@@ -1,10 +1,8 @@
 ﻿using Application.ViewModel;
 using AutoMapper;
-using AutoMapper.EquivalencyExpression;
 using Domain.DTO;
 using Domain.Entities;
 using Domain.ViewModel;
-using Microsoft.Extensions.DependencyInjection;
 
 
 namespace Application.Mapper
@@ -19,7 +17,7 @@ namespace Application.Mapper
 
         private void MapperVMToDTO()
         {
-           
+
             CreateMap(typeof(PaginationVM<>), typeof(PaginationDTO<>)).ReverseMap();
             CreateMap<SupplierVM, SupplierDTO>().ReverseMap();
             CreateMap<PartNumberVM, PartNumberDTO>().ReverseMap();

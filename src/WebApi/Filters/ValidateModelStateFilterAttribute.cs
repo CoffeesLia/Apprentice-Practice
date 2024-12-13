@@ -1,9 +1,9 @@
 ﻿
+using Application.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System.Net.Mime;
 using System.Net;
-using Application.ViewModel;
+using System.Net.Mime;
 
 namespace CleanArchBase.Filters
 {

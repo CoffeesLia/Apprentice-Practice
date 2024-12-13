@@ -22,7 +22,7 @@ namespace Domain.Interfaces
 
         Task SaveChanges();
 
-        
+
         Task<TEntity?> GetById(int id);
         Task<TEntity?> GetByIdAsNoTracking(int id);
         Task<TEntity> GetByIdWithInclude(int id, params Expression<Func<TEntity, object>>[] includeProperties);

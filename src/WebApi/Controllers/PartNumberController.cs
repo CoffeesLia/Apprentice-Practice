@@ -1,9 +1,6 @@
 ﻿using Application.Interfaces;
-using Application.Services;
 using AutoMapper;
 using Domain.DTO;
-using Domain.Entities;
-using Domain.Interfaces;
 using Domain.Resources;
 using Domain.ViewModel;
 using Microsoft.AspNetCore.Authorization;
@@ -42,7 +39,7 @@ namespace CleanArchBase.Controllers
         [HttpGet("Get/{id}")]
         public async Task<PartNumberVM> Get([FromRoute] int id)
         {
-            return  this._mapper.Map<PartNumberVM>(await _partNumberService.Get(id));
+            return this._mapper.Map<PartNumberVM>(await _partNumberService.Get(id));
         }
 
         [HttpGet("GetList")]
@@ -60,6 +57,6 @@ namespace CleanArchBase.Controllers
             return Ok(_localizer["SuccessDelete"].Value);
         }
 
-        
+
     }
 }

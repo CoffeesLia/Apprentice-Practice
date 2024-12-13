@@ -1,12 +1,12 @@
 using CleanArchBase.Filters;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Mvc;
+using Infrastructure.Data.Context;
 using IoC;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using WebApi.Extensions;
-using Infrastructure.Data.Context;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 

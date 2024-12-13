@@ -1,11 +1,10 @@
 ﻿using Application.Interfaces;
+using AutoMapper;
+using Domain.DTO;
 using Domain.Entities;
 using Domain.Interfaces;
-
-using Microsoft.Extensions.Localization;
-using AutoMapper;
 using Domain.Resources;
-using Domain.DTO;
+using Microsoft.Extensions.Localization;
 
 namespace Application.Services
 {

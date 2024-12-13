@@ -1,11 +1,4 @@
-﻿using Domain.Entities;
-using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using FluentValidation;
 
 namespace Domain.ViewModel
 {
@@ -14,7 +7,7 @@ namespace Domain.ViewModel
         public string? Chassi { get; set; }
         public virtual ICollection<PartNumberVehicleVM> PartNumberVehicle { get; set; }
 
-        public VehicleVM() 
+        public VehicleVM()
         {
             PartNumberVehicle = new List<PartNumberVehicleVM>();
         }

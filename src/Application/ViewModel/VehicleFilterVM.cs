@@ -5,6 +5,6 @@ namespace Application.ViewModel
     {
         public string? Chassi { get; set; }
 
-        
+
     }
 }

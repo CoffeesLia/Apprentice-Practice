@@ -57,7 +57,7 @@ namespace Data
         }
 
         public Task Commit()
-        {   
+        {
             try
             {
                 _transaction?.Commit();

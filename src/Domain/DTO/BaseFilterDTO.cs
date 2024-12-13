@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Domain.DTO
+﻿namespace Domain.DTO
 {
-    public  class BaseFilterDTO
+    public class BaseFilterDTO
     {
         public int Page { get; set; }
         public int RowsPerPage { get; set; }

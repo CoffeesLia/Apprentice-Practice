@@ -1,13 +1,13 @@
 ﻿using Application.Services;
 using AutoFixture;
 using AutoMapper;
+using Domain.DTO;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Resources;
 using Microsoft.Extensions.Localization;
 using Moq;
 using Xunit;
-using Domain.DTO;
 
 namespace Application.Tests
 {
@@ -29,7 +29,7 @@ namespace Application.Tests
 
             var mapperMock = new Mock<IMapper>();
             mapperMock.Setup(x => x.Map<Supplier>(It.IsAny<SupplierDTO>())).Returns(supplier);
-          
+
 
             var localizerMock = new Mock<IStringLocalizer<Messages>>();
 

@@ -2,9 +2,7 @@
 using Application.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System.Diagnostics;
 using System.Net;
-using System.Security.Claims;
 
 namespace CleanArchBase.Filters
 {
@@ -15,7 +13,7 @@ namespace CleanArchBase.Filters
         public void OnException(ExceptionContext context)
         {
             ObjectResult objectResult;
-     
+
             var contextException = context.Exception.InnerException ?? context.Exception;
 
             int statusCode = (int)HttpStatusCode.InternalServerError;
@@ -34,6 +32,6 @@ namespace CleanArchBase.Filters
             context.Result = objectResult;
         }
 
-        }
     }
+}
 

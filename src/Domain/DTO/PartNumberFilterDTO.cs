@@ -1,13 +1,4 @@
-﻿using Domain.DTO;
-using Domain.Enum;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-
-namespace Domain.DTO
+﻿namespace Domain.DTO
 {
     public class PartNumberFilterDTO : BaseFilterDTO
     {

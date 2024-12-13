@@ -1,9 +1,7 @@
 ﻿using Application.Interfaces;
-using Application.Services;
 using Application.ViewModel;
 using AutoMapper;
 using Domain.DTO;
-using Domain.Entities;
 using Domain.Resources;
 using Domain.ViewModel;
 using Microsoft.AspNetCore.Authorization;
