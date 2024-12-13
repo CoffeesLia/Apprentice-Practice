@@ -174,8 +174,6 @@ namespace Application.Tests
                 Total = paginationPartNumber.Total
             };
 
-            var id = new Fixture().Create<int>();
-
             var partNumberRepositoryMock = new Mock<IPartNumberRepository>();
             partNumberRepositoryMock.Setup(x => x.GetListFilter(It.IsAny<PartNumberFilterDTO>())).ReturnsAsync(paginationPartNumber);
 

@@ -1,5 +1,4 @@
-﻿using Domain.Entities;
-using Domain.Enum;
+﻿using Domain.Enum;
 using FluentValidation;
 
 namespace Domain.ViewModel
@@ -20,7 +19,7 @@ namespace Domain.ViewModel
                 RuleFor(x => x.Code).Length(0, 11).WithMessage("O código deve possuir no máximo 11 caracteres");
                 RuleFor(x => x.Type).NotNull().NotEmpty().WithMessage("O tipo é obrigatório");
 
-                
+
             }
 
         }

@@ -4,13 +4,6 @@ using Domain.Interfaces;
 
 using Infrastructure.Data.Context;
 using LinqKit;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Data.Repositories
 {
@@ -27,9 +20,9 @@ namespace Infrastructure.Data.Repositories
 
             if (!string.IsNullOrWhiteSpace(filter.Code))
                 filters = filters.And(x => x.Code.Contains(filter.Code));
-            if(!string.IsNullOrWhiteSpace(filter.Description))
+            if (!string.IsNullOrWhiteSpace(filter.Description))
                 filters = filters.And(x => x.Description.Contains(filter.Description));
-            if(!filter.Type.Equals(null))
+            if (!filter.Type.Equals(null))
                 filters = filters.And(x => x.Type.Equals(filter.Type));
 
 

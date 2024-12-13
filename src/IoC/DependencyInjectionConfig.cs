@@ -1,18 +1,11 @@
 ﻿using Application.Interfaces;
 using Application.Services;
 using Data;
-using Domain.DTO;
 using Domain.Interfaces;
 using Domain.ViewModel;
 using FluentValidation;
 using Infrastructure.Data.Repositories;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using static Domain.ViewModel.PartNumberVM;
 using static Domain.ViewModel.SupplierVM;
 using static Domain.ViewModel.VehicleVM;

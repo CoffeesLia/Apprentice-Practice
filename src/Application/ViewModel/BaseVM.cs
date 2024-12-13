@@ -1,8 +1,8 @@
 ﻿namespace Domain.ViewModel
 {
-    public  class BaseVM
+    public class BaseVM
     {
-        public int Id { get;  set; }    
-       
+        public int Id { get; set; }
+
     }
 }

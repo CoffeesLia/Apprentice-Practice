@@ -1,11 +1,4 @@
-﻿using Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Domain.DTO
+﻿namespace Domain.DTO
 {
     public class SupplierDTO : BaseDTO
     {
@@ -16,7 +9,7 @@ namespace Domain.DTO
 
         public virtual ICollection<PartNumberSupplierDTO> PartNumberSupplier { get; set; }
 
-        public SupplierDTO() 
+        public SupplierDTO()
         {
             PartNumberSupplier = new List<PartNumberSupplierDTO>();
         }

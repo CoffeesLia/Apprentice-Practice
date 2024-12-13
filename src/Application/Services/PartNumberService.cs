@@ -74,7 +74,7 @@ namespace Application.Services
         public async Task Delete(int id)
         {
             var partNumber = await _unitOfWork.PartNumberRepository.GetByIdWithInclude(id, x => x.PartNumberVehicle!, x => x.PartNumberSupplier!);
-            if(partNumber.PartNumberSupplier!.Count == 0 || partNumber.PartNumberVehicle!.Count == 0)
+            if (partNumber.PartNumberSupplier!.Count == 0 || partNumber.PartNumberVehicle!.Count == 0)
             {
                 throw new InvalidOperationException(_localizer["UndeletedDrawing"].Value);
             }

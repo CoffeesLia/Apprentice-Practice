@@ -1,23 +1,13 @@
 ﻿using Application.Services;
 using AutoFixture;
 using AutoMapper;
+using Domain.DTO;
 using Domain.Entities;
-using Domain.Enum;
 using Domain.Interfaces;
 using Domain.Resources;
-
 using Microsoft.Extensions.Localization;
-using Microsoft.SqlServer.Server;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
-
-using Domain.DTO;
 
 namespace Application.Tests
 {

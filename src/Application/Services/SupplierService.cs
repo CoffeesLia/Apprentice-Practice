@@ -40,8 +40,8 @@ namespace Application.Services
         public async Task<SupplierDTO> Get(int id)
         {
             var supplier = await _unitOfWork.SupplierRepository.GetByIdWithPartNumber(id);
-            return supplier == null 
-                ? throw new InvalidOperationException(_localizer["NotFound"].Value) 
+            return supplier == null
+                ? throw new InvalidOperationException(_localizer["NotFound"].Value)
                 : this._mapper.Map<SupplierDTO>(supplier);
         }
 
@@ -50,18 +50,18 @@ namespace Application.Services
             VerifyDuplicatePartNumbers(supplierDTO);
 
             var supplier = await _unitOfWork.SupplierRepository.GetByIdWithPartNumber(supplierDTO.Id) ?? throw new InvalidOperationException(_localizer["NotFound"].Value);
-            
+
             var partnumbersIdsToDelete = EntityComparison.PropsDiffer(supplier.PartNumberSupplier, supplierDTO.PartNumberSupplier, "PartNumberId").ToList();
             await _unitOfWork.PartNumberSupplierRepository.Delete(supplier.PartNumberSupplier.Where(f => partnumbersIdsToDelete.Contains(f.PartNumberId.GetValueOrDefault())), false);
-            
+
             _mapper.Map(supplierDTO, supplier);
 
-            await this._unitOfWork.SupplierRepository.Update(supplier); 
+            await this._unitOfWork.SupplierRepository.Update(supplier);
         }
 
         public async Task<PaginationDTO<SupplierDTO>> GetList(SupplierFilterDTO filter)
         {
-           return this._mapper.Map<PaginationDTO<SupplierDTO>>(await _unitOfWork.SupplierRepository.GetListFilter(filter));
+            return this._mapper.Map<PaginationDTO<SupplierDTO>>(await _unitOfWork.SupplierRepository.GetListFilter(filter));
         }
 
         private async Task DeleteExists(Supplier supplier)

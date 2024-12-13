@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Domain.Entities
+﻿namespace Domain.Entities
 {
     public class Supplier : BaseEntity
     {
@@ -14,7 +8,7 @@ namespace Domain.Entities
         public string Fone { get; private set; }
         public string Address { get; private set; }
 
-        public virtual ICollection<PartNumberSupplier> PartNumberSupplier { get;  set; }
+        public virtual ICollection<PartNumberSupplier> PartNumberSupplier { get; set; }
 
         private Supplier()
         {

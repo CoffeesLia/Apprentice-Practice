@@ -11,7 +11,7 @@ namespace Infrastructure.Data.Context
             modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
             base.OnModelCreating(modelBuilder);
 
-     
+
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

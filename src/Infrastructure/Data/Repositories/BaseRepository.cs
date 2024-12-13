@@ -1,10 +1,10 @@
-﻿using Domain.Entities;
+﻿using Domain.DTO;
+using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Data.Context;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 using System.Linq.Dynamic.Core;
-using Domain.DTO;
+using System.Linq.Expressions;
 
 namespace Infrastructure.Data.Repositories
 {
@@ -31,7 +31,7 @@ namespace Infrastructure.Data.Repositories
         public PaginationDTO<TEntity> GetList(Expression<Func<TEntity, bool>>? filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null, string? includeProperties = null, int page = 1, int pageSize = 10)
         {
             IQueryable<TEntity> query = _context.Set<TEntity>();
-            
+
 
             if (filter != null)
             {
@@ -51,7 +51,7 @@ namespace Infrastructure.Data.Repositories
                 query = orderBy(query);
             }
 
-            var list  =  query.Skip((page - 1) * pageSize)
+            var list = query.Skip((page - 1) * pageSize)
                         .Take(pageSize)
                         .ToList();
 
@@ -153,7 +153,7 @@ namespace Infrastructure.Data.Repositories
         public async Task Create(TEntity entity, bool saveChanges = true)
         {
             await _context.Set<TEntity>().AddAsync(entity);
-            
+
             if (saveChanges)
                 await _context.SaveChangesAsync();
         }
@@ -172,7 +172,7 @@ namespace Infrastructure.Data.Repositories
         public async Task Update(TEntity entity, bool saveChanges = true)
         {
             _context.Set<TEntity>().Update(entity);
-            
+
             if (saveChanges)
                 await _context.SaveChangesAsync();
         }
@@ -205,7 +205,7 @@ namespace Infrastructure.Data.Repositories
         {
             var entity = await GetById(id);
             _context.Set<TEntity>().Remove(entity!);
-            
+
             if (saveChanges)
                 await _context.SaveChangesAsync();
         }
