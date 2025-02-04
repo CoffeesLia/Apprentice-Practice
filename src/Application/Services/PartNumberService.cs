@@ -1,93 +1,59 @@
-﻿using Application.Interfaces;
-using AutoMapper;
-using Domain.DTO;
-using Domain.Entities;
-using Domain.Interfaces;
-using Domain.Resources;
+﻿using Microsoft.Extensions.Localization;
+using Stellantis.ProjectName.Application.Interfaces;
+using Stellantis.ProjectName.Application.Interfaces.Repositories;
+using Stellantis.ProjectName.Application.Interfaces.Services;
+using Stellantis.ProjectName.Application.Models;
+using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Application.Resources;
+using Stellantis.ProjectName.Domain.Entities;
 
-using Microsoft.Extensions.Localization;
-
-namespace Application.Services
+namespace Stellantis.ProjectName.Application.Services
 {
-    public class PartNumberService : IPartNumberService
+    public class PartNumberService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory)
+        : BaseEntityService<PartNumber, IPartNumberRepository>(unitOfWork, localizerFactory), IPartNumberService
     {
+        private readonly IStringLocalizer _partNumberLocalizer = localizerFactory.Create(typeof(PartNumberResources));
+        protected override IPartNumberRepository Repository => UnitOfWork.PartNumberRepository;
 
-        private readonly IMapper _mapper;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IStringLocalizer<Messages> _localizer;
-
-        public PartNumberService(IMapper mapper, IUnitOfWork unitOfWork, IStringLocalizer<Messages> localizer)
+        public override async Task<OperationResult> DeleteAsync(int id)
         {
-            _mapper = mapper;
-            _unitOfWork = unitOfWork;
-            _localizer = localizer;
+            var item = await Repository.GetFullByIdAsync(id).ConfigureAwait(false);
+            if (item == null)
+                return OperationResult.Error(Localizer[nameof(GeneralResources.NotFound)]);
+            else if (item.Suppliers.Count > 0 || item.Vehicles.Count > 0)
+                return OperationResult.Error(_partNumberLocalizer[nameof(PartNumberResources.Undeleted)]);
+            else
+                return await base.DeleteAsync(item).ConfigureAwait(false);
         }
 
-
-        public async Task Create(PartNumberDTO partNumberDTO)
+        public override async Task<OperationResult> CreateAsync(PartNumber itemDto)
         {
-            var partNumberValidated = ValidateCreateOrUpdate(partNumberDTO);
-
-            if (_unitOfWork.PartNumberRepository.VerifyCodeExists(partNumberDTO.Code!))
-            {
-                throw new InvalidOperationException(_localizer["AlreadyExistCode"].Value);
-            }
-
-            var partNumber = this._mapper.Map<PartNumber>(partNumberValidated);
-            await this._unitOfWork.PartNumberRepository.Create(partNumber);
+            ArgumentNullException.ThrowIfNull(itemDto);
+            itemDto = ValidateCreateOrUpdate(itemDto);
+            if (Repository.VerifyCodeExists(itemDto.Code!))
+                return OperationResult.Error(_partNumberLocalizer[nameof(PartNumberResources.AlreadyExistCode)]);
+            return await base.CreateAsync(itemDto).ConfigureAwait(false);
         }
 
-        public async Task Update(PartNumberDTO partNumberDTO)
+        public async Task<PagedResult<PartNumber>> GetListAysnc(PartNumberFilter filter)
         {
-            var partNumberValidated = ValidateCreateOrUpdate(partNumberDTO);
-
-            if (_unitOfWork.PartNumberRepository.VerifyCodeExists(partNumberDTO.Code!))
-            {
-                throw new InvalidOperationException(_localizer["AlreadyExistCode"].Value);
-            }
-
-            _unitOfWork.BeginTransaction();
-
-            var partNumberDB = await _unitOfWork.PartNumberRepository.GetById(partNumberDTO.Id) ?? throw new InvalidOperationException(_localizer["NotFound"].Value);
-            this._unitOfWork.PartNumberRepository.DetachEntity(partNumberDB);
-
-            var partNumber = this._mapper.Map<PartNumber>(partNumberValidated);
-            await this._unitOfWork.PartNumberRepository.Update(partNumber);
-
-            await _unitOfWork.Commit();
+            return await UnitOfWork.PartNumberRepository.GetListAsync(filter).ConfigureAwait(false);
         }
 
-        public async Task<PartNumberDTO> Get(int id)
+        public override async Task<OperationResult> UpdateAsync(PartNumber item)
         {
-            var partNumber = await _unitOfWork.PartNumberRepository.GetById(id);
-            return partNumber == null
-                ? throw new InvalidOperationException(_localizer["NotFound"].Value)
-                : this._mapper.Map<PartNumberDTO>(await _unitOfWork.PartNumberRepository.GetById(id));
+            ArgumentNullException.ThrowIfNull(item);
+            item = ValidateCreateOrUpdate(item);
+            if (UnitOfWork.PartNumberRepository.VerifyCodeExists(item.Code))
+                return OperationResult.Error(_partNumberLocalizer[nameof(PartNumberResources.AlreadyExistCode)]);
+            return await base.UpdateAsync(item).ConfigureAwait(false);
         }
 
-        public async Task<PaginationDTO<PartNumberDTO>> GetList(PartNumberFilterDTO filter)
+        private static PartNumber ValidateCreateOrUpdate(PartNumber partNumberDto)
         {
-            return this._mapper.Map<PaginationDTO<PartNumberDTO>>(await _unitOfWork.PartNumberRepository.GetListFilter(filter));
-
-        }
-
-        public async Task Delete(int id)
-        {
-            var partNumber = await _unitOfWork.PartNumberRepository.GetByIdWithInclude(id, x => x.PartNumberVehicle!, x => x.PartNumberSupplier!);
-            if (partNumber.PartNumberSupplier!.Count == 0 || partNumber.PartNumberVehicle!.Count == 0)
-            {
-                throw new InvalidOperationException(_localizer["UndeletedDrawing"].Value);
-            }
-            await _unitOfWork.PartNumberRepository.Delete(id);
-        }
-
-
-        private static PartNumberDTO ValidateCreateOrUpdate(PartNumberDTO partNumberDTO)
-        {
-            if (partNumberDTO.Code!.Length < 11)
-                partNumberDTO.Code = partNumberDTO.Code.PadLeft(11, '0');
-
-            return partNumberDTO;
+            if (partNumberDto.Code!.Length < 11)
+                partNumberDto.Code = partNumberDto.Code.PadLeft(11, '0');
+            return partNumberDto;
         }
     }
 }

@@ -1,31 +1,13 @@
-﻿namespace Domain.Entities
+﻿using Stellantis.ProjectName.Domain.Enums;
+
+namespace Stellantis.ProjectName.Domain.Entities
 {
-    public class PartNumber : BaseEntity
+    public class PartNumber(string code, string description, PartNumberType type) : BaseEntity
     {
-        public string Code { get; private set; }
-        public string Description { get; private set; }
-
-        public int Type { get; set; }
-
-        public virtual ICollection<PartNumberSupplier>? PartNumberSupplier { get; private set; }
-        public virtual ICollection<PartNumberVehicle>? PartNumberVehicle { get; private set; }
-
-        private PartNumber()
-        {
-            Code = "";
-            Description = "";
-            Type = 1;
-        }
-
-        public PartNumber(string code, string description, int type)
-        {
-            Code = code;
-            Description = description;
-            Type = type;
-            PartNumberSupplier = [];
-            PartNumberVehicle = [];
-        }
-
-
+        public string Code { get; set; } = code;
+        public string Description { get; } = description;
+        public PartNumberType Type { get; } = type;
+        public virtual ICollection<PartNumberSupplier> Suppliers { get; } = [];
+        public virtual ICollection<VehiclePartNumber> Vehicles { get; } = [];
     }
 }

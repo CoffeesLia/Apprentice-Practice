@@ -1,13 +1,14 @@
-﻿using Domain.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Stellantis.ProjectName.Domain.Entities;
 
-namespace Infrastructure.Data.EntityConfig
+namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
 {
     public class VehicleConfig : IEntityTypeConfiguration<Vehicle>
     {
         public void Configure(EntityTypeBuilder<Vehicle> builder)
         {
+            ArgumentNullException.ThrowIfNull(builder);
             builder.ToTable("Vehicle");
 
             builder.HasKey(p => p.Id);

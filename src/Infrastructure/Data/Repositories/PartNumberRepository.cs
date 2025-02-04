@@ -1,21 +1,22 @@
-﻿using Domain.DTO;
-using Domain.Entities;
-using Domain.Interfaces;
+﻿using LinqKit;
+using Stellantis.ProjectName.Application.Interfaces.Repositories;
+using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Domain.Entities;
 
-using Infrastructure.Data.Context;
-using LinqKit;
-
-namespace Infrastructure.Data.Repositories
+namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
-    public class PartNumberRepository(CleanArchBaseContext context) : BaseRepository<PartNumber>(context), IPartNumberRepository
+    public class PartNumberRepository(Context context)
+        : BaseRepositoryEntity<PartNumber, Context>(context), IPartNumberRepository
     {
         public bool VerifyCodeExists(string code)
         {
-            return _context.PartNumber.Any(p => p.Code == code);
+            return Context.PartNumbers.Any(p => p.Code == code);
         }
 
-        public async Task<PaginationDTO<PartNumber>> GetListFilter(PartNumberFilterDTO filter)
+        public async Task<PagedResult<PartNumber>> GetListAsync(PartNumberFilter filter)
         {
+            ArgumentNullException.ThrowIfNull(filter);
+
             var filters = PredicateBuilder.New<PartNumber>(true);
 
             if (!string.IsNullOrWhiteSpace(filter.Code))
@@ -25,9 +26,12 @@ namespace Infrastructure.Data.Repositories
             if (!filter.Type.Equals(null))
                 filters = filters.And(x => x.Type.Equals(filter.Type));
 
-
-            return await GetListAsync(filter: filters, page: filter.Page, sort: filter.Sort, sortDir: filter.SortDir);
+            return await GetListAsync(filter: filters, page: filter.Page, sort: filter.Sort, sortDir: filter.SortDir).ConfigureAwait(false);
         }
 
+        public async Task<PartNumber?> GetFullByIdAsync(int id)
+        {
+            return await GetByIdWithIncludeAsync(id, x => x.Suppliers, x => x.Vehicles).ConfigureAwait(false);
+        }
     }
 }

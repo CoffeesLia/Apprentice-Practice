@@ -1,33 +1,20 @@
-﻿using Application.Interfaces;
-using Application.Services;
-using Data;
-using Domain.Interfaces;
-using Domain.ViewModel;
-using FluentValidation;
-using Infrastructure.Data.Repositories;
-using Microsoft.Extensions.DependencyInjection;
-using static Domain.ViewModel.PartNumberVM;
-using static Domain.ViewModel.SupplierVM;
-using static Domain.ViewModel.VehicleVM;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Stellantis.ProjectName.Application.Interfaces;
+using Stellantis.ProjectName.Application.Interfaces.Repositories;
+using Stellantis.ProjectName.Application.Interfaces.Services;
+using Stellantis.ProjectName.Application.Services;
+using Stellantis.ProjectName.Infrastructure.Data;
+using Stellantis.ProjectName.Infrastructure.Data.Repositories;
 
-namespace IoC
+namespace Stellantis.ProjectName.IoC
 {
     public static class DependencyInjectionConfig
     {
         public static void ConfigureDependencyInjection(this IServiceCollection services)
         {
-            Validations(services);
             Services(services);
             Repositories(services);
         }
-
-        private static void Validations(IServiceCollection services)
-        {
-            services.AddTransient<IValidator<PartNumberVM>, PartNumberVMValidation>();
-            services.AddTransient<IValidator<VehicleVM>, VehicleVMValidation>();
-            services.AddTransient<IValidator<SupplierVM>, SupplierVMValidation>();
-        }
-
 
         private static void Services(IServiceCollection services)
         {
@@ -40,9 +27,7 @@ namespace IoC
         {
             services.AddScoped<IPartNumberRepository, PartNumberRepository>();
             services.AddScoped<IVehicleRepository, VehicleRepository>();
-            services.AddScoped<IPartNumberVehicleRepository, PartNumberVehicleRepository>();
             services.AddScoped<ISupplierRepository, SupplierRepository>();
-            services.AddScoped<IPartNumberSupplierRepository, PartNumberSupplierRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
     }

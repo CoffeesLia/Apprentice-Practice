@@ -1,6 +1,6 @@
-﻿namespace Domain.ViewModel
+﻿namespace Stellantis.ProjectName.Application.Models
 {
-    public class PartNumberVehicleVM
+    public class PartNumberVehicleVm
     {
         public int PartNumberId { get; set; }
         public int VehicleId { get; set; }

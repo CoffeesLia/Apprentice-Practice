@@ -1,19 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
-namespace uploadapi
+namespace Stellantis.ProjectName.WebApi.Controllers
 {
+    /// <summary>
+    /// Health check controller
+    /// </summary>
     [ApiController]
     [Route("[controller]")]
-    public class HealthCheckController : ControllerBase
+    public sealed class HealthCheckController : ControllerBase
     {
-        [HttpGet("/health")]
+        /// <summary>
+        /// Health check endpoint
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("health")]
         public IActionResult HealthCheck()
         {
             return Ok();
         }
-
-
     }
 }

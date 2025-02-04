@@ -1,34 +1,40 @@
-﻿using Domain.DTO;
-using Domain.Entities;
-using Domain.Interfaces;
-using Infrastructure.Data.Context;
-using LinqKit;
+﻿using LinqKit;
 using Microsoft.EntityFrameworkCore;
+using Stellantis.ProjectName.Application.Interfaces.Repositories;
+using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Domain.Entities;
 
-namespace Infrastructure.Data.Repositories
+namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
-    public class VehicleRepository(CleanArchBaseContext context) : BaseRepository<Vehicle>(context), IVehicleRepository
+    public class VehicleRepository(Context context) : BaseRepositoryEntity<Vehicle, Context>(context), IVehicleRepository
     {
-        public bool VerifyChassiExists(string chassi)
+        public async Task<bool> VerifyChassiExistsAsync(string chassi)
         {
-            return _context.Vehicle.Any(p => p.Chassi == chassi);
+            return await Context.Vehicles.AnyAsync(p => p.Chassi == chassi).ConfigureAwait(false);
         }
 
-        public async Task<PaginationDTO<Vehicle>> GetListFilter(VehicleFilterDTO filter)
+        public async Task<PagedResult<Vehicle>> GetListAsync(VehicleFilter filter)
         {
+            ArgumentNullException.ThrowIfNull(filter);
+
             var filters = PredicateBuilder.New<Vehicle>(true);
 
-            if (!string.IsNullOrWhiteSpace(filter.Chassi))
-                filters = filters.And(x => x.Chassi.Contains(filter.Chassi));
+            if (!string.IsNullOrWhiteSpace(filter.Chassis))
+                filters = filters.And(x => x.Chassi.Contains(filter.Chassis));
 
-
-            return await GetListAsync(filter: filters, page: filter.Page, sort: "chassi", sortDir: filter.SortDir);
-
+            return await GetListAsync(filter: filters, page: filter.Page, sort: "Chassi", sortDir: filter.SortDir).ConfigureAwait(false);
+            //Review: Criar testes com nome sem ser sensitive case
         }
 
-        public async Task<Vehicle?> GetByIdWithPartNumber(int id) => await _context.Vehicle
-                .Include(x => x.PartNumberVehicle!)
-                .ThenInclude(x => x.PartNumber)
-                .FirstOrDefaultAsync(x => x.Id == id);
+        public async Task<Vehicle?> GetFullByIdAsync(int id) => await Context.Vehicles
+            .Include(x => x.PartNumbers)
+            .ThenInclude(x => x.PartNumber)
+            .FirstOrDefaultAsync(x => x.Id == id)
+            .ConfigureAwait(false);
+
+        public void RemovePartnumbers(IEnumerable<VehiclePartNumber> partNumbers)
+        {
+            Context.VehiclePartNumbers.RemoveRange(partNumbers);
+        }
     }
 }

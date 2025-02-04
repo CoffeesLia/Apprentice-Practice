@@ -1,19 +1,9 @@
-﻿using FluentValidation;
-
-namespace Domain.ViewModel
+﻿namespace Stellantis.ProjectName.Application.Models
 {
-    public class VehicleWithPartNumberDTO
+    public class VehicleWithPartNumberVM
     {
-        public string Chassi { get; set; }
-        public ICollection<int>? PartNumberIds { get; set; }
+        public string Chassi { get; set; } = string.Empty;
+        public IEnumerable<int> PartNumberIds { get; set; } = [];
         public int Amount { get; set; }
-
-        public class VehicleWithPartNumberDTOValidation : AbstractValidator<VehicleWithPartNumberDTO>
-        {
-            public VehicleWithPartNumberDTOValidation()
-            {
-                RuleFor(x => x.Chassi).NotEmpty().WithMessage("Chassi é obrigatório");
-            }
-        }
     }
 }

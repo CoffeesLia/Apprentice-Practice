@@ -1,29 +1,12 @@
-﻿using FluentValidation;
-
-namespace Domain.ViewModel
+﻿namespace Stellantis.ProjectName.Application.Models
 {
-    public class SupplierVM : BaseVM
+    public class SupplierVm(string code, string companyName, string phone, string address) : BaseViewModel
     {
-        public string? Code { get; set; }
-        public string? CompanyName { get; set; }
-        public string? Fone { get; set; }
-        public string? Address { get; set; }
+        public string Code { get; } = code;
+        public string CompanyName { get; } = companyName;
+        public string Phone { get; } = phone;
+        public string Address { get; } = address;
 
-        public virtual ICollection<PartNumberSupplierVM>? PartNumberSupplier { get; set; }
-
-        public class SupplierVMValidation : AbstractValidator<SupplierVM>
-        {
-            public SupplierVMValidation()
-            {
-                RuleFor(x => x.Code).NotNull().Length(1, 11).WithMessage("O código é obrigatório e deve possuir no máximo 11 caracteres");
-                RuleFor(x => x.CompanyName).NotEmpty().WithMessage("Nome da empresa é obrigatório");
-                RuleFor(x => x.CompanyName).Length(1, 255).WithMessage("Nome da empresa deve possuir no máximo 255 caracteres");
-                RuleFor(x => x.Fone).NotEmpty().Length(1, 20).WithMessage("Telefone é obrigatório e deve possuir no máximo 20 caracteres");
-                RuleFor(x => x.Address).NotEmpty().WithMessage("Endereço é obrigatório");
-                RuleFor(x => x.Address).Length(1, 255).WithMessage("Endereço deve possuir no máximo 255 caracteres");
-            }
-        }
-
-
+        public virtual ICollection<PartNumberSupplierVm>? PartNumbers { get; protected set; }
     }
 }

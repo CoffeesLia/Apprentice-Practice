@@ -1,62 +1,68 @@
-﻿using Application.Interfaces;
-using AutoMapper;
-using Domain.DTO;
-using Domain.Resources;
-using Domain.ViewModel;
-using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
+using Stellantis.ProjectName.Application.Interfaces.Services;
+using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Application.Resources;
+using Stellantis.ProjectName.Domain.Entities;
+using Stellantis.ProjectName.WebApi.Dto;
+using Stellantis.ProjectName.WebApi.Dto.Filters;
+using Stellantis.ProjectName.WebApi.ViewModels;
 
-namespace CleanArchBase.Controllers
+namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [AllowAnonymous]
-    public class PartNumberController(IMapper mapper, IPartNumberService partNumberService, IStringLocalizer<Messages> localizer) : ControllerBase
+    public sealed class PartNumberController(IMapper mapper, IPartNumberService partNumberService, IStringLocalizerFactory localizerFactory) : ControllerBase
     {
         private readonly IPartNumberService _partNumberService = partNumberService;
-        private readonly IStringLocalizer<Messages> _localizer = localizer;
+        private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(PartNumberResources));
         private readonly IMapper _mapper = mapper;
 
         [HttpPost]
-        public async Task<ActionResult> Create([FromBody] PartNumberVM partNumberVM)
+        public async Task<ActionResult> Create([FromBody] PartNumberDto itemDto)
         {
-            var partNumberDTO = this._mapper.Map<PartNumberDTO>(partNumberVM);
-            await _partNumberService.Create(partNumberDTO);
-
-            return Ok(_localizer["SuccessRegister"].Value);
+            ArgumentNullException.ThrowIfNull(itemDto);
+            var item = _mapper.Map<PartNumber>(itemDto);
+            var result = await _partNumberService.CreateAsync(item!);
+            if (result.Success)
+                return Ok(_localizer["SuccessRegister"].Value);
+            else
+            {
+                return BadRequest(result);
+            }
         }
 
         [HttpPut]
-        public async Task<ActionResult> Update([FromBody] PartNumberVM partNumberVM)
+        public async Task<ActionResult> Update([FromBody] PartNumberVm itemDto)
         {
-            var partNumberDTO = this._mapper.Map<PartNumberDTO>(partNumberVM);
-            await _partNumberService.Update(partNumberDTO);
+            ArgumentNullException.ThrowIfNull(itemDto);
+            var item = _mapper.Map<PartNumber>(itemDto);
+            await _partNumberService.UpdateAsync(item!);
 
             return Ok(_localizer["SuccessUpdate"].Value);
         }
 
         [HttpGet("Get/{id}")]
-        public async Task<PartNumberVM> Get([FromRoute] int id)
+        public async Task<PartNumberVm?> Get([FromRoute] int id)
         {
-            return this._mapper.Map<PartNumberVM>(await _partNumberService.Get(id));
+            return _mapper.Map<PartNumberVm>(await _partNumberService.GetItemAsync(id));
         }
 
         [HttpGet("GetList")]
-        public async Task<ActionResult> GetList([FromQuery] PartNumberFilterVM filter)
+        public async Task<ActionResult> GetList([FromQuery] PartNumberFilterDto filterDto)
         {
-            var partNumberFilterDTO = this._mapper.Map<PartNumberFilterDTO>(filter);
-            return Ok(this._mapper.Map<PaginationDTO<PartNumberVM>>(await _partNumberService.GetList(partNumberFilterDTO)));
+            ArgumentNullException.ThrowIfNull(filterDto);
+            var filter = _mapper.Map<PartNumberFilter>(filterDto);
+            return Ok(_mapper.Map<PagedResultDto<PartNumberVm>>(await _partNumberService.GetListAysnc(filter!)));
         }
 
         [HttpDelete("Delete/{id}")]
         public async Task<ActionResult> Delete([FromRoute] int id)
         {
-            await _partNumberService.Delete(id);
+            await _partNumberService.DeleteAsync(id);
 
             return Ok(_localizer["SuccessDelete"].Value);
         }
-
-
     }
 }
