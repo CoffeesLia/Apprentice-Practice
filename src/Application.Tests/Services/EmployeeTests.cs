@@ -14,6 +14,7 @@ namespace Application.Tests.Services
 {
     public class EmployeeServiceTests
     {
+        
         private readonly Fixture _fixture = new();
         private readonly Mock<IUnitOfWork> _unitOfWorkMock = new();
         private readonly Mock<IEmployeeRepository> _repositoryMock = new();
