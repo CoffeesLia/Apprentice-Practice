@@ -4,8 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
-using System.Data.Entity;
-using Xunit;
 
 namespace Infrastructure.Tests.Data.Repositories
 {
