@@ -3,6 +3,7 @@ using Microsoft.Extensions.Localization;
 
 namespace Application.Tests.Helpers
 {
+    //comentario
     internal static class LocalizerFactorHelper
     {
         internal static IStringLocalizerFactory Create()
