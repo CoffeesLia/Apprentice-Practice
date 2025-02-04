@@ -8,7 +8,6 @@ using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
-using Stellantis.ProjectName.WebApi.ViewModels;
 
 namespace Stellantis.ProjectName.WebApi.Controllers
 {

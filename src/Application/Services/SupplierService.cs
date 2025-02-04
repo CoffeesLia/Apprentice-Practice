@@ -13,7 +13,7 @@ namespace Stellantis.ProjectName.Application.Services
         : BaseEntityService<Supplier, ISupplierRepository>(unitOfWork, localizerFactory), ISupplierService
     {
         private readonly IStringLocalizer _supplierLocalizer = localizerFactory.Create(typeof(SupplierResources));
-                protected override ISupplierRepository Repository => UnitOfWork.SupplierRepository;
+        protected override ISupplierRepository Repository => UnitOfWork.SupplierRepository;
 
         public override async Task<OperationResult> CreateAsync(Supplier item)
         {
