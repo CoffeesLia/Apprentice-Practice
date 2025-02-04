@@ -11,7 +11,7 @@ namespace Infrastructure.Tests.Data.Repositories
         public void Commit() => throw new NotImplementedException();
         public Task CommitAsync(CancellationToken cancellationToken = default) => throw new NotImplementedException();
         public void Dispose() => GC.SuppressFinalize(this);
-        public ValueTask DisposeAsync() =>  throw new NotImplementedException();
+        public ValueTask DisposeAsync() => throw new NotImplementedException();
         public void Rollback() => _rollbackAsyncHasCalled = true;
         public Task RollbackAsync(CancellationToken cancellationToken = default)
         {
