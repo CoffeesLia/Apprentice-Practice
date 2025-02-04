@@ -6,7 +6,6 @@ using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
-using System.Diagnostics;
 
 namespace Stellantis.ProjectName.Application.Services
 {
