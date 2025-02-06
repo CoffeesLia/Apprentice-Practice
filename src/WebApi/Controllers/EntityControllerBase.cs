@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces.Services;
@@ -8,6 +9,7 @@ using Stellantis.ProjectName.WebApi.Resources;
 
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
+    [Authorize]
     public abstract class EntityControllerBase<TEntityDto, TEntity>(IMapper mapper, IBaseEntityService<TEntity> service, IStringLocalizerFactory localizerFactory)
         : ControllerBase
         where TEntityDto : BaseEntityDto
