@@ -26,13 +26,13 @@ namespace Stellantis.ProjectName.Application.Services
                 return await base.DeleteAsync(item).ConfigureAwait(false);
         }
 
-        public override async Task<OperationResult> CreateAsync(PartNumber itemDto)
+        public override async Task<OperationResult> CreateAsync(PartNumber item)
         {
-            ArgumentNullException.ThrowIfNull(itemDto);
-            itemDto = ValidateCreateOrUpdate(itemDto);
-            if (Repository.VerifyCodeExists(itemDto.Code!))
+            ArgumentNullException.ThrowIfNull(item);
+            item = ValidateCreateOrUpdate(item);
+            if (Repository.VerifyCodeExists(item.Code!))
                 return OperationResult.Error(_partNumberLocalizer[nameof(PartNumberResources.AlreadyExistCode)]);
-            return await base.CreateAsync(itemDto).ConfigureAwait(false);
+            return await base.CreateAsync(item).ConfigureAwait(false);
         }
 
         public async Task<PagedResult<PartNumber>> GetListAysnc(PartNumberFilter filter)
