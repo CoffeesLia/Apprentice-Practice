@@ -270,3 +270,4 @@ __pycache__/
 */**/obj/Release
 /src/WebApi/appsettings.json
 /src/WebApi/appsettings.json
+/src/TestsCoverageReport
