@@ -60,7 +60,7 @@ namespace Stellantis.ProjectName.Application.Services
                     Repository.RemovePartnumbers(item.PartNumbers);
                     await Repository.UpdateAsync(item).ConfigureAwait(false);
                     await UnitOfWork.CommitAsync().ConfigureAwait(false);
-                    return OperationResult.Complete(Localizer[GeneralResources.SuccessUpdate]);
+                    return OperationResult.Complete(Localizer[GeneralResources.UpdatedSuccessfully]);
                 }
             }
         }

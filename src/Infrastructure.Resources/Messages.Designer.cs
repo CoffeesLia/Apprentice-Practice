@@ -126,27 +126,27 @@ namespace Stellantis.ProjectName.Infrastructure.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Successfully deleted.
         /// </summary>
-        public static string SuccessDelete {
+        public static string DeletedSuccessfully {
             get {
-                return ResourceManager.GetString("SuccessDelete", resourceCulture);
+                return ResourceManager.GetString("DeletedSuccessfully", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Successfully registered.
         /// </summary>
-        public static string SuccessRegister {
+        public static string RegisteredSuccessfully {
             get {
-                return ResourceManager.GetString("SuccessRegister", resourceCulture);
+                return ResourceManager.GetString("RegisteredSuccessfully", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Updated successfully.
         /// </summary>
-        public static string SuccessUpdate {
+        public static string UpdatedSuccessfully {
             get {
-                return ResourceManager.GetString("SuccessUpdate", resourceCulture);
+                return ResourceManager.GetString("UpdatedSuccessfully", resourceCulture);
             }
         }
         

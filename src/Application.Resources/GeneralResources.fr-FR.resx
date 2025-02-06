@@ -120,16 +120,13 @@
   <data name="NotFound" xml:space="preserve">
     <value>Non trouvé.</value>
   </data>
-  <data name="SuccessDelete" xml:space="preserve">
+  <data name="DeletedSuccessfully" xml:space="preserve">
     <value>Supprimé avec succès.</value>
   </data>
-  <data name="SuccessRegister" xml:space="preserve">
+  <data name="RegisteredSuccessfully" xml:space="preserve">
     <value>Enregistré avec succès.</value>
   </data>
-  <data name="SuccessUpdate" xml:space="preserve">
+  <data name="UpdatedSuccessfully" xml:space="preserve">
     <value>Mis à jour avec succès.</value>
-  </data>
-  <data name="Required" xml:space="preserve">
-    <value>C'est obligatoire</value>
   </data>
 </root>

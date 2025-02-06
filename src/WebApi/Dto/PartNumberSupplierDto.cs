@@ -3,7 +3,6 @@
     public class PartNumberSupplierDto
     {
         public int PartNumberId { get; set; }
-        public int SupplierId { get; set; }
         public int Amount { get; set; }
     }
 }

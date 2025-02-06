@@ -20,4 +20,42 @@
     <NeutralResourcesLanguage>en</NeutralResourcesLanguage>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Update="ControllerResources.Designer.cs">
+      <DependentUpon>ControllerResources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="ControllerResources.es-AR.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ControllerResources.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="ControllerResources.it-IT.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ControllerResources.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="ControllerResources.fr-FR.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ControllerResources.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="ControllerResources.ja-JP.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ControllerResources.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="ControllerResources.pt-BR.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ControllerResources.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="ControllerResources.resx">
+      <LastGenOutput>ControllerResources.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="ControllerResources.zh-CN.resx">
+      <DependentUpon>ControllerResources.resx</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>

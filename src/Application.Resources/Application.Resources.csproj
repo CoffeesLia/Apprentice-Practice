@@ -63,6 +63,18 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>FilterValidatorResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Update="GeneralResources - Copy.fr-FR.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>GeneralResources.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="GeneralResources - Copy.ja-JP.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>GeneralResources.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="GeneralResources - Copy.zh-CN.resx">
+      <DependentUpon>GeneralResources.resx</DependentUpon>
+      <Generator></Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="Messages - Copy %282%29.pt-br.resx">
       <SubType>Designer</SubType>
       <DependentUpon>Messages.resx</DependentUpon>

@@ -135,13 +135,13 @@
   <data name="NotFound" xml:space="preserve">
     <value>Not found</value>
   </data>
-  <data name="SuccessDelete" xml:space="preserve">
+  <data name="DeletedSuccessfully" xml:space="preserve">
     <value>Successfully deleted</value>
   </data>
-  <data name="SuccessRegister" xml:space="preserve">
+  <data name="RegisteredSuccessfully" xml:space="preserve">
     <value>Successfully registered</value>
   </data>
-  <data name="SuccessUpdate" xml:space="preserve">
+  <data name="UpdatedSuccessfully" xml:space="preserve">
     <value>Updated successfully</value>
   </data>
   <data name="TheDrawing" xml:space="preserve">

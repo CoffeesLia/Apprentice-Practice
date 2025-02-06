@@ -98,7 +98,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.True(result.Success, result.Message);
-            Assert.Equal(GeneralResources.SuccessRegister, result.Message);
+            Assert.Equal(GeneralResources.RegisteredSuccessfully, result.Message);
         }
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.True(result.Success, result.Message);
-            Assert.Equal(GeneralResources.SuccessRegister, result.Message);
+            Assert.Equal(GeneralResources.RegisteredSuccessfully, result.Message);
         }
 
         /// <summary>
@@ -184,7 +184,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.True(result.Success, result.Message);
-            Assert.Equal(GeneralResources.SuccessDelete, result.Message);
+            Assert.Equal(GeneralResources.DeletedSuccessfully, result.Message);
         }
 
         /// <summary>
@@ -299,7 +299,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.True(result.Success, result.Message);
-            Assert.Equal(GeneralResources.SuccessUpdate, result.Message);
+            Assert.Equal(GeneralResources.UpdatedSuccessfully, result.Message);
         }
 
         /// <summary>
@@ -322,7 +322,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.True(result.Success, result.Message);
-            Assert.Equal(GeneralResources.SuccessUpdate, result.Message);
+            Assert.Equal(GeneralResources.UpdatedSuccessfully, result.Message);
         }
     }
 }

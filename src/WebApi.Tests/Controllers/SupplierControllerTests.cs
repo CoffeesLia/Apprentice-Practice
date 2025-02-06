@@ -1,34 +1,46 @@
 using AutoFixture;
-using AutoFixture.AutoMoq;
-using AutoMapper;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Localization;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces.Services;
+using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Controllers;
+using Stellantis.ProjectName.WebApi.Dto;
+using Stellantis.ProjectName.WebApi.Dto.Filters;
 
-namespace WebApi.Tests
+namespace WebApi.Tests.Controllers
 {
-    public class SupplierControllerTests
+    public class SupplierControllerTests : EntityControllerTestsBase<SupplierController, ISupplierService, SupplierDto, Supplier>
     {
-        private readonly IFixture _fixture;
-        private readonly Mock<IMapper> _mapperMock;
-        private readonly Mock<ISupplierService> _SupplierServiceMock;
-        private readonly SupplierController _controller;
-
-        public SupplierControllerTests()
+        protected override SupplierController CreateController()
         {
-            var serviceCollection = new ServiceCollection();
-            serviceCollection.AddLogging();
-            serviceCollection.AddLocalization();
-            var serviceProvider = serviceCollection.BuildServiceProvider();
-            var localizerFactory = serviceProvider.GetRequiredService<IStringLocalizerFactory>();
+            return new SupplierController(MapperMock.Object, ServiceMock.Object, LocalizerFactor);
+        }
 
-            _fixture = new Fixture().Customize(new AutoMoqCustomization());
-            _mapperMock = _fixture.Freeze<Mock<IMapper>>();
-            _SupplierServiceMock = _fixture.Freeze<Mock<ISupplierService>>();
+        /// Given a supplier filter,
+        /// when GetListAsync is called,
+        /// then it should return Ok with the list of supplier.
+        [Fact]
+        public async Task GetListAsync_Success()
+        {
+            // Arrange
+            var pagedResultDto = Fixture.Create<PagedResultDto<SupplierDto>>();
+            var pagedResult = Fixture.Create<PagedResult<Supplier>>();
 
-            _controller = new SupplierController(_mapperMock.Object, _SupplierServiceMock.Object, localizerFactory);
+            var filterDto = Fixture.Create<SupplierFilterDto>();
+            ServiceMock
+                .Setup(s => s.GetListAsync(It.IsAny<SupplierFilter>()))
+                .ReturnsAsync(pagedResult);
+            MapperMock
+                .Setup(m => m.Map<PagedResultDto<SupplierDto>>(pagedResult))
+                .Returns(pagedResultDto);
+
+            // Act
+            var result = await Controller.GetListAsync(filterDto);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal(pagedResultDto, okResult.Value);
         }
     }
 }

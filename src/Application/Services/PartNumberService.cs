@@ -49,11 +49,11 @@ namespace Stellantis.ProjectName.Application.Services
             return await base.UpdateAsync(item).ConfigureAwait(false);
         }
 
-        private static PartNumber ValidateCreateOrUpdate(PartNumber partNumberDto)
+        private static PartNumber ValidateCreateOrUpdate(PartNumber partNumber)
         {
-            if (partNumberDto.Code!.Length < 11)
-                partNumberDto.Code = partNumberDto.Code.PadLeft(11, '0');
-            return partNumberDto;
+            if (partNumber.Code!.Length < 11)
+                partNumber.Code = partNumber.Code.PadLeft(11, '0');
+            return partNumber;
         }
     }
 }

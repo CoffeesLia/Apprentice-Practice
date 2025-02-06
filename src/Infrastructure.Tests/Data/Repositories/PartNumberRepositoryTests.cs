@@ -29,7 +29,7 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task GetListAsync_ByCode()
         {
             // Arrange
-            PartNumberFilter filter = new PartNumberFilter
+            var filter = new PartNumberFilter
             {
                 Page = 1,
                 RowsPerPage = 10,
@@ -59,7 +59,7 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task GetListAsync_ByDescription()
         {
             // Arrange
-            PartNumberFilter filter = new PartNumberFilter
+            var filter = new PartNumberFilter
             {
                 Page = 1,
                 RowsPerPage = 10,
@@ -90,7 +90,7 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task GetListAsync_ByType()
         {
             // Arrange
-            PartNumberFilter filter = new PartNumberFilter
+            var filter = new PartNumberFilter
             {
                 Page = 1,
                 RowsPerPage = 10,

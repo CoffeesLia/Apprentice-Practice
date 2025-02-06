@@ -6,7 +6,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
     /// Health check controller
     /// </summary>
     [ApiController]
-    [Route("[controller]")]
+    [Route("/")]
     public sealed class HealthCheckController : ControllerBase
     {
         /// <summary>

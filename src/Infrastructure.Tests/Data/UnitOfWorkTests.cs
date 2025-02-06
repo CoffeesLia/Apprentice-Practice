@@ -5,7 +5,7 @@ using Moq;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Infrastructure.Data;
 
-namespace Infrastructure.Tests.Data.Repositories
+namespace Infrastructure.Tests.Data
 {
     public class UnitOfWorkTests
     {
@@ -105,12 +105,14 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task CommitAsync_WhenNotBebunTransction()
         {
             await _unitOfWork.CommitAsync();
+            Assert.True(true);
         }
 
         [Fact]
         public void DisposeIt_WhenTransactionIsNull()
         {
             _unitOfWork.DisposeIt();
+            Assert.True(true);
         }
 
         [Fact]

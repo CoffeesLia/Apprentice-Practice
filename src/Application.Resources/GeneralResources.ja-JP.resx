@@ -120,16 +120,13 @@
   <data name="NotFound" xml:space="preserve">
     <value>必須です (Hissu desu).</value>
   </data>
-  <data name="SuccessDelete" xml:space="preserve">
+  <data name="DeletedSuccessfully" xml:space="preserve">
     <value>正常に削除されました (Seijō ni sakujo saremashita).</value>
   </data>
-  <data name="SuccessRegister" xml:space="preserve">
+  <data name="RegisteredSuccessfully" xml:space="preserve">
     <value>正常に登録されました (Seijō ni tōroku saremashita).</value>
   </data>
-  <data name="SuccessUpdate" xml:space="preserve">
+  <data name="UpdatedSuccessfully" xml:space="preserve">
     <value>正常に更新されました (Seijō ni kōshin saremashita).</value>
-  </data>
-  <data name="Required" xml:space="preserve">
-    <value>見つかりません (Mitsukarimasen).</value>
   </data>
 </root>

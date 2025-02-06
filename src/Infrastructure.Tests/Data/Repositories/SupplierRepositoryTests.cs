@@ -11,7 +11,7 @@ namespace Infrastructure.Tests.Data.Repositories
     {
         private readonly Context _context;
         private readonly SupplierRepository _repository;
-        private Fixture _fixture;
+        private readonly Fixture _fixture;
 
         public SupplierRepositoryTests()
         {
@@ -184,7 +184,7 @@ namespace Infrastructure.Tests.Data.Repositories
             // Arrange
             var suppliers = new List<Supplier>
             {
-                new Supplier("Code1", "Company1", "Phone1", "Address1")
+                new ("Code1", "Company1", "Phone1", "Address1")
             }.AsQueryable();
             await _repository.CreateAsync(suppliers);
 
@@ -201,7 +201,7 @@ namespace Infrastructure.Tests.Data.Repositories
             // Arrange
             var suppliers = new List<Supplier>
             {
-                new Supplier("Code1", "Company1", "Phone1", "Address1")
+                new ("Code1", "Company1", "Phone1", "Address1")
             }.AsQueryable();
             await _repository.CreateAsync(suppliers);
 

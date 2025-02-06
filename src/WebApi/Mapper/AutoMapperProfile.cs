@@ -10,22 +10,17 @@ namespace Stellantis.ProjectName.WebApi.Mapper
     {
         public AutoMapperProfile()
         {
-            MapperVMToDto();
-            MapperDtoToEntity();
-        }
-
-        private void MapperVMToDto()
-        {
-            CreateMap<VehicleFilterDto, VehicleFilter>().ReverseMap();
-        }
-
-        private void MapperDtoToEntity()
-        {
-            CreateMap(typeof(PagedResultDto<>), typeof(PagedResult<>));
-            CreateMap<Vehicle, Vehicle>().ReverseMap();
-            CreateMap<Supplier, Supplier>()
+            CreateMap<PartNumberDto, PartNumber>()
+                .ConstructUsing(src => new PartNumber(src.Code!, src.Description!, src.Type!.Value))
+                .ForMember(dest => dest.Suppliers, opt => opt.Ignore())
+                .ForMember(dest => dest.Vehicles, opt => opt.Ignore()); 
+            CreateMap<Vehicle, VehicleDto>()
+                .ReverseMap();
+            CreateMap<Supplier, SupplierDto>()
+                .ReverseMap()
                 .ConstructUsing(src => new Supplier(src.Code, src.CompanyName, src.Phone, src.Address));
-            CreateMap<PartNumber, PartNumber>().ReverseMap();
+            CreateMap<VehicleFilterDto, VehicleFilter>();
+            CreateMap(typeof(PagedResult<>), typeof(PagedResultDto<>));
         }
     }
 }

@@ -2,6 +2,6 @@
 {
     public class VehicleFilterDto : BaseFilterDto
     {
-        public string? Chassi { get; set; }
+        public string? Chassis { get; set; }
     }
 }

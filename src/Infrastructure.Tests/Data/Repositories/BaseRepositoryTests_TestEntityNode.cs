@@ -2,18 +2,12 @@
 {
     public partial class BaseRepositoryTests
     {
-        public class TestEntityNode
+        public class TestEntityNode(int parentId, string? name)
         {
-            public TestEntityNode(int parentId, string? name)
-            {
-                ParentId = parentId;
-                Name = name;
-            }
-
-            public virtual TestEntity Parent { get; set; }
-            public int ParentId { get; set; }
+            public virtual TestEntity? Parent { get; set; }
+            public int ParentId { get; set; } = parentId;
             public int Id { get; set; }
-            public string? Name { get; set; }
+            public string? Name { get; set; } = name;
         }
     }
 }

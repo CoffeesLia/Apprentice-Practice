@@ -120,16 +120,13 @@
   <data name="NotFound" xml:space="preserve">
     <value>未找到 (Wèi zhǎodào).</value>
   </data>
-  <data name="SuccessDelete" xml:space="preserve">
+  <data name="DeletedSuccessfully" xml:space="preserve">
     <value>删除成功 (Shānchú chénggōng)</value>
   </data>
-  <data name="SuccessRegister" xml:space="preserve">
+  <data name="RegisteredSuccessfully" xml:space="preserve">
     <value> 注册成功 (Zhùcè chénggōng).</value>
   </data>
-  <data name="SuccessUpdate" xml:space="preserve">
+  <data name="UpdatedSuccessfully" xml:space="preserve">
     <value>更新成功 (Gēngxīn chénggōng).</value>
-  </data>
-  <data name="Required" xml:space="preserve">
-    <value>是必需的 (Shì bìxū de).</value>
   </data>
 </root>

@@ -27,7 +27,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Entities\ValueObject\" />
+    <Compile Remove="Entities\ValueObject\**" />
+    <EmbeddedResource Remove="Entities\ValueObject\**" />
+    <None Remove="Entities\ValueObject\**" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
+using System.Reflection;
 
 namespace Infrastructure.Tests.Data
 {
@@ -47,8 +48,10 @@ namespace Infrastructure.Tests.Data
             var modelBuilder = new ModelBuilder(new Microsoft.EntityFrameworkCore.Metadata.Conventions.ConventionSet());
 
             // Act
-            context.GetType().GetMethod("OnModelCreating", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
-                .Invoke(context, [modelBuilder]);
+            var method = context.GetType()
+                .GetMethod("OnModelCreating", BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.NotNull(method);
+            method.Invoke(context, [modelBuilder]);
 
             // Assert
             Assert.NotNull(modelBuilder.Model.FindEntityType(typeof(PartNumber)));
@@ -66,11 +69,13 @@ namespace Infrastructure.Tests.Data
 
             // Act
             using var context = new Context(_options);
-            context.GetType().GetMethod("OnConfiguring", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
-                .Invoke(context, [optionsBuilder]);
+            var method = context.GetType()
+                .GetMethod("OnConfiguring", BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.NotNull(method);
+            method.Invoke(context, [optionsBuilder]);
 
             // Assert
-            Assert.True(optionsBuilder.Options.Extensions.Any(e => e.GetType().Name == "CoreOptionsExtension" && ((dynamic)e).IsSensitiveDataLoggingEnabled));
+            Assert.Contains(optionsBuilder.Options.Extensions, e => e.GetType().Name == "CoreOptionsExtension" && ((dynamic)e).IsSensitiveDataLoggingEnabled);
         }
     }
 }

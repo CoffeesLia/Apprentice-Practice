@@ -13,17 +13,6 @@
             Message = message;
         }
 
-        public ErrorResponseVm(int code, string message, Exception ex)
-        {
-            Code = code;
-            Message = message;
-
-            while (ex != null)
-            {
-                _Errors.Add(ex.Message);
-            }
-        }
-
         public ErrorResponseVm(int code, string message, ICollection<string> errors)
         {
             Code = code;

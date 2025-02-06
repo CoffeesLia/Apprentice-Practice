@@ -3,6 +3,7 @@ using AutoFixture.AutoMoq;
 using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
+using static Infrastructure.Tests.Data.Repositories.BaseRepositoryTests;
 
 namespace Infrastructure.Tests.Data.Repositories
 {
@@ -86,7 +87,7 @@ namespace Infrastructure.Tests.Data.Repositories
             await _repository.DeleteAsync(ids);
 
             // Assert
-            var result = _context.Entities.ToList();
+            var result = await _context.Entities.ToListAsync();
             Assert.Empty(result);
         }
 
@@ -103,7 +104,7 @@ namespace Infrastructure.Tests.Data.Repositories
             await _repository.DeleteAsync(ids, true);
 
             // Assert
-            var result = _context.Entities.ToList();
+            var result = await _context.Entities.ToListAsync();
             Assert.Empty(result);
         }
 
@@ -120,7 +121,7 @@ namespace Infrastructure.Tests.Data.Repositories
             await _repository.DeleteAsync(ids, false);
 
             // Assert
-            var result = _context.Entities.ToList();
+            var result = await _context.Entities.ToListAsync();
             Assert.NotEmpty(result);
         }
 
@@ -181,30 +182,28 @@ namespace Infrastructure.Tests.Data.Repositories
             var result = await _repository.GetByIdWithIncludeAsync(entity.Id, true, x => x.RelatedEntities);
 
             // Assert
+            Assert.NotNull(result);
             Assert.Equal(entity.Id, result.Id);
         }
 
-        private class TestRepository : BaseRepositoryEntity<TestEntity, TestContext>
+        private class TestRepository(TestContext context) : BaseRepositoryEntity<TestEntity, TestContext>(context)
         {
-            public TestRepository(TestContext context) : base(context) { }
         }
 
-        private class TestEntity : BaseEntity
+        private class TestEntity (string name) : BaseEntity
         {
-            public string Name { get; set; }
-            public ICollection<TestEntityChildren> RelatedEntities { get; set; }
+            public string Name { get; set; } = name;
+            public ICollection<TestEntityChildren> RelatedEntities { get; set; } = [];
         }
 
-        public class TestEntityChildren : BaseEntity
+        public class TestEntityChildren(string name) : BaseEntity
         {
-            public string Name { get; set; }
+            public string Name { get; set; } = name;
         }
 
-        private class TestContext : DbContext
+        private class TestContext(DbContextOptions<TestContext> options) : DbContext(options)
         {
-            public TestContext(DbContextOptions<TestContext> options) : base(options) { }
-
-            public DbSet<TestEntity> Entities { get; set; }
+            public DbSet<TestEntity> Entities { get; set; } = default!;
         }
     }
 }

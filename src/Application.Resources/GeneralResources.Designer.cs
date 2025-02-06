@@ -61,6 +61,15 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Deleted Successfully..
+        /// </summary>
+        public static string DeletedSuccessfully {
+            get {
+                return ResourceManager.GetString("DeletedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Not found..
         /// </summary>
         public static string NotFound {
@@ -70,38 +79,20 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Is required..
+        ///   Looks up a localized string similar to Registered Successfully..
         /// </summary>
-        public static string Required {
+        public static string RegisteredSuccessfully {
             get {
-                return ResourceManager.GetString("Required", resourceCulture);
+                return ResourceManager.GetString("RegisteredSuccessfully", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Successfully deleted..
+        ///   Looks up a localized string similar to Updated Successfully..
         /// </summary>
-        public static string SuccessDelete {
+        public static string UpdatedSuccessfully {
             get {
-                return ResourceManager.GetString("SuccessDelete", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Successfully registered..
-        /// </summary>
-        public static string SuccessRegister {
-            get {
-                return ResourceManager.GetString("SuccessRegister", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Successfully updated..
-        /// </summary>
-        public static string SuccessUpdate {
-            get {
-                return ResourceManager.GetString("SuccessUpdate", resourceCulture);
+                return ResourceManager.GetString("UpdatedSuccessfully", resourceCulture);
             }
         }
     }

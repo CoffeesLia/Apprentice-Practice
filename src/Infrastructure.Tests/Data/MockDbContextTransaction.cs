@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Infrastructure.Tests.Data.Repositories
+namespace Infrastructure.Tests.Data
 {
     [SuppressMessage("Major Code Smell", "S3881:\"IDisposable\" should be implemented correctly", Justification = "This is Mock.")]
     internal class MockDbContextTransaction : IDbContextTransaction

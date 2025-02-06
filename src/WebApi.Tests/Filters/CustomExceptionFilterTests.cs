@@ -18,8 +18,8 @@ namespace WebApi.Tests.Filters
             var exception = new Exception("An error occurred");
             HttpContext httpContext = new DefaultHttpContext();
             var actionContext = new ActionContext(httpContext, new RouteData(), new ActionDescriptor());
-            var context = new ExceptionContext(actionContext, new List<IFilterMetadata>());
-            context.Exception = exception;
+            var context = new ExceptionContext(actionContext, []) { Exception = exception
+};
 
             var filter = new CustomExceptionFilter();
 
@@ -40,8 +40,10 @@ namespace WebApi.Tests.Filters
             var exception = new UnauthorizedAccessException("An error occurred");
             HttpContext httpContext = new DefaultHttpContext();
             var actionContext = new ActionContext(httpContext, new RouteData(), new ActionDescriptor());
-            var context = new ExceptionContext(actionContext, new List<IFilterMetadata>());
-            context.Exception = exception;
+            var context = new ExceptionContext(actionContext, [])
+            {
+                Exception = exception
+            };
 
             var filter = new CustomExceptionFilter();
 
@@ -62,8 +64,10 @@ namespace WebApi.Tests.Filters
             var exception = new FormatException("An error occurred");
             HttpContext httpContext = new DefaultHttpContext();
             var actionContext = new ActionContext(httpContext, new RouteData(), new ActionDescriptor());
-            var context = new ExceptionContext(actionContext, new List<IFilterMetadata>());
-            context.Exception = exception;
+            var context = new ExceptionContext(actionContext, [])
+            {
+                Exception = exception
+            };
 
             var filter = new CustomExceptionFilter();
 

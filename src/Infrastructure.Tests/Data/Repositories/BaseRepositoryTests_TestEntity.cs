@@ -2,18 +2,11 @@
 {
     public partial class BaseRepositoryTests
     {
-        public class TestEntity
+        public class TestEntity(int id, string name)
         {
-            public TestEntity(int id, string name)
-            {
-                Id = id;
-                Name = name;
-            }
-
-            public int Id { get; set; }
-            public string? Name { get; set; }
-
-            public virtual ICollection<TestEntityNode> Nodes { get; set; } = new List<TestEntityNode>();
+            public int Id { get; set; } = id;
+            public string? Name { get; set; } = name;
+            public virtual ICollection<TestEntityNode> Nodes { get; set; } = [];
         }
     }
 }

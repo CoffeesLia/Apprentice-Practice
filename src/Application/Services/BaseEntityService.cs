@@ -19,7 +19,7 @@ namespace Stellantis.ProjectName.Application.Services
         {
             ArgumentNullException.ThrowIfNull(item);
             await Repository.CreateAsync(item).ConfigureAwait(false);
-            return OperationResult.Complete(Localizer[GeneralResources.SuccessRegister]);
+            return OperationResult.Complete(Localizer[GeneralResources.RegisteredSuccessfully]);
         }
 
         public virtual async Task<OperationResult> DeleteAsync(int id)
@@ -34,7 +34,7 @@ namespace Stellantis.ProjectName.Application.Services
         protected async Task<OperationResult> DeleteAsync(TEntity item)
         {
             await Repository.DeleteAsync(item).ConfigureAwait(false);
-            return OperationResult.Complete(Localizer[GeneralResources.SuccessDelete]);
+            return OperationResult.Complete(Localizer[GeneralResources.DeletedSuccessfully]);
         }
 
         public async Task<TEntity?> GetItemAsync(int id)
@@ -57,7 +57,7 @@ namespace Stellantis.ProjectName.Application.Services
             Repository.DetachEntity(itemOld);
             await Repository.UpdateAsync(item).ConfigureAwait(false);
             await UnitOfWork.CommitAsync().ConfigureAwait(false);
-            return OperationResult.Complete(Localizer[GeneralResources.SuccessUpdate]);
+            return OperationResult.Complete(Localizer[GeneralResources.UpdatedSuccessfully]);
         }
     }
 }

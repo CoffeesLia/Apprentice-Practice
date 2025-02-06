@@ -75,8 +75,8 @@ namespace Infrastructure.Tests.Data.Repositories
             await _repository.CreateAsync(entities, false);
 
             // Assert
-            var result = _context.Entities.ToList();
-            Assert.Equal(0, result.Count);
+            var result = await _context.Entities.ToListAsync();
+            Assert.Empty(result);
         }
 
         [Fact]
@@ -404,7 +404,7 @@ namespace Infrastructure.Tests.Data.Repositories
         {
             // Act & Assert
             await Assert.ThrowsAsync<ArgumentNullException>(()
-                => _repository.CallGetListAsync(null, null, null, 1, 1));
+                => _repository.CallGetListAsync(null!, null, null, 1, 1));
         }
 
         [Fact]

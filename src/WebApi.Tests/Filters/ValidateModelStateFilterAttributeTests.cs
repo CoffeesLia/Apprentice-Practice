@@ -24,8 +24,8 @@ namespace WebApi.Tests.Filters
 
             var actionExecutingContext = new ActionExecutingContext(
                 actionContext,
-                new List<IFilterMetadata>(),
-                new Dictionary<string, object>(),
+                [],
+                new Dictionary<string, object?>(),
                 new Mock<Controller>().Object
             );
 
@@ -37,15 +37,13 @@ namespace WebApi.Tests.Filters
             // Assert
             var result = Assert.IsType<BadRequestObjectResult>(actionExecutingContext.Result);
             var valueResult = Assert.IsType<ErrorResponseVm>(result.Value);
-            Assert.Equal(modelState.SelectMany(x => x.Value.Errors.Select(x => x.ErrorMessage)).ToArray(), valueResult.Errors.ToArray());
+            Assert.Equal(modelState.SelectMany(x => x.Value!.Errors.Select(x => x.ErrorMessage)), valueResult.Errors);
         }
 
         [Fact]
         public void OnActionExecuting_NotReturnBadRequest_WhenModelStateIsValid()
         {
             // Arrange
-            var modelState = new ModelStateDictionary();
-
             var actionContext = new ActionContext
             {
                 HttpContext = new DefaultHttpContext(),
@@ -55,8 +53,8 @@ namespace WebApi.Tests.Filters
 
             var actionExecutingContext = new ActionExecutingContext(
                 actionContext,
-                new List<IFilterMetadata>(),
-                new Dictionary<string, object>(),
+                [],
+                new Dictionary<string, object?>(),
                 new Mock<Controller>().Object
             );
 

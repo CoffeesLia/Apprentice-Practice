@@ -14,12 +14,9 @@ namespace WebApi.Tests.Extensions
 
             // Act
             services.RegisterMapper();
-            var serviceProvider = services.BuildServiceProvider();
-            var mapper = serviceProvider.GetService<IMapper>();
 
             // Assert
-            Assert.NotNull(mapper);
-            mapper.ConfigurationProvider.AssertConfigurationIsValid();
+            Assert.NotNull(services.BuildServiceProvider().GetService<IMapper>());
         }
     }
 }

@@ -1,69 +1,46 @@
 using AutoFixture;
-using AutoFixture.AutoMoq;
-using AutoFixture.Xunit2;
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Localization;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces.Services;
-using Stellantis.ProjectName.Application.Models;
+using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Controllers;
 using Stellantis.ProjectName.WebApi.Dto;
+using Stellantis.ProjectName.WebApi.Dto.Filters;
 
 namespace WebApi.Tests.Controllers
 {
-    public class PartNumberControllerTests
+    public class PartNumberControllerTests : EntityControllerTestsBase<PartNumberController, IPartNumberService, PartNumberDto, PartNumber>
     {
-        private readonly IFixture _fixture;
-        private readonly Mock<IMapper> _mapperMock;
-        private readonly Mock<IPartNumberService> _partNumberServiceMock;
-        private readonly PartNumberController _controller;
-
-        public PartNumberControllerTests()
+        protected override PartNumberController CreateController()
         {
-            var serviceCollection = new ServiceCollection();
-            serviceCollection.AddLogging();
-            serviceCollection.AddLocalization();
-            var serviceProvider = serviceCollection.BuildServiceProvider();
-            var localizerFactory = serviceProvider.GetRequiredService<IStringLocalizerFactory>();
-
-            _fixture = new Fixture().Customize(new AutoMoqCustomization());
-            _mapperMock = _fixture.Freeze<Mock<IMapper>>();
-            _partNumberServiceMock = _fixture.Freeze<Mock<IPartNumberService>>();
-
-            _controller = new PartNumberController(_mapperMock.Object, _partNumberServiceMock.Object, localizerFactory);
+            return new PartNumberController(MapperMock.Object, ServiceMock.Object, LocalizerFactor);
         }
 
-        [Theory, AutoData]
-        public async Task Create_ReturnOk_WhenCreationIsSuccessful(PartNumber partNumber, PartNumberDto partNumberDto, OperationResult operationResult)
+        /// Given a part number filter,
+        /// when GetListAsync is called,
+        /// then it should return Ok with the list of part numbers.
+        [Fact]
+        public async Task GetListAsync_Success()
         {
             // Arrange
-            _partNumberServiceMock.Setup(s => s.CreateAsync(partNumber)).ReturnsAsync(operationResult);
+            var pagedResultDto = Fixture.Create<PagedResultDto<PartNumberDto>>();
+            var pagedResult = Fixture.Create<PagedResult<PartNumber>>();
+
+            var filterDto = Fixture.Create<PartNumberFilterDto>();
+            ServiceMock
+                .Setup(s => s.GetListAysnc(It.IsAny<PartNumberFilter>()))
+                .ReturnsAsync(pagedResult);
+            MapperMock
+                .Setup(m => m.Map<PagedResultDto<PartNumberDto>>(pagedResult))
+                .Returns(pagedResultDto);
 
             // Act
-            var result = await _controller.Create(partNumberDto);
+            var result = await Controller.GetListAsync(filterDto);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.Equal("Successfully registered", okResult.Value);
-        }
-
-        [Theory, AutoData]
-        public async Task Create_ReturnBadRequest_WhenCreationFails(PartNumber partNumber, PartNumberDto partNumberDto, OperationResult operationResult)
-        {
-            // Arrange
-            _mapperMock.Setup(m => m.Map<PartNumberDto>(partNumber)).Returns(partNumberDto);
-            //operationResult.Success = false;
-            _partNumberServiceMock.Setup(s => s.CreateAsync(partNumber)).ReturnsAsync(operationResult);
-
-            // Act
-            var result = await _controller.Create(partNumberDto);
-
-            // Assert
-            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Equal(operationResult, badRequestResult.Value);
+            Assert.Equal(pagedResultDto, okResult.Value);
         }
     }
 }

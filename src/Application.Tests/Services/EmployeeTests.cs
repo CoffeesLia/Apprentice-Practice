@@ -64,7 +64,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.True(result.Success, result.Message);
-            Assert.Equal(GeneralResources.SuccessDelete, result.Message);
+            Assert.Equal(GeneralResources.DeletedSuccessfully, result.Message);
             _repositoryMock.Verify(x => x.DeleteAsync(employee, true), Times.Once);
         }
 

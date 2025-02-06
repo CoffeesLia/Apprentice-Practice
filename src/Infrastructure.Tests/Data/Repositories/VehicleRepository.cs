@@ -67,7 +67,7 @@ namespace Infrastructure.Tests.Data.Repositories
             var result = _context.VehiclePartNumbers.Where(x => x.VehicleId == vehicle.Id);
 
             // Assert
-            Assert.Equal(0, result.Count());
+            Assert.Equal(0, await result.CountAsync());
         }
 
         [Fact]

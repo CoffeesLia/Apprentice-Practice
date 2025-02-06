@@ -35,6 +35,26 @@ namespace Application.Tests.Services
         /// then it should fail.
         /// </summary>
         [Fact]
+        public async Task CreateAsync_Fail_WhenCodeNull()
+        {
+            // Arrange
+            var partNumber = new Fixture().Create<PartNumber>();
+            partNumber.Code = null!;
+
+            // Act
+            var result = await _service.CreateAsync(partNumber);
+
+            // Assert
+            Assert.False(result.Success, result.Message);
+            Assert.Equal(PartNumberResources.AlreadyExistCode, result.Message);
+        }
+
+        /// <summary>
+        /// Given a part number with an existing code,
+        /// when CreateAsync is called,
+        /// then it should fail.
+        /// </summary>
+        [Fact]
         public async Task CreateAsync_Fail_WhenCodeExists()
         {
             // Arrange
@@ -231,7 +251,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.True(result.Success, result.Message);
-            Assert.Equal(GeneralResources.SuccessDelete, result.Message);
+            Assert.Equal(GeneralResources.DeletedSuccessfully, result.Message);
         }
 
         /// <summary>
@@ -280,7 +300,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.True(result.Success, result.Message);
-            Assert.Equal(GeneralResources.SuccessRegister, result.Message);
+            Assert.Equal(GeneralResources.RegisteredSuccessfully, result.Message);
             _repositoryMock.Verify(x => x.CreateAsync(It.IsAny<PartNumber>(), true), Times.Once);
         }
 
@@ -307,4 +327,3 @@ namespace Application.Tests.Services
         }
     }
 }
-
