@@ -2,7 +2,7 @@
 
 namespace Stellantis.ProjectName.Domain.Entities
 {
-    public class PartNumber(string code, string description, PartNumberType type) : BaseEntity
+    public class PartNumber(string code, string description, PartNumberType type) : EntityBase
     {
         public string Code { get; set; } = code;
         public string Description { get; } = description;

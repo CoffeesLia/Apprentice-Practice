@@ -8,10 +8,10 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Services
 {
-    public abstract class BaseEntityService<TEntity, TIRepository>(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory)
-        : BaseService(unitOfWork, localizerFactory)
-        where TEntity : BaseEntity
-        where TIRepository : IBaseRepositoryEntity<TEntity>
+    public abstract class EntityServiceBase<TEntity, TIRepository>(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory)
+        : ServiceBase(unitOfWork, localizerFactory)
+        where TEntity : EntityBase
+        where TIRepository : IRepositoryEntityBase<TEntity>
     {
         protected abstract TIRepository Repository { get; }
 
@@ -42,7 +42,7 @@ namespace Stellantis.ProjectName.Application.Services
             return await Repository.GetByIdAsync(id).ConfigureAwait(false);
         }
 
-        public virtual async Task<PagedResult<TEntity>> GetListAsync(BaseFilter filter)
+        public virtual async Task<PagedResult<TEntity>> GetListAsync(Filter filter)
         {
             return await Repository.GetListAsync(sort: filter?.Sort, sortDir: filter?.SortDir, page: filter?.Page ?? 1, pageSize: filter?.RowsPerPage ?? 10).ConfigureAwait(false);
         }

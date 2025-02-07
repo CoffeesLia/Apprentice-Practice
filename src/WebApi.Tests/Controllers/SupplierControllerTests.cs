@@ -1,5 +1,4 @@
 using AutoFixture;
-using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models.Filters;
@@ -14,7 +13,7 @@ namespace WebApi.Tests.Controllers
     {
         protected override SupplierController CreateController()
         {
-            return new SupplierController(MapperMock.Object, ServiceMock.Object, LocalizerFactor);
+            return new SupplierController(Mapper, ServiceMock.Object, LocalizerFactor);
         }
 
         /// Given a supplier filter,
@@ -24,23 +23,18 @@ namespace WebApi.Tests.Controllers
         public async Task GetListAsync_Success()
         {
             // Arrange
-            var pagedResultDto = Fixture.Create<PagedResultDto<SupplierDto>>();
             var pagedResult = Fixture.Create<PagedResult<Supplier>>();
-
+            var expect = Mapper.Map<PagedResultDto<SupplierDto>>(pagedResult);
             var filterDto = Fixture.Create<SupplierFilterDto>();
             ServiceMock
                 .Setup(s => s.GetListAsync(It.IsAny<SupplierFilter>()))
                 .ReturnsAsync(pagedResult);
-            MapperMock
-                .Setup(m => m.Map<PagedResultDto<SupplierDto>>(pagedResult))
-                .Returns(pagedResultDto);
 
             // Act
             var result = await Controller.GetListAsync(filterDto);
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.Equal(pagedResultDto, okResult.Value);
+            AssertResultIsOkAndValueIsEqual(result, expect);
         }
     }
 }

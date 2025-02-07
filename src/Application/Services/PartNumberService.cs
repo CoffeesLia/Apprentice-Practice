@@ -10,7 +10,7 @@ using Stellantis.ProjectName.Domain.Entities;
 namespace Stellantis.ProjectName.Application.Services
 {
     public class PartNumberService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory)
-        : BaseEntityService<PartNumber, IPartNumberRepository>(unitOfWork, localizerFactory), IPartNumberService
+        : EntityServiceBase<PartNumber, IPartNumberRepository>(unitOfWork, localizerFactory), IPartNumberService
     {
         private readonly IStringLocalizer _partNumberLocalizer = localizerFactory.Create(typeof(PartNumberResources));
         protected override IPartNumberRepository Repository => UnitOfWork.PartNumberRepository;

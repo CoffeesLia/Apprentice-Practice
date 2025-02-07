@@ -10,12 +10,12 @@ using Stellantis.ProjectName.WebApi.Resources;
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [Authorize]
-    public abstract class EntityControllerBase<TEntityDto, TEntity>(IMapper mapper, IBaseEntityService<TEntity> service, IStringLocalizerFactory localizerFactory)
+    public abstract class EntityControllerBase<TEntityDto, TEntity>(IMapper mapper, IEntityServiceBase<TEntity> service, IStringLocalizerFactory localizerFactory)
         : ControllerBase
-        where TEntityDto : BaseEntityDto
-        where TEntity : BaseEntity
+        where TEntityDto : EntityDtoBase
+        where TEntity : EntityBase
     {
-        protected virtual IBaseEntityService<TEntity> Service { get; } = service;
+        protected virtual IEntityServiceBase<TEntity> Service { get; } = service;
         protected IMapper Mapper { get; } = mapper;
         protected IStringLocalizer Localizer { get; } = localizerFactory.Create(typeof(ControllerResources));
 

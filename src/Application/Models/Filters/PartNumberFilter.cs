@@ -2,7 +2,7 @@
 
 namespace Stellantis.ProjectName.Application.Models.Filters
 {
-    public class PartNumberFilter : BaseFilter
+    public class PartNumberFilter : Filter
     {
         public string? Code { get; set; }
         public string? Description { get; set; }

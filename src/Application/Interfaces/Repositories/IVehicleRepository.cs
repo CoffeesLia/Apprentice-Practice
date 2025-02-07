@@ -3,7 +3,7 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Interfaces.Repositories
 {
-    public interface IVehicleRepository : IBaseRepositoryEntity<Vehicle>
+    public interface IVehicleRepository : IRepositoryEntityBase<Vehicle>
     {
         Task<bool> VerifyChassiExistsAsync(string chassi);
         Task<PagedResult<Vehicle>> GetListAsync(VehicleFilter filter);

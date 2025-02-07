@@ -1,5 +1,4 @@
 ﻿using Stellantis.ProjectName.WebApi.Dto;
-using Xunit;
 
 namespace WebApi.Tests.Dto
 {

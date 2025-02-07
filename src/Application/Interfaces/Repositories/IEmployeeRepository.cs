@@ -2,7 +2,7 @@
 
 namespace Stellantis.ProjectName.Application.Interfaces.Repositories
 {
-    public interface IEmployeeRepository : IBaseRepositoryEntity<Employee>
+    public interface IEmployeeRepository : IRepositoryEntityBase<Employee>
     {
     }
 }

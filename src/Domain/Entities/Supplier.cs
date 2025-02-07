@@ -1,6 +1,6 @@
 ﻿namespace Stellantis.ProjectName.Domain.Entities
 {
-    public class Supplier(string code, string companyName, string phone, string address) : BaseEntity
+    public class Supplier(string code, string companyName, string phone, string address) : EntityBase
     {
         public string Code { get; set; } = code;
         public string CompanyName { get; set; } = companyName;

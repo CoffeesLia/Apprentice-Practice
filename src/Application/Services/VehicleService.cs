@@ -10,7 +10,7 @@ using Stellantis.ProjectName.Domain.Entities;
 namespace Stellantis.ProjectName.Application.Services
 {
     public class VehicleService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory)
-        : BaseEntityService<Vehicle, IVehicleRepository>(unitOfWork, localizerFactory), IVehicleService
+        : EntityServiceBase<Vehicle, IVehicleRepository>(unitOfWork, localizerFactory), IVehicleService
     {
         protected override IVehicleRepository Repository => UnitOfWork.VehicleRepository;
         private readonly IStringLocalizer _vehicleLocalizer = localizerFactory.Create(typeof(VehicleResources));

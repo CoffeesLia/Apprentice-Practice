@@ -6,7 +6,7 @@ using Stellantis.ProjectName.Domain.Entities;
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
     public class PartNumberRepository(Context context)
-        : BaseRepositoryEntity<PartNumber, Context>(context), IPartNumberRepository
+        : RepositoryEntityBase<PartNumber, Context>(context), IPartNumberRepository
     {
         public bool VerifyCodeExists(string code)
         {

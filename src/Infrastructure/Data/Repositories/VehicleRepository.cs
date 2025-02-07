@@ -6,7 +6,7 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
-    public class VehicleRepository(Context context) : BaseRepositoryEntity<Vehicle, Context>(context), IVehicleRepository
+    public class VehicleRepository(Context context) : RepositoryEntityBase<Vehicle, Context>(context), IVehicleRepository
     {
         public async Task<bool> VerifyChassiExistsAsync(string chassi)
         {

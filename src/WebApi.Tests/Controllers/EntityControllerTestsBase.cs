@@ -10,19 +10,20 @@ using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Controllers;
 using Stellantis.ProjectName.WebApi.Dto;
+using Stellantis.ProjectName.WebApi.Mapper;
 using Stellantis.ProjectName.WebApi.Resources;
 using WebApi.Tests.Helpers;
 
 namespace WebApi.Tests.Controllers
 {
-    public abstract class EntityControllerTestsBase<TController, TService, TBaseEntityDto, TBaseEntity>
-        where TBaseEntityDto : BaseEntityDto
-        where TBaseEntity : BaseEntity
-        where TService : class, IBaseEntityService<TBaseEntity>
-        where TController : EntityControllerBase<TBaseEntityDto, TBaseEntity>
+    public abstract class EntityControllerTestsBase<TController, TService, TEntityDto, TEntity>
+        where TEntityDto : EntityDtoBase
+        where TEntity : EntityBase
+        where TService : class, IEntityServiceBase<TEntity>
+        where TController : EntityControllerBase<TEntityDto, TEntity>
     {
         protected IFixture Fixture { get; }
-        protected Mock<IMapper> MapperMock { get; }
+        protected IMapper Mapper { get; }
         protected Mock<TService> ServiceMock { get; set; }
         protected IStringLocalizerFactory LocalizerFactor { get; }
         protected virtual TController Controller { get; set; }
@@ -31,7 +32,8 @@ namespace WebApi.Tests.Controllers
         protected EntityControllerTestsBase()
         {
             Fixture = new Fixture().Customize(new AutoMoqCustomization());
-            MapperMock = Fixture.Freeze<Mock<IMapper>>();
+            var mapperConfiguration = new MapperConfiguration(x => { x.AddProfile<AutoMapperProfile>(); });
+            Mapper = mapperConfiguration.CreateMapper();
             LocalizerFactor = LocalizerFactorHelper.Create();
             ServiceMock = Fixture.Freeze<Mock<TService>>();
             Controller = CreateController();
@@ -57,11 +59,9 @@ namespace WebApi.Tests.Controllers
         public async Task CreateAsync_Fail()
         {
             // Arrange
-            var item = Fixture.Create<TBaseEntity>();
-            var itemDto = Fixture.Create<TBaseEntityDto>();
+            var itemDto = Fixture.Create<TEntityDto>();
             var operationResult = OperationResult.Error("Test");
-            MapperMock.Setup(m => m.Map<TBaseEntity>(itemDto)).Returns(item);
-            ServiceMock.Setup(s => s.CreateAsync(item)).ReturnsAsync(operationResult);
+            ServiceMock.Setup(s => s.CreateAsync(It.IsAny<TEntity>())).ReturnsAsync(operationResult);
 
             // Act
             var result = await Controller.CreateAsync(itemDto);
@@ -78,23 +78,17 @@ namespace WebApi.Tests.Controllers
         public async Task CreateAsync_Success()
         {
             // Arrange
-            var item = Fixture.Create<TBaseEntity>();
-            var itemDto = Fixture.Create<TBaseEntityDto>();
+            var itemDto = Fixture.Create<TEntityDto>();
             var operationResult = OperationResult.Complete(GeneralResources.RegisteredSuccessfully);
-            MapperMock
-                .Setup(m => m.Map<TBaseEntity>(itemDto))
-                .Returns(item);
-            MapperMock
-                .Setup(m => m.Map<TBaseEntityDto>(item))
-                .Returns(itemDto);
-            ServiceMock.Setup(s => s.CreateAsync(item)).ReturnsAsync(operationResult);
+            ServiceMock.Setup(s => s.CreateAsync(It.IsAny<TEntity>())).ReturnsAsync(operationResult);
 
             // Act
             var result = await Controller.CreateAsync(itemDto);
 
             // Assert
             var createdAtResult = Assert.IsType<CreatedAtActionResult>(result);
-            Assert.Equal(itemDto, createdAtResult.Value);
+            Assert.NotNull(createdAtResult.Value);
+            Assert.Equal(itemDto, (TEntityDto)createdAtResult.Value, new GeneralEqualityComparer<TEntityDto>());
         }
 
         /// Given a item,
@@ -141,11 +135,11 @@ namespace WebApi.Tests.Controllers
         public async Task GetAsync_Fail()
         {
             // Arrange
-            TBaseEntity? item = null;
+            TEntity? item = null;
             ServiceMock.Setup(s => s.GetItemAsync(0)).ReturnsAsync(item);
 
             // Act
-            ActionResult<TBaseEntityDto> result = await Controller.GetAsync(0);
+            ActionResult<TEntityDto> result = await Controller.GetAsync(0);
 
             // Assert
             Assert.IsType<NotFoundResult>(result.Result);
@@ -158,18 +152,18 @@ namespace WebApi.Tests.Controllers
         public async Task GetAsync_Success()
         {
             // Arrange
-            var item = Fixture.Create<TBaseEntity>();
-            var itemDto = Fixture.Create<TBaseEntityDto>();
+            var item = Fixture.Create<TEntity>();
             ServiceMock.Setup(s => s.GetItemAsync(item.Id)).ReturnsAsync(item);
-            MapperMock.Setup(m => m.Map<TBaseEntityDto>(item)).Returns(itemDto);
 
             // Act
             var result = await Controller.GetAsync(item.Id);
 
             // Assert
-            var actionResult = Assert.IsType<ActionResult<TBaseEntityDto>>(result);
+            var actionResult = Assert.IsType<ActionResult<TEntityDto>>(result);
             var okResult = Assert.IsType<OkObjectResult>(actionResult.Result);
-            Assert.Equal(itemDto, okResult.Value);
+            var itemDto = Assert.IsType<TEntityDto?>(okResult.Value);
+            var expectItemDto = Mapper.Map<TEntityDto>(item);
+            Assert.Equal(expectItemDto, itemDto, new GeneralEqualityComparer<TEntityDto?>());
         }
 
         /// Given a item,
@@ -179,7 +173,7 @@ namespace WebApi.Tests.Controllers
         public async Task UpdateAsync_Fail_WhenIdMismatch()
         {
             // Arrange
-            var itemDto = Fixture.Create<TBaseEntityDto>();
+            var itemDto = Fixture.Create<TEntityDto>();
 
             // Act
             var result = await Controller.UpdateAsync(itemDto.Id + 1, itemDto);
@@ -208,11 +202,11 @@ namespace WebApi.Tests.Controllers
         public async Task UpdateAsync_Fail()
         {
             // Arrange
-            var item = Fixture.Create<TBaseEntity>();
-            var itemDto = Fixture.Create<TBaseEntityDto>();
+            var itemDto = Fixture.Create<TEntityDto>();
             var operationResult = OperationResult.Error("Test");
-            MapperMock.Setup(m => m.Map<TBaseEntity>(itemDto)).Returns(item);
-            ServiceMock.Setup(s => s.UpdateAsync(item)).ReturnsAsync(operationResult);
+            ServiceMock
+                .Setup(s => s.UpdateAsync(It.IsAny<TEntity>()))
+                .ReturnsAsync(operationResult);
 
             // Act
             var result = await Controller.UpdateAsync(itemDto.Id, itemDto);
@@ -229,11 +223,11 @@ namespace WebApi.Tests.Controllers
         public async Task UpdateAsync_Success()
         {
             // Arrange
-            var item = Fixture.Create<TBaseEntity>();
-            var itemDto = Fixture.Create<TBaseEntityDto>();
+            var itemDto = Fixture.Create<TEntityDto>();
             var operationResult = OperationResult.Complete();
-            MapperMock.Setup(m => m.Map<TBaseEntity>(itemDto)).Returns(item);
-            ServiceMock.Setup(s => s.UpdateAsync(item)).ReturnsAsync(operationResult);
+            ServiceMock
+                .Setup(s => s.UpdateAsync(It.IsAny<TEntity>()))
+                .ReturnsAsync(operationResult);
 
             // Act
             var result = await Controller.UpdateAsync(itemDto.Id, itemDto);
@@ -255,5 +249,13 @@ namespace WebApi.Tests.Controllers
             var errorResponse = Assert.IsType<ErrorResponse>(badRequestResult.Value);
             Assert.Equal(expected, errorResponse);
         }
+
+        protected static void AssertResultIsOkAndValueIsEqual(IActionResult result, PagedResultDto<TEntityDto>? expect)
+        {
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var pagedResultDto = Assert.IsType<PagedResultDto<TEntityDto>>(okResult.Value);
+            Assert.Equal(expect, pagedResultDto, new GeneralEqualityComparer<PagedResultDto<TEntityDto>?>());
+        }
+
     }
 }

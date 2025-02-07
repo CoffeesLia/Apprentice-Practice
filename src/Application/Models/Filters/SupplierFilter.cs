@@ -1,6 +1,6 @@
 ﻿namespace Stellantis.ProjectName.Application.Models.Filters
 {
-    public class SupplierFilter : BaseFilter
+    public class SupplierFilter : Filter
     {
         public string? Code { get; set; }
         public string? CompanyName { get; set; }

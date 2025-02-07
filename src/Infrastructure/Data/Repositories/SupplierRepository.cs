@@ -6,7 +6,7 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
-    public class SupplierRepository(Context context) : BaseRepositoryEntity<Supplier, Context>(context), ISupplierRepository
+    public class SupplierRepository(Context context) : RepositoryEntityBase<Supplier, Context>(context), ISupplierRepository
     {
         public async Task<PagedResult<Supplier>> GetListAsync(SupplierFilter filter)
         {

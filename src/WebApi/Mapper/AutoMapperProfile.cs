@@ -13,9 +13,11 @@ namespace Stellantis.ProjectName.WebApi.Mapper
             CreateMap<PartNumberDto, PartNumber>()
                 .ConstructUsing(src => new PartNumber(src.Code!, src.Description!, src.Type!.Value))
                 .ForMember(dest => dest.Suppliers, opt => opt.Ignore())
-                .ForMember(dest => dest.Vehicles, opt => opt.Ignore()); 
-            CreateMap<Vehicle, VehicleDto>()
-                .ReverseMap();
+                .ForMember(dest => dest.Vehicles, opt => opt.Ignore());
+            CreateMap<PartNumber, PartNumberDto>();
+            CreateMap<PartNumberFilterDto, PartNumberFilter>();
+            CreateMap<SupplierFilterDto, SupplierFilter>();
+            CreateMap<Vehicle, VehicleDto>().ReverseMap();
             CreateMap<Supplier, SupplierDto>()
                 .ReverseMap()
                 .ConstructUsing(src => new Supplier(src.Code, src.CompanyName, src.Phone, src.Address));

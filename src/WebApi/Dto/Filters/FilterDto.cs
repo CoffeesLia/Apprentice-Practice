@@ -1,6 +1,6 @@
 ﻿namespace Stellantis.ProjectName.WebApi.Dto.Filters
 {
-    public class BaseFilterDto
+    public class FilterDto
     {
         public int Page { get; set; }
         public int RowsPerPage { get; set; }

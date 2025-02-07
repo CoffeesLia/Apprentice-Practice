@@ -3,20 +3,19 @@ using AutoFixture.AutoMoq;
 using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
-using static Infrastructure.Tests.Data.Repositories.BaseRepositoryTests;
 
 namespace Infrastructure.Tests.Data.Repositories
 {
     /// <summary>
     /// Unit tests for BaseRepositoryEntity.
     /// </summary>
-    public class BaseRepositoryEntityTests
+    public class RepositoryEntityBaseTests
     {
         private readonly IFixture _fixture;
         private readonly TestContext _context;
         private readonly TestRepository _repository;
 
-        public BaseRepositoryEntityTests()
+        public RepositoryEntityBaseTests()
         {
             _fixture = new Fixture().Customize(new AutoMoqCustomization());
             var options = new DbContextOptionsBuilder<TestContext>()
@@ -186,17 +185,17 @@ namespace Infrastructure.Tests.Data.Repositories
             Assert.Equal(entity.Id, result.Id);
         }
 
-        private class TestRepository(TestContext context) : BaseRepositoryEntity<TestEntity, TestContext>(context)
+        private class TestRepository(TestContext context) : RepositoryEntityBase<TestEntity, TestContext>(context)
         {
         }
 
-        private class TestEntity (string name) : BaseEntity
+        private class TestEntity(string name) : EntityBase
         {
             public string Name { get; set; } = name;
             public ICollection<TestEntityChildren> RelatedEntities { get; set; } = [];
         }
 
-        public class TestEntityChildren(string name) : BaseEntity
+        public class TestEntityChildren(string name) : EntityBase
         {
             public string Name { get; set; } = name;
         }

@@ -3,7 +3,7 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Interfaces.Services
 {
-    public interface IVehicleService : IBaseEntityService<Vehicle>
+    public interface IVehicleService : IEntityServiceBase<Vehicle>
     {
         Task<PagedResult<Vehicle>> GetListAsync(VehicleFilter filter);
     }

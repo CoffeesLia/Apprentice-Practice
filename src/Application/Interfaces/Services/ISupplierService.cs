@@ -3,7 +3,7 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Interfaces.Services
 {
-    public interface ISupplierService : IBaseEntityService<Supplier>
+    public interface ISupplierService : IEntityServiceBase<Supplier>
     {
         Task<PagedResult<Supplier>> GetListAsync(SupplierFilter filter);
     }

@@ -1,6 +1,6 @@
 ﻿namespace Stellantis.ProjectName.WebApi.Dto
 {
-    public abstract class BaseEntityDto
+    public abstract class EntityDtoBase
     {
         public int Id { get; set; }
     }

@@ -2,7 +2,7 @@
 
 namespace Stellantis.ProjectName.WebApi.Dto
 {
-    public class PartNumberDto : BaseEntityDto
+    public class PartNumberDto : EntityDtoBase
     {
         public string? Code { get; set; }
         public string? Description { get; set; }

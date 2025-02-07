@@ -1,6 +1,6 @@
 ﻿namespace Infrastructure.Tests.Data.Repositories
 {
-    public partial class BaseRepositoryTests
+    public partial class RepositoryBaseTests
     {
         public class TestEntityNode(int parentId, string? name)
         {

@@ -4,7 +4,7 @@ using Stellantis.ProjectName.Application.Resources;
 
 namespace Stellantis.ProjectName.Application.Services
 {
-    public abstract class BaseService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory)
+    public abstract class ServiceBase(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory)
     {
         protected IStringLocalizer Localizer => localizerFactory.Create(typeof(GeneralResources));
         protected IUnitOfWork UnitOfWork { get; } = unitOfWork;

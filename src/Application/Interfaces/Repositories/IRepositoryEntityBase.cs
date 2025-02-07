@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace Stellantis.ProjectName.Application.Interfaces.Repositories
 {
-    public interface IBaseRepositoryEntity<TEntity> : IBaseRepository<TEntity> where TEntity : BaseEntity
+    public interface IRepositoryEntityBase<TEntity> : IRepositoryBase<TEntity> where TEntity : EntityBase
     {
         Task DeleteAsync(IEnumerable<int> ids, bool saveChanges = true);
         Task DeleteAsync(int id, bool saveChanges = true);

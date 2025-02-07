@@ -2,7 +2,7 @@
 
 namespace Stellantis.ProjectName.Application.Interfaces.Services
 {
-    public interface IEmployeeService : IBaseEntityService<Employee>
+    public interface IEmployeeService : IEntityServiceBase<Employee>
     {
     }
 }

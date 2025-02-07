@@ -2,7 +2,7 @@
 
 namespace Infrastructure.Tests.Data.Repositories
 {
-    public partial class BaseRepositoryTests
+    public partial class RepositoryBaseTests
     {
         internal class TestContext(DbContextOptions<TestContext> options) : DbContext(options)
         {

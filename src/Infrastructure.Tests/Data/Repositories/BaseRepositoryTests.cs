@@ -9,7 +9,7 @@ namespace Infrastructure.Tests.Data.Repositories
     /// <summary>
     /// Base class for repository tests.
     /// </summary>
-    public partial class BaseRepositoryTests
+    public partial class RepositoryBaseTests
     {
         private readonly IFixture _fixture;
         private readonly TestContext _context;
@@ -27,7 +27,7 @@ namespace Infrastructure.Tests.Data.Repositories
             return new TestEntity(_fixture.Create<int>(), _fixture.Create<string>());
         }
 
-        public BaseRepositoryTests()
+        public RepositoryBaseTests()
         {
             _fixture = new Fixture().Customize(new AutoMoqCustomization());
             var options = new DbContextOptionsBuilder<TestContext>()

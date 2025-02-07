@@ -1,5 +1,4 @@
 using AutoFixture;
-using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models.Filters;
@@ -10,11 +9,12 @@ using Stellantis.ProjectName.WebApi.Dto.Filters;
 
 namespace WebApi.Tests.Controllers
 {
-    public class PartNumberControllerTests : EntityControllerTestsBase<PartNumberController, IPartNumberService, PartNumberDto, PartNumber>
+    public class PartNumberControllerTests
+        : EntityControllerTestsBase<PartNumberController, IPartNumberService, PartNumberDto, PartNumber>
     {
         protected override PartNumberController CreateController()
         {
-            return new PartNumberController(MapperMock.Object, ServiceMock.Object, LocalizerFactor);
+            return new PartNumberController(Mapper, ServiceMock.Object, LocalizerFactor);
         }
 
         /// Given a part number filter,
@@ -24,23 +24,18 @@ namespace WebApi.Tests.Controllers
         public async Task GetListAsync_Success()
         {
             // Arrange
-            var pagedResultDto = Fixture.Create<PagedResultDto<PartNumberDto>>();
             var pagedResult = Fixture.Create<PagedResult<PartNumber>>();
-
+            var expect = Mapper.Map<PagedResultDto<PartNumberDto>>(pagedResult);
             var filterDto = Fixture.Create<PartNumberFilterDto>();
             ServiceMock
                 .Setup(s => s.GetListAysnc(It.IsAny<PartNumberFilter>()))
                 .ReturnsAsync(pagedResult);
-            MapperMock
-                .Setup(m => m.Map<PagedResultDto<PartNumberDto>>(pagedResult))
-                .Returns(pagedResultDto);
 
             // Act
             var result = await Controller.GetListAsync(filterDto);
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.Equal(pagedResultDto, okResult.Value);
+            AssertResultIsOkAndValueIsEqual(result, expect);
         }
     }
 }

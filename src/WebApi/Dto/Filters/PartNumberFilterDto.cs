@@ -2,7 +2,7 @@
 
 namespace Stellantis.ProjectName.WebApi.Dto.Filters
 {
-    public class PartNumberFilterDto : BaseFilterDto
+    public class PartNumberFilterDto : FilterDto
     {
         public string? Code { get; set; }
         public string? Description { get; set; }

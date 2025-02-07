@@ -4,9 +4,9 @@ using Stellantis.ProjectName.WebApi.Dto.Filters;
 
 namespace Stellantis.ProjectName.WebApi.Dto.Validators
 {
-    public class BaseFilterDtoValidator<T> : AbstractValidator<T> where T : BaseFilterDto
+    internal class FilterDtoValidator<T> : AbstractValidator<T> where T : FilterDto
     {
-        public BaseFilterDtoValidator()
+        internal FilterDtoValidator()
         {
             RuleFor(x => x.Page)
                 .GreaterThan(0)

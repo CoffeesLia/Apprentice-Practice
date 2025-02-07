@@ -3,9 +3,9 @@ using Stellantis.ProjectName.Infrastructure.Data.Repositories;
 
 namespace Infrastructure.Tests.Data.Repositories
 {
-    public partial class BaseRepositoryTests
+    public partial class RepositoryBaseTests
     {
-        internal sealed class TestRepository(TestContext context) : BaseRepository<TestEntity, TestContext>(context)
+        internal sealed class TestRepository(TestContext context) : RepositoryBase<TestEntity, TestContext>(context)
         {
             /// <summary>
             /// To test the protected method GetListAsync

@@ -18,8 +18,10 @@ namespace WebApi.Tests.Filters
             var exception = new Exception("An error occurred");
             HttpContext httpContext = new DefaultHttpContext();
             var actionContext = new ActionContext(httpContext, new RouteData(), new ActionDescriptor());
-            var context = new ExceptionContext(actionContext, []) { Exception = exception
-};
+            var context = new ExceptionContext(actionContext, [])
+            {
+                Exception = exception
+            };
 
             var filter = new CustomExceptionFilter();
 

@@ -10,7 +10,7 @@ using Stellantis.ProjectName.Domain.Entities;
 namespace Stellantis.ProjectName.Application.Services
 {
     public class SupplierService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory)
-        : BaseEntityService<Supplier, ISupplierRepository>(unitOfWork, localizerFactory), ISupplierService
+        : EntityServiceBase<Supplier, ISupplierRepository>(unitOfWork, localizerFactory), ISupplierService
     {
         private readonly IStringLocalizer _supplierLocalizer = localizerFactory.Create(typeof(SupplierResources));
         protected override ISupplierRepository Repository => UnitOfWork.SupplierRepository;

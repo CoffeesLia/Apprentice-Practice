@@ -34,11 +34,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Dto\PartNumberSupplierDto.cs" />
     <Compile Remove="Dto\Validators\PartNumberFilterVmValidator.cs" />
     <Compile Remove="Dto\Validators\PartNumberVmValidator.cs" />
     <Compile Remove="Dto\Validators\SupplierVmValidator.cs" />
     <Compile Remove="Dto\Validators\VehicleVmValidator.cs" />
     <Compile Remove="Dto\Validators\VehicleWithPartNumberVmValidator.cs" />
+    <Compile Remove="Dto\VehiclePartNumberDto.cs" />
     <Compile Remove="ViewModels\BaseEntityViewModel.cs" />
   </ItemGroup>
 

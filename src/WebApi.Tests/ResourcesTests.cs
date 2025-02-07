@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.Localization;
-using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources;
 using Stellantis.ProjectName.WebApi.Resources;
-using System.Collections;
 using System.Globalization;
 using System.Resources;
 using WebApi.Tests.Helpers;

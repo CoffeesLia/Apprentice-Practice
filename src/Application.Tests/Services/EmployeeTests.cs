@@ -15,7 +15,7 @@ namespace Application.Tests.Services
 {
     public class EmployeeServiceTests
     {
-        
+
         private readonly Fixture _fixture = new();
         private readonly Mock<IUnitOfWork> _unitOfWorkMock = new();
         private readonly Mock<IEmployeeRepository> _repositoryMock = new();
@@ -118,14 +118,13 @@ namespace Application.Tests.Services
         public async Task GetListAsync_Success_ReturnEmployeeList()
         {
             // Arrange
-            var employeeFilter = _fixture.Create<BaseFilter>();
+            var employeeFilter = _fixture.Create<Filter>();
             var list = _fixture.Create<List<Employee>>();
             var paginationEmployee = new PagedResult<Employee>()
             {
                 Result = list,
                 Total = list.Count
             };
-
             _repositoryMock
                 .Setup(x => x.GetListAsync(It.IsAny<Expression<Func<Employee, bool>>>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()))
                 .ReturnsAsync(paginationEmployee);

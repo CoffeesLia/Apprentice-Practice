@@ -4,7 +4,7 @@
     /// Generic interface for base repositories.
     /// </summary>
     /// <typeparam name="TEntity">The type of the entity.</typeparam>
-    public interface IBaseRepository<in TEntity> where TEntity : class
+    public interface IRepositoryBase<in TEntity> where TEntity : class
     {
         /// <summary>
         /// Creates a new entity.

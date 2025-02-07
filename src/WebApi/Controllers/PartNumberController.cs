@@ -11,7 +11,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public sealed class PartNumberController(IMapper mapper, IPartNumberService partNumberService, IStringLocalizerFactory localizerFactory) : 
+    public sealed class PartNumberController(IMapper mapper, IPartNumberService partNumberService, IStringLocalizerFactory localizerFactory) :
         EntityControllerBase<PartNumberDto, PartNumber>(mapper, partNumberService, localizerFactory)
     {
         protected override IPartNumberService Service => (IPartNumberService)base.Service;

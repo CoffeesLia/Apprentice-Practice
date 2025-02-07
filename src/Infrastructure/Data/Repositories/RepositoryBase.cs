@@ -11,7 +11,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
     /// </summary>
     /// <typeparam name="TEntity">Type of Entity.</typeparam>
     /// <param name="context">A session with the database and can be used to query and save instances of your entities.</param>
-    public abstract class BaseRepository<TEntity, TContext>(TContext context) : IBaseRepository<TEntity> where TEntity : class where TContext : DbContext
+    public abstract class RepositoryBase<TEntity, TContext>(TContext context) : IRepositoryBase<TEntity> where TEntity : class where TContext : DbContext
     {
         public const char Separator = ',';
 
@@ -223,7 +223,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             return new PagedResult<TEntity>()
             {
-                Result = list,
+                Result = [.. list],
                 Total = total
             };
         }

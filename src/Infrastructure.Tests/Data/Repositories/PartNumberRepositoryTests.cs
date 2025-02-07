@@ -171,9 +171,17 @@ namespace Infrastructure.Tests.Data.Repositories
             var partNumberSupplierResult = result.Suppliers.First();
             Assert.Equal(partNumberSupplier.SupplierId, partNumberSupplierResult.SupplierId);
             Assert.Equal(partNumberSupplier.UnitPrice, partNumberSupplierResult.UnitPrice);
+            Assert.NotNull(partNumberSupplier.Supplier);
+            Assert.Equal(supplier, partNumberSupplier.Supplier);
+            Assert.NotNull(partNumberSupplier.PartNumber);
+            Assert.Equal(partNumber, partNumberSupplier.PartNumber);
             var vehiclePartNumberResult = result.Vehicles.First();
             Assert.Equal(vehiclePartNumber.VehicleId, vehiclePartNumberResult.VehicleId);
             Assert.Equal(vehiclePartNumber.Amount, vehiclePartNumberResult.Amount);
+            Assert.NotNull(vehiclePartNumber.Vehicle);
+            Assert.Equal(vehicle, vehiclePartNumber.Vehicle);
+            Assert.NotNull(vehiclePartNumber.PartNumber);
+            Assert.Equal(partNumber, vehiclePartNumber.PartNumber);
         }
     }
 }

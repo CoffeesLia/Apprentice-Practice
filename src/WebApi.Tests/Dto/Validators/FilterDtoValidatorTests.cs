@@ -1,24 +1,23 @@
 ﻿using FluentValidation.TestHelper;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.Dto.Validators;
-using Xunit;
 
 namespace WebApi.Tests.Dto.Validators
 {
-    public class BaseFilterDtoValidatorTests
+    public class FilterDtoValidatorTests
     {
-        private readonly BaseFilterDtoValidator<BaseFilterDto> _validator;
+        private readonly FilterDtoValidator<FilterDto> _validator;
 
-        public BaseFilterDtoValidatorTests()
+        public FilterDtoValidatorTests()
         {
-            _validator = new BaseFilterDtoValidator<BaseFilterDto>();
+            _validator = new FilterDtoValidator<FilterDto>();
         }
 
         [Fact]
         public void Should_Have_Error_When_Page_Is_Less_Than_One()
         {
             // Arrange
-            var model = new BaseFilterDto { Page = 0 };
+            var model = new FilterDto { Page = 0 };
 
             // Act & Assert
             var result = _validator.TestValidate(model);
@@ -30,7 +29,7 @@ namespace WebApi.Tests.Dto.Validators
         public void Should_Not_Have_Error_When_Page_Is_Greater_Than_Zero()
         {
             // Arrange
-            var model = new BaseFilterDto { Page = 1 };
+            var model = new FilterDto { Page = 1 };
 
             // Act & Assert
             var result = _validator.TestValidate(model);

@@ -1,8 +1,8 @@
 ﻿namespace Stellantis.ProjectName.WebApi.Dto
 {
-    public class VehicleDto(string chassi, ICollection<VehiclePartNumberDto> partnumbers) : BaseEntityDto
+    public class VehicleDto(string chassi) : EntityDtoBase
     {
-        public string Chassi { get; } = chassi;
-        public virtual ICollection<VehiclePartNumberDto> Partnumbers { get; } = partnumbers ?? [];
+        public string Chassi { get; set; } = chassi;
+        public Dictionary<int, decimal> PartNumbers { get; } = [];
     }
 }

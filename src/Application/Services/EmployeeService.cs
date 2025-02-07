@@ -7,7 +7,7 @@ using Stellantis.ProjectName.Domain.Entities;
 namespace Stellantis.ProjectName.Application.Services
 {
     public class EmployeeService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory)
-        : BaseEntityService<Employee, IEmployeeRepository>(unitOfWork, localizerFactory), IEmployeeService
+        : EntityServiceBase<Employee, IEmployeeRepository>(unitOfWork, localizerFactory), IEmployeeService
     {
         protected override IEmployeeRepository Repository => base.UnitOfWork.EmployeeRepository;
     }

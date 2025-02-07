@@ -3,7 +3,7 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Interfaces.Services
 {
-    public interface IPartNumberService : IBaseEntityService<PartNumber>
+    public interface IPartNumberService : IEntityServiceBase<PartNumber>
     {
         Task<PagedResult<PartNumber>> GetListAysnc(PartNumberFilter filter);
     }

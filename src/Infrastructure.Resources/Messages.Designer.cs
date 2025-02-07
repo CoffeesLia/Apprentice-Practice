@@ -97,6 +97,15 @@ namespace Stellantis.ProjectName.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Successfully deleted.
+        /// </summary>
+        public static string DeletedSuccessfully {
+            get {
+                return ResourceManager.GetString("DeletedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Duplicate drawings.
         /// </summary>
         public static string DuplicatedDrawings {
@@ -115,24 +124,6 @@ namespace Stellantis.ProjectName.Infrastructure.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Is required..
-        /// </summary>
-        public static string Required {
-            get {
-                return ResourceManager.GetString("Required", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Successfully deleted.
-        /// </summary>
-        public static string DeletedSuccessfully {
-            get {
-                return ResourceManager.GetString("DeletedSuccessfully", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Successfully registered.
         /// </summary>
         public static string RegisteredSuccessfully {
@@ -142,11 +133,11 @@ namespace Stellantis.ProjectName.Infrastructure.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Updated successfully.
+        ///   Looks up a localized string similar to Is required..
         /// </summary>
-        public static string UpdatedSuccessfully {
+        public static string Required {
             get {
-                return ResourceManager.GetString("UpdatedSuccessfully", resourceCulture);
+                return ResourceManager.GetString("Required", resourceCulture);
             }
         }
         
@@ -165,6 +156,15 @@ namespace Stellantis.ProjectName.Infrastructure.Resources {
         public static string UndeletedDrawing {
             get {
                 return ResourceManager.GetString("UndeletedDrawing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Updated successfully.
+        /// </summary>
+        public static string UpdatedSuccessfully {
+            get {
+                return ResourceManager.GetString("UpdatedSuccessfully", resourceCulture);
             }
         }
     }

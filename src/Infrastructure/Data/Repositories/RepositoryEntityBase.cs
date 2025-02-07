@@ -5,11 +5,11 @@ using System.Linq.Expressions;
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
     /// <summary>
-    /// Base repository for entities based on <see cref="BaseEntity"/>.
+    /// Base repository for entities based on <see cref="EntityBase"/>.
     /// </summary>
     /// <typeparam name="TEntity">Type of Entity based on BaseEntity.</typeparam>
     /// <param name="context">A session with the database and can be used to query and save instances of your entities.</param>
-    public abstract class BaseRepositoryEntity<TEntity, TContext>(TContext context) : BaseRepository<TEntity, TContext>(context) where TEntity : BaseEntity where TContext : DbContext
+    public abstract class RepositoryEntityBase<TEntity, TContext>(TContext context) : RepositoryBase<TEntity, TContext>(context) where TEntity : EntityBase where TContext : DbContext
     {
         /// <summary>
         /// Deletes an entity by its id.
