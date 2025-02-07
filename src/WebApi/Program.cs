@@ -54,11 +54,6 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
         .AddSupportedUICultures(supportedCultures);
 });
 
-#if DEBUG
-builder.Services.AddAuthentication("TokenAuthentication")
-    .AddScheme<AuthenticationSchemeOptions, TokenAuthenticationHandler>("TokenAuthentication", null);
-#endif
-
 var app = builder.Build();
 app.UseRequestLocalization();
 
