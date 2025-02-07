@@ -35,7 +35,7 @@ namespace WebApi.Tests.Controllers
             var result = await Controller.GetListAsync(filterDto);
 
             // Assert
-            AssertResultIsOkAndValueIsEqual(result, expect);
+            AssertOkResultAndEqualValue(result, expect);
         }
     }
 }

@@ -250,7 +250,7 @@ namespace WebApi.Tests.Controllers
             Assert.Equal(expected, errorResponse);
         }
 
-        protected static void AssertResultIsOkAndValueIsEqual(IActionResult result, PagedResultDto<TEntityDto>? expect)
+        protected static void AssertOkResultAndEqualValue(IActionResult result, PagedResultDto<TEntityDto>? expect)
         {
             var okResult = Assert.IsType<OkObjectResult>(result);
             var pagedResultDto = Assert.IsType<PagedResultDto<TEntityDto>>(okResult.Value);
