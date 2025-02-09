@@ -12,15 +12,17 @@ using Stellantis.ProjectName.WebApi.Controllers;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Mapper;
 using Stellantis.ProjectName.WebApi.Resources;
+using Stellantis.ProjectName.WebApi.ViewModels;
 using WebApi.Tests.Helpers;
 
 namespace WebApi.Tests.Controllers
 {
-    public abstract class EntityControllerTestsBase<TController, TService, TEntityDto, TEntity>
-        where TEntityDto : EntityDtoBase
+    public abstract class EntityControllerTestsBase<TController, TService, TEntityDto, TEntityVm, TEntity>
+        where TEntityDto : class
+        where TEntityVm : EntityVmBase
         where TEntity : EntityBase
         where TService : class, IEntityServiceBase<TEntity>
-        where TController : EntityControllerBase<TEntityDto, TEntity>
+        where TController : EntityControllerBase<TEntityDto, TEntityVm, TEntity>
     {
         protected IFixture Fixture { get; }
         protected IMapper Mapper { get; }
@@ -88,7 +90,8 @@ namespace WebApi.Tests.Controllers
             // Assert
             var createdAtResult = Assert.IsType<CreatedAtActionResult>(result);
             Assert.NotNull(createdAtResult.Value);
-            Assert.Equal(itemDto, (TEntityDto)createdAtResult.Value, new GeneralEqualityComparer<TEntityDto>());
+            var itemVm = Assert.IsType<TEntityVm>(createdAtResult.Value);
+            AssertEqualProperties(itemDto, itemVm);
         }
 
         /// Given a item,
@@ -139,7 +142,7 @@ namespace WebApi.Tests.Controllers
             ServiceMock.Setup(s => s.GetItemAsync(0)).ReturnsAsync(item);
 
             // Act
-            ActionResult<TEntityDto> result = await Controller.GetAsync(0);
+            ActionResult<TEntityVm> result = await Controller.GetAsync(0);
 
             // Assert
             Assert.IsType<NotFoundResult>(result.Result);
@@ -159,27 +162,11 @@ namespace WebApi.Tests.Controllers
             var result = await Controller.GetAsync(item.Id);
 
             // Assert
-            var actionResult = Assert.IsType<ActionResult<TEntityDto>>(result);
+            var actionResult = Assert.IsType<ActionResult<TEntityVm>>(result);
             var okResult = Assert.IsType<OkObjectResult>(actionResult.Result);
-            var itemDto = Assert.IsType<TEntityDto?>(okResult.Value);
-            var expectItemDto = Mapper.Map<TEntityDto>(item);
-            Assert.Equal(expectItemDto, itemDto, new GeneralEqualityComparer<TEntityDto?>());
-        }
-
-        /// Given a item,
-        /// when UpdateAsync is called,
-        /// then it should return BadRequest if the id != itemDto.Id.
-        [Fact]
-        public async Task UpdateAsync_Fail_WhenIdMismatch()
-        {
-            // Arrange
-            var itemDto = Fixture.Create<TEntityDto>();
-
-            // Act
-            var result = await Controller.UpdateAsync(itemDto.Id + 1, itemDto);
-
-            // Assert
-            AssertIsBadRequest(result, ControllerResources.IdMismatch);
+            var itemVm = Assert.IsType<TEntityVm?>(okResult.Value);
+            var expectItem = Mapper.Map<TEntityVm>(item);
+            Assert.Equal(expectItem, itemVm, new GeneralEqualityComparer<TEntityVm?>());
         }
 
         /// Given a item,
@@ -209,7 +196,7 @@ namespace WebApi.Tests.Controllers
                 .ReturnsAsync(operationResult);
 
             // Act
-            var result = await Controller.UpdateAsync(itemDto.Id, itemDto);
+            var result = await Controller.UpdateAsync(0, itemDto);
 
             // Assert
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
@@ -230,11 +217,23 @@ namespace WebApi.Tests.Controllers
                 .ReturnsAsync(operationResult);
 
             // Act
-            var result = await Controller.UpdateAsync(itemDto.Id, itemDto);
+            var result = await Controller.UpdateAsync(0, itemDto);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(operationResult, okResult.Value);
+        }
+
+        protected static void AssertEqualProperties(TEntityDto itemDto, TEntityVm itemVm)
+        {
+            typeof(TEntityDto).GetProperties().ToList()
+                .ForEach(p =>
+                {
+                    var value = p.GetValue(itemDto);
+                    var property = itemVm.GetType().GetProperty(p.Name);
+                    if (property != null)
+                        Assert.Equal(value, property.GetValue(itemVm));
+                });
         }
 
         /// <summary>
@@ -250,11 +249,11 @@ namespace WebApi.Tests.Controllers
             Assert.Equal(expected, errorResponse);
         }
 
-        protected static void AssertOkResultAndEqualValue(IActionResult result, PagedResultDto<TEntityDto>? expect)
+        protected static void AssertOkResultAndEqualValue(IActionResult result, PagedResultVm<TEntityVm>? expect)
         {
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var pagedResultDto = Assert.IsType<PagedResultDto<TEntityDto>>(okResult.Value);
-            Assert.Equal(expect, pagedResultDto, new GeneralEqualityComparer<PagedResultDto<TEntityDto>?>());
+            var pagedResult = Assert.IsType<PagedResultVm<TEntityVm>>(okResult.Value);
+            Assert.Equal(expect, pagedResult, new GeneralEqualityComparer<PagedResultVm<TEntityVm>?>());
         }
 
     }

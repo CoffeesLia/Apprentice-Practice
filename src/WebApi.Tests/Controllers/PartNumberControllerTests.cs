@@ -6,11 +6,12 @@ using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Controllers;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
+using Stellantis.ProjectName.WebApi.ViewModels;
 
 namespace WebApi.Tests.Controllers
 {
     public class PartNumberControllerTests
-        : EntityControllerTestsBase<PartNumberController, IPartNumberService, PartNumberDto, PartNumber>
+        : EntityControllerTestsBase<PartNumberController, IPartNumberService, PartNumberDto, PartNumberVm, PartNumber>
     {
         protected override PartNumberController CreateController()
         {
@@ -25,7 +26,7 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             var pagedResult = Fixture.Create<PagedResult<PartNumber>>();
-            var expect = Mapper.Map<PagedResultDto<PartNumberDto>>(pagedResult);
+            var expect = Mapper.Map<PagedResultVm<PartNumberVm>>(pagedResult);
             var filterDto = Fixture.Create<PartNumberFilterDto>();
             ServiceMock
                 .Setup(s => s.GetListAysnc(It.IsAny<PartNumberFilter>()))

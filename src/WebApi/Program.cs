@@ -41,7 +41,20 @@ builder.Services.Configure<ApiBehaviorOptions>(p =>
 });
 builder.Services.ConfigureDependencyInjection();
 builder.Services.RegisterMapper();
-builder.Services.AddDbContext<Context>(options => options.UseSqlServer(configuration["ConnectionString"]));
+var databaseType = configuration["DatabaseType"];
+switch (databaseType)
+{
+    case "InMemory":
+        builder.Services.AddDbContext<Context>(options => options.UseInMemoryDatabase(databaseName: "InMemory")
+        );
+        break;
+    case "SqlServer":
+        builder.Services.AddDbContext<Context>(options => options.UseSqlServer(configuration["ConnectionString"]));
+        break;
+    default:
+        throw new NotSupportedException(databaseType);
+}
+
 builder.Services.AddLocalization();
 
 var arrLanguage = new[] { "en-US", "pt-BR", "es-AR", "fr-FR", "it-IT", "nl-NL" };
@@ -53,6 +66,11 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
         .AddSupportedCultures(supportedCultures)
         .AddSupportedUICultures(supportedCultures);
 });
+
+#if DEBUG
+builder.Services.AddAuthentication("AuthenticationForDebug")
+    .AddScheme<AuthenticationSchemeOptions, ForDebugAuthenticationHandler>("AuthenticationForDebug", null);
+#endif
 
 var app = builder.Build();
 app.UseRequestLocalization();
@@ -67,5 +85,5 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
-app.UsePathBase("/api");
+app.UsePathBase("/");
 await app.RunAsync().ConfigureAwait(false);

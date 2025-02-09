@@ -126,10 +126,22 @@
   <data name="AlreadyExistForThisVehicle" xml:space="preserve">
     <value>この車両には既に存在します。</value>
   </data>
+  <data name="CodeIsRequired" xml:space="preserve">
+    <value>シャーシは必須です。</value>
+  </data>
+  <data name="DescriptionIsRequired" xml:space="preserve">
+    <value>シャーシは必須です。</value>
+  </data>
+  <data name="TypeIsRequired" xml:space="preserve">
+    <value>シャーシは必須です。</value>
+  </data>
   <data name="Duplicated" xml:space="preserve">
     <value>重複した図面。</value>
   </data>
   <data name="Undeleted" xml:space="preserve">
     <value>サプライヤーまたは車両にリンクされているため削除できません。</value>
+  </data>
+  <data name="CodeMaxLength" xml:space="preserve">
+    <value>シャーシは必須です。</value>
   </data>
 </root>

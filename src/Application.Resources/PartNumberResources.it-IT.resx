@@ -126,10 +126,22 @@
   <data name="AlreadyExistForThisVehicle" xml:space="preserve">
     <value>Esiste già per questo veicolo.</value>
   </data>
+  <data name="CodeIsRequired" xml:space="preserve">
+    <value>Il telaio è obbligatorio.</value>
+  </data>
+  <data name="DescriptionIsRequired" xml:space="preserve">
+    <value>Il telaio è obbligatorio.</value>
+  </data>
+  <data name="TypeIsRequired" xml:space="preserve">
+    <value>Il telaio è obbligatorio.</value>
+  </data>
   <data name="Duplicated" xml:space="preserve">
     <value>Disegni duplicati.</value>
   </data>
   <data name="Undeleted" xml:space="preserve">
     <value>Non può essere eliminato poiché è collegato a un fornitore o veicolo.</value>
+  </data>
+  <data name="CodeMaxLength" xml:space="preserve">
+    <value>Il telaio è obbligatorio.</value>
   </data>
 </root>

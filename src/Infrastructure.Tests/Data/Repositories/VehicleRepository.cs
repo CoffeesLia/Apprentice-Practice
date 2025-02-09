@@ -33,7 +33,7 @@ namespace Infrastructure.Tests.Data.Repositories
             {
                 Chassis = _fixture.Create<string>(),
                 Page = 1,
-                RowsPerPage = 10
+                PageSize = 10
             };
             var vehicles = _fixture
                 .Build<Vehicle>()

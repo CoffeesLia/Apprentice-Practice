@@ -126,10 +126,22 @@
   <data name="AlreadyExistForThisVehicle" xml:space="preserve">
     <value>Already exists for this vehicle.</value>
   </data>
+  <data name="CodeIsRequired" xml:space="preserve">
+    <value>Code is required.</value>
+  </data>
+  <data name="DescriptionIsRequired" xml:space="preserve">
+    <value>Description is required.</value>
+  </data>
+  <data name="TypeIsRequired" xml:space="preserve">
+    <value>Chassis is required.</value>
+  </data>
   <data name="Duplicated" xml:space="preserve">
     <value>Duplicate partnumbers.</value>
   </data>
   <data name="Undeleted" xml:space="preserve">
     <value>Cannot be deleted as it is linked to a supplier or vehicle.</value>
+  </data>
+  <data name="CodeMaxLength" xml:space="preserve">
+    <value>Code maxi length 11.</value>
   </data>
 </root>

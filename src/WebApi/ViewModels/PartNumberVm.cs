@@ -1,8 +1,8 @@
 ﻿using Stellantis.ProjectName.Domain.Enums;
 
-namespace Stellantis.ProjectName.WebApi.Dto
+namespace Stellantis.ProjectName.WebApi.ViewModels
 {
-    public class PartNumberDto
+    public class PartNumberVm : EntityVmBase
     {
         public string? Code { get; set; }
         public string? Description { get; set; }

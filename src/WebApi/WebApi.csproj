@@ -34,6 +34,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Dto\EntityDtoBase.cs" />
     <Compile Remove="Dto\PartNumberSupplierDto.cs" />
     <Compile Remove="Dto\Validators\PartNumberFilterVmValidator.cs" />
     <Compile Remove="Dto\Validators\PartNumberVmValidator.cs" />
@@ -50,6 +51,7 @@
     <PackageReference Include="LinqKit" Version="1.3.8" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.11" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.1" />
     <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="9.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />

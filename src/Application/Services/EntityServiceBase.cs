@@ -1,19 +1,22 @@
-﻿using Microsoft.Extensions.Localization;
+﻿using FluentValidation;
+using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace Stellantis.ProjectName.Application.Services
 {
-    public abstract class EntityServiceBase<TEntity, TIRepository>(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory)
+    public abstract class EntityServiceBase<TEntity, TIRepository>(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<TEntity> validator)
         : ServiceBase(unitOfWork, localizerFactory)
         where TEntity : EntityBase
         where TIRepository : IRepositoryEntityBase<TEntity>
     {
         protected abstract TIRepository Repository { get; }
+        protected IValidator<TEntity> Validator { get; } = validator;
 
         public virtual async Task<OperationResult> CreateAsync(TEntity item)
         {
@@ -44,7 +47,7 @@ namespace Stellantis.ProjectName.Application.Services
 
         public virtual async Task<PagedResult<TEntity>> GetListAsync(Filter filter)
         {
-            return await Repository.GetListAsync(sort: filter?.Sort, sortDir: filter?.SortDir, page: filter?.Page ?? 1, pageSize: filter?.RowsPerPage ?? 10).ConfigureAwait(false);
+            return await Repository.GetListAsync(sort: filter?.Sort, sortDir: filter?.SortDir, page: filter?.Page ?? 1, pageSize: filter?.PageSize ?? 10).ConfigureAwait(false);
         }
 
         public virtual async Task<OperationResult> UpdateAsync(TEntity item)

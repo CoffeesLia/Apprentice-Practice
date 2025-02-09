@@ -23,7 +23,7 @@ namespace Application.Tests.Services
         {
             IStringLocalizerFactory localizerFactory = LocalizerFactorHelper.Create();
             _unitOfWorkMock.SetupGet(x => x.SupplierRepository).Returns(_repositoryMock.Object);
-            _service = new SupplierService(_unitOfWorkMock.Object, localizerFactory);
+            _service = new SupplierService(_unitOfWorkMock.Object, localizerFactory, null!);
         }
 
         /// <summary>

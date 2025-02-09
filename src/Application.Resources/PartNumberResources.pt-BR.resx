@@ -126,10 +126,22 @@
   <data name="AlreadyExistForThisVehicle" xml:space="preserve">
     <value>Já existe para este veículo.</value>
   </data>
+  <data name="CodeIsRequired" xml:space="preserve">
+    <value>Chassi é obrigatório.</value>
+  </data>
+  <data name="DescriptionIsRequired" xml:space="preserve">
+    <value>Chassi é obrigatório.</value>
+  </data>
+  <data name="TypeIsRequired" xml:space="preserve">
+    <value>Chassi é obrigatório.</value>
+  </data>
   <data name="Duplicated" xml:space="preserve">
     <value>Desenhos duplicados.</value>
   </data>
   <data name="Undeleted" xml:space="preserve">
     <value>Não pode ser deletado, pois está vinculado a um fornecedor ou veículo.</value>
+  </data>
+  <data name="CodeMaxLength" xml:space="preserve">
+    <value>Chassi é obrigatório.</value>
   </data>
 </root>

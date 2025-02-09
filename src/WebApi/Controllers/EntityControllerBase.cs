@@ -6,13 +6,16 @@ using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Resources;
+using Stellantis.ProjectName.WebApi.ViewModels;
 
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
+    [ApiController]
     [Authorize]
-    public abstract class EntityControllerBase<TEntityDto, TEntity>(IMapper mapper, IEntityServiceBase<TEntity> service, IStringLocalizerFactory localizerFactory)
+    public abstract class EntityControllerBase<TEntityDto, TEntityVm, TEntity>(IMapper mapper, IEntityServiceBase<TEntity> service, IStringLocalizerFactory localizerFactory)
         : ControllerBase
-        where TEntityDto : EntityDtoBase
+        where TEntityDto : class
+        where TEntityVm : EntityVmBase
         where TEntity : EntityBase
     {
         protected virtual IEntityServiceBase<TEntity> Service { get; } = service;
@@ -30,8 +33,8 @@ namespace Stellantis.ProjectName.WebApi.Controllers
 
             if (result.Success)
             {
-                var createdItem = Mapper.Map<TEntityDto>(item);
-                return CreatedAtAction(nameof(GetAsync), new { id = createdItem!.Id }, createdItem);
+                var createdItem = Mapper.Map<TEntityVm>(item);
+                return CreatedAtAction(HttpMethod.Get.Method, new { id = createdItem!.Id }, createdItem);
             }
             return BadRequest(result);
         }
@@ -41,8 +44,6 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         {
             if (itemDto == null)
                 return BadRequest(ErrorResponse.BadRequest(Localizer[nameof(ControllerResources.CannotBeNull)]));
-            if (id != itemDto.Id)
-                return BadRequest(ErrorResponse.BadRequest(Localizer[nameof(ControllerResources.IdMismatch)]));
 
             var item = Mapper.Map<TEntity>(itemDto);
             var result = await Service.UpdateAsync(item!);
@@ -53,14 +54,14 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public virtual async Task<ActionResult<TEntityDto>> GetAsync(int id)
+        public virtual async Task<ActionResult<TEntityVm>> GetAsync(int id)
         {
-            var TEntity = await Service.GetItemAsync(id);
+            var item = await Service.GetItemAsync(id);
 
-            if (TEntity == null)
+            if (item == null)
                 return NotFound();
 
-            var result = Mapper.Map<TEntityDto>(TEntity);
+            var result = Mapper.Map<TEntityVm>(item);
             return Ok(result);
         }
 

@@ -6,13 +6,13 @@ using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
+using Stellantis.ProjectName.WebApi.ViewModels;
 
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
     public sealed class PartNumberController(IMapper mapper, IPartNumberService partNumberService, IStringLocalizerFactory localizerFactory) :
-        EntityControllerBase<PartNumberDto, PartNumber>(mapper, partNumberService, localizerFactory)
+        EntityControllerBase<PartNumberDto, PartNumberVm, PartNumber>(mapper, partNumberService, localizerFactory)
     {
         protected override IPartNumberService Service => (IPartNumberService)base.Service;
 
@@ -21,7 +21,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         {
             var filter = Mapper.Map<PartNumberFilter>(filterDto);
             var pagedResult = await Service.GetListAysnc(filter!);
-            var result = Mapper.Map<PagedResultDto<PartNumberDto>>(pagedResult);
+            var result = Mapper.Map<PagedResultVm<ViewModels.PartNumberVm>>(pagedResult);
 
             return Ok(result);
         }

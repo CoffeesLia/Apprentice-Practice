@@ -30,7 +30,7 @@ namespace Infrastructure.Tests.Data.Repositories
             var filter = new SupplierFilter
             {
                 Page = 1,
-                RowsPerPage = 10,
+                PageSize = 10,
                 Address = _fixture.Create<string>()
             };
             const int Count = 10;
@@ -60,7 +60,7 @@ namespace Infrastructure.Tests.Data.Repositories
             var filter = new SupplierFilter
             {
                 Page = 1,
-                RowsPerPage = 10,
+                PageSize = 10,
                 CompanyName = _fixture.Create<string>()
             };
             const int Count = 10;
@@ -90,7 +90,7 @@ namespace Infrastructure.Tests.Data.Repositories
             var filter = new SupplierFilter
             {
                 Page = 1,
-                RowsPerPage = 10,
+                PageSize = 10,
                 Code = _fixture.Create<string>()
             };
             const int Count = 10;
@@ -120,7 +120,7 @@ namespace Infrastructure.Tests.Data.Repositories
             var filter = new SupplierFilter
             {
                 Page = 1,
-                RowsPerPage = 10,
+                PageSize = 10,
                 Phone = _fixture.Create<string>()
             };
             const int Count = 10;

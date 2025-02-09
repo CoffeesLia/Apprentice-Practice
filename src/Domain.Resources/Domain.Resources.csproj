@@ -47,6 +47,14 @@
       <LastGenOutput>Messages.Designer.cs</LastGenOutput>
       <Generator>PublicResXFileCodeGenerator</Generator>
     </EmbeddedResource>
+    <EmbeddedResource Update="PartNumberResources.es-AR.resx">
+      <DependentUpon>PartNumberResources.resx</DependentUpon>
+      <Generator></Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="PartNumberResources.ja-JP.resx">
+      <DependentUpon>PartNumberResources.resx</DependentUpon>
+      <Generator></Generator>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

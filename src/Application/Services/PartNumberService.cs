@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Localization;
+﻿using FluentValidation;
+using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Interfaces.Services;
@@ -6,13 +7,15 @@ using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace Stellantis.ProjectName.Application.Services
 {
-    public class PartNumberService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory)
-        : EntityServiceBase<PartNumber, IPartNumberRepository>(unitOfWork, localizerFactory), IPartNumberService
+    public class PartNumberService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<PartNumber> validator)
+        : EntityServiceBase<PartNumber, IPartNumberRepository>(unitOfWork, localizerFactory, validator), IPartNumberService
     {
         private readonly IStringLocalizer _partNumberLocalizer = localizerFactory.Create(typeof(PartNumberResources));
+
         protected override IPartNumberRepository Repository => UnitOfWork.PartNumberRepository;
 
         public override async Task<OperationResult> DeleteAsync(int id)
@@ -28,6 +31,9 @@ namespace Stellantis.ProjectName.Application.Services
 
         public override async Task<OperationResult> CreateAsync(PartNumber item)
         {
+            var result = await Validator.ValidateAsync(item).ConfigureAwait(false);
+            if (!result.IsValid)
+                return OperationResult.Error(string.Join(", ", result.Errors.Select(e => e.ErrorMessage)));
             ArgumentNullException.ThrowIfNull(item);
             item = ValidateCreateOrUpdate(item);
             if (Repository.VerifyCodeExists(item.Code!))

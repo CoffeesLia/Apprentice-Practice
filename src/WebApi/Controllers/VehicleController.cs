@@ -6,13 +6,13 @@ using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
+using Stellantis.ProjectName.WebApi.ViewModels;
 
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
     public sealed class VehicleController(IMapper mapper, IVehicleService VehicleService, IStringLocalizerFactory localizerFactory) :
-        EntityControllerBase<VehicleDto, Vehicle>(mapper, VehicleService, localizerFactory)
+        EntityControllerBase<VehicleDto, VehicleVm, Vehicle>(mapper, VehicleService, localizerFactory)
     {
         protected override IVehicleService Service => (IVehicleService)base.Service;
 
@@ -21,7 +21,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         {
             var filter = Mapper.Map<VehicleFilter>(filterDto);
             var pagedResult = await Service.GetListAsync(filter!);
-            var result = Mapper.Map<PagedResultDto<VehicleDto>>(pagedResult);
+            var result = Mapper.Map<PagedResultVm<VehicleVm>>(pagedResult);
 
             return Ok(result);
         }

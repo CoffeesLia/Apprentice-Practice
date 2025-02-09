@@ -6,6 +6,7 @@ using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Application.Services;
+using Stellantis.ProjectName.Application.Validators;
 using Stellantis.ProjectName.Domain.Entities;
 using System.Linq.Expressions;
 using Xunit;
@@ -25,7 +26,7 @@ namespace Application.Tests.Services
         {
             var localizerFactory = LocalizerFactorHelper.Create();
             _unitOfWorkMock.SetupGet(x => x.EmployeeRepository).Returns(_repositoryMock.Object);
-            _service = new EmployeeService(_unitOfWorkMock.Object, localizerFactory);
+            _service = new EmployeeService(_unitOfWorkMock.Object, localizerFactory, null!);
         }
 
         [Fact]

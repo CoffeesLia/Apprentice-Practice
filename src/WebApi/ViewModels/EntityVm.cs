@@ -1,6 +1,6 @@
 ﻿namespace Stellantis.ProjectName.WebApi.ViewModels
 {
-    public class BaseEntityViewModel
+    public class EntityVmBase
     {
         public int Id { get; set; }
     }

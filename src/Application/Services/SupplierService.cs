@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Localization;
+﻿using FluentValidation;
+using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Interfaces.Services;
@@ -9,8 +10,8 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Services
 {
-    public class SupplierService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory)
-        : EntityServiceBase<Supplier, ISupplierRepository>(unitOfWork, localizerFactory), ISupplierService
+    public class SupplierService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<Supplier> validator)
+        : EntityServiceBase<Supplier, ISupplierRepository>(unitOfWork, localizerFactory, validator), ISupplierService
     {
         private readonly IStringLocalizer _supplierLocalizer = localizerFactory.Create(typeof(SupplierResources));
         protected override ISupplierRepository Repository => UnitOfWork.SupplierRepository;

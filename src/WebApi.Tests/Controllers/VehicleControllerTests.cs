@@ -6,10 +6,12 @@ using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Controllers;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
+using Stellantis.ProjectName.WebApi.ViewModels;
 
 namespace WebApi.Tests.Controllers
 {
-    public class VehicleControllerTests : EntityControllerTestsBase<VehicleController, IVehicleService, VehicleDto, Vehicle>
+    public class VehicleControllerTests
+        : EntityControllerTestsBase<VehicleController, IVehicleService, VehicleDto, VehicleVm, Vehicle>
     {
         protected override VehicleController CreateController()
         {
@@ -24,7 +26,7 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             var pagedResult = Fixture.Create<PagedResult<Vehicle>>();
-            var expect = Mapper.Map<PagedResultDto<VehicleDto>>(pagedResult);
+            var expect = Mapper.Map<PagedResultVm<VehicleVm>>(pagedResult);
             var filterDto = Fixture.Create<VehicleFilterDto>();
             ServiceMock
                 .Setup(s => s.GetListAsync(It.IsAny<VehicleFilter>()))

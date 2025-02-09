@@ -88,11 +88,47 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Code is required..
+        /// </summary>
+        public static string CodeIsRequired {
+            get {
+                return ResourceManager.GetString("CodeIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Code maxi length 11..
+        /// </summary>
+        public static string CodeMaxLength {
+            get {
+                return ResourceManager.GetString("CodeMaxLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Description is required..
+        /// </summary>
+        public static string DescriptionIsRequired {
+            get {
+                return ResourceManager.GetString("DescriptionIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Duplicate partnumbers..
         /// </summary>
         public static string Duplicated {
             get {
                 return ResourceManager.GetString("Duplicated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Chassis is required..
+        /// </summary>
+        public static string TypeIsRequired {
+            get {
+                return ResourceManager.GetString("TypeIsRequired", resourceCulture);
             }
         }
         

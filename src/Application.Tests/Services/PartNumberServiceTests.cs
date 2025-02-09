@@ -8,8 +8,10 @@ using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Application.Services;
+using Stellantis.ProjectName.Application.Validators;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Domain.Enums;
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using Xunit;
 
@@ -26,7 +28,8 @@ namespace Application.Tests.Services
         {
             IStringLocalizerFactory localizerFactory = LocalizerFactorHelper.Create();
             _unitOfWorkMock.SetupGet(x => x.PartNumberRepository).Returns(_repositoryMock.Object);
-            _service = new PartNumberService(_unitOfWorkMock.Object, localizerFactory);
+            var validator = new PartNumberValidator(localizerFactory);
+            _service = new PartNumberService(_unitOfWorkMock.Object, localizerFactory, validator);
         }
 
         /// <summary>
@@ -38,7 +41,7 @@ namespace Application.Tests.Services
         public async Task CreateAsync_Fail_WhenCodeExists()
         {
             // Arrange
-            var partNumber = new Fixture().Create<PartNumber>();
+            var partNumber = new PartNumber(_fixture.Create<string>()[..11], _fixture.Create<string>(), PartNumberType.Internal);
             _repositoryMock
                 .Setup(x => x.VerifyCodeExists(partNumber.Code!))
                 .Returns(true);

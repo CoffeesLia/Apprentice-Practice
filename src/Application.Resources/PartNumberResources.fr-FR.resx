@@ -126,10 +126,22 @@
   <data name="AlreadyExistForThisVehicle" xml:space="preserve">
     <value>Existe déjà pour ce véhicule.</value>
   </data>
+  <data name="CodeIsRequired" xml:space="preserve">
+    <value>Le châssis est requis.</value>
+  </data>
+  <data name="DescriptionIsRequired" xml:space="preserve">
+    <value>Le châssis est requis.</value>
+  </data>
+  <data name="TypeIsRequired" xml:space="preserve">
+    <value>Le châssis est requis.</value>
+  </data>
   <data name="Duplicated" xml:space="preserve">
     <value>Dessins en double.</value>
   </data>
   <data name="Undeleted" xml:space="preserve">
     <value>Ne peut pas être supprimé car il est lié à un fournisseur ou un véhicule.</value>
+  </data>
+  <data name="CodeMaxLength" xml:space="preserve">
+    <value>Le châssis est requis.</value>
   </data>
 </root>

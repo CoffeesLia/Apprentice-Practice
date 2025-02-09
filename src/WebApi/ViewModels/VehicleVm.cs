@@ -1,6 +1,6 @@
-﻿namespace Stellantis.ProjectName.WebApi.Dto
+﻿namespace Stellantis.ProjectName.WebApi.ViewModels
 {
-    public class VehicleDto(string chassi)
+    public class VehicleVm(string chassi) : EntityVmBase
     {
         public string Chassi { get; set; } = chassi;
         public Dictionary<int, decimal> PartNumbers { get; } = [];

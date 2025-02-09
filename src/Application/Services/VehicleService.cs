@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Localization;
+﻿using FluentValidation;
+using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Interfaces.Services;
@@ -9,8 +10,8 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Services
 {
-    public class VehicleService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory)
-        : EntityServiceBase<Vehicle, IVehicleRepository>(unitOfWork, localizerFactory), IVehicleService
+    public class VehicleService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<Vehicle> validator)
+        : EntityServiceBase<Vehicle, IVehicleRepository>(unitOfWork, localizerFactory, validator), IVehicleService
     {
         protected override IVehicleRepository Repository => UnitOfWork.VehicleRepository;
         private readonly IStringLocalizer _vehicleLocalizer = localizerFactory.Create(typeof(VehicleResources));

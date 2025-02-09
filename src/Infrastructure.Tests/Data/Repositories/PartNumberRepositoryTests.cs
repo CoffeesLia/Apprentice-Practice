@@ -32,7 +32,7 @@ namespace Infrastructure.Tests.Data.Repositories
             var filter = new PartNumberFilter
             {
                 Page = 1,
-                RowsPerPage = 10,
+                PageSize = 10,
                 Code = _fixture.Create<string>()
             };
             const int Count = 10;
@@ -62,7 +62,7 @@ namespace Infrastructure.Tests.Data.Repositories
             var filter = new PartNumberFilter
             {
                 Page = 1,
-                RowsPerPage = 10,
+                PageSize = 10,
                 Description = _fixture.Create<string>()
             };
             const int Count = 10;
@@ -93,7 +93,7 @@ namespace Infrastructure.Tests.Data.Repositories
             var filter = new PartNumberFilter
             {
                 Page = 1,
-                RowsPerPage = 10,
+                PageSize = 10,
                 Type = PartNumberType.External
             };
             const int Count = 10;
