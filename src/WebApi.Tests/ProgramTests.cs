@@ -6,7 +6,7 @@ namespace WebApi.Tests
     public class ProgramTests
     {
         [Fact]
-        public async Task Get_EndpointsReturnSuccessAndCorrectContentType()
+        public async Task Get_Endpoint_ReturnSuccess()
         {
             WebApplicationFactory<Program> _factory = new();
 

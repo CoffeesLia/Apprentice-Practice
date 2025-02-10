@@ -9,7 +9,6 @@ using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Controllers;
-using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Mapper;
 using Stellantis.ProjectName.WebApi.Resources;
 using Stellantis.ProjectName.WebApi.ViewModels;
@@ -51,7 +50,7 @@ namespace WebApi.Tests.Controllers
             var result = await Controller.CreateAsync(null!);
 
             // Assert
-            AssertIsBadRequest(result, ControllerResources.CannotBeNull);
+            AssertHelper.IsBadRequest(result, ControllerResources.CannotBeNull);
         }
 
         /// Given a item,
@@ -179,7 +178,7 @@ namespace WebApi.Tests.Controllers
             var result = await Controller.UpdateAsync(0, null!);
 
             // Assert
-            AssertIsBadRequest(result, ControllerResources.CannotBeNull);
+            AssertHelper.IsBadRequest(result, ControllerResources.CannotBeNull);
         }
 
         /// Given a item,
@@ -212,6 +211,7 @@ namespace WebApi.Tests.Controllers
             // Arrange
             var itemDto = Fixture.Create<TEntityDto>();
             var operationResult = OperationResult.Complete();
+            var expected = Mapper.Map<TEntityVm>(Mapper.Map<TEntity>(itemDto));
             ServiceMock
                 .Setup(s => s.UpdateAsync(It.IsAny<TEntity>()))
                 .ReturnsAsync(operationResult);
@@ -220,33 +220,19 @@ namespace WebApi.Tests.Controllers
             var result = await Controller.UpdateAsync(0, itemDto);
 
             // Assert
+            AssertOkResultAndEqualValue(result, expected);
+        }
+
+        private static void AssertOkResultAndEqualValue(IActionResult result, TEntityVm? expected)
+        {
             var okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.Equal(operationResult, okResult.Value);
+            var item = Assert.IsType<TEntityVm>(okResult.Value);
+            Assert.Equal(expected, item, new GeneralEqualityComparer<TEntityVm?>());
         }
 
         protected static void AssertEqualProperties(TEntityDto itemDto, TEntityVm itemVm)
         {
-            typeof(TEntityDto).GetProperties().ToList()
-                .ForEach(p =>
-                {
-                    var value = p.GetValue(itemDto);
-                    var property = itemVm.GetType().GetProperty(p.Name);
-                    if (property != null)
-                        Assert.Equal(value, property.GetValue(itemVm));
-                });
-        }
-
-        /// <summary>
-        /// Asserts that the result is a BadRequestObjectResult with the expected message.
-        /// </summary>
-        /// <param name="result">Action result.</param>
-        /// <param name="message">Expected message</param>
-        private static void AssertIsBadRequest(IActionResult result, string message)
-        {
-            var expected = ErrorResponse.BadRequest(message);
-            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-            var errorResponse = Assert.IsType<ErrorResponse>(badRequestResult.Value);
-            Assert.Equal(expected, errorResponse);
+            AssertHelper.EqualsProperties(itemDto, itemVm);
         }
 
         protected static void AssertOkResultAndEqualValue(IActionResult result, PagedResultVm<TEntityVm>? expect)

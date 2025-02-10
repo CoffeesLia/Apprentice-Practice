@@ -5,6 +5,7 @@ namespace Stellantis.ProjectName.Application.Interfaces.Services
 {
     public interface ISupplierService : IEntityServiceBase<Supplier>
     {
+        Task<bool> ExistsAsync(int id);
         Task<PagedResult<Supplier>> GetListAsync(SupplierFilter filter);
     }
 }

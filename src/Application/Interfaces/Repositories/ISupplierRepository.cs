@@ -8,5 +8,6 @@ namespace Stellantis.ProjectName.Application.Interfaces.Repositories
         Task<Supplier?> GetFullByIdAsync(int id);
         Task<bool> VerifyCodeExistsAsync(string code);
         Task<PagedResult<Supplier>> GetListAsync(SupplierFilter filter);
+        Task<bool> ExistsAsync(int id);
     }
 }

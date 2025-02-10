@@ -77,10 +77,8 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             IQueryable<TEntity> query = Context.Set<TEntity>();
 
             if (includeProperties != null)
-            {
                 foreach (var includeProperty in includeProperties)
                     query = query.Include(includeProperty);
-            }
 
             if (noTracking)
                 query = query.AsNoTracking();

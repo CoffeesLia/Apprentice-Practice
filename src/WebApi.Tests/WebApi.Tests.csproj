@@ -25,6 +25,10 @@
 
   <ItemGroup>
     <Compile Remove="Controllers\PartNumberControllerTests - Copy.cs" />
+    <Compile Remove="Controllers\PartNumberControllerTests.cs" />
+    <Compile Remove="Controllers\PartNumberSupplierControllerTests.cs" />
+    <Compile Remove="Controllers\SupplierControllerTests.cs" />
+    <Compile Remove="Controllers\VehicleControllerTests.cs" />
     <Compile Remove="SupplierControllerTests.cs" />
   </ItemGroup>
 

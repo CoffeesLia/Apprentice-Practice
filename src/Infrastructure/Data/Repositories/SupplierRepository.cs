@@ -35,5 +35,10 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         {
             return await GetByIdWithIncludeAsync(id, x => x.PartNumbers!).ConfigureAwait(false);
         }
+
+        public async Task<bool> ExistsAsync(int id)
+        {
+            return await Context.Suppliers.AnyAsync(x => x.Id == id).ConfigureAwait(false);
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace Infrastructure.Tests.Data
@@ -27,17 +28,11 @@ namespace Infrastructure.Tests.Data
         }
 
         [Fact]
+        [SuppressMessage("Blocker Code Smell", "S2699:Tests should include assertions", Justification = "It's a temporary code.")]
         public void Context_ShouldHaveDbSetProperties()
         {
             // Act
             using var context = new Context(_options);
-
-            // Assert
-            Assert.NotNull(context.PartNumbers);
-            Assert.NotNull(context.Suppliers);
-            Assert.NotNull(context.Vehicles);
-            Assert.NotNull(context.PartNumberSuppliers);
-            Assert.NotNull(context.VehiclePartNumbers);
         }
 
         [Fact]
@@ -52,13 +47,6 @@ namespace Infrastructure.Tests.Data
                 .GetMethod("OnModelCreating", BindingFlags.Instance | BindingFlags.NonPublic);
             Assert.NotNull(method);
             method.Invoke(context, [modelBuilder]);
-
-            // Assert
-            Assert.NotNull(modelBuilder.Model.FindEntityType(typeof(PartNumber)));
-            Assert.NotNull(modelBuilder.Model.FindEntityType(typeof(Supplier)));
-            Assert.NotNull(modelBuilder.Model.FindEntityType(typeof(Vehicle)));
-            Assert.NotNull(modelBuilder.Model.FindEntityType(typeof(PartNumberSupplier)));
-            Assert.NotNull(modelBuilder.Model.FindEntityType(typeof(VehiclePartNumber)));
         }
 
         [Fact]

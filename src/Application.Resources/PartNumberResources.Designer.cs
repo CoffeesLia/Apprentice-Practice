@@ -124,6 +124,24 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Not found..
+        /// </summary>
+        public static string PartNumberNotFound {
+            get {
+                return ResourceManager.GetString("PartNumberNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not found..
+        /// </summary>
+        public static string SupplierNotFound {
+            get {
+                return ResourceManager.GetString("SupplierNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Chassis is required..
         /// </summary>
         public static string TypeIsRequired {

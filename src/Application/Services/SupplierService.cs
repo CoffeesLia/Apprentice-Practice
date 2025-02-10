@@ -21,9 +21,9 @@ namespace Stellantis.ProjectName.Application.Services
             ArgumentNullException.ThrowIfNull(item);
             var (duplicate, message) = VerifyDuplicatePartNumbers(item);
             if (duplicate)
-                return OperationResult.Error(message);
-            else if (await Repository.VerifyCodeExistsAsync(item.Code).ConfigureAwait(false))
-                return OperationResult.Error(_supplierLocalizer[nameof(SupplierResources.AlreadyExistCode)]);
+                return OperationResult.Conflict(message);
+            if (await Repository.VerifyCodeExistsAsync(item.Code).ConfigureAwait(false))
+                return OperationResult.Conflict(_supplierLocalizer[nameof(SupplierResources.AlreadyExistCode)]);
             return await base.CreateAsync(item).ConfigureAwait(false);
         }
 
@@ -31,11 +31,10 @@ namespace Stellantis.ProjectName.Application.Services
         {
             var item = await Repository.GetFullByIdAsync(id).ConfigureAwait(false);
             if (item == null)
-                return OperationResult.Error(Localizer[nameof(GeneralResources.NotFound)]);
-            else if (item.PartNumbers!.Count > 0)
-                return OperationResult.Error(_supplierLocalizer[nameof(SupplierResources.Undeleted)]);
-            else
-                return await base.DeleteAsync(item).ConfigureAwait(false);
+                return OperationResult.NotFound(Localizer[nameof(GeneralResources.NotFound)]);
+            if (item.PartNumbers!.Count > 0)
+                return OperationResult.Conflict(_supplierLocalizer[nameof(SupplierResources.Undeleted)]);
+            return await base.DeleteAsync(item).ConfigureAwait(false);
         }
 
         public override async Task<OperationResult> UpdateAsync(Supplier item)
@@ -43,9 +42,8 @@ namespace Stellantis.ProjectName.Application.Services
             ArgumentNullException.ThrowIfNull(item);
             var (duplicate, message) = VerifyDuplicatePartNumbers(item);
             if (duplicate)
-                return OperationResult.Error(message);
-            else
-                return await base.UpdateAsync(item).ConfigureAwait(false);
+                return OperationResult.Conflict(message);
+            return await base.UpdateAsync(item).ConfigureAwait(false);
         }
 
         public async Task<PagedResult<Supplier>> GetListAsync(SupplierFilter filter)
@@ -64,6 +62,11 @@ namespace Stellantis.ProjectName.Application.Services
                     return (true, _supplierLocalizer[nameof(SupplierResources.DuplicatePartNumbers), string.Join(", ", duplicates.Select(p => p.Key))]);
             }
             return (false, string.Empty);
+        }
+
+        public async Task<bool> ExistsAsync(int id)
+        {
+            return await Repository.ExistsAsync(id).ConfigureAwait(false);
         }
     }
 }

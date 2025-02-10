@@ -144,4 +144,10 @@
   <data name="CodeMaxLength" xml:space="preserve">
     <value>Code maxi length 11.</value>
   </data>
+  <data name="PartNumberNotFound" xml:space="preserve">
+    <value>Not found.</value>
+  </data>
+  <data name="SupplierNotFound" xml:space="preserve">
+    <value>Not found.</value>
+  </data>
 </root>

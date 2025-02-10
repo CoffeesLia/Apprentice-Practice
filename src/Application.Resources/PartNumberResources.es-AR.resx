@@ -144,4 +144,10 @@
   <data name="CodeMaxLength" xml:space="preserve">
     <value>El chasis es obligatorio.</value>
   </data>
+  <data name="PartNumberNotFound" xml:space="preserve">
+    <value>No encontrado.</value>
+  </data>
+  <data name="SupplierNotFound" xml:space="preserve">
+    <value>No encontrado.</value>
+  </data>
 </root>

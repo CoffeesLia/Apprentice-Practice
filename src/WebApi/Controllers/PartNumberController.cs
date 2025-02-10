@@ -10,19 +10,18 @@ using Stellantis.ProjectName.WebApi.ViewModels;
 
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/partnumbers")]
     public sealed class PartNumberController(IMapper mapper, IPartNumberService partNumberService, IStringLocalizerFactory localizerFactory) :
         EntityControllerBase<PartNumberDto, PartNumberVm, PartNumber>(mapper, partNumberService, localizerFactory)
     {
         protected override IPartNumberService Service => (IPartNumberService)base.Service;
 
         [HttpGet]
-        public async Task<IActionResult> GetListAsync([FromQuery] PartNumberFilterDto? filterDto)
+        public async Task<IActionResult> GetListAsync([FromQuery] PartNumberFilterDto filterDto)
         {
             var filter = Mapper.Map<PartNumberFilter>(filterDto);
             var pagedResult = await Service.GetListAysnc(filter!);
-            var result = Mapper.Map<PagedResultVm<ViewModels.PartNumberVm>>(pagedResult);
-
+            var result = Mapper.Map<PagedResultVm<PartNumberVm>>(pagedResult);
             return Ok(result);
         }
     }

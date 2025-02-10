@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Infrastructure.Data
 {
@@ -19,13 +18,5 @@ namespace Stellantis.ProjectName.Infrastructure.Data
             base.OnConfiguring(optionsBuilder);
             optionsBuilder.EnableSensitiveDataLogging();
         }
-
-        public DbSet<Employee> Employees { get; set; }
-
-        public DbSet<PartNumber> PartNumbers { get; set; }
-        public DbSet<Supplier> Suppliers { get; set; }
-        public DbSet<Vehicle> Vehicles { get; set; }
-        public DbSet<PartNumberSupplier> PartNumberSuppliers { get; set; }
-        public DbSet<VehiclePartNumber> VehiclePartNumbers { get; set; }
     }
 }

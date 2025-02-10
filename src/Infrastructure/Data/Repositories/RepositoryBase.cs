@@ -188,9 +188,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         public async Task<PagedResult<TEntity>> GetListAsync(Expression<Func<TEntity, bool>>? filter = null, string? sort = null, string? sortDir = null, string? includeProperties = null, int page = 1, int pageSize = 10)
         {
             ValidatePaginationParameters(page, pageSize);
-
             IQueryable<TEntity> query = BuildQuery(filter, includeProperties);
-
             return await GetListAsync(query, sort, sortDir, page, pageSize).ConfigureAwait(false);
         }
 
@@ -223,6 +221,8 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             return new PagedResult<TEntity>()
             {
+                Page = 1,
+                PageSize = pageSize,
                 Result = [.. list],
                 Total = total
             };
@@ -277,7 +277,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         /// <param name="page">The page number to retrieve.</param>
         /// <param name="pageSize">The number of items per page.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the page or pageSize is less than 1.</exception>
-        private static void ValidatePaginationParameters(int page, int pageSize)
+        protected static void ValidatePaginationParameters(int page, int pageSize)
         {
             if (page < 1)
                 throw new ArgumentOutOfRangeException(nameof(page), "Page number must be greater than 0.");

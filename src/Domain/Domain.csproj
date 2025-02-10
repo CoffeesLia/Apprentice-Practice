@@ -33,7 +33,23 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Entities\Employee.cs" />
+    <Compile Remove="Entities\PartNumber.cs" />
+    <Compile Remove="Entities\PartNumberSupplier.cs" />
+    <Compile Remove="Entities\Supplier.cs" />
+    <Compile Remove="Entities\Vehicle.cs" />
+    <Compile Remove="Entities\VehiclePartNumber.cs" />
+    <Compile Remove="Enums\PartNumberType.cs" />
+    <Compile Remove="Services\VehicleCostService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Domain.Resources\Domain.Resources.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Enums\" />
+    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

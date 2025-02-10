@@ -144,4 +144,10 @@
   <data name="CodeMaxLength" xml:space="preserve">
     <value>シャーシは必須です。</value>
   </data>
+  <data name="PartNumberNotFound" xml:space="preserve">
+    <value>必須です (Hissu desu).</value>
+  </data>
+  <data name="SupplierNotFound" xml:space="preserve">
+    <value>必須です (Hissu desu).</value>
+  </data>
 </root>

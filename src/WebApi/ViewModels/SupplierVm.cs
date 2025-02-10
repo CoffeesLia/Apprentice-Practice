@@ -6,6 +6,5 @@
         public string CompanyName { get; } = companyName;
         public string Phone { get; } = phone;
         public string Address { get; } = address;
-        public Dictionary<int, decimal> PartNumbers { get; } = [];
     }
 }

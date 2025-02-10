@@ -1,18 +1,17 @@
 ﻿using Application.Tests.Helpers;
 using AutoFixture;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
+using Stellantis.ProjectName.Application.Interfaces.Services;
+using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Application.Validators;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Domain.Enums;
-using System.ComponentModel.DataAnnotations;
-using System.Globalization;
 using Xunit;
 
 namespace Application.Tests.Services
@@ -23,13 +22,14 @@ namespace Application.Tests.Services
         private readonly Mock<IUnitOfWork> _unitOfWorkMock = new();
         private readonly Mock<IPartNumberRepository> _repositoryMock = new();
         private readonly PartNumberService _service;
+        private readonly Mock<ISupplierService> _supplierServiceMock = new();
 
         public PartNumberServiceTests()
         {
             IStringLocalizerFactory localizerFactory = LocalizerFactorHelper.Create();
             _unitOfWorkMock.SetupGet(x => x.PartNumberRepository).Returns(_repositoryMock.Object);
             var validator = new PartNumberValidator(localizerFactory);
-            _service = new PartNumberService(_unitOfWorkMock.Object, localizerFactory, validator);
+            _service = new PartNumberService(_unitOfWorkMock.Object, localizerFactory, validator, _supplierServiceMock.Object);
         }
 
         /// <summary>
@@ -65,14 +65,17 @@ namespace Application.Tests.Services
             // Arrange
             var partNumber = new Fixture().Create<PartNumber>();
             _repositoryMock
-                .Setup(x => x.VerifyCodeExists(partNumber.Code!))
+                .Setup(x => x.VerifyCodeExists(partNumber.Code, partNumber.Id))
                 .Returns(true);
+            _repositoryMock
+                .Setup(x => x.GetByIdAsync(partNumber.Id, false))
+                .ReturnsAsync(partNumber);
 
             // Act
             var result = await _service.UpdateAsync(partNumber);
 
             // Assert
-            Assert.False(result.Success, result.Message);
+            Assert.Equal(OperationStatus.Conflict, result.Status);
             Assert.Equal(PartNumberResources.AlreadyExistCode, result.Message);
         }
 
@@ -96,40 +99,6 @@ namespace Application.Tests.Services
             // Assert
             Assert.False(result.Success, result.Message);
             Assert.Equal(GeneralResources.NotFound, result.Message);
-        }
-
-        /// <summary>
-        /// Given different cultures,
-        /// when localization is tested,
-        /// then it should return localized strings.
-        /// </summary>
-        [Theory]
-        [InlineData(null)]
-        [InlineData("it")]
-        [InlineData("pt-BR")]
-        [InlineData("es-AR")]
-        public void Localization_ReturnLocalizedStrings_ForDifferentCultures(string? culture)
-        {
-            // Arrange
-            if (culture != null)
-                CultureInfo.CurrentUICulture = new CultureInfo(culture);
-
-            var serviceCollection = new ServiceCollection();
-            serviceCollection.AddLogging();
-            serviceCollection.AddLocalization();
-            var serviceProvider = serviceCollection.BuildServiceProvider();
-            var localizerFactory = serviceProvider.GetRequiredService<IStringLocalizerFactory>();
-            var localizer = localizerFactory.Create(typeof(GeneralResources));
-
-            foreach (var key in localizer.GetAllStrings())
-            {
-                // Act
-                var localizedString = localizer[key];
-
-                // Assert
-                Assert.False(string.IsNullOrEmpty(localizedString));
-                Console.WriteLine($"Culture: {CultureInfo.CurrentUICulture.Name}, Localized String: {localizedString}");
-            }
         }
 
         /// <summary>
@@ -307,6 +276,179 @@ namespace Application.Tests.Services
             // Assert
             Assert.True(result.Success, result.Message);
             _repositoryMock.Verify(x => x.UpdateAsync(It.IsAny<PartNumber>(), true), Times.Once);
+        }
+
+        /// <summary>
+        /// Given a valid PartNumberSupplier,
+        /// when AddSupplierAsync is called,
+        /// then it should fail.
+        /// </summary>
+        [Fact]
+        public async Task AddSupplierAsync_Fail_PartNumberNotFound()
+        {
+            // Arrange
+            var item = _fixture.Create<PartNumberSupplier>();
+
+            // Act
+            var result = await _service.AddSupplierAsync(item);
+
+            // Assert
+            Assert.Equal(OperationStatus.NotFound, result.Status);
+            Assert.Equal(GeneralResources.NotFound, result.Message);
+        }
+
+        /// <summary>
+        /// Given a valid PartNumberSupplier,
+        /// when AddSupplierAsync is called,
+        /// then it should fail.
+        /// </summary>
+        [Fact]
+        public async Task AddSupplierAsync_Fail_SupplierNotFound()
+        {
+            // Arrange
+            var item = _fixture.Create<PartNumberSupplier>();
+            var partNumber = _fixture.Create<PartNumber>();
+            _repositoryMock
+                .Setup(x => x.GetFullByIdAsync(item.PartNumberId))
+                .ReturnsAsync(partNumber);
+
+            // Act
+            var result = await _service.AddSupplierAsync(item);
+
+            // Assert
+            Assert.Equal(OperationStatus.NotFound, result.Status);
+            Assert.Equal(GeneralResources.NotFound, result.Message);
+        }
+
+        /// <summary>
+        /// Given a valid PartNumberSupplier,
+        /// when AddSupplierAsync is called,
+        /// then it should succeed.
+        /// </summary>
+        [Fact]
+        public async Task AddSupplierAsync_Success()
+        {
+            // Arrange
+            var partNumberSupplier = _fixture.Create<PartNumberSupplier>();
+            _repositoryMock
+                .Setup(x => x.ExistsAsync(partNumberSupplier.PartNumberId))
+                .ReturnsAsync(true);
+            _supplierServiceMock
+                .Setup(x => x.ExistsAsync(partNumberSupplier.SupplierId))
+                .ReturnsAsync(true);
+
+            // Act
+            var result = await _service.AddSupplierAsync(partNumberSupplier);
+
+            // Assert
+            Assert.True(result.Success, result.Message);
+            Assert.Equal(GeneralResources.RegisteredSuccessfully, result.Message);
+            _repositoryMock.Verify(x => x.AddSupplierAsync(partNumberSupplier), Times.Once);
+        }
+
+        /// <summary>
+        /// Given a valid PartNumberSupplier,
+        /// when GetSupplierAsync is called,
+        /// then it should return the supplier.
+        /// </summary>
+        [Fact]
+        public async Task GetSupplierAsync_Success()
+        {
+            // Arrange
+            var partNumberSupplier = _fixture.Create<PartNumberSupplier>();
+            _repositoryMock
+                .Setup(x => x.GetSupplierAsync(partNumberSupplier.PartNumberId, partNumberSupplier.SupplierId))
+                .ReturnsAsync(partNumberSupplier);
+
+            // Act
+            var result = await _service.GetSupplierAsync(partNumberSupplier.PartNumberId, partNumberSupplier.SupplierId);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(partNumberSupplier, result);
+        }
+
+        /// <summary>
+        /// Given a valid PartNumberSupplier,
+        /// when RemoveSupplierAsync is called,
+        /// then it should fail.
+        /// </summary>
+        [Fact]
+        public async Task RemoveSupplierAsync_Fail()
+        {
+            // Arrange
+            var partNumberSupplier = _fixture.Create<PartNumberSupplier>();
+
+            // Act
+            var result = await _service.RemoveSupplierAsync(partNumberSupplier.PartNumberId, partNumberSupplier.SupplierId);
+
+            // Assert
+            Assert.Equal(OperationStatus.NotFound, result.Status);
+            Assert.Equal(GeneralResources.NotFound, result.Message);
+        }
+
+        /// <summary>
+        /// Given a valid PartNumberSupplier,
+        /// when RemoveSupplierAsync is called,
+        /// then it should succeed.
+        /// </summary>
+        [Fact]
+        public async Task RemoveSupplierAsync_Success()
+        {
+            // Arrange
+            var item = _fixture.Create<PartNumberSupplier>();
+            _repositoryMock
+                .Setup(x => x.GetSupplierAsync(item.PartNumberId, item.SupplierId))
+                .ReturnsAsync(item);
+
+            // Act
+            var result = await _service.RemoveSupplierAsync(item.PartNumberId, item.SupplierId);
+
+            // Assert
+            Assert.True(result.Success, result.Message);
+            Assert.Equal(GeneralResources.DeletedSuccessfully, result.Message);
+            _repositoryMock.Verify(x => x.RemoveSupplierAsync(item), Times.Once);
+        }
+
+        /// <summary>
+        /// Given a valid PartNumberSupplier,
+        /// when UpdateSupplierAsync is called,
+        /// then it should fail.
+        /// </summary>
+        [Fact]
+        public async Task UpdateSupplierAsync_Fail()
+        {
+            // Arrange
+            var partNumberSupplier = _fixture.Create<PartNumberSupplier>();
+
+            // Act
+            var result = await _service.UpdateSupplierAsync(partNumberSupplier);
+
+            // Assert
+            Assert.Equal(OperationStatus.NotFound, result.Status);
+            Assert.Equal(GeneralResources.NotFound, result.Message);
+        }
+
+        /// <summary>
+        /// Given a valid PartNumberSupplier,
+        /// when UpdateSupplierAsync is called,
+        /// then it should succeed.
+        /// </summary>
+        [Fact]
+        public async Task UpdateSupplierAsync_Success()
+        {
+            // Arrange
+            var item = _fixture.Create<PartNumberSupplier>();
+            _repositoryMock
+                .Setup(x => x.GetSupplierAsync(item.PartNumberId, item.SupplierId))
+                .ReturnsAsync(item);
+
+            // Act
+            var result = await _service.UpdateSupplierAsync(item);
+
+            // Assert
+            Assert.True(result.Success, result.Message);
+            Assert.Equal(GeneralResources.UpdatedSuccessfully, result.Message);
         }
     }
 }

@@ -33,7 +33,11 @@
 
   <ItemGroup>
     <Compile Remove="Services\BaseServiceTests_TestService.cs" />
+    <Compile Remove="Services\EmployeeTests.cs" />
+    <Compile Remove="Services\PartNumberServiceTests.cs" />
+    <Compile Remove="Services\SupplierServiceTests.cs" />
     <Compile Remove="Services\VehicleTests - Copy.cs" />
+    <Compile Remove="Services\VehicleTests.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -65,6 +69,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Application\Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

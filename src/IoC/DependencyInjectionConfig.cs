@@ -1,14 +1,5 @@
-﻿using FluentValidation;
-using Microsoft.Extensions.DependencyInjection;
-using Stellantis.ProjectName.Application.Interfaces;
-using Stellantis.ProjectName.Application.Interfaces.Repositories;
-using Stellantis.ProjectName.Application.Interfaces.Services;
-using Stellantis.ProjectName.Application.Services;
-using Stellantis.ProjectName.Application.Validators;
-using Stellantis.ProjectName.Domain.Entities;
-using Stellantis.ProjectName.Infrastructure.Data;
-using Stellantis.ProjectName.Infrastructure.Data.Repositories;
-using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Stellantis.ProjectName.IoC
 {
@@ -21,26 +12,22 @@ namespace Stellantis.ProjectName.IoC
             Repositories(services);
         }
 
+        [SuppressMessage("Critical Code Smell", "S1186:Methods should not be empty", Justification = "It's code temporary.")]
+        [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "It's code temporary.")]
         private static void Validators(IServiceCollection services)
         {
-            services.AddTransient<IValidator<PartNumber>, PartNumberValidator>();
-            services.AddTransient<IValidator<Supplier>, SupplierValidator>();
-            services.AddTransient<IValidator<Vehicle>, VehicleValidator>();
         }
 
+        [SuppressMessage("Critical Code Smell", "S1186:Methods should not be empty", Justification = "It's code temporary.")]
+        [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "It's code temporary.")]
         private static void Services(IServiceCollection services)
         {
-            services.AddScoped<IPartNumberService, PartNumberService>();
-            services.AddScoped<IVehicleService, VehicleService>();
-            services.AddScoped<ISupplierService, SupplierService>();
         }
 
+        [SuppressMessage("Critical Code Smell", "S1186:Methods should not be empty", Justification = "It's code temporary.")]
+        [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "It's code temporary.")]
         private static void Repositories(IServiceCollection services)
         {
-            services.AddScoped<IPartNumberRepository, PartNumberRepository>();
-            services.AddScoped<IVehicleRepository, VehicleRepository>();
-            services.AddScoped<ISupplierRepository, SupplierRepository>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
     }
 }

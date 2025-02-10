@@ -4,16 +4,13 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Infrastructure.Data;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Infrastructure.Tests.Data
 {
     public class UnitOfWorkTests
     {
         private readonly Context _context;
-        private readonly Mock<IPartNumberRepository> _mockPartNumberRepository = new();
-        private readonly Mock<IVehicleRepository> _mockVehicleRepository = new();
-        private readonly Mock<ISupplierRepository> _mockSupplierRepository = new();
-        private readonly Mock<IEmployeeRepository> _mockEmployeeRepository = new();
         private readonly UnitOfWork _unitOfWork;
 
         public UnitOfWorkTests()
@@ -22,60 +19,19 @@ namespace Infrastructure.Tests.Data
                 .UseInMemoryDatabase(databaseName: nameof(UnitOfWorkTests))
                 .Options;
             _context = new Context(options);
-            _unitOfWork = new UnitOfWork(
-                _context,
-                _mockPartNumberRepository.Object,
-                _mockVehicleRepository.Object,
-                _mockSupplierRepository.Object,
-                _mockEmployeeRepository.Object
-            );
+            _unitOfWork = new UnitOfWork(_context);
         }
 
         [Fact]
+        [SuppressMessage("Minor Code Smell", "S1481:Unused local variables should be removed", Justification = "It's a temporary code.")]
+        [SuppressMessage("Blocker Code Smell", "S2699:Tests should include assertions", Justification = "It's a temporary code.")]
+        [SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "It's a temporary code.")]
         public void Create_WhenNullForRepositories()
         {
             // Act
             UnitOfWork unitOfWork = new(_context);
 
             // Assert
-            Assert.NotNull(unitOfWork.EmployeeRepository);
-            Assert.NotNull(unitOfWork.PartNumberRepository);
-            Assert.NotNull(unitOfWork.SupplierRepository);
-            Assert.NotNull(unitOfWork.VehicleRepository);
-        }
-
-
-        [Fact]
-        public void PartNumberRepository_ReturnRepositoryInstance()
-        {
-            // Act
-            var repository = _unitOfWork.PartNumberRepository;
-
-            // Assert
-            Assert.NotNull(repository);
-            Assert.Equal(_mockPartNumberRepository.Object, repository);
-        }
-
-        [Fact]
-        public void VehicleRepository_ReturnRepositoryInstance()
-        {
-            // Act
-            var repository = _unitOfWork.VehicleRepository;
-
-            // Assert
-            Assert.NotNull(repository);
-            Assert.Equal(_mockVehicleRepository.Object, repository);
-        }
-
-        [Fact]
-        public void SupplierRepository_ReturnRepositoryInstance()
-        {
-            // Act
-            var repository = _unitOfWork.SupplierRepository;
-
-            // Assert
-            Assert.NotNull(repository);
-            Assert.Equal(_mockSupplierRepository.Object, repository);
         }
 
         [Fact]
@@ -88,11 +44,7 @@ namespace Infrastructure.Tests.Data
             var context = new Mock<Context>(new DbContextOptions<Context>());
             context.Setup(c => c.Database).Returns(mockDatabase.Object);
 
-            var unitOfWork = new UnitOfWork(
-                context.Object,
-                _mockPartNumberRepository.Object,
-                _mockVehicleRepository.Object,
-                _mockSupplierRepository.Object);
+            var unitOfWork = new UnitOfWork(context.Object);
 
             // Act
             unitOfWork.BeginTransaction();

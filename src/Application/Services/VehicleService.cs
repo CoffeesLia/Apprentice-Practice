@@ -21,22 +21,20 @@ namespace Stellantis.ProjectName.Application.Services
             ArgumentNullException.ThrowIfNull(item);
             var (duplicate, message) = VerifyDuplicatePartNumbers(item);
             if (duplicate)
-                return OperationResult.Error(message);
-            else if (await Repository.VerifyChassiExistsAsync(item.Chassi).ConfigureAwait(false))
-                return OperationResult.Error(_vehicleLocalizer[VehicleResources.AlreadyExistChassis]);
-            else
-                return await base.CreateAsync(item).ConfigureAwait(false);
+                return OperationResult.Conflict(message);
+            if (await Repository.VerifyChassiExistsAsync(item.Chassi).ConfigureAwait(false))
+                return OperationResult.Conflict(_vehicleLocalizer[VehicleResources.AlreadyExistChassis]);
+            return await base.CreateAsync(item).ConfigureAwait(false);
         }
 
         public override async Task<OperationResult> DeleteAsync(int id)
         {
             var item = await Repository.GetFullByIdAsync(id).ConfigureAwait(false);
             if (item == null)
-                return OperationResult.Error(base.Localizer[nameof(GeneralResources.NotFound)]);
-            else if (item.PartNumbers.Count > 0)
-                return OperationResult.Error(_vehicleLocalizer[nameof(VehicleResources.Undeleted)]);
-            else
-                return await DeleteAsync(item).ConfigureAwait(false);
+                return OperationResult.NotFound(Localizer[nameof(GeneralResources.NotFound)]);
+            if (item.PartNumbers.Count > 0)
+                return OperationResult.Conflict(_vehicleLocalizer[nameof(VehicleResources.Undeleted)]);
+            return await DeleteAsync(item).ConfigureAwait(false);
         }
 
         public async Task<PagedResult<Vehicle>> GetListAsync(VehicleFilter filter)
@@ -49,20 +47,17 @@ namespace Stellantis.ProjectName.Application.Services
             ArgumentNullException.ThrowIfNull(item);
             var (duplicate, message) = VerifyDuplicatePartNumbers(item);
             if (duplicate)
-                return OperationResult.Error(message);
+                return OperationResult.Conflict(message);
             else
             {
                 UnitOfWork.BeginTransaction();
                 var itemOld = await Repository.GetFullByIdAsync(item.Id).ConfigureAwait(false);
                 if (itemOld == null)
-                    return OperationResult.Error(base.Localizer[nameof(GeneralResources.NotFound)]);
-                else
-                {
-                    Repository.RemovePartnumbers(item.PartNumbers);
-                    await Repository.UpdateAsync(item).ConfigureAwait(false);
-                    await UnitOfWork.CommitAsync().ConfigureAwait(false);
-                    return OperationResult.Complete(Localizer[GeneralResources.UpdatedSuccessfully]);
-                }
+                    return OperationResult.NotFound(Localizer[nameof(GeneralResources.NotFound)]);
+                Repository.RemovePartnumbers(item.PartNumbers);
+                await Repository.UpdateAsync(item).ConfigureAwait(false);
+                await UnitOfWork.CommitAsync().ConfigureAwait(false);
+                return OperationResult.Complete(Localizer[GeneralResources.UpdatedSuccessfully]);
             }
         }
 

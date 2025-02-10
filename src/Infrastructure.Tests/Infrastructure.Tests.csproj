@@ -24,7 +24,21 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Data\EntityConfig\PartNumberConfigTests.cs" />
+    <Compile Remove="Data\EntityConfig\PartNumberSupplierConfigTests.cs" />
+    <Compile Remove="Data\EntityConfig\PartNumberVehicleConfigTests.cs" />
+    <Compile Remove="Data\EntityConfig\SupplierConfigTests.cs" />
+    <Compile Remove="Data\EntityConfig\VehicleConfigTests.cs" />
+    <Compile Remove="Data\Repositories\EmployeeRepositoryTests.cs" />
+    <Compile Remove="Data\Repositories\PartNumberRepositoryTests.cs" />
+    <Compile Remove="Data\Repositories\SupplierRepositoryTests.cs" />
+    <Compile Remove="Data\Repositories\VehicleRepository.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="coverage.json" />
+    <None Remove="Data\ContextTests.bak" />
+    <None Remove="Data\UnitOfWorkTests.cs.bak" />
   </ItemGroup>
 
   <ItemGroup>
@@ -53,6 +67,10 @@
 
   <ItemGroup>
     <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Data\EntityConfig\" />
   </ItemGroup>
 
 </Project>

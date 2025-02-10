@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces.Services;
+using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Resources;
@@ -31,12 +32,13 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             var item = Mapper.Map<TEntity>(itemDto);
             var result = await Service.CreateAsync(item!);
 
-            if (result.Success)
+            return result.Status switch
             {
-                var createdItem = Mapper.Map<TEntityVm>(item);
-                return CreatedAtAction(HttpMethod.Get.Method, new { id = createdItem!.Id }, createdItem);
-            }
-            return BadRequest(result);
+                OperationStatus.Success => CreatedAtAction(HttpMethod.Get.Method, new { id = item!.Id }, Mapper.Map<TEntityVm>(item)),
+                OperationStatus.Conflict => Conflict(result),
+                OperationStatus.InvalidData => UnprocessableEntity(result),
+                _ => BadRequest(result)
+            };
         }
 
         [HttpPut("{id}")]
@@ -46,11 +48,17 @@ namespace Stellantis.ProjectName.WebApi.Controllers
                 return BadRequest(ErrorResponse.BadRequest(Localizer[nameof(ControllerResources.CannotBeNull)]));
 
             var item = Mapper.Map<TEntity>(itemDto);
-            var result = await Service.UpdateAsync(item!);
+            item!.Id = id;
+            var result = await Service.UpdateAsync(item);
 
-            if (result.Success)
-                return Ok(result);
-            return BadRequest(result);
+            return result.Status switch
+            {
+                OperationStatus.Success => Ok(Mapper.Map<TEntityVm>(item)),
+                OperationStatus.Conflict => Conflict(result),
+                OperationStatus.NotFound => NotFound(),
+                OperationStatus.InvalidData => UnprocessableEntity(result),
+                _ => BadRequest(result)
+            };
         }
 
         [HttpGet("{id}")]
@@ -69,9 +77,13 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         public virtual async Task<IActionResult> DeleteAsync(int id)
         {
             var result = await Service.DeleteAsync(id);
-            if (result.Success)
-                return NoContent();
-            return BadRequest(result);// Review, porque deveria retorna not found quando não encontrado. Pensar em alterar o retorno do serviço ou 409 Conflict
+            return result.Status switch
+            {
+                OperationStatus.Success => NoContent(),
+                OperationStatus.Conflict => Conflict(result),
+                OperationStatus.NotFound => NotFound(),
+                _ => BadRequest(result)
+            };
         }
     }
 }

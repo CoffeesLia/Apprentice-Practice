@@ -6,7 +6,6 @@ using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
-using System.ComponentModel.DataAnnotations;
 
 namespace Stellantis.ProjectName.Application.Services
 {
@@ -29,9 +28,8 @@ namespace Stellantis.ProjectName.Application.Services
         {
             var item = await Repository.GetByIdAsync(id).ConfigureAwait(false);
             if (item == null)
-                return OperationResult.Error(Localizer[nameof(GeneralResources.NotFound)]);
-            else
-                return await DeleteAsync(item).ConfigureAwait(false);
+                return OperationResult.NotFound(Localizer[nameof(GeneralResources.NotFound)]);
+            return await DeleteAsync(item).ConfigureAwait(false);
         }
 
         protected async Task<OperationResult> DeleteAsync(TEntity item)
@@ -53,13 +51,11 @@ namespace Stellantis.ProjectName.Application.Services
         public virtual async Task<OperationResult> UpdateAsync(TEntity item)
         {
             ArgumentNullException.ThrowIfNull(item);
-            UnitOfWork.BeginTransaction();
             var itemOld = await Repository.GetByIdAsync(item.Id).ConfigureAwait(false);
             if (itemOld == null)
-                return OperationResult.Error(Localizer[nameof(GeneralResources.NotFound)]);
+                return OperationResult.NotFound(Localizer[nameof(GeneralResources.NotFound)]);
             Repository.DetachEntity(itemOld);
             await Repository.UpdateAsync(item).ConfigureAwait(false);
-            await UnitOfWork.CommitAsync().ConfigureAwait(false);
             return OperationResult.Complete(Localizer[GeneralResources.UpdatedSuccessfully]);
         }
     }

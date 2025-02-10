@@ -10,7 +10,7 @@ using Stellantis.ProjectName.WebApi.ViewModels;
 
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/suppliers")]
     public sealed class SupplierController(IMapper mapper, ISupplierService SupplierService, IStringLocalizerFactory localizerFactory) :
         EntityControllerBase<SupplierDto, SupplierVm, Supplier>(mapper, SupplierService, localizerFactory)
     {

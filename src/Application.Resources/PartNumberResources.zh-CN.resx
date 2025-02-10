@@ -144,4 +144,10 @@
   <data name="CodeMaxLength" xml:space="preserve">
     <value>需要底盘。</value>
   </data>
+  <data name="PartNumberNotFound" xml:space="preserve">
+    <value>未找到 (Wèi zhǎodào).</value>
+  </data>
+  <data name="SupplierNotFound" xml:space="preserve">
+    <value>未找到 (Wèi zhǎodào).</value>
+  </data>
 </root>

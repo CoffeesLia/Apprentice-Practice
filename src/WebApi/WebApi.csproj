@@ -34,15 +34,38 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\PartNumberController.cs" />
+    <Compile Remove="Controllers\PartNumberSupplierController.cs" />
+    <Compile Remove="Controllers\SupplierController.cs" />
+    <Compile Remove="Controllers\SupplierPartNumberController.cs" />
+    <Compile Remove="Controllers\VehicleController.cs" />
     <Compile Remove="Dto\EntityDtoBase.cs" />
+    <Compile Remove="Dto\Filters\PartNumberFilterDto.cs" />
+    <Compile Remove="Dto\Filters\PartNumberSupplierFilterDto.cs" />
+    <Compile Remove="Dto\Filters\SupplierFilterDTO.cs" />
+    <Compile Remove="Dto\Filters\SupplierPartNumberFilterDto.cs" />
+    <Compile Remove="Dto\Filters\VehicleFilterDto.cs" />
+    <Compile Remove="Dto\PartNumberDto.cs" />
     <Compile Remove="Dto\PartNumberSupplierDto.cs" />
+    <Compile Remove="Dto\SupplierDTO.cs" />
+    <Compile Remove="Dto\SupplierPartNumberDto.cs" />
     <Compile Remove="Dto\Validators\PartNumberFilterVmValidator.cs" />
     <Compile Remove="Dto\Validators\PartNumberVmValidator.cs" />
     <Compile Remove="Dto\Validators\SupplierVmValidator.cs" />
     <Compile Remove="Dto\Validators\VehicleVmValidator.cs" />
     <Compile Remove="Dto\Validators\VehicleWithPartNumberVmValidator.cs" />
+    <Compile Remove="Dto\VehicleDto.cs" />
     <Compile Remove="Dto\VehiclePartNumberDto.cs" />
     <Compile Remove="ViewModels\BaseEntityViewModel.cs" />
+    <Compile Remove="ViewModels\PartNumberSupplierVm.cs" />
+    <Compile Remove="ViewModels\PartNumberVm.cs" />
+    <Compile Remove="ViewModels\SupplierPartNumberVm.cs" />
+    <Compile Remove="ViewModels\SupplierVm.cs" />
+    <Compile Remove="ViewModels\VehicleVm.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Mapper\AutoMapperProfile.cs.bak" />
   </ItemGroup>
 
   <ItemGroup>
