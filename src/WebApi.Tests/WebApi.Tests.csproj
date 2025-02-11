@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\EntityControllerTestsBase.cs" />
     <Compile Remove="Controllers\PartNumberControllerTests - Copy.cs" />
     <Compile Remove="Controllers\PartNumberControllerTests.cs" />
     <Compile Remove="Controllers\PartNumberSupplierControllerTests.cs" />

@@ -21,7 +21,7 @@ namespace WebApi.Tests.Controllers
         where TEntityVm : EntityVmBase
         where TEntity : EntityBase
         where TService : class, IEntityServiceBase<TEntity>
-        where TController : EntityControllerBase<TEntityDto, TEntityVm, TEntity>
+        where TController : AreaControllerBase<TEntityDto, TEntityVm, TEntity>
     {
         protected IFixture Fixture { get; }
         protected IMapper Mapper { get; }

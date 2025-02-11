@@ -13,28 +13,25 @@ namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [ApiController]
     [Authorize]
-    public abstract class EntityControllerBase<TEntityDto, TEntityVm, TEntity>(IMapper mapper, IEntityServiceBase<TEntity> service, IStringLocalizerFactory localizerFactory)
+    public abstract class AreaControllerBase(IMapper mapper, IAreaService service, IStringLocalizerFactory localizerFactory)
         : ControllerBase
-        where TEntityDto : class
-        where TEntityVm : EntityVmBase
-        where TEntity : EntityBase
     {
-        protected virtual IEntityServiceBase<TEntity> Service { get; } = service;
+        protected virtual IAreaService Service { get; } = service;
         protected IMapper Mapper { get; } = mapper;
         protected IStringLocalizer Localizer { get; } = localizerFactory.Create(typeof(ControllerResources));
 
         [HttpPost]
-        public virtual async Task<IActionResult> CreateAsync([FromBody] TEntityDto itemDto)
+        public virtual async Task<IActionResult> CreateAsync([FromBody] AreaDto itemDto)
         {
             if (itemDto == null)
                 return BadRequest(ErrorResponse.BadRequest(Localizer[nameof(ControllerResources.CannotBeNull)]));
 
-            var item = Mapper.Map<TEntity>(itemDto);
+            var item = Mapper.Map<Area>(itemDto);
             var result = await Service.CreateAsync(item!);
 
             return result.Status switch
             {
-                OperationStatus.Success => CreatedAtAction(HttpMethod.Get.Method, new { id = item!.Id }, Mapper.Map<TEntityVm>(item)),
+                OperationStatus.Success => CreatedAtAction(HttpMethod.Get.Method, new { id = item!.Id }, Mapper.Map<AreaVm>(item)),
                 OperationStatus.Conflict => Conflict(result),
                 OperationStatus.InvalidData => UnprocessableEntity(result),
                 _ => BadRequest(result)
@@ -42,18 +39,18 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public virtual async Task<IActionResult> UpdateAsync(int id, [FromBody] TEntityDto itemDto)
+        public virtual async Task<IActionResult> UpdateAsync(int id, [FromBody] AreaDto itemDto)
         {
             if (itemDto == null)
                 return BadRequest(ErrorResponse.BadRequest(Localizer[nameof(ControllerResources.CannotBeNull)]));
 
-            var item = Mapper.Map<TEntity>(itemDto);
+            var item = Mapper.Map<Area>(itemDto);
             item!.Id = id;
             var result = await Service.UpdateAsync(item);
 
             return result.Status switch
             {
-                OperationStatus.Success => Ok(Mapper.Map<TEntityVm>(item)),
+                OperationStatus.Success => Ok(Mapper.Map<AreaVm>(item)),
                 OperationStatus.Conflict => Conflict(result),
                 OperationStatus.NotFound => NotFound(),
                 OperationStatus.InvalidData => UnprocessableEntity(result),
@@ -62,14 +59,14 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public virtual async Task<ActionResult<TEntityVm>> GetAsync(int id)
+        public virtual async Task<ActionResult<AreaVm>> GetAsync(int id)
         {
             var item = await Service.GetItemAsync(id);
 
             if (item == null)
                 return NotFound();
 
-            var result = Mapper.Map<TEntityVm>(item);
+            var result = Mapper.Map<AreaVm>(item);
             return Ok(result);
         }
 
