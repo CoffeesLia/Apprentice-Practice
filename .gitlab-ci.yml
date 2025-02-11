@@ -6,22 +6,14 @@ include:
     file: "/job-commons.yml"
 
 variables:
-  # DOCKER_HOST: tcp://docker:2375
-  # DOCKER_TLS_CERTDIR: ""
   REPOSITORY_URL: 924431524709.dkr.ecr.us-east-1.amazonaws.com/digital-esb-app-esb-baseproject-esb
-
-# services:
-#   - docker:24.0.5-dind
 
 stages:
   - build
-  - sonarqube
   - deploy
-
 
 before_script:
   - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 924431524709.dkr.ecr.us-east-1.amazonaws.com
-  #- aws ecr get-login-password --region "${AWS_REGION}" | docker login --username AWS --password-stdin 253882794486.dkr.ecr.us-east-1.amazonaws.com
   - IMAGE_TAG="$(echo $CI_COMMIT_SHA | head -c 8)"
   - VERSION=$(date +"%Y%m%d%H%M")
   - echo $IMAGE_TAG $CI_COMMIT_REF_NAME $VERSION
@@ -35,16 +27,14 @@ web-build:
 
 sonarqube:
   image: 253882794486.dkr.ecr.us-east-1.amazonaws.com/build-tools:latest-devops-master-dotnet
-  stage: sonarqube
+  stage: build
   script:
     - dotnet restore ./src
-    - echo $SONAR_URL $SONAR_LOGIN $CI_PROJECT_NAME $PATH
-    - mono /opt/sonar-scanner-msbuild/SonarScanner.MSBuild.dll begin /d:sonar.host.url=$SONAR_URL /d:sonar.login=$SONAR_LOGIN /k:$CI_PROJECT_NAME /n:$CI_PROJECT_NAME /v:1.0 /d:sonar.coverage.exclusions=**/*
+    - echo $SONAR_URL $SONAR_LOGIN $CI_PROJECT_ID-$CI_PROJECT_NAME $PATH
+    - mono /opt/sonar-scanner-msbuild/SonarScanner.MSBuild.dll begin /d:sonar.host.url=$SONAR_URL /d:sonar.login=$SONAR_LOGIN /k:$CI_PROJECT_ID-$CI_PROJECT_NAME /n:$CI_PROJECT_ID-$CI_PROJECT_NAME /v:1.0 /d:sonar.coverage.exclusions=**/*
     - dotnet build ./src
     - mono /opt/sonar-scanner-msbuild/SonarScanner.MSBuild.dll end /d:sonar.login=$SONAR_LOGIN
   allow_failure: true
-  dependencies:
-    - web-build
 
 deploy:
   extends: .deploy-common
