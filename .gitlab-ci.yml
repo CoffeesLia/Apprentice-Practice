@@ -28,6 +28,7 @@ sonarqube:
   image: 253882794486.dkr.ecr.us-east-1.amazonaws.com/build-tools:latest-devops-master-dotnet
   stage: build
   script:
+    - apt-get update && apt-get install -y dotnet-sdk-8.0
     - dotnet tool install --global dotnet-reportgenerator-globaltool
     - dotnet restore ./src
     - echo $SONAR_URL $SONAR_LOGIN $CI_PROJECT_ID-$CI_PROJECT_NAME $PATH
