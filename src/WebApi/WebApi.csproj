@@ -65,6 +65,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Dockerfile" />
     <None Remove="Mapper\AutoMapperProfile.cs.bak" />
   </ItemGroup>
 
