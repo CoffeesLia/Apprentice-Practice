@@ -10,7 +10,6 @@ variables:
 
 stages:
   - build
-  - sonarqube
   - deploy
 
 before_script:
@@ -28,7 +27,7 @@ web-build:
 
 sonarqube:
   image: 253882794486.dkr.ecr.us-east-1.amazonaws.com/build-tools:latest-devops-master-dotnet
-  stage: sonarqube
+  stage: build
   script:
     - dotnet restore ./src
     - echo $SONAR_URL $SONAR_LOGIN $CI_PROJECT_ID-$CI_PROJECT_NAME $PATH
