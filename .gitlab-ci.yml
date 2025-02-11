@@ -28,15 +28,11 @@ sonarqube:
   image: 253882794486.dkr.ecr.us-east-1.amazonaws.com/build-tools:latest-devops-master-dotnet
   stage: build
   script:
-    - apt-get update && apt-get install -y dotnet-sdk-8.0
-    - dotnet tool install --global dotnet-coverage
-    - export PATH="$PATH:/root/.dotnet/tools"
     - dotnet restore ./src
     - echo $SONAR_URL $SONAR_LOGIN $CI_PROJECT_ID-$CI_PROJECT_NAME $PATH
-    - mono /opt/sonar-scanner-msbuild/SonarScanner.MSBuild.dll begin /d:sonar.host.url=$SONAR_URL /d:sonar.login=$SONAR_LOGIN /k:$CI_PROJECT_ID-$CI_PROJECT_NAME /n:"Portal AMS - API" /v:1.0 /d:sonar.coverage.exclusions="**/*.Tests/*" /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
+    - mono /opt/sonar-scanner-msbuild/SonarScanner.MSBuild.dll begin /d:sonar.host.url=$SONAR_URL /d:sonar.login=$SONAR_LOGIN /k:$CI_PROJECT_ID-$CI_PROJECT_NAME /n:"Portal AMS - API" /v:1.0 /d:sonar.coverage.exclusions="**/*.Tests/*" /d:sonar.cs.vscoveragexml.reportsPaths=./src/**/TestResults/**/coverage.cobertura.xml
     - dotnet build ./src --no-restore
-    - dotnet-coverage collect "dotnet test ./src" -f xml -o "coverage.xml"
-    - export PATH="$PATH:/root/.dotnet/tools"
+    - dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura --collect:"XPlat Code Coverage"
     - mono /opt/sonar-scanner-msbuild/SonarScanner.MSBuild.dll end /d:sonar.login=$SONAR_LOGIN
   allow_failure: true
 
