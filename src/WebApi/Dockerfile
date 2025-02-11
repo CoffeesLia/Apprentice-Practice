@@ -17,7 +17,8 @@ USER appuser
 # Define a health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:8000/health || exit 1
-  
+
+# Expose  
 EXPOSE 8000
 ENV ASPNETCORE_URLS=http://*:8000
 
