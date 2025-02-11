@@ -36,8 +36,6 @@ sonarqube:
     - dotnet build ./src
     - mono /opt/sonar-scanner-msbuild/SonarScanner.MSBuild.dll end /d:sonar.login=$SONAR_LOGIN
   allow_failure: true
-  dependencies:
-    - web-build
 
 deploy:
   extends: .deploy-common
