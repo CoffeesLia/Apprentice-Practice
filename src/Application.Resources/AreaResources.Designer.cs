@@ -77,5 +77,14 @@ namespace Stellantis.ProjectName.Application.Resources {
                 return ResourceManager.GetString("NameIsRequired", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The name must be between {0} and {1} characters long..
+        /// </summary>
+        public static string NameValidateLength {
+            get {
+                return ResourceManager.GetString("NameValidateLength", resourceCulture);
+            }
+        }
     }
 }

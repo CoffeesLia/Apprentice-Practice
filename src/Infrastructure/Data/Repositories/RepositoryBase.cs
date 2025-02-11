@@ -11,7 +11,10 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
     /// </summary>
     /// <typeparam name="TEntity">Type of Entity.</typeparam>
     /// <param name="context">A session with the database and can be used to query and save instances of your entities.</param>
-    public abstract class RepositoryBase<TEntity, TContext>(TContext context) : IRepositoryBase<TEntity> where TEntity : class where TContext : DbContext
+    public abstract class RepositoryBase<TEntity, TContext>(TContext context) 
+        : IRepositoryBase<TEntity> 
+        where TEntity : class 
+        where TContext : DbContext
     {
         public const char Separator = ',';
 
@@ -37,7 +40,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 query = query.Where(filter);
 
             if (!string.IsNullOrWhiteSpace(includeProperties))
-                foreach (var includeProperty in includeProperties.Split([Separator], StringSplitOptions.RemoveEmptyEntries))
+                foreach (var includeProperty in includeProperties.Split(Separator, StringSplitOptions.RemoveEmptyEntries))
                     query = query.Include(includeProperty);
 
             return query;

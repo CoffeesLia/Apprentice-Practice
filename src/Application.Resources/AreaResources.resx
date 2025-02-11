@@ -123,4 +123,7 @@
   <data name="NameIsRequired" xml:space="preserve">
     <value>The name is required.</value>
   </data>
+  <data name="NameValidateLength" xml:space="preserve">
+    <value>The name must be between {0} and {1} characters long.</value>
+  </data>
 </root>
