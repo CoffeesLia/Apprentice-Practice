@@ -34,6 +34,7 @@ sonarqube:
     - mono /opt/sonar-scanner-msbuild/SonarScanner.MSBuild.dll begin /d:sonar.host.url=$SONAR_URL /d:sonar.login=$SONAR_LOGIN /k:$CI_PROJECT_ID-$CI_PROJECT_NAME /n:"Portal AMS - API" /v:1.0 /d:sonar.coverage.exclusions="**/*.Tests/*" /d:sonar.cs.opencover.reportsPaths=./coverage/coverage.opencover.xml
     - dotnet build ./src --no-restore
     - dotnet test ./src --collect:"XPlat Code Coverage" --results-directory ./TestResults
+    - export PATH="$PATH:/root/.dotnet/tools"
     - reportgenerator -reports:./TestResults/**/coverage.cobertura.xml -targetdir:./coverage -reporttypes:opencover
     - mono /opt/sonar-scanner-msbuild/SonarScanner.MSBuild.dll end /d:sonar.login=$SONAR_LOGIN
   allow_failure: true
