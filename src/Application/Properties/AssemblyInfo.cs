@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyCopyrightAttribute("© Stellantis. All rights reserved.")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+94b9a02c2ebea41ac73e18918cab5889517ad804")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a94760610ee2035843793527120dfed4b7777fe6")]
 [assembly: System.Reflection.AssemblyProductAttribute("ProjectName")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Stellantis.ProjectName.Application")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
