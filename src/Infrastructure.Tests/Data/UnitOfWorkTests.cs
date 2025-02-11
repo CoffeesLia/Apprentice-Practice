@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Moq;
-using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Infrastructure.Data;
 using System.Diagnostics.CodeAnalysis;
 

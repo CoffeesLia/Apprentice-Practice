@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
-using Stellantis.ProjectName.Infrastructure.Data.Repositories;
 
 namespace Stellantis.ProjectName.Infrastructure.Data
 {
-    public class UnitOfWork(Context context) : IUnitOfWork
+    public class UnitOfWork(Context context, IAreaRepository? areaRepository = null) : IUnitOfWork
     {
         private IDbContextTransaction? _transaction;
+        public IAreaRepository AreaRepository { get; } = areaRepository ?? new AreaRepository();
 
         public void BeginTransaction()
         {

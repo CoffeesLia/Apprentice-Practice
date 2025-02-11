@@ -32,10 +32,12 @@ namespace WebApi.Tests.Controllers
                         if (xValue is IEnumerable xEnumerable && yValue is IEnumerable yEnumerable)
                             EnumerablesAreEqual(xEnumerable, yEnumerable);
                         else
+                        {
                             if (xProperty.PropertyType.IsPrimitive)
                                 Assert.Equal(xValue, yValue);
-                        else
-                            Assert.Equal(xValue, yValue);
+                            else
+                                Assert.Equal(xValue, yValue);
+                        }
                     }
                 });
         }

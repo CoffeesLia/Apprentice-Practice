@@ -11,7 +11,6 @@ namespace Stellantis.ProjectName.Application.Validators
         {
             ArgumentNullException.ThrowIfNull(localizerFactory);
             var localizer = localizerFactory.Create(typeof(PartNumberResources));
-            ArgumentNullException.ThrowIfNull(localizer);
             RuleFor(x => x.Code)
                 .NotNull()
                 .NotEmpty()

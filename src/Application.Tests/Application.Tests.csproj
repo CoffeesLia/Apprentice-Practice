@@ -41,6 +41,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="ResourcesTests.cs.bak" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoFixture" Version="4.18.1" />
     <PackageReference Include="coverlet.collector" Version="6.0.4">
       <PrivateAssets>all</PrivateAssets>
@@ -69,10 +73,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Application\Application.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

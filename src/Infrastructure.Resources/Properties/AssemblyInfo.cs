@@ -14,7 +14,7 @@ using System.Reflection;
 
 [assembly: NeutralResourcesLanguage("en")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("Stellantis")]
-[assembly: System.Reflection.AssemblyCopyright("� Stellantis. All rights reserved.")]
+[assembly: System.Reflection.AssemblyCopyright("© Stellantis. All rights reserved.")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+36ef5af2dbfe0a8e9ede90270c8f9aa757de2f6b")]

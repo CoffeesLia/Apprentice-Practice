@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;

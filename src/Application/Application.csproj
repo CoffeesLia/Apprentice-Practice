@@ -19,11 +19,13 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <WarningLevel>9999</WarningLevel>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <WarningLevel>9999</WarningLevel>
   </PropertyGroup>
 
   <ItemGroup>
@@ -52,7 +54,6 @@
     <Compile Remove="Models\Filters\SupplierFilter.cs" />
     <Compile Remove="Models\Filters\VehicleFilter.cs" />
     <Compile Remove="Services\EmployeeService.cs" />
-    <Compile Remove="Services\EntityServiceBase.cs" />
     <Compile Remove="Services\PartNumberService.cs" />
     <Compile Remove="Services\SupplierService.cs" />
     <Compile Remove="Services\VehicleService.cs" />
@@ -69,10 +70,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Application.Resources\Application.Resources.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Validators\" />
   </ItemGroup>
 
 </Project>

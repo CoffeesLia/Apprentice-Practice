@@ -9,7 +9,7 @@ namespace Application.Tests
 {
     public class ResourcesTests
     {
-        private static readonly string[] SupportedCultures = ["en-US"];
+        private static readonly string[] SupportedCultures = ["es-AR", "en-US", "fr-FR", "it-IT", "ja-JP", "pt-BR", "zh-CN"];
         private readonly IStringLocalizerFactory LocalizerFactor;
 
         public ResourcesTests() => LocalizerFactor = LocalizerFactorHelper.Create();
@@ -35,13 +35,33 @@ namespace Application.Tests
         }
 
         [Fact]
-        public void AreaResources_AllCultures()
+        public void PartNumberResources_AllCultures()
         {
-            var resource = new AreaResources();
+            var resource = new PartNumberResources();
             Assert.NotNull(resource);
-            AreaResources.Culture = CultureInfo.InvariantCulture;
-            Assert.Equal(CultureInfo.InvariantCulture, AreaResources.Culture);
-            VerifyAllResources<AreaResources>(AreaResources.ResourceManager);
+            PartNumberResources.Culture = CultureInfo.InvariantCulture;
+            Assert.Equal(CultureInfo.InvariantCulture, PartNumberResources.Culture);
+            VerifyAllResources<PartNumberResources>(PartNumberResources.ResourceManager);
+        }
+
+        [Fact]
+        public void SupplierResources_AllCultures()
+        {
+            var resource = new SupplierResources();
+            Assert.NotNull(resource);
+            SupplierResources.Culture = CultureInfo.InvariantCulture;
+            Assert.Equal(CultureInfo.InvariantCulture, SupplierResources.Culture);
+            VerifyAllResources<SupplierResources>(SupplierResources.ResourceManager);
+        }
+
+        [Fact]
+        public void VehicleResources_AllCultures()
+        {
+            var resource = new VehicleResources();
+            Assert.NotNull(resource);
+            VehicleResources.Culture = CultureInfo.InvariantCulture;
+            Assert.Equal(CultureInfo.InvariantCulture, VehicleResources.Culture);
+            VerifyAllResources<VehicleResources>(VehicleResources.ResourceManager);
         }
 
         private void VerifyAllResources<TResouces>(ResourceManager resourceManager)
