@@ -32,9 +32,9 @@ sonarqube:
     - echo $SONAR_URL $SONAR_LOGIN $CI_PROJECT_ID-$CI_PROJECT_NAME $PATH
     - mono /opt/sonar-scanner-msbuild/SonarScanner.MSBuild.dll begin /d:sonar.host.url=$SONAR_URL /d:sonar.login=$SONAR_LOGIN /k:$CI_PROJECT_ID-$CI_PROJECT_NAME /n:"Portal AMS - API" /v:1.0 /d:sonar.coverage.exclusions="**/*.Tests/*" /d:sonar.cs.opencover.reportsPaths=./src/coverage.xml
     - dotnet build ./src --no-restore
-    - dotnet test ./src /p:CollectCoverage=true /p:CoverletOutput=./src/coverage.xml /p:CoverletOutputFormat=opencover
+    - dotnet test ./src /p:CollectCoverage=true /p:CoverletOutput=./src/coverage.xml /p:CoverletOutputFormat=opencover --collect:"XPlat Code Coverage"
+    - find . -name "coverage.xml"
     - mono /opt/sonar-scanner-msbuild/SonarScanner.MSBuild.dll end /d:sonar.login=$SONAR_LOGIN
-    - ls -lh ./src/coverage.xml
   allow_failure: true
 
 deploy:
