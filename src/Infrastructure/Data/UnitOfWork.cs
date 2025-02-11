@@ -7,7 +7,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data
     public class UnitOfWork(Context context, IAreaRepository? areaRepository = null) : IUnitOfWork
     {
         private IDbContextTransaction? _transaction;
-        public IAreaRepository AreaRepository { get; } = areaRepository ?? new AreaRepository();
+        public IAreaRepository AreaRepository { get; } = areaRepository ?? new AreaRepository(context);
 
         public void BeginTransaction()
         {

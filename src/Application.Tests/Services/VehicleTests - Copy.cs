@@ -50,7 +50,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.True(result.Success);
-            Assert.Equal(GeneralResources.SuccessRegister, result.Message);
+            Assert.Equal(ServiceResources.SuccessRegister, result.Message);
         }
 
         [Fact]
@@ -71,7 +71,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.True(result.Success);
-            Assert.Equal(GeneralResources.SuccessRegister, result.Message);
+            Assert.Equal(ServiceResources.SuccessRegister, result.Message);
         }
 
         [Fact]
@@ -151,7 +151,7 @@ namespace Application.Tests.Services
             var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () => await _service.UpdateAsync(addVehicleInputModel));
 
             // Assert
-            Assert.Equal(GeneralResources.NotFound, exception.Message);
+            Assert.Equal(ServiceResources.NotFound, exception.Message);
         }
 
         [Fact]
@@ -210,7 +210,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.True(result.Success);
-            Assert.Equal(GeneralResources.SuccessDelete, result.Message);
+            Assert.Equal(ServiceResources.SuccessDelete, result.Message);
         }
 
         [Fact]
@@ -226,7 +226,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.False(result.Success);
-            Assert.Equal(GeneralResources.NotFound, result.Message);
+            Assert.Equal(ServiceResources.NotFound, result.Message);
         }
 
         [Fact]

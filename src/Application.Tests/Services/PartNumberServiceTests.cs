@@ -98,7 +98,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.False(result.Success, result.Message);
-            Assert.Equal(GeneralResources.NotFound, result.Message);
+            Assert.Equal(ServiceResources.NotFound, result.Message);
         }
 
         /// <summary>
@@ -181,7 +181,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.False(result.Success, result.Message);
-            Assert.Equal(GeneralResources.NotFound, result.Message);
+            Assert.Equal(ServiceResources.NotFound, result.Message);
         }
 
         /// <summary>
@@ -203,7 +203,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.True(result.Success, result.Message);
-            Assert.Equal(GeneralResources.DeletedSuccessfully, result.Message);
+            Assert.Equal(ServiceResources.DeletedSuccessfully, result.Message);
         }
 
         /// <summary>
@@ -252,7 +252,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.True(result.Success, result.Message);
-            Assert.Equal(GeneralResources.RegisteredSuccessfully, result.Message);
+            Assert.Equal(ServiceResources.RegisteredSuccessfully, result.Message);
             _repositoryMock.Verify(x => x.CreateAsync(It.IsAny<PartNumber>(), true), Times.Once);
         }
 
@@ -294,7 +294,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(OperationStatus.NotFound, result.Status);
-            Assert.Equal(GeneralResources.NotFound, result.Message);
+            Assert.Equal(ServiceResources.NotFound, result.Message);
         }
 
         /// <summary>
@@ -317,7 +317,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(OperationStatus.NotFound, result.Status);
-            Assert.Equal(GeneralResources.NotFound, result.Message);
+            Assert.Equal(ServiceResources.NotFound, result.Message);
         }
 
         /// <summary>
@@ -342,7 +342,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.True(result.Success, result.Message);
-            Assert.Equal(GeneralResources.RegisteredSuccessfully, result.Message);
+            Assert.Equal(ServiceResources.RegisteredSuccessfully, result.Message);
             _repositoryMock.Verify(x => x.AddSupplierAsync(partNumberSupplier), Times.Once);
         }
 
@@ -384,7 +384,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(OperationStatus.NotFound, result.Status);
-            Assert.Equal(GeneralResources.NotFound, result.Message);
+            Assert.Equal(ServiceResources.NotFound, result.Message);
         }
 
         /// <summary>
@@ -406,7 +406,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.True(result.Success, result.Message);
-            Assert.Equal(GeneralResources.DeletedSuccessfully, result.Message);
+            Assert.Equal(ServiceResources.DeletedSuccessfully, result.Message);
             _repositoryMock.Verify(x => x.RemoveSupplierAsync(item), Times.Once);
         }
 
@@ -426,7 +426,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(OperationStatus.NotFound, result.Status);
-            Assert.Equal(GeneralResources.NotFound, result.Message);
+            Assert.Equal(ServiceResources.NotFound, result.Message);
         }
 
         /// <summary>
@@ -448,7 +448,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.True(result.Success, result.Message);
-            Assert.Equal(GeneralResources.UpdatedSuccessfully, result.Message);
+            Assert.Equal(ServiceResources.UpdatedSuccessfully, result.Message);
         }
     }
 }

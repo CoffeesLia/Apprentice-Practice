@@ -98,7 +98,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.True(result.Success, result.Message);
-            Assert.Equal(GeneralResources.RegisteredSuccessfully, result.Message);
+            Assert.Equal(ServiceResources.RegisteredSuccessfully, result.Message);
         }
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.True(result.Success, result.Message);
-            Assert.Equal(GeneralResources.RegisteredSuccessfully, result.Message);
+            Assert.Equal(ServiceResources.RegisteredSuccessfully, result.Message);
         }
 
         /// <summary>
@@ -161,7 +161,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.False(result.Success, result.Message);
-            Assert.Equal(GeneralResources.NotFound, result.Message);
+            Assert.Equal(ServiceResources.NotFound, result.Message);
         }
 
         /// <summary>
@@ -183,7 +183,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.True(result.Success, result.Message);
-            Assert.Equal(GeneralResources.DeletedSuccessfully, result.Message);
+            Assert.Equal(ServiceResources.DeletedSuccessfully, result.Message);
         }
 
         /// <summary>
@@ -275,7 +275,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.False(result.Success, result.Message);
-            Assert.Equal(GeneralResources.NotFound, result.Message);
+            Assert.Equal(ServiceResources.NotFound, result.Message);
         }
 
         /// <summary>
@@ -301,7 +301,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.True(result.Success, result.Message);
-            Assert.Equal(GeneralResources.UpdatedSuccessfully, result.Message);
+            Assert.Equal(ServiceResources.UpdatedSuccessfully, result.Message);
         }
 
         /// <summary>
@@ -324,7 +324,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.True(result.Success, result.Message);
-            Assert.Equal(GeneralResources.UpdatedSuccessfully, result.Message);
+            Assert.Equal(ServiceResources.UpdatedSuccessfully, result.Message);
         }
     }
 }

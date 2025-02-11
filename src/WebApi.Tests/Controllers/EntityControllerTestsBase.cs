@@ -80,7 +80,7 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             var itemDto = Fixture.Create<TEntityDto>();
-            var operationResult = OperationResult.Complete(GeneralResources.RegisteredSuccessfully);
+            var operationResult = OperationResult.Complete(ServiceResources.RegisteredSuccessfully);
             ServiceMock.Setup(s => s.CreateAsync(It.IsAny<TEntity>())).ReturnsAsync(operationResult);
 
             // Act
@@ -120,7 +120,7 @@ namespace WebApi.Tests.Controllers
         public async Task DeleteAsync_Success()
         {
             // Arrange
-            var operationResult = OperationResult.Complete(GeneralResources.DeletedSuccessfully);
+            var operationResult = OperationResult.Complete(ServiceResources.DeletedSuccessfully);
             ServiceMock.Setup(s => s.DeleteAsync(It.IsAny<int>())).ReturnsAsync(operationResult);
 
             // Act

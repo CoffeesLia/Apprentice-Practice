@@ -6,7 +6,7 @@ namespace Stellantis.ProjectName.Application.Services
 {
     public abstract class ServiceBase(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory)
     {
-        protected IStringLocalizer Localizer => localizerFactory.Create(typeof(GeneralResources));
+        protected IStringLocalizer Localizer => localizerFactory.Create(typeof(ServiceResources));
         protected IUnitOfWork UnitOfWork { get; } = unitOfWork;
     }
 }

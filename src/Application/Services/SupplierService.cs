@@ -31,7 +31,7 @@ namespace Stellantis.ProjectName.Application.Services
         {
             var item = await Repository.GetFullByIdAsync(id).ConfigureAwait(false);
             if (item == null)
-                return OperationResult.NotFound(Localizer[nameof(GeneralResources.NotFound)]);
+                return OperationResult.NotFound(Localizer[nameof(ServiceResources.NotFound)]);
             if (item.PartNumbers!.Count > 0)
                 return OperationResult.Conflict(_supplierLocalizer[nameof(SupplierResources.Undeleted)]);
             return await base.DeleteAsync(item).ConfigureAwait(false);

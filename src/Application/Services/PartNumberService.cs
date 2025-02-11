@@ -43,7 +43,7 @@ namespace Stellantis.ProjectName.Application.Services
         {
             var item = await Repository.GetFullByIdAsync(id).ConfigureAwait(false);
             if (item == null)
-                return OperationResult.NotFound(Localizer[nameof(GeneralResources.NotFound)]);
+                return OperationResult.NotFound(Localizer[nameof(ServiceResources.NotFound)]);
             if (item.Suppliers.Count > 0 || item.Vehicles.Count > 0)
                 return OperationResult.Conflict(_partNumberLocalizer[nameof(PartNumberResources.Undeleted)]);
             return await base.DeleteAsync(item).ConfigureAwait(false);
@@ -101,7 +101,7 @@ namespace Stellantis.ProjectName.Application.Services
                     if (await Repository.ExistsSupplierAsync(item.PartNumberId, item.SupplierId).ConfigureAwait(false))
                         return OperationResult.Conflict(_partNumberLocalizer[nameof(PartNumberResources.AlreadyExistForThisSupplier)]);
                     await Repository.AddSupplierAsync(item).ConfigureAwait(false);
-                    return OperationResult.Complete(Localizer[nameof(GeneralResources.RegisteredSuccessfully)]);
+                    return OperationResult.Complete(Localizer[nameof(ServiceResources.RegisteredSuccessfully)]);
                 }
                 return OperationResult.NotFound(_partNumberLocalizer[nameof(PartNumberResources.SupplierNotFound)]);
             }
@@ -129,10 +129,10 @@ namespace Stellantis.ProjectName.Application.Services
         {
             var item = await Repository.GetSupplierAsync(partNumberId, supplierId).ConfigureAwait(false);
             if (item == null)
-                return OperationResult.NotFound(Localizer[nameof(GeneralResources.NotFound)]);
+                return OperationResult.NotFound(Localizer[nameof(ServiceResources.NotFound)]);
 
             await Repository.RemoveSupplierAsync(item).ConfigureAwait(false);
-            return OperationResult.Complete(Localizer[nameof(GeneralResources.DeletedSuccessfully)]);
+            return OperationResult.Complete(Localizer[nameof(ServiceResources.DeletedSuccessfully)]);
         }
 
         /// <summary>
@@ -145,10 +145,10 @@ namespace Stellantis.ProjectName.Application.Services
             ArgumentNullException.ThrowIfNull(item);
             var itemOld = await Repository.GetSupplierAsync(item.PartNumberId, item.SupplierId).ConfigureAwait(false);
             if (itemOld == null)
-                return OperationResult.NotFound(Localizer[nameof(GeneralResources.NotFound)]);
+                return OperationResult.NotFound(Localizer[nameof(ServiceResources.NotFound)]);
             itemOld.UnitPrice = item.UnitPrice;
             await UnitOfWork.CommitAsync().ConfigureAwait(false);
-            return OperationResult.Complete(Localizer[GeneralResources.UpdatedSuccessfully]);
+            return OperationResult.Complete(Localizer[ServiceResources.UpdatedSuccessfully]);
         }
 
         public async Task<PagedResult<PartNumberSupplier>> GetSupplierListAsync(PartNumberSupplierFilter filter)

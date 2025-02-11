@@ -31,7 +31,7 @@ namespace Stellantis.ProjectName.Application.Services
         {
             var item = await Repository.GetFullByIdAsync(id).ConfigureAwait(false);
             if (item == null)
-                return OperationResult.NotFound(Localizer[nameof(GeneralResources.NotFound)]);
+                return OperationResult.NotFound(Localizer[nameof(ServiceResources.NotFound)]);
             if (item.PartNumbers.Count > 0)
                 return OperationResult.Conflict(_vehicleLocalizer[nameof(VehicleResources.Undeleted)]);
             return await DeleteAsync(item).ConfigureAwait(false);
@@ -53,11 +53,11 @@ namespace Stellantis.ProjectName.Application.Services
                 UnitOfWork.BeginTransaction();
                 var itemOld = await Repository.GetFullByIdAsync(item.Id).ConfigureAwait(false);
                 if (itemOld == null)
-                    return OperationResult.NotFound(Localizer[nameof(GeneralResources.NotFound)]);
+                    return OperationResult.NotFound(Localizer[nameof(ServiceResources.NotFound)]);
                 Repository.RemovePartnumbers(item.PartNumbers);
                 await Repository.UpdateAsync(item).ConfigureAwait(false);
                 await UnitOfWork.CommitAsync().ConfigureAwait(false);
-                return OperationResult.Complete(Localizer[GeneralResources.UpdatedSuccessfully]);
+                return OperationResult.Complete(Localizer[ServiceResources.UpdatedSuccessfully]);
             }
         }
 

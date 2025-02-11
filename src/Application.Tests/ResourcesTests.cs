@@ -27,11 +27,11 @@ namespace Application.Tests
         [Fact]
         public void GeneralResources_AllCultures()
         {
-            var resource = new GeneralResources();
+            var resource = new ServiceResources();
             Assert.NotNull(resource);
-            GeneralResources.Culture = CultureInfo.InvariantCulture;
-            Assert.Equal(CultureInfo.InvariantCulture, GeneralResources.Culture);
-            VerifyAllResources<GeneralResources>(GeneralResources.ResourceManager);
+            ServiceResources.Culture = CultureInfo.InvariantCulture;
+            Assert.Equal(CultureInfo.InvariantCulture, ServiceResources.Culture);
+            VerifyAllResources<ServiceResources>(ServiceResources.ResourceManager);
         }
 
         [Fact]

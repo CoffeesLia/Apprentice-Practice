@@ -49,9 +49,9 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         /// <param name="id">Entity's id.</param>
         /// <param name="noTracking">Indicates whether to track changes in the context.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains the single element.</returns>
-        public async Task<TEntity?> GetByIdAsync(int id, bool noTracking = false)
+        public async Task<TEntity?> GetByIdAsync(int id)
         {
-            return await GetByIdWithIncludeAsync(id, noTracking).ConfigureAwait(false);
+            return await GetByIdWithIncludeAsync(id).ConfigureAwait(false);
         }
 
         /// <summary>
