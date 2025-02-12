@@ -28,10 +28,9 @@ sonarqube:
   image: 253882794486.dkr.ecr.us-east-1.amazonaws.com/build-tools:latest-devops-master
   stage: build
   script:
-    #- apt-get update && apt-get install -y dotnet-sdk-8.0
-    #- dotnet tool install --global dotnet-coverage
-    #- export PATH="$PATH:/root/.dotnet/tools"
-    - curl -v https://sonarqube.intra.stellantis.com
+    - apt-get update && apt-get install -y dotnet-sdk-8.0
+    - dotnet tool install --global dotnet-coverage
+    - export PATH="$PATH:/root/.dotnet/tools"
     - dotnet restore ./src
     - echo $SONAR_URL $SONAR_LOGIN $CI_PROJECT_ID-$CI_PROJECT_NAME $PATH
     - mono /opt/sonar-scanner-msbuild/SonarScanner.MSBuild.dll begin /d:sonar.host.url=https://sonarqube.intra.stellantis.com /d:sonar.login=squ_4f6391317de359b7c13f44e636dc10271296fd57 /k:com.ste.sa-$CI_PROJECT_ID-$CI_PROJECT_NAME /n:"AMS Portal - Web API" /v:1.0 /d:sonar.coverage.exclusions="**/*.Tests/*" /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
