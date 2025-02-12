@@ -126,4 +126,7 @@
   <data name="NameValidateLength" xml:space="preserve">
     <value>O nome deve ter entre {0} e {1} caracteres.</value>
   </data>
+  <data name="Undeleted" xml:space="preserve">
+    <value>Não é possível excluir uma área que tem aplicações associadas.</value>
+  </data>
 </root>

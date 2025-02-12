@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using FluentValidation.Results;
+using System.Text.Json.Serialization;
 
 namespace Stellantis.ProjectName.Application.Models
 {
@@ -7,9 +8,6 @@ namespace Stellantis.ProjectName.Application.Models
     /// </summary>
     public class OperationResult
     {
-        [JsonIgnore]
-        public bool Success => Status == OperationStatus.Success;
-
         /// <summary>
         /// Gets the status of the operation.
         /// </summary>
@@ -24,23 +22,13 @@ namespace Stellantis.ProjectName.Application.Models
         /// <summary>
         /// Gets the errors associated with the operation result.
         /// </summary>
-        public IReadOnlyList<string> Errors { get; private set; }
+        public IEnumerable<string> Errors { get; private set; }
 
-        private OperationResult(OperationStatus status, string message, IReadOnlyList<string> errors)
+        private OperationResult(OperationStatus status, string message, IEnumerable<string> errors)
         {
             Status = status;
             Message = message;
             Errors = errors;
-        }
-
-        /// <summary>
-        /// Creates an <see cref="OperationResult"/> representing an error.
-        /// </summary>
-        /// <param name="message">The error message.</param>
-        /// <returns>An <see cref="OperationResult"/> with error status.</returns>
-        public static OperationResult Error(string message)
-        {
-            return new OperationResult(OperationStatus.Error, message, [message]);
         }
 
         /// <summary>
@@ -68,9 +56,9 @@ namespace Stellantis.ProjectName.Application.Models
         /// </summary>
         /// <param name="message">The invalid data message.</param>
         /// <returns>An <see cref="OperationResult"/> with invalid data status.</returns>
-        public static OperationResult InvalidData(string message)
+        internal static OperationResult InvalidData(ValidationResult result)
         {
-            return new OperationResult(OperationStatus.InvalidData, message, [message]);
+            return new OperationResult(OperationStatus.InvalidData, "", result.Errors.Select(e => e.ErrorMessage));
         }
 
         /// <summary>
@@ -82,5 +70,6 @@ namespace Stellantis.ProjectName.Application.Models
         {
             return new OperationResult(OperationStatus.NotFound, message, [message]);
         }
+
     }
 }

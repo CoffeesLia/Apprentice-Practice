@@ -79,16 +79,6 @@ namespace Stellantis.ProjectName.Application.Services
         }
 
         /// <summary>
-        /// Gets a paginated list of entities based on the provided filter.
-        /// </summary>
-        /// <param name="filter">The filter to apply to the entity list.</param>
-        /// <returns>A PagedResult containing the filtered list of entities.</returns>
-        public virtual async Task<PagedResult<TEntity>> GetListAsync(Filter filter)
-        {
-            return await Repository.GetListAsync(sort: filter?.Sort, sortDir: filter?.SortDir, page: filter?.Page ?? 1, pageSize: filter?.PageSize ?? 10).ConfigureAwait(false);
-        }
-
-        /// <summary>
         /// Updates an existing entity.
         /// </summary>
         /// <param name="item">The entity to update.</param>

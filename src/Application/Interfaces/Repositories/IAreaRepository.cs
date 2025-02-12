@@ -6,7 +6,7 @@ namespace Stellantis.ProjectName.Application.Interfaces.Repositories
     public interface IAreaRepository : IRepositoryEntityBase<Area>
     {
         public Task<Area?> GetByNameAsync(string name);
-
         public Task<PagedResult<Area>> GetListAsync(AreaFilter filter);
+        Task<bool> HasApplicationsAsync(int id);
     }
 }

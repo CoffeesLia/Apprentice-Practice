@@ -3,7 +3,6 @@
     public enum OperationStatus
     {
         Conflict,
-        Error,
         InvalidData,
         NotFound,
         Success

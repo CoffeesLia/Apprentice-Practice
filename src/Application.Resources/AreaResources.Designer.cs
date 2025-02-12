@@ -86,5 +86,14 @@ namespace Stellantis.ProjectName.Application.Resources {
                 return ResourceManager.GetString("NameValidateLength", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You cannot delete an area that has associated applications..
+        /// </summary>
+        public static string Undeleted {
+            get {
+                return ResourceManager.GetString("Undeleted", resourceCulture);
+            }
+        }
     }
 }

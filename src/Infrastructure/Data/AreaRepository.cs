@@ -17,5 +17,10 @@ namespace Stellantis.ProjectName.Infrastructure.Data
         {
             throw new NotImplementedException();
         }
+
+        public Task<bool> HasApplicationsAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
