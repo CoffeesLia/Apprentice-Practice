@@ -4,7 +4,6 @@ namespace Stellantis.ProjectName.Application.Interfaces
 {
     public interface IUnitOfWork
     {
-        IAreaRepository AreaRepository { get; }
         Task CommitAsync();
         void BeginTransaction();
     }

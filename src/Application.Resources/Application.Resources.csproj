@@ -31,6 +31,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="AreaResources.resx.Designer.cs" />
     <Compile Remove="PartNumberResources.Designer.cs" />
     <Compile Remove="SupplierResources.Designer.cs" />
     <Compile Remove="VehicleResources.Designer.cs" />
@@ -61,11 +62,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="AreaResources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>AreaResources.resx</DependentUpon>
-    </Compile>
+    <None Remove="AreaResources.pt-BR.resx.bak" />
+    <None Remove="AreaResources.resx.bak" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="FilterResources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -79,10 +80,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="AreaResources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>AreaResources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <EmbeddedResource Update="FilterResources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>FilterValidatorResource.Designer.cs</LastGenOutput>

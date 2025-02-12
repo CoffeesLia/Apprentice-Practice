@@ -44,6 +44,8 @@
 
   <ItemGroup>
     <None Remove="ResourcesTests.cs.bak" />
+    <None Remove="Services\AreaServiceTests.cs.bak" />
+    <None Remove="Validators\AreaValidatorTests.cs.bak" />
   </ItemGroup>
 
   <ItemGroup>
@@ -75,6 +77,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Application\Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\" />
+    <Folder Include="Validators\" />
   </ItemGroup>
 
 </Project>

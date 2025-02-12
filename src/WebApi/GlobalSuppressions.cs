@@ -16,7 +16,5 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Maintainability", "CA1515:Consider making public types internal", Justification = "<Pending>", Scope = "type", Target = $"~T:Stellantis.ProjectName.WebApi.ViewModels.PagedResultVm`1")]
 [assembly: SuppressMessage("Maintainability", "CA1515:Consider making public types internal", Justification = "<Pending>", Scope = "type", Target = "~T:Stellantis.ProjectName.WebApi.ViewModels.AreaVm")]
 [assembly: SuppressMessage("Maintainability", "CA1515:Consider making public types internal", Justification = "<Pending>", Scope = "type", Target = "~T:Stellantis.ProjectName.WebApi.Dto.AreaDto")]
-[assembly: SuppressMessage("Maintainability", "CA1515:Consider making public types internal", Justification = "<Pending>", Scope = "type", Target = "~T:Stellantis.ProjectName.WebApi.Controllers.AreaControllerBase")]
-[assembly: SuppressMessage("Reliability", "CA2007:Consider calling ConfigureAwait on the awaited task", Justification = "<Pending>", Scope = "type", Target = "~T:Stellantis.ProjectName.WebApi.Controllers.AreaControllerBase")]
 [assembly: SuppressMessage("Reliability", "CA2007:Consider calling ConfigureAwait on the awaited task", Justification = "<Pending>", Scope = "type", Target = "~T:Stellantis.ProjectName.WebApi.Controllers.EntityControllerBase`2")]
 [assembly: SuppressMessage("Maintainability", "CA1515:Consider making public types internal", Justification = "<Pending>", Scope = "type", Target = "~T:Stellantis.ProjectName.WebApi.Controllers.EntityControllerBase`2")]

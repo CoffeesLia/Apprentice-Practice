@@ -38,6 +38,7 @@
   <ItemGroup>
     <None Remove="coverage.json" />
     <None Remove="Data\ContextTests.bak" />
+    <None Remove="Data\Repositories\AreaRepositoryTests.cs.bak" />
     <None Remove="Data\UnitOfWorkTests.cs.bak" />
   </ItemGroup>
 

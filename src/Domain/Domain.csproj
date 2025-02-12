@@ -46,6 +46,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Entities\Area.cs.bak" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Domain.Resources\Domain.Resources.csproj" />
   </ItemGroup>
 

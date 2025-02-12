@@ -2,10 +2,9 @@
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
-using Stellantis.ProjectName.Infrastructure.Data.Repositories;
 using System.Data.Entity;
 
-namespace Stellantis.ProjectName.Infrastructure.Data
+namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
     public class AreaRepository(Context context)
         : RepositoryEntityBase<Area, Context>(context), IAreaRepository
@@ -13,7 +12,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data
         public async Task<Area?> GetByNameAsync(string name)
         {
 
-            return await this.Context.Areas.AsQueryable().SingleOrDefaultAsync(x => x.Name == name).ConfigureAwait(false);
+            return await Context.Areas.AsQueryable().SingleOrDefaultAsync(x => x.Name == name).ConfigureAwait(false);
         }
 
         public async Task<PagedResult<Area>> GetListAsync(AreaFilter? filter)

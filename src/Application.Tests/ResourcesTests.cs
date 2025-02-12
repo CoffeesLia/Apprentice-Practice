@@ -34,16 +34,6 @@ namespace Application.Tests
             VerifyAllResources<ServiceResources>(ServiceResources.ResourceManager);
         }
 
-        [Fact]
-        public void AreaResources_AllCultures()
-        {
-            var resource = new AreaResources();
-            Assert.NotNull(resource);
-            AreaResources.Culture = CultureInfo.InvariantCulture;
-            Assert.Equal(CultureInfo.InvariantCulture, AreaResources.Culture);
-            VerifyAllResources<AreaResources>(AreaResources.ResourceManager);
-        }
-
         private void VerifyAllResources<TResouces>(ResourceManager resourceManager)
         {
             var localizaer = LocalizerFactor.Create(typeof(TResouces));

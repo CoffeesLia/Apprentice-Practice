@@ -61,6 +61,14 @@
     <Compile Remove="Validators\SupplierValidator.cs" />
     <Compile Remove="Validators\VehicleValidator.cs" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Interfaces\Repositories\IAreaRepository.cs.bak" />
+    <None Remove="Interfaces\Services\IAreaService.cs.bak" />
+    <None Remove="Models\Filters\AreaFilter.cs.bak" />
+    <None Remove="Services\AreaService.cs.bak" />
+    <None Remove="Validators\AreaValidator.cs.bak" />
+  </ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="11.11.0" />
@@ -70,6 +78,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Application.Resources\Application.Resources.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Validators\" />
   </ItemGroup>
 
 </Project>
