@@ -8,6 +8,7 @@ variables:
   REPOSITORY_URL: 924431524709.dkr.ecr.us-east-1.amazonaws.com/digital-esb-app-esb-baseproject-esb
 
 stages:
+  - security
   - build
   - deploy
 
@@ -25,9 +26,9 @@ web-build:
     - docker push $REPOSITORY_URL:$IMAGE_TAG
 
 sonarqube:
-  #image: 253882794486.dkr.ecr.us-east-1.amazonaws.com/build-tools:latest-devops-master
-  image: 253882794486.dkr.ecr.us-east-1.amazonaws.com/build-tools:latest-devops-master-dotnet
-  stage: build
+  image: 253882794486.dkr.ecr.us-east-1.amazonaws.com/build-tools:latest-devops-master
+  #image: 253882794486.dkr.ecr.us-east-1.amazonaws.com/build-tools:latest-devops-master-dotnet
+  stage: security
   script:
     - apt-get update && apt-get install -y dotnet-sdk-8.0
     - dotnet tool install --global dotnet-coverage
@@ -37,7 +38,7 @@ sonarqube:
     - mono /opt/sonar-scanner-msbuild/SonarScanner.MSBuild.dll begin /d:sonar.host.url=https://sonarqube.intra.stellantis.com /d:sonar.login=squ_4f6391317de359b7c13f44e636dc10271296fd57 /k:com.ste.sa-$CI_PROJECT_ID-$CI_PROJECT_NAME /n:"AMS Portal - Web API" /v:1.0 /d:sonar.coverage.exclusions="**/*.Tests/*" /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
     - dotnet build ./src --no-restore
     - dotnet-coverage collect "dotnet test ./src" -f xml -o "coverage.xml"
-    - mono /opt/sonar-scanner-msbuild/SonarScanner.MSBuild.dll end /d:sonar.login=squ_4f6391317de359b7c13f44e636dc10271296fd57
+    #- mono /opt/sonar-scanner-msbuild/SonarScanner.MSBuild.dll end /d:sonar.login=squ_4f6391317de359b7c13f44e636dc10271296fd57
   allow_failure: true
 
 deploy:
