@@ -1,9 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Infrastructure.Data
 {
     public class Context(DbContextOptions<Context> options) : DbContext(options)
     {
+        public DbSet<Area> Areas { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             ArgumentNullException.ThrowIfNull(modelBuilder);

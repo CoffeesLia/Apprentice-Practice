@@ -1,0 +1,171 @@
+﻿using AutoFixture;
+using AutoFixture.AutoMoq;
+using Microsoft.EntityFrameworkCore;
+using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Domain.Entities;
+using Stellantis.ProjectName.Infrastructure.Data;
+
+namespace Infrastructure.Tests.Data.Repositories
+{
+    public class AreaRepositoryTests
+    {
+        private readonly IFixture _fixture;
+        private readonly Context _context;
+        private readonly AreaRepository _repository;
+
+        public AreaRepositoryTests()
+        {
+            _fixture = new Fixture().Customize(new AutoMoqCustomization());
+            var options = new DbContextOptionsBuilder<Context>()
+                .UseInMemoryDatabase(databaseName: _fixture.Create<string>())
+                .Options;
+            _context = new Context(options);
+            _repository = new AreaRepository(_context);
+        }
+
+        [Fact]
+        public async Task CreateAsync_Success()
+        {
+            // Arrange
+            var area = _fixture.Create<Area>();
+
+            // Act
+            var repository = new AreaRepository(_context);
+            await repository.CreateAsync(area);
+            var result = await _context.Areas.FindAsync([area.Id]);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(area.Name, result.Name);
+        }
+
+        [Fact]
+        public async Task DeleteAsync_Success()
+        {
+            // Arrange
+            var area = _fixture.Create<Area>();
+            _context.Add(area);
+            await _context.SaveChangesAsync();
+
+            // Act
+            await _repository.DeleteAsync(area.Id);
+            var result = await _repository.GetByIdAsync(area.Id);
+
+            // Assert
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public async Task GetByIdAsync_Success()
+        {
+            // Arrange
+            var area = _fixture.Create<Area>();
+            _context.Add(area);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.GetByIdAsync(area.Id);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(area.Name, result.Name);
+        }
+
+        [Fact]
+        public async Task GetListAsync_Success()
+        {
+            // Arrange
+            var areas = _fixture.CreateMany<Area>(5).ToList();
+            await _repository.CreateAsync(areas);
+
+            // Act
+            var result = await _repository.GetListAsync();
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(5, result.Result.Count());
+        }
+
+        [Fact]
+        public async Task GetListAsync_ByFilter_Success()
+        {
+            // Arrange
+            var areas = _fixture.CreateMany<Area>(5).ToList();
+            var filter = new AreaFilter { Name = "Name" };
+            await _repository.CreateAsync(areas);
+
+            // Act
+            var result = await _repository.GetListAsync(filter);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(5, result.Result.Count());
+        }
+
+        [Fact]
+        public async Task GetListAsync_ByFilterNull_Success()
+        {
+            // Arrange
+            var areas = _fixture.CreateMany<Area>(5).ToList();
+            await _repository.CreateAsync(areas);
+
+            // Act
+            var result = await _repository.GetListAsync(null);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(5, result.Result.Count());
+        }
+
+        [Fact]
+        public async Task UpdateAsync_Success()
+        {
+            // Arrange
+            var area = _fixture.Create<Area>();
+            await _repository.CreateAsync(area);
+            area.Name = "Updated Name";
+
+            // Act
+            await _repository.UpdateAsync(area);
+            var result = await _repository.GetByIdAsync(area.Id);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(area.Name, result.Name);
+        }
+
+        [Fact]
+        public async Task GetByNameAsync_Success()
+        {
+            // Arrange
+            var area = _fixture.Create<Area>();
+            await _repository.CreateAsync(area);
+            area.Name = "Updated Name";
+
+            // Act
+            var result = await _repository.GetByNameAsync(area.Name);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(area.Name, result.Name);
+        }
+
+        [Fact]
+        public async Task HasApplicationsAsync_Success()
+        {
+            // Arrange
+            var area = _fixture.Create<Area>();
+            await _repository.CreateAsync(area);
+            area.Name = "Updated Name";
+
+            // Act
+            var result = await _repository.HasApplicationsAsync(area.Id);
+
+            // Assert
+            Assert.True(result);
+        }
+    }
+}
+
+
+

@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using LinqKit;
+using Microsoft.EntityFrameworkCore;
+using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using System.Linq.Expressions;
 
@@ -9,7 +11,10 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
     /// </summary>
     /// <typeparam name="TEntity">Type of Entity based on BaseEntity.</typeparam>
     /// <param name="context">A session with the database and can be used to query and save instances of your entities.</param>
-    public abstract class RepositoryEntityBase<TEntity, TContext>(TContext context) : RepositoryBase<TEntity, TContext>(context) where TEntity : EntityBase where TContext : DbContext
+    public abstract class RepositoryEntityBase<TEntity, TContext>(TContext context)
+        : RepositoryBase<TEntity, TContext>(context)
+        where TEntity : EntityBase
+        where TContext : DbContext
     {
         /// <summary>
         /// Deletes an entity by its id.
@@ -83,6 +88,13 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             if (noTracking)
                 query = query.AsNoTracking();
             return await query.SingleOrDefaultAsync(p => p.Id == id).ConfigureAwait(false);
+        }
+
+        protected async Task<PagedResult<TEntity>> GetListAsync(ExpressionStarter<TEntity> filters, Filter filter)
+        {
+            filter ??= new Filter();
+
+            return await base.GetListAsync(filters, filter.Sort, filter.SortDir, page: filter.Page, pageSize: filter.PageSize).ConfigureAwait(false); // Review para não duplicar
         }
     }
 }

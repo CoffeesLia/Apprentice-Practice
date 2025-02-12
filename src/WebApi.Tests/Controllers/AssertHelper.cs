@@ -32,7 +32,7 @@ namespace WebApi.Tests.Controllers
                         object? yValue = yProperty!.GetValue(itemVm);
                         if (xValue is IEnumerable xEnumerable && yValue is IEnumerable yEnumerable)
                             EnumerablesAreEqual(xEnumerable, yEnumerable);
-                        else 
+                        else
                             Assert.Equal(xValue, yValue);
                     }
                 });
