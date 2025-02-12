@@ -36,7 +36,6 @@ sonarqube:
     - mono /opt/sonar-scanner-msbuild/SonarScanner.MSBuild.dll begin /d:sonar.host.url=$SONAR_URL /d:sonar.login=$SONAR_LOGIN /k:$CI_PROJECT_ID-$CI_PROJECT_NAME /n:"AMS Portal - Web API" /v:1.0 /d:sonar.coverage.exclusions="**/*.Tests/*" /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
     - dotnet build ./src --no-restore
     - dotnet-coverage collect "dotnet test ./src" -f xml -o "coverage.xml"
-    - export PATH="$PATH:/root/.dotnet/tools"
     - mono /opt/sonar-scanner-msbuild/SonarScanner.MSBuild.dll end /d:sonar.login=$SONAR_LOGIN
   allow_failure: true
 
