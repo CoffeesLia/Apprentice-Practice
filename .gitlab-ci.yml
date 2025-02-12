@@ -26,6 +26,7 @@ web-build:
 
 sonarqube:
   #image: 253882794486.dkr.ecr.us-east-1.amazonaws.com/build-tools:latest-devops-master
+  image: 253882794486.dkr.ecr.us-east-1.amazonaws.com/build-tools:latest-devops-master-dotnet
   stage: build
   script:
     - apt-get update && apt-get install -y dotnet-sdk-8.0
