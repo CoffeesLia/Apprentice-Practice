@@ -3,7 +3,6 @@ using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models;
-using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
 

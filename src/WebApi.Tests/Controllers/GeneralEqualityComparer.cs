@@ -102,7 +102,7 @@ namespace WebApi.Tests.Controllers
             foreach (var property in properties)
             {
                 var value = property.GetValue(obj);
-                hash = hash * 23 + (value?.GetHashCode() ?? 0);
+                hash = (hash * 23) + (value?.GetHashCode() ?? 0);
             }
             return hash;
         }

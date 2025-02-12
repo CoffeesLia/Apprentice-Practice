@@ -11,9 +11,9 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
     /// </summary>
     /// <typeparam name="TEntity">Type of Entity.</typeparam>
     /// <param name="context">A session with the database and can be used to query and save instances of your entities.</param>
-    public abstract class RepositoryBase<TEntity, TContext>(TContext context) 
-        : IRepositoryBase<TEntity> 
-        where TEntity : class 
+    public abstract class RepositoryBase<TEntity, TContext>(TContext context)
+        : IRepositoryBase<TEntity>
+        where TEntity : class
         where TContext : DbContext
     {
         public const char Separator = ',';

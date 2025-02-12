@@ -22,7 +22,8 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         protected IMapper Mapper { get; } = mapper;
         protected IStringLocalizer Localizer { get; } = localizerFactory.Create(typeof(ControllerResources));
 
-        protected async Task<IActionResult> CreateBaseAsync<TEntityVm>(TEntityDto itemDto) where TEntityVm : EntityVmBase        {
+        protected async Task<IActionResult> CreateBaseAsync<TEntityVm>(TEntityDto itemDto) where TEntityVm : EntityVmBase
+        {
             if (itemDto == null)
                 return BadRequest(ErrorResponse.BadRequest(Localizer[nameof(ControllerResources.CannotBeNull)]));
 

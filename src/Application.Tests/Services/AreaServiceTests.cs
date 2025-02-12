@@ -1,7 +1,5 @@
 ﻿using Application.Tests.Helpers;
 using AutoFixture;
-using FluentValidation;
-using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
@@ -11,10 +9,7 @@ using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Application.Validators;
 using Stellantis.ProjectName.Domain.Entities;
-using System.Runtime.ConstrainedExecution;
-using System.Runtime.Intrinsics.X86;
 using Xunit;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Application.Tests.Services
 {
@@ -27,8 +22,8 @@ namespace Application.Tests.Services
         public AreaServiceTests()
         {
             // Integration tests
-            var localizerFactory = LocalizerFactorHelper.Create(); 
-            var areaValidator = new AreaValidator(localizerFactory); 
+            var localizerFactory = LocalizerFactorHelper.Create();
+            var areaValidator = new AreaValidator(localizerFactory);
 
             var unitOfWorkMock = new Mock<IUnitOfWork>();
             unitOfWorkMock
@@ -411,7 +406,7 @@ namespace Application.Tests.Services
 
             // Act
             var result = await _service.GetItemAsync(area.Id);
-            
+
             // Assert
             Assert.Null(result);
             _repositoryMock.Verify(x => x.GetByIdAsync(area.Id), Times.Once);

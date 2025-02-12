@@ -16,7 +16,7 @@ namespace Stellantis.ProjectName.Application.Services
         private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(AreaResources));
         protected override IAreaRepository Repository => UnitOfWork.AreaRepository;
 
-        public async override Task<OperationResult> CreateAsync(Area item)
+        public override async Task<OperationResult> CreateAsync(Area item)
         {
             ArgumentNullException.ThrowIfNull(item);
             var result = await Validator.ValidateAsync(item).ConfigureAwait(false);
@@ -30,7 +30,7 @@ namespace Stellantis.ProjectName.Application.Services
             return OperationResult.Conflict(_localizer[nameof(AreaResources.AlreadyExists)]);
         }
 
-        public async override Task<OperationResult> DeleteAsync(int id)
+        public override async Task<OperationResult> DeleteAsync(int id)
         {
             if (await Repository.HasApplicationsAsync(id).ConfigureAwait(false))
                 return OperationResult.Conflict(_localizer[nameof(AreaResources.Undeleted)]);
@@ -42,7 +42,7 @@ namespace Stellantis.ProjectName.Application.Services
             return await Repository.GetListAsync(filter ?? new AreaFilter()).ConfigureAwait(false);
         }
 
-        public async override Task<OperationResult> UpdateAsync(Area item)
+        public override async Task<OperationResult> UpdateAsync(Area item)
         {
             ArgumentNullException.ThrowIfNull(item);
             var result = await Validator.ValidateAsync(item).ConfigureAwait(false);
