@@ -30,7 +30,7 @@ sonarqube:
   #image: 253882794486.dkr.ecr.us-east-1.amazonaws.com/build-tools:latest-devops-master-dotnet
   stage: security
   script:
-    - /opt/sonar-scanner/sonar-scanner-6.0.0.4432-linux/bin/sonar-scanner -Dsonar.projectKey="com.ste.sa.$NAMESPACE.$CI_PROJECT_NAME" -Dsonar.sources=. -Dsonar.host.url=https://sonarqube.intra.stellantis.com -Dsonar.login=squ_4f6391317de359b7c13f44e636dc10271296fd57
+    - /opt/sonar-scanner/sonar-scanner-6.0.0.4432-linux/bin/sonar-scanner -Dsonar.projectKey="com.ste.sa.$NAMESPACE.$CI_PROJECT_NAME" -Dsonar.sources=. -Dsonar.host.url=$SONAR_URL -Dsonar.login=$SONAR_LOGIN
     #- apt-get update && apt-get install -y dotnet-sdk-8.0
     #- dotnet tool install --global dotnet-coverage
     #- export PATH="$PATH:/root/.dotnet/tools"
