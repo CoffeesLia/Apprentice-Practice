@@ -8,6 +8,8 @@ namespace Stellantis.ProjectName.Infrastructure.Data
     {
         private IDbContextTransaction? _transaction;
 
+        public IAreaRepository AreaRepository => throw new NotImplementedException();
+
         public void BeginTransaction()
         {
             _transaction = context.Database.BeginTransaction();

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces;
+using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Resources;
 
 namespace Stellantis.ProjectName.Application.Services

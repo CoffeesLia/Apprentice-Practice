@@ -37,7 +37,7 @@ namespace Stellantis.ProjectName.Application.Services
         {
             ArgumentNullException.ThrowIfNull(item);
             await Repository.CreateAsync(item).ConfigureAwait(false);
-            return OperationResult.Complete(Localizer[ServiceResources.RegisteredSuccessfully]);
+            return OperationResult.Complete(Localizer[nameof(ServiceResources.RegisteredSuccessfully)]);
         }
 
         /// <summary>

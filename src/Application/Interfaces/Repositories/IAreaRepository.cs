@@ -7,8 +7,8 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Interfaces.Repositories
 {
-    public interface IAreaRepository : IRepositoryBase<Area>
+    public interface IAreaRepository : IRepositoryEntityBase<Area>
     {
-
+        Task<bool> VerifyNameAlreadyExistsAsync(string name);
     }
 }
