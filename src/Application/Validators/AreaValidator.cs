@@ -27,7 +27,7 @@ namespace Stellantis.ProjectName.Application.Validators
                 .MinimumLength(MinimumLength)
                 .WithMessage(localizer[nameof(AreaResources.NameValidateLength), MinimumLength, MaximumLength])
                 .MaximumLength(MaximumLength)
-                .WithMessage(localizer[nameof(AreaResources.NameValidateLength), MinimumLength, MaximumLength])
+                .WithMessage(localizer[nameof(AreaResources.NameValidateLength), MinimumLength, MaximumLength]);
         }
     }
 }
