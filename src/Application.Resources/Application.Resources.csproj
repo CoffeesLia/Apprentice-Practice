@@ -86,8 +86,7 @@
 
   <ItemGroup>
     <EmbeddedResource Update="AreaResources.pt-BR.resx">
-      <LastGenOutput>AreaResources.pt-BR.Designer.cs</LastGenOutput>
-      <Generator>PublicResXFileCodeGenerator</Generator>
+      <Generator></Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="AreaResources.resx">
       <Generator></Generator>
