@@ -31,6 +31,10 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         }
 
 
-
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteListAsync(int id)
+        {
+            return await base.DeleteAsync(id);
+        }
     }
 }
