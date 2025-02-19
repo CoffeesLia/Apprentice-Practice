@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratedAssemblyInfoFile>Properties\AssemblyInfo.cs</GeneratedAssemblyInfoFile>
+    <AssemblyInformationalVersion>1.0.0</AssemblyInformationalVersion>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
     <Authors>Stellantis</Authors>
