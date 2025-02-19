@@ -11,6 +11,8 @@ using Stellantis.ProjectName.Domain.Entities;
 using Xunit;
 using Stellantis.ProjectName.Application.Validators;
 using System.Globalization;
+using Stellantis.ProjectName.Application.Models.Filters;
+using AutoFixture;
 
 namespace Application.Tests.Services
 {
@@ -37,7 +39,7 @@ namespace Application.Tests.Services
         public async Task CreateAsync_ShouldReturnInvalidData_WhenValidationFails()
         {
             // Arrange
-            var area = new Area { Name = "EU" };
+            var area = new Area ("Eu");
             
 
             // Act
@@ -51,7 +53,7 @@ namespace Application.Tests.Services
         public async Task CreateAsync_ShouldReturnConflict_WhenNameAlreadyExists()
         {
             // Arrange
-            var area = new Area { Name = "Test Area" };
+            var area = new Area("Test Area");
             _areaRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(area.Name)).ReturnsAsync(true);
 
             // Act
@@ -65,7 +67,7 @@ namespace Application.Tests.Services
         public async Task CreateAsync_ShouldReturnSuccess_WhenAreaIsValid()
         {
             // Arrange
-            var area = new Area { Name = "Test Area" };
+            var area = new Area("Test Area");
             _areaRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(area.Name)).ReturnsAsync(false);
 
             // Act
@@ -80,7 +82,7 @@ namespace Application.Tests.Services
         public async Task CreateAsync_ShouldReturnInvalidData_WhenNameExceedsMaxLength()
         {
             // Arrange
-            var area = new Area { Name = new string('A', 256) }; // Nome com 256 caracteres
+            var area = new Area(new string('A', 256)); // Nome com 256 caracteres
 
             // Act
             var result = await _areaService.CreateAsync(area);
@@ -88,5 +90,32 @@ namespace Application.Tests.Services
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
         }
+
+        [Fact]
+        public async Task GetListAsync_ShouldReturnPagedResult_WhenCalledWithValidFilter()
+        {
+            // Arrange
+            var fixture = new Fixture();
+            var filter = fixture.Create<AreaFilter>();
+            var pagedResult = fixture.Build<PagedResult<Area>>()
+                                     .With(pr => pr.Result, fixture.CreateMany<Area>(2).ToList())
+                                     .With(pr => pr.Page, 1)
+                                     .With(pr => pr.PageSize, 10)
+                                     .With(pr => pr.Total, 2)
+                                     .Create();
+
+            _areaRepositoryMock.Setup(r => r.GetListAsync(filter)).ReturnsAsync(pagedResult);
+
+            // Act
+            var result = await _areaService.GetListAsync(filter);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(2, result.Total);
+            Assert.IsType<List<Area>>(result.Result);
+
+        }
     }
 }
+    
+
