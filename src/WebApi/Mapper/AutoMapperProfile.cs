@@ -2,6 +2,7 @@
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Dto;
+using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.ViewModels;
 
 namespace Stellantis.ProjectName.WebApi.Mapper
@@ -14,6 +15,7 @@ namespace Stellantis.ProjectName.WebApi.Mapper
             CreateMap<AreaDto, Area>()
                 .ForMember(x => x.Id, x => x.Ignore());
             CreateMap<Area, AreaVm>();
+            CreateMap<AreaFilterDto, AreaFilter>();
         }
     }
 }
