@@ -32,7 +32,7 @@ namespace Stellantis.ProjectName.IoC
         [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "It's code temporary.")]
         private static void Repositories(IServiceCollection services)
         {
-            services.AddScoped<IAreaRepository, AreaRepository>();
+           
 
         }
     }

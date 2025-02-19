@@ -11,6 +11,7 @@ using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Resources;
+using Stellantis.ProjectName.Application.Models.Filters;
 
 namespace Stellantis.ProjectName.Application.Services
 {
@@ -18,14 +19,7 @@ namespace Stellantis.ProjectName.Application.Services
         : EntityServiceBase<Area>(unitOfWork, localizerFactory, validator), IAreaService
     {
         private IStringLocalizer _localizer => localizerFactory.Create(typeof(AreaResources));
-        /*
-O nome da área deve ter um número mínimo de 3 e máximo de 255 de caracteres definidos.
-
-O sistema deve confirmar o sucesso da criação da área.O sistema deve permitir a edição do nome da área.
-
-
-Pendências:
-        */
+       
         protected override IAreaRepository Repository => UnitOfWork.AreaRepository;
 
         public override async Task<OperationResult> CreateAsync(Area item)
@@ -43,6 +37,13 @@ Pendências:
             }
             return await base.CreateAsync(item).ConfigureAwait(false);
         }
+
+        public async Task<PagedResult<Area>> GetListAsync(AreaFilter filter)
+        {
+            filter ??= new AreaFilter();
+            return await Repository.GetListAsync(filter).ConfigureAwait(false);
+        }
+
 
     }
 }

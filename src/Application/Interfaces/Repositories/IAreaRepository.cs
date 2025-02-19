@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Interfaces.Repositories
 {
     public interface IAreaRepository : IRepositoryEntityBase<Area>
     {
+        Task<PagedResult<Area>> GetListAsync(AreaFilter filter);
         Task<bool> VerifyNameAlreadyExistsAsync(string name);
     }
 }
