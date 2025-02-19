@@ -16,6 +16,7 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(x => x.Id, x => x.Ignore());
             CreateMap<Area, AreaVm>();
             CreateMap<AreaFilterDto, AreaFilter>();
+           
         }
     }
 }
