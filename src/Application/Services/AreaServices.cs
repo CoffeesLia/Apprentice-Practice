@@ -44,6 +44,16 @@ namespace Stellantis.ProjectName.Application.Services
             return await Repository.GetListAsync(filter).ConfigureAwait(false);
         }
 
+        public override async Task <OperationResult> DeleteAsync(int id)
+        {
+                    
+            if(await Repository.VerifyAplicationsExistsAsync(id).ConfigureAwait(false)) 
+            {
+                return OperationResult.Conflict(_localizer[nameof(AreaResources.Undeleted)]);
+
+            }
+            return await base.DeleteAsync(id).ConfigureAwait(false);
+        }
 
     }
 }
