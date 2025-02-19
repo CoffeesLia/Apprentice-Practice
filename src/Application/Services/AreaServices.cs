@@ -19,7 +19,7 @@ namespace Stellantis.ProjectName.Application.Services
         : EntityServiceBase<Area>(unitOfWork, localizerFactory, validator), IAreaService
     {
         private IStringLocalizer _localizer => localizerFactory.Create(typeof(AreaResources));
-       
+
         protected override IAreaRepository Repository => UnitOfWork.AreaRepository;
 
         public override async Task<OperationResult> CreateAsync(Area item)
@@ -43,7 +43,19 @@ namespace Stellantis.ProjectName.Application.Services
             filter ??= new AreaFilter();
             return await Repository.GetListAsync(filter).ConfigureAwait(false);
         }
-
-
+        public async Task<OperationResult> UpdateAreaAsync(Area area)
+        {
+            ArgumentNullException.ThrowIfNull(area);
+            var validationResult = await Validator.ValidateAsync(area).ConfigureAwait(false);
+            if (!validationResult.IsValid)
+            {
+                return OperationResult.InvalidData(validationResult);
+            }
+            if (await Repository.VerifyNameAlreadyExistsAsync(area.Name).ConfigureAwait(false))
+            {
+                return OperationResult.Conflict(_localizer[nameof(AreaResources.AlreadyExists)]);
+            }
+            return await UpdateAsync(area).ConfigureAwait(false);
+        }
     }
 }
