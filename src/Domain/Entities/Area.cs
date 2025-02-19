@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Stellantis.ProjectName.Domain.Entities
 {
-   public  class Area : EntityBase
+   public  class Area(string name) : EntityBase
     {
-        public string Name { get; set; }
+        public string Name { get; set; } = name;
     }
 }
