@@ -30,7 +30,20 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             return Ok(result);
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetAsync(int id)
+        {
+            var area = await Service.GetItemAsync(id);
+            var areaVm = Mapper.Map<AreaVm>(area);
+            return Ok(areaVm);
+        }
 
 
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteListAsync(int id)
+        {
+            return await base.DeleteAsync(id);
+        }
     }
 }

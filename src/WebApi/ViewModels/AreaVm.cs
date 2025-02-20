@@ -3,5 +3,7 @@
     public class AreaVm : EntityVmBase
     {
         public string? Name { get; set; }
+        public List<ApplicationVm> Applications { get; set; }
+
     }
 }
