@@ -13,13 +13,14 @@ using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Application.Models.Filters;
 
+
 namespace Stellantis.ProjectName.Application.Services
 {
     public class AreaService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<Area> validator)
         : EntityServiceBase<Area>(unitOfWork, localizerFactory, validator), IAreaService
     {
         private IStringLocalizer _localizer => localizerFactory.Create(typeof(AreaResources));
-       
+        
         protected override IAreaRepository Repository => UnitOfWork.AreaRepository;
 
         public override async Task<OperationResult> CreateAsync(Area item)
@@ -44,16 +45,13 @@ namespace Stellantis.ProjectName.Application.Services
             return await Repository.GetListAsync(filter).ConfigureAwait(false);
         }
 
-        public override async Task <OperationResult> DeleteAsync(int id)
+        public async Task<OperationResult> GetItemAsync(int id)
         {
-                    
-            if(await Repository.VerifyAplicationsExistsAsync(id).ConfigureAwait(false)) 
-            {
-                return OperationResult.Conflict(_localizer[nameof(AreaResources.Undeleted)]);
-
-            }
-            return await base.DeleteAsync(id).ConfigureAwait(false);
+            return await Repository.GetByIdAsync(id).ConfigureAwait(false) is Area area
+                ? OperationResult.Complete()
+                : OperationResult.NotFound(_localizer[nameof(AreaResources.NotFound)]);
         }
+
 
     }
 }
