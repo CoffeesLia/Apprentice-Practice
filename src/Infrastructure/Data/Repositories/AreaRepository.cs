@@ -62,5 +62,10 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 PageSize = pageSize
             };
         }
+
+        public Task<bool> VerifyAplicationsExistsAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
