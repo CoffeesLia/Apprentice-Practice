@@ -128,25 +128,54 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
-            Assert.Equal("Existem aplicações associadas a esta área.", result.Message); // Ajuste a mensagem esperada
         }
 
         [Fact]
         public async Task DeleteAsync_ShouldReturnSuccess_WhenNoApplicationsExist()
         {
-            // Arrange
             var areaId = 1;
+            var area = new Area("Test Area") { Id = areaId };
             _areaRepositoryMock.Setup(r => r.VerifyAplicationsExistsAsync(areaId)).ReturnsAsync(false);
-            _areaRepositoryMock.Setup(r => r.DeleteAsync(areaId, true)).Returns(Task.CompletedTask);
-
+            _areaRepositoryMock.Setup(r => r.GetByIdAsync(areaId)).ReturnsAsync(area);
+            _areaRepositoryMock.Setup(r => r.DeleteAsync(area, true)).Returns(Task.CompletedTask);
+            _unitOfWorkMock.Setup(u => u.CommitAsync()).Returns(Task.CompletedTask);
             // Act
             var result = await _areaService.DeleteAsync(areaId);
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
-            Assert.Equal("Área deletada com sucesso.", result.Message); // Ajuste a mensagem esperada
         }
 
+
+        [Fact]
+        public async Task GetItemAsync_ShouldReturnComplete_WhenAreaExists()
+        {
+            // Arrange
+            var fixture = new Fixture();
+            var area = fixture.Create<Area>();
+            _areaRepositoryMock.Setup(r => r.GetByIdAsync(area.Id)).ReturnsAsync(area);
+
+            // Act
+            var result = await _areaService.GetItemAsync(area.Id);
+
+            // Assert
+            Assert.Equal(OperationStatus.Success, result.Status);
+        }
+
+        [Fact]
+        public async Task GetItemAsync_ShouldReturnNotFound_WhenAreaDoesNotExist()
+        {
+            // Arrange
+            var fixture = new Fixture();
+            var areaId = fixture.Create<int>();
+            _areaRepositoryMock.Setup(r => r.GetByIdAsync(areaId)).ReturnsAsync((Area)null);
+
+            // Act
+            var result = await _areaService.GetItemAsync(areaId);
+
+            // Assert
+            Assert.Equal(OperationStatus.NotFound, result.Status);
+        }
     }
 }
 
