@@ -13,14 +13,20 @@ namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [ApiController]
     [Authorize]
-    public abstract class EntityControllerBase<TEntity, TEntityDto>(IEntityServiceBase<TEntity> service, IMapper mapper, IStringLocalizerFactory localizerFactory)
-        : ControllerBase
+    public abstract class EntityControllerBase<TEntity, TEntityDto> : ControllerBase
         where TEntity : EntityBase
         where TEntityDto : class
     {
-        protected virtual IEntityServiceBase<TEntity> Service { get; } = service;
-        protected IMapper Mapper { get; } = mapper;
-        protected IStringLocalizer Localizer { get; } = localizerFactory.Create(typeof(ControllerResources));
+        protected virtual IEntityServiceBase<TEntity> Service { get; }
+        protected IMapper Mapper { get; }
+        protected IStringLocalizer Localizer { get; }
+
+        protected EntityControllerBase(IEntityServiceBase<TEntity> service, IMapper mapper, IStringLocalizerFactory localizerFactory)
+        {
+            Service = service ?? throw new ArgumentNullException(nameof(service));
+            Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            Localizer = localizerFactory.Create(typeof(ControllerResources));
+        }
 
         protected async Task<IActionResult> CreateBaseAsync<TEntityVm>(TEntityDto itemDto) where TEntityVm : EntityVmBase
         {
@@ -80,9 +86,6 @@ namespace Stellantis.ProjectName.WebApi.Controllers
                 OperationStatus.NotFound => NotFound(),
                 _ => BadRequest(result)
             };
-
-
-
         }
     }
 }
