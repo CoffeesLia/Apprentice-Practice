@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -43,6 +43,7 @@ namespace Stellantis.ProjectName.Application.Services
             filter ??= new AreaFilter();
             return await Repository.GetListAsync(filter).ConfigureAwait(false);
         }
+
         public async Task<OperationResult> UpdateAreaAsync(Area area)
         {
             ArgumentNullException.ThrowIfNull(area);
@@ -55,7 +56,18 @@ namespace Stellantis.ProjectName.Application.Services
             {
                 return OperationResult.Conflict(_localizer[nameof(AreaResources.AlreadyExists)]);
             }
-            return await UpdateAsync(area).ConfigureAwait(false);
+            return await base.UpdateAsync(area).ConfigureAwait(false);
+        }
+
+        public override async Task <OperationResult> DeleteAsync(int id)
+        {
+                    
+            if(await Repository.VerifyAplicationsExistsAsync(id).ConfigureAwait(false)) 
+            {
+                return OperationResult.Conflict(_localizer[nameof(AreaResources.Undeleted)]);
+
+            }
+            return await base.DeleteAsync(id).ConfigureAwait(false);
         }
     }
 }
