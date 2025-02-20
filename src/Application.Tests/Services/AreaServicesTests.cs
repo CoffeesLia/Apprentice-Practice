@@ -39,8 +39,8 @@ namespace Application.Tests.Services
         public async Task CreateAsync_ShouldReturnInvalidData_WhenValidationFails()
         {
             // Arrange
-            var area = new Area ("Eu");
-            
+            var area = new Area("Eu");
+
 
             // Act
             var result = await _areaService.CreateAsync(area);
@@ -75,7 +75,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
-            Assert.Equal(ServiceResources.RegisteredSuccessfully, result.Message);
+            Assert.Equal("Cadastrado com sucesso.", result.Message); // Ajuste a mensagem esperada
         }
 
         [Fact]
@@ -115,7 +115,39 @@ namespace Application.Tests.Services
             Assert.IsType<List<Area>>(result.Result);
 
         }
+
+        [Fact]
+        public async Task DeleteAsync_ShouldReturnConflict_WhenApplicationsExist()
+        {
+            // Arrange
+            var areaId = 1;
+            _areaRepositoryMock.Setup(r => r.VerifyAplicationsExistsAsync(areaId)).ReturnsAsync(true);
+
+            // Act
+            var result = await _areaService.DeleteAsync(areaId);
+
+            // Assert
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal("Existem aplicações associadas a esta área.", result.Message); // Ajuste a mensagem esperada
+        }
+
+        [Fact]
+        public async Task DeleteAsync_ShouldReturnSuccess_WhenNoApplicationsExist()
+        {
+            // Arrange
+            var areaId = 1;
+            _areaRepositoryMock.Setup(r => r.VerifyAplicationsExistsAsync(areaId)).ReturnsAsync(false);
+            _areaRepositoryMock.Setup(r => r.DeleteAsync(areaId, true)).Returns(Task.CompletedTask);
+
+            // Act
+            var result = await _areaService.DeleteAsync(areaId);
+
+            // Assert
+            Assert.Equal(OperationStatus.Success, result.Status);
+            Assert.Equal("Área deletada com sucesso.", result.Message); // Ajuste a mensagem esperada
+        }
+
     }
 }
-    
+
 
