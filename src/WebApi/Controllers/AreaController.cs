@@ -25,12 +25,25 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         public async Task<IActionResult> GetListAsync([FromQuery] AreaFilterDto filterDto)
         {
             var filter = Mapper.Map<AreaFilter>(filterDto);
-            var pagedResult = await Service.GetListAsync(filter!);
+            var pagedResult = await Service.GetListAsync(filter!).ConfigureAwait(false);
             var result = Mapper.Map<PagedResultVm<AreaVm>>(pagedResult);
             return Ok(result);
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetAsync(int id)
+        {
+            var area = await Service.GetItemAsync(id).ConfigureAwait(false);
+            var areaVm = Mapper.Map<AreaVm>(area);
+            return Ok(areaVm);
+        }
 
 
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteListAsync(int id)
+        {
+            return await DeleteAsync(id).ConfigureAwait(false);
+        }
     }
 }
