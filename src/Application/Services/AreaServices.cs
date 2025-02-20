@@ -52,5 +52,6 @@ namespace Stellantis.ProjectName.Application.Services
                 : OperationResult.NotFound(_localizer[nameof(AreaResources.NotFound)]);
         }
 
+
     }
 }
