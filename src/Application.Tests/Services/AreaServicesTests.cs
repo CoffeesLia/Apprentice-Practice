@@ -191,13 +191,11 @@ namespace Application.Tests.Services
         public async Task UpdateAsync_ShouldReturnInvalidData_WhenValidationFails()
         {
             // Arrange
-            var area = new Area("Invalid Name");
+            var area = new Area("IN");
             _areaRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(area.Name)).ReturnsAsync(false);
-            var validationResult = new ValidationResult(new List<ValidationFailure> { new ValidationFailure("Name", "Invalid name") });
-            var validatorMock = new Mock<IValidator<Area>>();
-            validatorMock.Setup(v => v.ValidateAsync(area, It.IsAny<CancellationToken>())).ReturnsAsync(validationResult);
             var localizer = Helpers.LocalizerFactorHelper.Create();
-            var areaService = new AreaService(_unitOfWorkMock.Object, localizer, validatorMock.Object);
+            var areaValidator = new AreaValidator(localizer);
+            var areaService = new AreaService(_unitOfWorkMock.Object, localizer, areaValidator);
 
             // Act
             var result = await areaService.UpdateAsync(area);
