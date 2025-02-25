@@ -149,19 +149,30 @@ namespace Application.Tests.Services
 
 
         [Fact]
+
         public async Task GetItemAsync_ShouldReturnComplete_WhenAreaExists()
+
         {
+
             // Arrange
+
             var fixture = new Fixture();
+
             var area = fixture.Create<Area>();
+
             _areaRepositoryMock.Setup(r => r.GetByIdAsync(area.Id)).ReturnsAsync(area);
 
             // Act
+
             var result = await _areaService.GetItemAsync(area.Id);
 
             // Assert
-            Assert.Equal(OperationStatus.Success, result.Status);
+
+            Assert.IsType<Area>(result);
+
+
         }
+
 
         [Fact]
         public async Task GetItemAsync_ShouldReturnNotFound_WhenAreaDoesNotExist()
