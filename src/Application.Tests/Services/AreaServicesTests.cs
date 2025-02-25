@@ -76,8 +76,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
-            Assert.Equal("Cadastrado com sucesso.", result.Message); // Ajuste a mensagem esperada
-        }
+            Assert.Equal(ServiceResources.RegisteredSuccessfully, result.Message);
 
         [Fact]
         public async Task CreateAsync_ShouldReturnInvalidData_WhenNameExceedsMaxLength()
@@ -224,7 +223,7 @@ namespace Application.Tests.Services
             _areaRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(area.Name)).ReturnsAsync(false);
             _areaRepositoryMock.Setup(r => r.GetByIdAsync(area.Id)).ReturnsAsync(area);
             _areaRepositoryMock.Setup(r => r.UpdateAsync(area, true)).Returns(Task.CompletedTask);
-            _unitOfWorkMock.Setup(u => u.CommitAsync()).Returns(Task.CompletedTask);
+            _unitOfWorkMock.Setup(u => u.CommitAsync()).Returns(Task.CompletedTask);f
             var validationResult = new ValidationResult();
             var validatorMock = new Mock<IValidator<Area>>();
             validatorMock.Setup(v => v.ValidateAsync(area, It.IsAny<CancellationToken>())).ReturnsAsync(validationResult);
