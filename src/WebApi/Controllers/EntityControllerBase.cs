@@ -31,14 +31,14 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         protected async Task<IActionResult> CreateBaseAsync<TEntityVm>(TEntityDto itemDto) where TEntityVm : EntityVmBase
         {
             if (itemDto == null)
-                return BadRequest(new { Message = Localizer["InvalidAreaData"] });
+                return BadRequest(ErrorResponse.BadRequest(Localizer[nameof(ControllerResources.CannotBeNull)]));
 
             var item = Mapper.Map<TEntity>(itemDto);
             var result = await Service.CreateAsync(item!);
 
             return result.Status switch
             {
-                OperationStatus.Success => CreatedAtAction(nameof(GetAsync), new { id = item!.Id }, Mapper.Map<TEntityVm>(item)),
+                OperationStatus.Success => CreatedAtAction(HttpMethods.Get, new { id = item!.Id }, Mapper.Map<TEntityVm>(item)),
                 OperationStatus.Conflict => Conflict(result),
                 OperationStatus.InvalidData => UnprocessableEntity(result),
                 _ => BadRequest(result)
@@ -48,7 +48,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         protected async Task<IActionResult> UpdateBaseAsync<TEntityVm>(int id, TEntityDto itemDto) where TEntityVm : EntityVmBase
         {
             if (itemDto == null)
-                return BadRequest(new { Message = Localizer["InvalidAreaData"] });
+                return BadRequest(ErrorResponse.BadRequest(Localizer[nameof(ControllerResources.CannotBeNull)]));
 
             var item = Mapper.Map<TEntity>(itemDto);
             item!.Id = id;

@@ -9,15 +9,19 @@ using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.ViewModels;
+using Stellantis.ProjectName.Application.Resources;
 
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [Route("api/areas")]
     public sealed class AreaControllerBase : EntityControllerBase<Area, AreaDto>
     {
+        private readonly IStringLocalizer _localizer;
+
         public AreaControllerBase(IAreaService service, IMapper mapper, IStringLocalizerFactory localizerFactory)
             : base(service, mapper, localizerFactory)
         {
+            _localizer = localizerFactory.Create(typeof(AreaResources));
         }
 
         protected override IAreaService Service => (IAreaService)base.Service;
@@ -27,12 +31,12 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         {
             if (itemDto == null)
             {
-                return BadRequest(new { Message = Localizer["InvalidAreaData"] });
+                return BadRequest(new { Message = _localizer[nameof(AreaResources.NameIsRequired)] });
             }
 
             if (string.IsNullOrWhiteSpace(itemDto.Name) || itemDto.Name.Length > 100)
             {
-                return BadRequest(new { Message = Localizer["InvalidAreaName"] });
+                return BadRequest(new { Message = string.Format(_localizer[nameof(AreaResources.NameValidateLength)], 1, 100) });
             }
 
             return await CreateBaseAsync<AreaVm>(itemDto);
@@ -41,28 +45,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] AreaDto itemDto)
         {
-            if (itemDto == null)
-            {
-                return BadRequest(new { Message = Localizer["InvalidAreaData"] });
-            }
-
-            var existingArea = await Service.GetItemAsync(id).ConfigureAwait(false);
-            if (existingArea == null)
-            {
-                return NotFound(new { Message = Localizer["AreaNotFound"] });
-            }
-
-            if (!await Service.IsAreaNameUniqueAsync(itemDto.Name, id).ConfigureAwait(false))
-            {
-                return Conflict(new { Message = Localizer["AreaNameExists"] });
-            }
-
-            if (string.IsNullOrWhiteSpace(itemDto.Name) || itemDto.Name.Length > 100)
-            {
-                return BadRequest(new { Message = Localizer["InvalidAreaName"] });
-            }
-
-            return await UpdateBaseAsync<AreaVm>(id, itemDto);
+            return await base.UpdateBaseAsync<AreaVm>(id, itemDto);
         }
 
         [HttpGet("{id}")]
