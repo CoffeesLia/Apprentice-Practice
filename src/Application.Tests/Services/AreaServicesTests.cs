@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using FluentValidation;
 using Microsoft.Extensions.Localization;
 using Moq;
@@ -76,8 +76,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
-            Assert.Equal("Cadastrado com sucesso.", result.Message); // Ajuste a mensagem esperada
-        }
+            Assert.Equal(ServiceResources.RegisteredSuccessfully, result.Message);
 
         [Fact]
         public async Task CreateAsync_ShouldReturnInvalidData_WhenNameExceedsMaxLength()
@@ -149,19 +148,28 @@ namespace Application.Tests.Services
 
 
         [Fact]
+
         public async Task GetItemAsync_ShouldReturnComplete_WhenAreaExists()
+
         {
+
             // Arrange
+
             var fixture = new Fixture();
+
             var area = fixture.Create<Area>();
+
             _areaRepositoryMock.Setup(r => r.GetByIdAsync(area.Id)).ReturnsAsync(area);
 
             // Act
+
             var result = await _areaService.GetItemAsync(area.Id);
 
             // Assert
-            Assert.Equal(OperationStatus.Success, result.Status);
+
+            Assert.IsType<Area>(result);
         }
+
 
         [Fact]
         public async Task GetItemAsync_ShouldReturnNotFound_WhenAreaDoesNotExist()
@@ -179,7 +187,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task UpdateAreaAsync_ShouldReturnInvalidData_WhenValidationFails()
+        public async Task UpdateAsync_ShouldReturnInvalidData_WhenValidationFails()
         {
             // Arrange
             var area = new Area("Invalid Name");
@@ -191,14 +199,14 @@ namespace Application.Tests.Services
             var areaService = new AreaService(_unitOfWorkMock.Object, localizer, validatorMock.Object);
 
             // Act
-            var result = await areaService.UpdateAreaAsync(area);
+            var result = await areaService.UpdateAsync(area);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
         }
 
         [Fact]
-        public async Task UpdateAreaAsync_ShouldReturnConflict_WhenNameAlreadyExists()
+        public async Task UpdateAsync_ShouldReturnConflict_WhenNameAlreadyExists()
         {
             // Arrange
             var area = new Area("Existing Name");
@@ -210,14 +218,14 @@ namespace Application.Tests.Services
             var areaService = new AreaService(_unitOfWorkMock.Object, localizer, validatorMock.Object);
 
             // Act
-            var result = await areaService.UpdateAreaAsync(area);
+            var result = await areaService.UpdateAsync(area);
 
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
         }
 
         [Fact]
-        public async Task UpdateAreaAsync_ShouldReturnSuccess_WhenAreaIsValid()
+        public async Task UpdateAsync_ShouldReturnSuccess_WhenAreaIsValid()
         {
             // Arrange
             var area = new Area("Valid Name") { Id = 1 };
@@ -232,12 +240,10 @@ namespace Application.Tests.Services
             var areaService = new AreaService(_unitOfWorkMock.Object, localizer, validatorMock.Object);
 
             // Act
-            var result = await areaService.UpdateAreaAsync(area);
+            var result = await areaService.UpdateAsync(area);
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
         }
     }
 }
-
-
