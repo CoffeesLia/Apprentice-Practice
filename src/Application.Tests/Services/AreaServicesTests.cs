@@ -13,6 +13,7 @@ using Stellantis.ProjectName.Application.Validators;
 using System.Globalization;
 using Stellantis.ProjectName.Application.Models.Filters;
 using AutoFixture;
+using FluentValidation.Results;
 
 namespace Application.Tests.Services
 {
@@ -39,8 +40,8 @@ namespace Application.Tests.Services
         public async Task CreateAsync_ShouldReturnInvalidData_WhenValidationFails()
         {
             // Arrange
-            var area = new Area ("Eu");
-            
+            var area = new Area("Eu");
+
 
             // Act
             var result = await _areaService.CreateAsync(area);
@@ -75,7 +76,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
-            Assert.Equal(ServiceResources.RegisteredSuccessfully, result.Message);
+            Assert.Equal("Cadastrado com sucesso.", result.Message); // Ajuste a mensagem esperada
         }
 
         [Fact]
@@ -115,7 +116,128 @@ namespace Application.Tests.Services
             Assert.IsType<List<Area>>(result.Result);
 
         }
+
+        [Fact]
+        public async Task DeleteAsync_ShouldReturnConflict_WhenApplicationsExist()
+        {
+            // Arrange
+            var areaId = 1;
+            _areaRepositoryMock.Setup(r => r.VerifyAplicationsExistsAsync(areaId)).ReturnsAsync(true);
+
+            // Act
+            var result = await _areaService.DeleteAsync(areaId);
+
+            // Assert
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+        }
+
+        [Fact]
+        public async Task DeleteAsync_ShouldReturnSuccess_WhenNoApplicationsExist()
+        {
+            var areaId = 1;
+            var area = new Area("Test Area") { Id = areaId };
+            _areaRepositoryMock.Setup(r => r.VerifyAplicationsExistsAsync(areaId)).ReturnsAsync(false);
+            _areaRepositoryMock.Setup(r => r.GetByIdAsync(areaId)).ReturnsAsync(area);
+            _areaRepositoryMock.Setup(r => r.DeleteAsync(area, true)).Returns(Task.CompletedTask);
+            _unitOfWorkMock.Setup(u => u.CommitAsync()).Returns(Task.CompletedTask);
+            // Act
+            var result = await _areaService.DeleteAsync(areaId);
+
+            // Assert
+            Assert.Equal(OperationStatus.Success, result.Status);
+        }
+
+
+        [Fact]
+        public async Task GetItemAsync_ShouldReturnComplete_WhenAreaExists()
+        {
+            // Arrange
+            var fixture = new Fixture();
+            var area = fixture.Create<Area>();
+            _areaRepositoryMock.Setup(r => r.GetByIdAsync(area.Id)).ReturnsAsync(area);
+
+            // Act
+            var result = await _areaService.GetItemAsync(area.Id);
+
+            // Assert
+            Assert.IsType<Area>(result);
+        }
+
+        [Fact]
+        public async Task GetItemAsync_ShouldReturnNotFound_WhenAreaDoesNotExist()
+        {
+            // Arrange
+            var fixture = new Fixture();
+            var areaId = fixture.Create<int>();
+            _areaRepositoryMock.Setup(r => r.GetByIdAsync(areaId)).ReturnsAsync((Area)null);
+
+            // Act
+            var result = await _areaService.GetItemAsync(areaId);
+
+            // Assert
+            Assert.Equal(OperationStatus.NotFound, result.Status);
+        }
+
+        [Fact]
+        public async Task UpdateAreaAsync_ShouldReturnInvalidData_WhenValidationFails()
+        {
+            // Arrange
+            var area = new Area("Invalid Name");
+            _areaRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(area.Name)).ReturnsAsync(false);
+            var validationResult = new ValidationResult(new List<ValidationFailure> { new ValidationFailure("Name", "Invalid name") });
+            var validatorMock = new Mock<IValidator<Area>>();
+            validatorMock.Setup(v => v.ValidateAsync(area, It.IsAny<CancellationToken>())).ReturnsAsync(validationResult);
+            var localizer = Helpers.LocalizerFactorHelper.Create();
+            var areaService = new AreaService(_unitOfWorkMock.Object, localizer, validatorMock.Object);
+
+            // Act
+            var result = await areaService.UpdateAreaAsync(area);
+
+            // Assert
+            Assert.Equal(OperationStatus.InvalidData, result.Status);
+        }
+
+        [Fact]
+        public async Task UpdateAreaAsync_ShouldReturnConflict_WhenNameAlreadyExists()
+        {
+            // Arrange
+            var area = new Area("Existing Name");
+            _areaRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(area.Name)).ReturnsAsync(true);
+            var validationResult = new ValidationResult();
+            var validatorMock = new Mock<IValidator<Area>>();
+            validatorMock.Setup(v => v.ValidateAsync(area, It.IsAny<CancellationToken>())).ReturnsAsync(validationResult);
+            var localizer = Helpers.LocalizerFactorHelper.Create();
+            var areaService = new AreaService(_unitOfWorkMock.Object, localizer, validatorMock.Object);
+
+            // Act
+            var result = await areaService.UpdateAreaAsync(area);
+
+            // Assert
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+        }
+
+        [Fact]
+        public async Task UpdateAreaAsync_ShouldReturnSuccess_WhenAreaIsValid()
+        {
+            // Arrange
+            var area = new Area("Valid Name") { Id = 1 };
+            _areaRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(area.Name)).ReturnsAsync(false);
+            _areaRepositoryMock.Setup(r => r.GetByIdAsync(area.Id)).ReturnsAsync(area);
+            _areaRepositoryMock.Setup(r => r.UpdateAsync(area, true)).Returns(Task.CompletedTask);
+            _unitOfWorkMock.Setup(u => u.CommitAsync()).Returns(Task.CompletedTask);
+            var validationResult = new ValidationResult();
+            var validatorMock = new Mock<IValidator<Area>>();
+            validatorMock.Setup(v => v.ValidateAsync(area, It.IsAny<CancellationToken>())).ReturnsAsync(validationResult);
+            var localizer = Helpers.LocalizerFactorHelper.Create();
+            var areaService = new AreaService(_unitOfWorkMock.Object, localizer, validatorMock.Object);
+
+            // Act
+            var result = await areaService.UpdateAreaAsync(area);
+
+            // Assert
+            Assert.Equal(OperationStatus.Success, result.Status);
+        }
     }
 }
-    
+
 
