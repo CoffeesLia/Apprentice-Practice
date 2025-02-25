@@ -6,7 +6,9 @@ RUN dotnet restore "./src/WebApi/WebApi.csproj" --disable-parallel
 RUN dotnet publish "./src/WebApi/WebApi.csproj" -c release -o /app --no-restore
 
 # Server Stage
+
 FROM mcr.microsoft.com/dotnet/aspnet:8.0.12-alpine3.21-amd64 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine-composite-amd64 AS runtime
 WORKDIR /app
 COPY --from=build /app ./
 
