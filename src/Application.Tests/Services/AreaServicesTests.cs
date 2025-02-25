@@ -160,7 +160,7 @@ namespace Application.Tests.Services
             var result = await _areaService.GetItemAsync(area.Id);
 
             // Assert
-            Assert.Equal(OperationStatus.Success, result.Status);
+            Assert.IsType<Area>(result);
         }
 
         [Fact]
