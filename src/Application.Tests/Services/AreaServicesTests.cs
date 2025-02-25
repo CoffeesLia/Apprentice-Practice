@@ -232,7 +232,7 @@ namespace Application.Tests.Services
             _areaRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(area.Name)).ReturnsAsync(false);
             _areaRepositoryMock.Setup(r => r.GetByIdAsync(area.Id)).ReturnsAsync(area);
             _areaRepositoryMock.Setup(r => r.UpdateAsync(area, true)).Returns(Task.CompletedTask);
-            _unitOfWorkMock.Setup(u => u.CommitAsync()).Returns(Task.CompletedTask);f
+            _unitOfWorkMock.Setup(u => u.CommitAsync()).Returns(Task.CompletedTask);
             var validationResult = new ValidationResult();
             var validatorMock = new Mock<IValidator<Area>>();
             validatorMock.Setup(v => v.ValidateAsync(area, It.IsAny<CancellationToken>())).ReturnsAsync(validationResult);
@@ -247,5 +247,3 @@ namespace Application.Tests.Services
         }
     }
 }
-
-
