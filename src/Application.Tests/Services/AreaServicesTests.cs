@@ -77,6 +77,7 @@ namespace Application.Tests.Services
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
             Assert.Equal(ServiceResources.RegisteredSuccessfully, result.Message);
+        }
 
         [Fact]
         public async Task CreateAsync_ShouldReturnInvalidData_WhenNameExceedsMaxLength()
