@@ -39,7 +39,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             return result.Status switch
             {
 
-                OperationStatus.Success => CreatedAtAction(HttpMethods.Get, new { id = item!.Id }, Mapper.Map<TEntityVm>(item)),
+              
                 OperationStatus.Success => CreatedAtAction(HttpMethod.Get.Method, new { id = item!.Id} , Mapper.Map<TEntityVm>(item)),
                 OperationStatus.Conflict => Conflict(result),
                 OperationStatus.InvalidData => UnprocessableEntity(result),
