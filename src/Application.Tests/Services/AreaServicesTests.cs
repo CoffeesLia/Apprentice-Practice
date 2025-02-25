@@ -179,7 +179,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task UpdateAreaAsync_ShouldReturnInvalidData_WhenValidationFails()
+        public async Task UpdateAsync_ShouldReturnInvalidData_WhenValidationFails()
         {
             // Arrange
             var area = new Area("Invalid Name");
@@ -191,14 +191,14 @@ namespace Application.Tests.Services
             var areaService = new AreaService(_unitOfWorkMock.Object, localizer, validatorMock.Object);
 
             // Act
-            var result = await areaService.UpdateAreaAsync(area);
+            var result = await areaService.UpdateAsync(area);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
         }
 
         [Fact]
-        public async Task UpdateAreaAsync_ShouldReturnConflict_WhenNameAlreadyExists()
+        public async Task UpdateAsync_ShouldReturnConflict_WhenNameAlreadyExists()
         {
             // Arrange
             var area = new Area("Existing Name");
@@ -210,14 +210,14 @@ namespace Application.Tests.Services
             var areaService = new AreaService(_unitOfWorkMock.Object, localizer, validatorMock.Object);
 
             // Act
-            var result = await areaService.UpdateAreaAsync(area);
+            var result = await areaService.UpdateAsync(area);
 
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
         }
 
         [Fact]
-        public async Task UpdateAreaAsync_ShouldReturnSuccess_WhenAreaIsValid()
+        public async Task UpdateAsync_ShouldReturnSuccess_WhenAreaIsValid()
         {
             // Arrange
             var area = new Area("Valid Name") { Id = 1 };
@@ -232,7 +232,7 @@ namespace Application.Tests.Services
             var areaService = new AreaService(_unitOfWorkMock.Object, localizer, validatorMock.Object);
 
             // Act
-            var result = await areaService.UpdateAreaAsync(area);
+            var result = await areaService.UpdateAsync(area);
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
