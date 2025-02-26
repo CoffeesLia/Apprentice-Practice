@@ -160,7 +160,9 @@ namespace Application.Tests.Services
             var result = await _areaService.GetItemAsync(area.Id);
 
             // Assert
-            Assert.Equal(OperationStatus.Success, result.Status);
+            Assert.IsType<Area>(result);
+           
+
         }
 
         [Fact]
@@ -191,7 +193,7 @@ namespace Application.Tests.Services
             var areaService = new AreaService(_unitOfWorkMock.Object, localizer, validatorMock.Object);
 
             // Act
-            var result = await areaService.UpdateAreaAsync(area);
+            var result = await areaService.UpdateAsync(area);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
@@ -210,7 +212,7 @@ namespace Application.Tests.Services
             var areaService = new AreaService(_unitOfWorkMock.Object, localizer, validatorMock.Object);
 
             // Act
-            var result = await areaService.UpdateAreaAsync(area);
+            var result = await areaService.UpdateAsync(area);
 
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
@@ -232,12 +234,10 @@ namespace Application.Tests.Services
             var areaService = new AreaService(_unitOfWorkMock.Object, localizer, validatorMock.Object);
 
             // Act
-            var result = await areaService.UpdateAreaAsync(area);
+            var result = await areaService.UpdateAsync(area);
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
         }
     }
 }
-
-
