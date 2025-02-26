@@ -69,6 +69,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="ApplicationDataResources.Designer.cs">
+      <DependentUpon>ApplicationDataResources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Update="AreaResources.pt-BR.Designer.cs">
       <DependentUpon>AreaResources.pt-BR.resx</DependentUpon>
       <DesignTime>True</DesignTime>
@@ -87,6 +92,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="ApplicationDataResources.resx">
+      <LastGenOutput>ApplicationDataResources.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="ApplicationDataResources.pt-BR.resx">
+      <Generator></Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="AreaResources.pt-BR.resx">
       <Generator></Generator>
     </EmbeddedResource>
