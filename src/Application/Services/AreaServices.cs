@@ -32,13 +32,13 @@ namespace Stellantis.ProjectName.Application.Services
             return await base.CreateAsync(item).ConfigureAwait(false);
         }
 
-        public async Task<PagedResult<Area>> GetListAsync(AreaFilter filter)
+        public async Task<PagedResult<Area>> GetListAsync(AreaFilter areaFilter)
         {
-            filter ??= new AreaFilter();
-            return await Repository.GetListAsync(filter).ConfigureAwait(false);
+            areaFilter ??= new AreaFilter();
+            return await Repository.GetListAsync(areaFilter).ConfigureAwait(false);
         }
 
-        public async Task<OperationResult> UpdateAsync(Area area)
+        async Task<OperationResult> IEntityServiceBase<Area>.UpdateAsync(Area area)
         {
             ArgumentNullException.ThrowIfNull(area);
             var validationResult = await Validator.ValidateAsync(area).ConfigureAwait(false);
@@ -62,7 +62,7 @@ namespace Stellantis.ProjectName.Application.Services
             return await base.DeleteAsync(id).ConfigureAwait(false);
         }
 
-        public async Task<OperationResult> GetItemAsync(int id)
+        public new async Task<OperationResult> GetItemAsync(int id)
         {
             return await Repository.GetByIdAsync(id).ConfigureAwait(false) is Area area
                 ? OperationResult.Complete()
