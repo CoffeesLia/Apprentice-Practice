@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Stellantis.ProjectName.Domain.Entities
+namespace Stellantis.ProjectName.Domain.Entity
 {
-    public class EntitieSquad
+    public class EntitySquad
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
