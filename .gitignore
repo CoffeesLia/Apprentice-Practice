@@ -269,3 +269,5 @@ __pycache__/
 */**/obj/Debug 
 */**/obj/Release
 /src/TestsCoverageReport
+/src/Application.Tests/Services/SquadServiceTestes.cs
+/src/Domain/Entities/EntitieSquad.cs
