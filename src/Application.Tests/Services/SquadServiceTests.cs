@@ -3,8 +3,10 @@ using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Application.Services;
+using Stellantis.ProjectName.Domain.Entities;
 using System;
 using Xunit;
+using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Domain.Entity;
 
 namespace Stellantis.ProjectName.Tests.Services
@@ -95,5 +97,69 @@ namespace Stellantis.ProjectName.Tests.Services
             var exception = Assert.Throws<KeyNotFoundException>(() => squadService.GetSquadById(squadId));
             Assert.Equal("Squad não encontrado.", exception.Message);
         }
+
+        [Fact]
+        public void UpdateSquad_ShouldThrowException_WhenNameIsEmpty()
+        {
+            // Arrange
+            var squadRepositoryMock = new Mock<ISquadRepository>();
+            var squadService = new SquadService(squadRepositoryMock.Object, _localizerMock.Object);
+
+            // Act & Assert
+            var exception = Assert.Throws<ArgumentException>(() => squadService.UpdateSquad(Guid.NewGuid(), "", "Description"));
+            Assert.Equal("O nome do squad é obrigatório.", exception.Message);
+        }
+
+        [Fact]
+        public void UpdateSquad_ShouldThrowException_WhenDescriptionIsEmpty()
+        {
+            // Arrange
+            var squadRepositoryMock = new Mock<ISquadRepository>();
+            var squadService = new SquadService(squadRepositoryMock.Object, _localizerMock.Object);
+
+            // Act & Assert
+            var exception = Assert.Throws<ArgumentException>(() => squadService.UpdateSquad(Guid.NewGuid(), "SquadName", ""));
+            Assert.Equal("A descrição do squad é obrigatória.", exception.Message);
+        }
+
+        [Fact]
+        public void UpdateSquad_ShouldThrowException_WhenSquadNameAlreadyExists()
+        {
+            // Arrange
+            var squadId = Guid.NewGuid();
+            var existingSquad = new EntitySquad { Id = squadId, Name = "ExistingSquad", Description = "Description" };
+            var anotherSquad = new EntitySquad { Id = Guid.NewGuid(), Name = "AnotherSquad", Description = "Description" };
+
+            var squadRepositoryMock = new Mock<ISquadRepository>();
+            squadRepositoryMock.Setup(repo => repo.GetById(squadId)).Returns(existingSquad);
+            squadRepositoryMock.Setup(repo => repo.GetByName("AnotherSquad")).Returns(anotherSquad);
+
+            var squadService = new SquadService(squadRepositoryMock.Object, _localizerMock.Object);
+
+            // Act & Assert
+            var exception = Assert.Throws<InvalidOperationException>(() => squadService.UpdateSquad(squadId, "AnotherSquad", "NewDescription"));
+            Assert.Equal("Um squad com esse nome já existe.", exception.Message);
+        }
+
+        [Fact]
+        public void UpdateSquad_ShouldUpdateSquad_WhenValid()
+        {
+            // Arrange
+            var squadId = Guid.NewGuid();
+            var existingSquad = new EntitySquad { Id = squadId, Name = "ExistingSquad", Description = "Description" };
+
+            var squadRepositoryMock = new Mock<ISquadRepository>();
+            squadRepositoryMock.Setup(repo => repo.GetById(squadId)).Returns(existingSquad);
+            squadRepositoryMock.Setup(repo => repo.GetByName("NewSquad")).Returns((EntitySquad)null);
+
+            var squadService = new SquadService(squadRepositoryMock.Object, _localizerMock.Object);
+
+            // Act
+            squadService.UpdateSquad(squadId, "NewSquad", "NewDescription");
+
+            // Assert
+            squadRepositoryMock.Verify(repo => repo.Update(It.Is<EntitySquad>(s => s.Id == squadId && s.Name == "NewSquad" && s.Description == "NewDescription")), Times.Once);
+        }
     }
 }
+
