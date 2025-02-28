@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
@@ -30,33 +31,29 @@ namespace Stellantis.ProjectName.Application.Services
             return !applicationData.Result.Any(a => a.Id != id);
         }
 
-        public Task<PagedResult<ApplicationData>> GetListAsync(ApplicationFilter applicationFilter)
+        public async Task<PagedResult<ApplicationData>> GetListAsync(ApplicationFilter applicationFilter)
         {
-            throw new NotImplementedException();
+            return await Repository.GetListAsync(applicationFilter).ConfigureAwait(false);
         }
 
         public override async Task<OperationResult> CreateAsync(ApplicationData item)
         {
             ArgumentNullException.ThrowIfNull(item);
 
-
             var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
             if (!validationResult.IsValid)
             {
                 return OperationResult.InvalidData(validationResult);
             }
-            if(await ApplicationDataUniqueNameAsync(item.NameApplication).ConfigureAwait(false))
+            if (string.IsNullOrEmpty(item.NameApplication))
+            {
+                return OperationResult.Conflict(localizer[nameof(ApplicationDataResources.NameRequired)]);
+            }
+            if (!await ApplicationDataUniqueNameAsync(item.NameApplication).ConfigureAwait(false))
             {
                 return OperationResult.Conflict(localizer[nameof(ApplicationDataResources.AlreadyExists)]);
             }
-
-            var area = await UnitOfWork.AreaRepository.GetByIdAsync(item.AreaId).ConfigureAwait(false);
-         
-            item.Area = area;
-
             return await base.CreateAsync(item).ConfigureAwait(false);
-
-
         }
     }
 }

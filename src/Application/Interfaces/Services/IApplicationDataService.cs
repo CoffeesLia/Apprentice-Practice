@@ -13,5 +13,5 @@ namespace Stellantis.ProjectName.Application.Interfaces.Services
         Task<PagedResult<ApplicationData>> GetListAsync(ApplicationFilter applicationFilter);
         Task<bool> ApplicationDataUniqueNameAsync(string nameApplication, int? id = null);
 
-    }           
+    }
 }

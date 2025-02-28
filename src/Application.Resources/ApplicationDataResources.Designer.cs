@@ -70,11 +70,11 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Area cannot be found.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a The Name field is required..
         /// </summary>
-        public static string AreaNotFound {
+        public static string NameRequired {
             get {
-                return ResourceManager.GetString("AreaNotFound", resourceCulture);
+                return ResourceManager.GetString("NameRequired", resourceCulture);
             }
         }
         

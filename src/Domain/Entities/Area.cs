@@ -8,7 +8,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Stellantis.ProjectName.Domain.Entities
 {
-   public class Area(string name) : EntityBase
+    public class Area(string name) : EntityBase
     {
         public string Name { get; set; } = name;
         public Collection<ApplicationData> Applications { get; } = new();

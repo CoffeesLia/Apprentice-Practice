@@ -10,5 +10,6 @@ namespace Stellantis.ProjectName.Application.Models.Filters
     {
         public string? NameApplication { get; set; }
         public int AreaId { get; set; }
+
     }
 }
