@@ -2,7 +2,7 @@
 {
     public class ApplicationDataDto
     {
-        public string? NameApplication { get; set; }
+        public string? Name { get; set; }
         public int AreaId { get; set; }
         public AreaDto Area { get; set; }
     }

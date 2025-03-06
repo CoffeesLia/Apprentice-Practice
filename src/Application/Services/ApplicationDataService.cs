@@ -24,9 +24,9 @@ namespace Stellantis.ProjectName.Application.Services
         protected override IApplicationDataRepository Repository =>
             UnitOfWork.ApplicationDataRepository;
 
-        public async Task<bool> IsAreaNameUniqueAsync(string nameApplication, int? id = null)
+        public async Task<bool> IsAreaNameUniqueAsync(string name, int? id = null)
         {
-            var filter = new ApplicationFilter { NameApplication = nameApplication };
+            var filter = new ApplicationFilter { Name = name};
             var applicationData = await GetListAsync(filter).ConfigureAwait(false);
             return !applicationData.Result.Any(a => a.Id != id);
         }
@@ -45,11 +45,11 @@ namespace Stellantis.ProjectName.Application.Services
             {
                 return OperationResult.InvalidData(validationResult);
             }
-            if (string.IsNullOrEmpty(item.NameApplication))
+            if (string.IsNullOrEmpty(item.Name))
             {
                 return OperationResult.Conflict(localizer[nameof(ApplicationDataResources.NameRequired)]);
             }
-            if (!await IsAreaNameUniqueAsync(item.NameApplication).ConfigureAwait(false))
+            if (!await IsAreaNameUniqueAsync(item.Name).ConfigureAwait(false))
             {
                 return OperationResult.Conflict(localizer[nameof(ApplicationDataResources.AlreadyExists)]);
             }

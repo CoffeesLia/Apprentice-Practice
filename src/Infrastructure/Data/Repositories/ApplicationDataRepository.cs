@@ -8,7 +8,7 @@ using Stellantis.ProjectName.Application.Models.Filters;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
-    internal class ApplicationDataRepository : RepositoryBase<ApplicationData, Context>, IApplicationDataRepository
+    internal class ApplicationDataRepository : RepositoryEntityBase<ApplicationData, Context>, IApplicationDataRepository
     {
         public ApplicationDataRepository(Context context) : base(context)
         {
@@ -35,9 +35,9 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         {
             IQueryable<ApplicationData> query = Context.Set<ApplicationData>();
 
-            if (!string.IsNullOrEmpty(applicationFilter.NameApplication))
+            if (!string.IsNullOrEmpty(applicationFilter.Name))
             {
-                query = query.Where(a => a.NameApplication.Contains(applicationFilter.NameApplication));
+                query = query.Where(a => a.Name.Contains(applicationFilter.Name));
             }
 
             if (applicationFilter.AreaId > 0)
@@ -48,9 +48,9 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             return await GetPagedResultAsync(query, applicationFilter.Page, applicationFilter.PageSize).ConfigureAwait(false);
         }
 
-        public async Task<bool> ApplicationDataNameExistsAsync(string name, int? id = null)
+        public async Task<bool> IsAreaNameUniqueAsync(string name, int? id = null)
         {
-            return await Context.Set<ApplicationData>().AnyAsync(a => a.NameApplication == name && a.Id != id).ConfigureAwait(false);
+            return await Context.Set<ApplicationData>().AnyAsync(a => a.Name == name && a.Id != id).ConfigureAwait(false);
         }
 
         private static async Task<PagedResult<ApplicationData>> GetPagedResultAsync(IQueryable<ApplicationData> query, int page, int pageSize)

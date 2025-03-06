@@ -8,7 +8,7 @@ namespace Stellantis.ProjectName.Application.Models.Filters
 {
     public class ApplicationFilter : Filter
     {
-        public string? NameApplication { get; set; }
+        public string? Name { get; set; }
         public int AreaId { get; set; }
 
     }
