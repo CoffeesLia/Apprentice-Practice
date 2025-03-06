@@ -13,7 +13,8 @@ namespace Stellantis.ProjectName.WebApi.Mapper
         {
             CreateMap(typeof(PagedResult<>), typeof(PagedResultVm<>));
             CreateMap<AreaDto, Area>()
-                .ForMember(x => x.Id, x => x.Ignore());
+                .ForMember(x => x.Id, x => x.Ignore())
+                .ForMember(x => x.Applications, x => x.Ignore());
             CreateMap<Area, AreaVm>()
                 .ForMember(x => x.Applications, x => x.Ignore());
             CreateMap<AreaFilterDto, AreaFilter>();

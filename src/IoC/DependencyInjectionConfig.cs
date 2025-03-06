@@ -21,8 +21,6 @@ namespace Stellantis.ProjectName.IoC
             Repositories(services);
         }
 
-        [SuppressMessage("Critical Code Smell", "S1186:Methods should not be empty", Justification = "It's code temporary.")]
-        [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "It's code temporary.")]
         private static void Validators(IServiceCollection services)
         {
             services.AddScoped<IValidator<Area>, AreaValidator>();
