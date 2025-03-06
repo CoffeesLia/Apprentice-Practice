@@ -2,7 +2,6 @@
 using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Domain.Entities;
-using Stellantis.ProjectName.Filters;
 
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
@@ -47,7 +46,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         public async Task<IActionResult> Update(int id, [FromBody] EntityGitLabRep updatedRepo)
         {
             updatedRepo.Id = id;
-            var result = await _gitLabRepositoryService.UpdateAsync(updatedRepo, "Name, Description, and URL are required fields.").ConfigureAwait(false);
+            var result = await _gitLabRepositoryService.UpdateAsync(updatedRepo).ConfigureAwait(false);
             if (result.Status == OperationStatus.NotFound)
             {
                 return NotFound(result);
