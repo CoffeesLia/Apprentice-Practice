@@ -42,6 +42,9 @@ namespace Application.Tests.Services
             // Arrange
             var applicationData = new ApplicationData("Valido");
 
+            _applicationDataRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<ApplicationFilter>()))
+                .ReturnsAsync(new PagedResult<ApplicationData> { Result = new List<ApplicationData>(), Page = 1, PageSize = 10, Total = 0 });
+
             // Act
             var result = await _applicationDataService.CreateAsync(applicationData);
 
@@ -53,7 +56,7 @@ namespace Application.Tests.Services
         public async Task CreateAsync_ShouldReturnInvalidData_WhenValidationFails()
         {
             // Arrange
-            var applicationData = new ApplicationData("E");
+            var applicationData = new ApplicationData("u");
 
             // Act
             var result = await _applicationDataService.CreateAsync(applicationData);
@@ -66,8 +69,8 @@ namespace Application.Tests.Services
         public async Task CreateAsync_ShouldReturnConflict_WhenNameAlreadyExists()
         {
             // Arrange
-            var applicationData = new ApplicationData("Existing Name") { AreaId = 1 };
-            var existingApplicationData = new ApplicationData("Existing Name") { Id = 2, AreaId = 1 };
+            var applicationData = new ApplicationData("Existing Name");
+            var existingApplicationData = new ApplicationData("Existing Name") { Id = 2 };
 
             _applicationDataRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<ApplicationFilter>()))
                 .ReturnsAsync(new PagedResult<ApplicationData> { Result = new List<ApplicationData> { existingApplicationData }, Page = 1, PageSize = 10, Total = 1 });
@@ -80,6 +83,41 @@ namespace Application.Tests.Services
         }
 
 
+        [Fact]
+        public async Task GetItemAsync_ShouldReturnSuccess_WhenApplicationDataExists()
+        {
+            // Arrange
+            var applicationData = new ApplicationData("Valid Application")
+            {
+                Id = 1,
+                Area = new Area("Valid Area")
+            };
+
+            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync(applicationData);
+
+            // Act
+            var result = await _applicationDataService.GetItemAsync(applicationData.Id);
+
+            // Assert
+
+            Assert.Contains(applicationData.Name, result.Message);
+
+        }
+
+        [Fact]
+        public async Task GetItemAsync_ShouldReturnNotFound_WhenApplicationDataDoesNotExist()
+        {
+            // Arrange
+            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((ApplicationData)null);
+
+            // Act
+            var result = await _applicationDataService.GetItemAsync(1);
+
+            // Assert
+            Assert.Equal(OperationStatus.NotFound, result.Status);
+        }
 
     }
 }

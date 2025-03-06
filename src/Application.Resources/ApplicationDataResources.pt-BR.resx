@@ -120,8 +120,11 @@
   <data name="AlreadyExists" xml:space="preserve">
     <value>O nome ja existe.</value>
   </data>
-  <data name="AreaNotFound" xml:space="preserve">
-    <value>A Área não pode ser encontrada</value>
+  <data name="ApplicationNotFound" xml:space="preserve">
+    <value>Aplicação não encontrada</value>
+  </data>
+  <data name="NameRequired" xml:space="preserve">
+    <value>O nome é obrigatório.</value>
   </data>
   <data name="NameValidateLength" xml:space="preserve">
     <value>O nome deve ter entre {0} e {1} caracteres.</value>

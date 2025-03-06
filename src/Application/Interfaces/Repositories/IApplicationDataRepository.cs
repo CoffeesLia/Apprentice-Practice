@@ -10,8 +10,9 @@ namespace Stellantis.ProjectName.Application.Interfaces.Repositories
 {
     public interface IApplicationDataRepository : IRepositoryEntityBase<ApplicationData>
     {
+
         Task<PagedResult<ApplicationData>> GetListAsync(ApplicationFilter applicationFilter);
-        Task<bool> ApplicationDataNameExistsAsync(string name, int? id = null);
+        Task<bool> IsAreaNameUniqueAsync(string name, int? id = null);
 
     }
 }

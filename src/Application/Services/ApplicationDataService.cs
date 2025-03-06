@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
@@ -23,40 +24,52 @@ namespace Stellantis.ProjectName.Application.Services
         protected override IApplicationDataRepository Repository =>
             UnitOfWork.ApplicationDataRepository;
 
-        public async Task<bool> ApplicationDataUniqueNameAsync(string nameApplication, int? id = null)
+        public async Task<bool> IsAreaNameUniqueAsync(string name, int? id = null)
         {
-            var filter = new ApplicationFilter { NameApplication = nameApplication };
+            var filter = new ApplicationFilter { Name = name};
             var applicationData = await GetListAsync(filter).ConfigureAwait(false);
             return !applicationData.Result.Any(a => a.Id != id);
         }
 
-        public Task<PagedResult<ApplicationData>> GetListAsync(ApplicationFilter applicationFilter)
+        public async Task<PagedResult<ApplicationData>> GetListAsync(ApplicationFilter applicationFilter)
         {
-            throw new NotImplementedException();
+            return await Repository.GetListAsync(applicationFilter).ConfigureAwait(false);
         }
 
         public override async Task<OperationResult> CreateAsync(ApplicationData item)
         {
             ArgumentNullException.ThrowIfNull(item);
 
-
             var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
             if (!validationResult.IsValid)
             {
                 return OperationResult.InvalidData(validationResult);
             }
-            if(await ApplicationDataUniqueNameAsync(item.NameApplication).ConfigureAwait(false))
+            if (string.IsNullOrEmpty(item.Name))
+            {
+                return OperationResult.Conflict(localizer[nameof(ApplicationDataResources.NameRequired)]);
+            }
+            if (!await IsAreaNameUniqueAsync(item.Name).ConfigureAwait(false))
             {
                 return OperationResult.Conflict(localizer[nameof(ApplicationDataResources.AlreadyExists)]);
             }
-
-            var area = await UnitOfWork.AreaRepository.GetByIdAsync(item.AreaId).ConfigureAwait(false);
-         
-            item.Area = area;
-
             return await base.CreateAsync(item).ConfigureAwait(false);
-
-
         }
+
+        public new async Task<OperationResult> GetItemAsync(int id)
+        {
+            var applicationData = await Repository.GetByIdAsync(id).ConfigureAwait(false);
+            if (applicationData == null)
+            {
+                return OperationResult.NotFound(localizer[nameof(ApplicationDataResources.ApplicationNotFound)]);
+            }
+            var result = new
+            {
+                applicationData.Name,
+                applicationData.Area
+            };
+            return OperationResult.Complete(result.ToString());
+        }
+
     }
 }
