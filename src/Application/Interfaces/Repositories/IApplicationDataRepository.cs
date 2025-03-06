@@ -12,7 +12,7 @@ namespace Stellantis.ProjectName.Application.Interfaces.Repositories
     {
 
         Task<PagedResult<ApplicationData>> GetListAsync(ApplicationFilter applicationFilter);
-        Task<bool> ApplicationDataNameExistsAsync(string name, int? id = null);
+        Task<bool> IsAreaNameUniqueAsync(string name, int? id = null);
 
     }
 }

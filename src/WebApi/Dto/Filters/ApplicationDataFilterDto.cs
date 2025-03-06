@@ -2,7 +2,7 @@
 {
     public class ApplicationDataFilterDto : FilterDto
     {
-        public string? NameApplication { get; set; }
+        public string? Name { get; set; }
         public AreaFilterDto Area { get; set; }
     }
 }
