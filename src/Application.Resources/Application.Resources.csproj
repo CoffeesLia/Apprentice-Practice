@@ -79,6 +79,16 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>FilterResources.resx</DependentUpon>
     </Compile>
+    <Compile Update="GitLabResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>GitLabResource.resx</DependentUpon>
+    </Compile>
+    <Compile Update="GitLabResource.pt-BR.Designer.cs">
+      <DependentUpon>GitLabResource.pt-BR.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Update="ServiceResources.Designer.cs">
       <DependentUpon>ServiceResources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
@@ -108,6 +118,14 @@
     <EmbeddedResource Update="GeneralResources - Copy.zh-CN.resx">
       <DependentUpon>GeneralResources.resx</DependentUpon>
       <Generator></Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="GitLabResource.pt-BR.resx">
+      <LastGenOutput>GitLabResource.pt-BR.Designer.cs</LastGenOutput>
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="GitLabResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>GitLabResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Messages - Copy %282%29.pt-br.resx">
       <SubType>Designer</SubType>

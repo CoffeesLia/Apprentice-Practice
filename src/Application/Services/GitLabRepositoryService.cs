@@ -1,51 +1,37 @@
 ﻿
-using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Application.Interfaces.Services;
-using Stellantis.ProjectName.Application.Models;
-using FluentValidation.Results;
 using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Application.Resources;
+using Stellantis.ProjectName.Application.Models;
+using Stellantis.ProjectName.Domain.Entities;
+using FluentValidation.Results;
 
 namespace Stellantis.ProjectName.Domain.Services
 {
     public class GitLabRepositoryService : IGitLabRepositoryService
     {
-        private const string V = "Name, Description, and URL are required fields.";
+        private const string ValidationErrorMessage = "Name, Description, and URL are required fields.";
         private readonly List<EntityGitLabRep> _repositories = new List<EntityGitLabRep>();
 
         async Task<OperationResult> IGitLabRepositoryService.CreateAsync(EntityGitLabRep newRepo)
         {
-            // Verificar se os campos obrigatórios estão preenchidos
-            if (string.IsNullOrWhiteSpace(newRepo.Name) || string.IsNullOrWhiteSpace(newRepo.Description) || string.IsNullOrWhiteSpace(newRepo.Url))
+            if (IsInvalidRepository(newRepo, out var validationResult))
             {
-                var failures = new List<ValidationFailure>
-                    {
-                        new ValidationFailure("Name", "Name is required"),
-                        new ValidationFailure("Description", "Description is required"),
-                        new ValidationFailure("Url", "URL is required")
-                    };
-                return OperationResult.InvalidData(new ValidationResult(failures));
+                return OperationResult.InvalidData("Invalid data", validationResult);
             }
 
-            // Verificar se a URL já existe
-            if (_repositories.Any(repo => repo.Url == newRepo.Url))
+            if (RepositoryUrlExists(newRepo.Url))
             {
-                return OperationResult.Conflict("A repository with the same URL already exists.");
+                return OperationResult.Conflict(GitLabResource.ExistentRepositoryUrl);
             }
 
-            // Adicionar o novo repositório à lista
             _repositories.Add(newRepo);
-            return OperationResult.Complete("Repository created successfully.");
+            return OperationResult.Complete(GitLabResource.RegisteredSuccessfully);
         }
 
         public async Task<EntityGitLabRep?> GetRepositoryDetailsAsync(int id)
         {
-            var repository = _repositories.FirstOrDefault(repo => repo.Id == id);
-            if (repository == null)
-            {
-                return null;
-            }
-
-            return repository;
+            return _repositories.FirstOrDefault(repo => repo.Id == id);
         }
 
         public async Task<OperationResult> UpdateAsync(EntityGitLabRep updatedRepo, string v)
@@ -53,34 +39,23 @@ namespace Stellantis.ProjectName.Domain.Services
             var existingRepo = _repositories.FirstOrDefault(repo => repo.Id == updatedRepo.Id);
             if (existingRepo == null)
             {
-                return OperationResult.NotFound("Repository not found.");
+                return OperationResult.NotFound(GitLabResource.RepositoryNotFound);
             }
 
-            if (string.IsNullOrWhiteSpace(updatedRepo.Name) || string.IsNullOrWhiteSpace(updatedRepo.Description) || string.IsNullOrWhiteSpace(updatedRepo.Url))
+            if (IsInvalidRepository(updatedRepo, out var validationResult))
             {
-                var failures = new List<ValidationFailure>
-                    {
-                        new ValidationFailure("Name", "Name is required"),
-                        new ValidationFailure("Description", "Description is required"),
-                        new ValidationFailure("Url", "URL is required")
-                    };
-                return OperationResult.InvalidData(new ValidationResult(failures));
+                return OperationResult.InvalidData(validationResult.ToString(), validationResult);
             }
 
-            if (_repositories.Any(repo => repo.Url == updatedRepo.Url && repo.Id != updatedRepo.Id))
+            if (RepositoryUrlExists(updatedRepo.Url, updatedRepo.Id))
             {
-                return OperationResult.Conflict("A repository with the same URL already exists.");
+                return OperationResult.Conflict(GitLabResource.ExistentRepositoryUrl);
             }
 
-            existingRepo.Name = updatedRepo.Name;
-            existingRepo.Description = updatedRepo.Description;
-            existingRepo.Url = updatedRepo.Url;
-            existingRepo.ApplicationId = updatedRepo.ApplicationId;
-
-            return OperationResult.Complete("Repository updated successfully.");
+            UpdateRepository(existingRepo, updatedRepo);
+            return OperationResult.Complete(GitLabResource.UpdatedSuccessfully);
         }
 
-        // Implementação dos métodos não implementados
         public async Task<OperationResult> CreateAsync(EntityGitLabRep item)
         {
             return await ((IGitLabRepositoryService)this).CreateAsync(item);
@@ -91,11 +66,11 @@ namespace Stellantis.ProjectName.Domain.Services
             var existingRepo = _repositories.FirstOrDefault(repo => repo.Id == id);
             if (existingRepo == null)
             {
-                return OperationResult.NotFound("Repository not found.");
+                return OperationResult.NotFound(GitLabResource.RepositoryNotFound);
             }
 
             _repositories.Remove(existingRepo);
-            return OperationResult.Complete("Repository deleted successfully.");
+            return OperationResult.Complete(GitLabResource.DeletedSuccessfully);
         }
 
         public async Task<EntityGitLabRep?> GetItemAsync(int id)
@@ -138,13 +113,49 @@ namespace Stellantis.ProjectName.Domain.Services
             foreach (var repo in _repositories)
             {
                 yield return repo;
-                await Task.Yield(); // Permite que o método seja assíncrono
+                await Task.Yield();
             }
         }
 
         Task<OperationResult> IEntityServiceBase<EntityGitLabRep>.UpdateAsync(EntityGitLabRep item)
         {
-            return UpdateAsync(item, V);
+            return UpdateAsync(item, ValidationErrorMessage);
+        }
+
+        private bool IsInvalidRepository(EntityGitLabRep repo, out ValidationResult validationResult)
+        {
+            var failures = new List<ValidationFailure>();
+
+            if (string.IsNullOrWhiteSpace(repo.Name))
+            {
+                failures.Add(new ValidationFailure("Name", GitLabResource.Name));
+            }
+
+            if (string.IsNullOrWhiteSpace(repo.Description))
+            {
+                failures.Add(new ValidationFailure("Description", GitLabResource.Description));
+            }
+
+            if (string.IsNullOrWhiteSpace(repo.Url))
+            {
+                failures.Add(new ValidationFailure("Url", GitLabResource.Url));
+            }
+
+            validationResult = new ValidationResult(failures);
+            return failures.Any();
+        }
+
+        private bool RepositoryUrlExists(string url, int? id = null)
+        {
+            return _repositories.Any(repo => repo.Url == url && (!id.HasValue || repo.Id != id.Value));
+        }
+
+        private void UpdateRepository(EntityGitLabRep existingRepo, EntityGitLabRep updatedRepo)
+        {
+            existingRepo.Name = updatedRepo.Name;
+            existingRepo.Description = updatedRepo.Description;
+            existingRepo.Url = updatedRepo.Url;
+            existingRepo.ApplicationId = updatedRepo.ApplicationId;
         }
     }
 }
