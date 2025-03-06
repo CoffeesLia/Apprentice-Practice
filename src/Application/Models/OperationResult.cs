@@ -56,7 +56,7 @@ namespace Stellantis.ProjectName.Application.Models
         /// </summary>
         /// <param name="result">The validation result.</param>
         /// <returns>An <see cref="OperationResult"/> with invalid data status.</returns>
-        internal static OperationResult InvalidData(ValidationResult result)
+        internal static OperationResult InvalidData(string v, ValidationResult result)
         {
             return new OperationResult(OperationStatus.InvalidData, "", result.Errors.Select(e => e.ErrorMessage));
         }
