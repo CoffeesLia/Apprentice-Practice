@@ -6,7 +6,6 @@
     <Nullable>enable</Nullable>
     <AssemblyName>Stellantis.$(SolutionName).$(MSBuildProjectName)</AssemblyName>
     <AssemblyInformationalVersion>1.0.0</AssemblyInformationalVersion>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GeneratedAssemblyInfoFile>Properties\AssemblyInfo.cs</GeneratedAssemblyInfoFile>
     <RootNamespace>Stellantis.$(SolutionName).$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
