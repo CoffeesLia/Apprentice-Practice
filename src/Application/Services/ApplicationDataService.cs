@@ -57,6 +57,30 @@ namespace Stellantis.ProjectName.Application.Services
             return await base.CreateAsync(item).ConfigureAwait(false);
 
 
+<<<<<<< Updated upstream
         }
+=======
+        public override async Task<OperationResult> UpdateAsync(ApplicationData item)
+        {
+            ArgumentNullException.ThrowIfNull(item);
+
+            var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
+
+            if (!validationResult.IsValid)
+            {
+                return OperationResult.InvalidData(validationResult);
+            }
+            if (string.IsNullOrEmpty(item.Name))
+            {
+                return OperationResult.Conflict(localizer[nameof(ApplicationDataResources.NameRequired)]);
+            }
+            if (!await IsAreaNameUniqueAsync(item.Name).ConfigureAwait(false))
+            {
+                return OperationResult.Conflict(localizer[nameof(ApplicationDataResources.AlreadyExists)]);
+            }
+            return await base.UpdateAsync(item).ConfigureAwait(false);
+        }
+
+>>>>>>> Stashed changes
     }
 }
