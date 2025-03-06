@@ -4,7 +4,6 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GeneratedAssemblyInfoFile>Properties\AssemblyInfo.cs</GeneratedAssemblyInfoFile>
     <AssemblyName>Stellantis.$(SolutionName).$(MSBuildProjectName)</AssemblyName>
     <AssemblyInformationalVersion>1.0.0</AssemblyInformationalVersion>
@@ -21,6 +20,15 @@
     <PackageProjectUrl>https://gitlab.fcalatam.com/fca/architecture/application/dotnetcore/base-project.git</PackageProjectUrl>
     <NeutralLanguage>en-US</NeutralLanguage>
     <NeutralResourcesLanguage>en</NeutralResourcesLanguage>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
   </PropertyGroup>
 
