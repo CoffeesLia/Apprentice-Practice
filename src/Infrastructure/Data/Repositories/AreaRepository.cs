@@ -8,7 +8,7 @@ using Stellantis.ProjectName.Application.Models.Filters;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
-    internal class AreaRepository : RepositoryBase<Area, Context>, IAreaRepository
+    public class AreaRepository : RepositoryBase<Area, Context>, IAreaRepository
     {
         public AreaRepository(Context context) : base(context)
         {

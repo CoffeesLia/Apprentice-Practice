@@ -19,12 +19,11 @@ namespace Stellantis.ProjectName.Application.Validators
             ArgumentNullException.ThrowIfNull(localizerFactory);
             var localizer = localizerFactory.Create(typeof(ApplicationDataResources));
 
-            RuleFor(x => x.NameApplication)
+            RuleFor(x => x.Name)
                .MinimumLength(MinimumLength)
                .WithMessage(localizer[nameof(ApplicationDataResources.NameValidateLength), MinimumLength, MaximumLength])
                .MaximumLength(MaximumLength)
                .WithMessage(localizer[nameof(ApplicationDataResources.NameValidateLength), MinimumLength, MaximumLength]);
-
         }
     }
 }

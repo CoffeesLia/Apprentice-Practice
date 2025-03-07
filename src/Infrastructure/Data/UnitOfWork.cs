@@ -10,6 +10,8 @@ namespace Stellantis.ProjectName.Infrastructure.Data
 
         public IAreaRepository AreaRepository => throw new NotImplementedException();
 
+        public IApplicationDataRepository ApplicationDataRepository => throw new NotImplementedException();
+
         public void BeginTransaction()
         {
             _transaction = context.Database.BeginTransaction();
