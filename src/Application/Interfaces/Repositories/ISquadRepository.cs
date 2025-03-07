@@ -5,13 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Stellantis.ProjectName.Domain.Entity;
 
-namespace Stellantis.ProjectName.Application.Interfaces.Services
+namespace Stellantis.ProjectName.Application.Interfaces.Repositories
 {
     public interface ISquadRepository
     {
         void Add(EntitySquad squad);
-        EntitySquad GetByName(String name);
+        EntitySquad GetByName(string name);
         IEnumerable<EntitySquad> GetAll();
-        EntitySquad GetById(Guid id); 
+        EntitySquad GetById(Guid id);
+        void Update(EntitySquad squad);
     }
 }
