@@ -1,120 +1,94 @@
-﻿using Stellantis.ProjectName.Domain.Entities;
-using Stellantis.ProjectName.Application.Interfaces.Services;
-using Stellantis.ProjectName.Application.Models;
-using FluentValidation.Results;
+﻿using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Application.Resources;
+using Stellantis.ProjectName.Application.Models;
+using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Filters;
+using FluentValidation.Results;
 
 namespace Stellantis.ProjectName.Domain.Services
 {
     // Implementation of the GitLab repository service
-    public class GitLabRepositoryService : IGitLabRepositoryService, IEntityServiceBase<EntityGitLabRep>
+    public class GitLabRepositoryService : IGitLabRepositoryService
     {
-        private const string V = "Name, Description, and URL are required fields.";
+        private const string ValidationErrorMessage = "Name, Description, and URL are required fields.";
         private readonly List<EntityGitLabRep> _repositories = new List<EntityGitLabRep>();
 
-        // Method to create a new GitLab repository
         async Task<OperationResult> IGitLabRepositoryService.CreateAsync(EntityGitLabRep newRepo)
         {
-            // Verify if the required fields are filled
-            if (string.IsNullOrWhiteSpace(newRepo.Name) || string.IsNullOrWhiteSpace(newRepo.Description) || string.IsNullOrWhiteSpace(newRepo.Url))
+            ArgumentNullException.ThrowIfNull(newRepo);
+
+            if (IsInvalidRepository(newRepo, out var validationResult))
             {
-                var failures = new List<ValidationFailure>
-                                    {
-                                        new ValidationFailure("Name", "Name is required"),
-                                        new ValidationFailure("Description", "Description is required"),
-                                        new ValidationFailure("Url", "URL is required")
-                                    };
-                return OperationResult.InvalidData(new ValidationResult(failures));
+                return OperationResult.InvalidData(validationResult);
             }
 
-            // Verify if the URL already exists
-            if (_repositories.Any(repo => repo.Url == newRepo.Url))
+            if (RepositoryUrlExists(newRepo.Url))
             {
-                return OperationResult.Conflict("A repository with the same URL already exists.");
+                return OperationResult.Conflict(GitLabResource.ExistentRepositoryUrl);
             }
 
-            // Add the new repository to the list
             _repositories.Add(newRepo);
-            return OperationResult.Complete("Repository created successfully.");
+            return OperationResult.Complete(GitLabResource.RegisteredSuccessfully);
         }
 
-        // Method to get repository details by ID
         public async Task<EntityGitLabRep?> GetRepositoryDetailsAsync(int id)
         {
-            var repository = _repositories.FirstOrDefault(repo => repo.Id == id);
-            if (repository == null)
-            {
-                return null;
-            }
-
-            return repository;
+            return await Task.FromResult(_repositories.FirstOrDefault(repo => repo.Id == id)).ConfigureAwait(false);
         }
 
-        // Method to update an existing repository
         public async Task<OperationResult> UpdateAsync(EntityGitLabRep updatedRepo, string v)
         {
+            ArgumentNullException.ThrowIfNull(updatedRepo);
+
             var existingRepo = _repositories.FirstOrDefault(repo => repo.Id == updatedRepo.Id);
             if (existingRepo == null)
             {
-                return OperationResult.NotFound("Repository not found.");
+                return OperationResult.NotFound(GitLabResource.RepositoryNotFound);
             }
 
-            // Verify if the required fields are filled
-            if (string.IsNullOrWhiteSpace(updatedRepo.Name) || string.IsNullOrWhiteSpace(updatedRepo.Description) || string.IsNullOrWhiteSpace(updatedRepo.Url))
+            if (IsInvalidRepository(updatedRepo, out var validationResult))
             {
-                var failures = new List<ValidationFailure>
-                                    {
-                                        new ValidationFailure("Name", "Name is required"),
-                                        new ValidationFailure("Description", "Description is required"),
-                                        new ValidationFailure("Url", "URL is required")
-                                    };
-                return OperationResult.InvalidData(new ValidationResult(failures));
+                return OperationResult.InvalidData(validationResult);
             }
 
-            // Verify if the URL is unique within the repositories list, excluding the current repository
-            if (_repositories.Any(repo => repo.Url == updatedRepo.Url && repo.Id != updatedRepo.Id))
+            if (RepositoryUrlExists(updatedRepo.Url, updatedRepo.Id))
             {
-                return OperationResult.Conflict("A repository with the same URL already exists.");
+                return OperationResult.Conflict(GitLabResource.ExistentRepositoryUrl);
             }
 
-            // Update the data of the existing repository
-            existingRepo.Name = updatedRepo.Name;
-            existingRepo.Description = updatedRepo.Description;
-            existingRepo.Url = updatedRepo.Url;
-            existingRepo.ApplicationId = updatedRepo.ApplicationId;
-
-            return OperationResult.Complete("Repository updated successfully.");
+            UpdateRepository(existingRepo, updatedRepo);
+            return OperationResult.Complete(GitLabResource.UpdatedSuccessfully);
         }
 
-        // Method to create a new repository (interface implementation)
         public async Task<OperationResult> CreateAsync(EntityGitLabRep item)
         {
-            return await ((IGitLabRepositoryService)this).CreateAsync(item);
+            ArgumentNullException.ThrowIfNull(item);
+
+            return await ((IGitLabRepositoryService)this).CreateAsync(item).ConfigureAwait(false);
         }
 
-        // Method to delete a repository by ID
         public async Task<OperationResult> DeleteAsync(int id)
         {
             var existingRepo = _repositories.FirstOrDefault(repo => repo.Id == id);
             if (existingRepo == null)
             {
-                return OperationResult.NotFound("Repository not found.");
+                return OperationResult.NotFound(GitLabResource.RepositoryNotFound);
             }
 
             _repositories.Remove(existingRepo);
-            return OperationResult.Complete("Repository deleted successfully.");
+            return OperationResult.Complete(GitLabResource.DeletedSuccessfully);
         }
 
-        // Method to get a repository by ID (interface implementation)
         public async Task<EntityGitLabRep?> GetItemAsync(int id)
         {
-            return await GetRepositoryDetailsAsync(id);
+            return await GetRepositoryDetailsAsync(id).ConfigureAwait(false);
         }
 
-        // Method to get a paginated list of repositories based on a filter
         public async Task<PagedResult<EntityGitLabRep>> GetListAsync(GitLabFilter filter)
         {
+            ArgumentNullException.ThrowIfNull(filter);
+
             var filteredRepos = _repositories.AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(filter.Name))
@@ -140,34 +114,57 @@ namespace Stellantis.ProjectName.Domain.Services
                 Total = filteredRepos.Count()
             };
 
-            return await Task.FromResult(result);
+            return await Task.FromResult(result).ConfigureAwait(false);
         }
 
-        // Method to list all repositories asynchronously
         public async IAsyncEnumerable<EntityGitLabRep> ListRepositories()
         {
             foreach (var repo in _repositories)
             {
                 yield return repo;
-                await Task.Yield(); // Allows the method to be asynchronous
+                await Task.Yield();
             }
         }
 
-        // Method to update a repository (interface implementation)
-        Task<OperationResult> IEntityServiceBase<EntityGitLabRep>.UpdateAsync(EntityGitLabRep item, string v)
+        Task<OperationResult> IEntityServiceBase<EntityGitLabRep>.UpdateAsync(EntityGitLabRep item)
         {
-            return UpdateAsync(item, V);
+            return UpdateAsync(item, ValidationErrorMessage);
         }
 
-        // Method not implemented to update an area (required to fulfill the interface)
-        public Task UpdateAsync(Area area)
+        private static bool IsInvalidRepository(EntityGitLabRep repo, out ValidationResult validationResult)
         {
-            throw new NotImplementedException();
+            var failures = new List<ValidationFailure>();
+
+            if (string.IsNullOrWhiteSpace(repo.Name))
+            {
+                failures.Add(new ValidationFailure("Name", GitLabResource.Name));
+            }
+
+            if (string.IsNullOrWhiteSpace(repo.Description))
+            {
+                failures.Add(new ValidationFailure("Description", GitLabResource.Description));
+            }
+
+            if (string.IsNullOrWhiteSpace(repo.Url))
+            {
+                failures.Add(new ValidationFailure("Url", GitLabResource.Url));
+            }
+
+            validationResult = new ValidationResult(failures);
+            return failures.Count > 0;
         }
 
-        public Task<OperationResult> UpdateAsync(EntityGitLabRep item)
+        private bool RepositoryUrlExists(string url, int? id = null)
         {
-            throw new NotImplementedException();
+            return _repositories.Any(repo => repo.Url == url && (!id.HasValue || repo.Id != id.Value));
+        }
+
+        private static void UpdateRepository(EntityGitLabRep existingRepo, EntityGitLabRep updatedRepo)
+        {
+            existingRepo.Name = updatedRepo.Name;
+            existingRepo.Description = updatedRepo.Description;
+            existingRepo.Url = updatedRepo.Url;
+            existingRepo.ApplicationId = updatedRepo.ApplicationId;
         }
     }
 }
