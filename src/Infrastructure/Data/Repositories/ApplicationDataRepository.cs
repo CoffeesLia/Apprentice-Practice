@@ -48,10 +48,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             return await GetPagedResultAsync(query, applicationFilter.Page, applicationFilter.PageSize).ConfigureAwait(false);
         }
 
-        public async Task<bool> IsAreaNameUniqueAsync(string name, int? id = null)
-        {
-            return await Context.Set<ApplicationData>().AnyAsync(a => a.Name == name && a.Id != id).ConfigureAwait(false);
-        }
 
         private static async Task<PagedResult<ApplicationData>> GetPagedResultAsync(IQueryable<ApplicationData> query, int page, int pageSize)
         {
@@ -65,6 +61,11 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 Page = page,
                 PageSize = pageSize
             };
+        }
+
+        public async Task<bool> IsApplicationNameUniqueAsync(string name, int? id = null)
+        {
+            return await Context.Set<ApplicationData>().AnyAsync(a => a.Name == name && a.Id != id).ConfigureAwait(false);
         }
     }
 }

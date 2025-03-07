@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
@@ -24,12 +26,7 @@ namespace Stellantis.ProjectName.Application.Services
         protected override IApplicationDataRepository Repository =>
             UnitOfWork.ApplicationDataRepository;
 
-        public async Task<bool> IsAreaNameUniqueAsync(string name, int? id = null)
-        {
-            var filter = new ApplicationFilter { Name = name};
-            var applicationData = await GetListAsync(filter).ConfigureAwait(false);
-            return !applicationData.Result.Any(a => a.Id != id);
-        }
+       
 
         public async Task<PagedResult<ApplicationData>> GetListAsync(ApplicationFilter applicationFilter)
         {
@@ -39,29 +36,66 @@ namespace Stellantis.ProjectName.Application.Services
         public override async Task<OperationResult> CreateAsync(ApplicationData item)
         {
             ArgumentNullException.ThrowIfNull(item);
-
-
             var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
             if (!validationResult.IsValid)
             {
-                return OperationResult.InvalidData(validationResult);
+                return OperationResult.InvalidData(validationResult.ToString(), validationResult);
             }
+
             if (string.IsNullOrEmpty(item.Name))
             {
                 return OperationResult.Conflict(localizer[nameof(ApplicationDataResources.NameRequired)]);
             }
-            if (!await IsAreaNameUniqueAsync(item.Name).ConfigureAwait(false))
+            if (!await IsApplicationNameUniqueAsync(item.Name).ConfigureAwait(false))
             {
                 return OperationResult.Conflict(localizer[nameof(ApplicationDataResources.AlreadyExists)]);
             }
-
-            var area = await UnitOfWork.AreaRepository.GetByIdAsync(item.AreaId).ConfigureAwait(false);
-         
-            item.Area = area;
-
             return await base.CreateAsync(item).ConfigureAwait(false);
+        }
+
+        public new async Task<OperationResult> GetItemAsync(int id)
+        {
+
+            var applicationData = await Repository.GetByIdAsync(id).ConfigureAwait(false);
+            if (applicationData == null)
+            {
+                return OperationResult.NotFound(localizer[nameof(ApplicationDataResources.ApplicationNotFound)]);
+            }
+            var result = new
+            {
+                applicationData.Name,
+                applicationData.Area
+            };
+            return OperationResult.Complete(result.ToString());
+        }
+
+        public async Task<bool> IsApplicationNameUniqueAsync(string name, int? id = null)
+        {
+            var filter = new ApplicationFilter { Name = name };
+            var applicationData = await GetListAsync(filter).ConfigureAwait(false);
+            return !applicationData.Result.Any(a => a.Id != id); ;
+        }
 
 
+        public override async Task<OperationResult> UpdateAsync(ApplicationData item)
+        {
+            ArgumentNullException.ThrowIfNull(item);
+            var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
+
+            if (!validationResult.IsValid)
+            {
+                return OperationResult.InvalidData(validationResult.ToString(), validationResult);
+            }
+
+            if (string.IsNullOrEmpty(item.Name))
+            {
+                return OperationResult.Conflict(localizer[nameof(ApplicationDataResources.NameRequired)]);
+            }
+            if (!await IsApplicationNameUniqueAsync(item.Name).ConfigureAwait(false))
+            {
+                return OperationResult.Conflict(localizer[nameof(ApplicationDataResources.AlreadyExists)]);
+            }
+            return await base.UpdateAsync(item).ConfigureAwait(false);
         }
     }
 }

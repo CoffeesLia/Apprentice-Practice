@@ -42,6 +42,9 @@ namespace Application.Tests.Services
             // Arrange
             var applicationData = new ApplicationData("Valido");
 
+            _applicationDataRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<ApplicationFilter>()))
+                .ReturnsAsync(new PagedResult<ApplicationData> { Result = new List<ApplicationData>(), Page = 1, PageSize = 10, Total = 0 });
+
             // Act
             var result = await _applicationDataService.CreateAsync(applicationData);
 
@@ -53,7 +56,7 @@ namespace Application.Tests.Services
         public async Task CreateAsync_ShouldReturnInvalidData_WhenValidationFails()
         {
             // Arrange
-            var applicationData = new ApplicationData("E");
+            var applicationData = new ApplicationData("u");
 
             // Act
             var result = await _applicationDataService.CreateAsync(applicationData);
@@ -66,8 +69,8 @@ namespace Application.Tests.Services
         public async Task CreateAsync_ShouldReturnConflict_WhenNameAlreadyExists()
         {
             // Arrange
-            var applicationData = new ApplicationData("Existing Name") { AreaId = 1 };
-            var existingApplicationData = new ApplicationData("Existing Name") { Id = 2, AreaId = 1 };
+            var applicationData = new ApplicationData("Existing Name");
+            var existingApplicationData = new ApplicationData("Existing Name") { Id = 2 };
 
             _applicationDataRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<ApplicationFilter>()))
                 .ReturnsAsync(new PagedResult<ApplicationData> { Result = new List<ApplicationData> { existingApplicationData }, Page = 1, PageSize = 10, Total = 1 });
@@ -78,5 +81,108 @@ namespace Application.Tests.Services
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
         }
+
+
+        [Fact]
+        public async Task GetItemAsync_ShouldReturnSuccess_WhenApplicationDataExists()
+        {
+            // Arrange
+            var applicationData = new ApplicationData("Valid Application")
+            {
+                Id = 1,
+                Area = new Area("Valid Area")
+            };
+
+            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync(applicationData);
+
+            // Act
+            var result = await _applicationDataService.GetItemAsync(applicationData.Id);
+
+            // Assert
+
+            Assert.Contains(applicationData.Name, result.Message);
+
+        }
+
+        [Fact]
+        public async Task GetItemAsync_ShouldReturnNotFound_WhenApplicationDataDoesNotExist()
+        {
+            // Arrange
+            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((ApplicationData)null);
+
+            // Act
+            var result = await _applicationDataService.GetItemAsync(1);
+
+            // Assert
+            Assert.Equal(OperationStatus.NotFound, result.Status);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_ShouldReturnSuccess_WhenApplicationDataIsValid()
+        {
+            // Arrange
+            var applicationData = new ApplicationData("Valid Name") { Id = 1, AreaId = 1 };
+
+            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(applicationData.Id)).ReturnsAsync(applicationData);
+            _applicationDataRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<ApplicationFilter>()))
+                .ReturnsAsync(new PagedResult<ApplicationData> { Result = new List<ApplicationData>(), Page = 1, PageSize = 10, Total = 0 });
+
+            // Act
+            var result = await _applicationDataService.UpdateAsync(applicationData);
+
+            // Assert
+            Assert.Equal(OperationStatus.Success, result.Status);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_ShouldReturnInvalidData_WhenValidationFails()
+        {
+            // Arrange
+            var applicationData = new ApplicationData("") { Id = 1, AreaId = 1 }; 
+
+            // Act
+            var result = await _applicationDataService.UpdateAsync(applicationData);
+
+            // Assert
+            Assert.Equal(OperationStatus.InvalidData, result.Status);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_ShouldReturnConflict_WhenNameAlreadyExists()
+        {
+            // Arrange
+            var applicationData = new ApplicationData("Existing Name") { Id = 1, AreaId = 1 };
+            var existingApplicationData = new ApplicationData("Existing Name") { Id = 2, AreaId = 1 };
+
+            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(applicationData.Id)).ReturnsAsync(applicationData);
+            _applicationDataRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<ApplicationFilter>()))
+                .ReturnsAsync(new PagedResult<ApplicationData> { Result = new List<ApplicationData> { existingApplicationData }, Page = 1, PageSize = 10, Total = 1 });
+
+            // Act
+            var result = await _applicationDataService.UpdateAsync(applicationData);
+
+            // Assert
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_ShouldReturnNotFound_WhenApplicationDataDoesNotExist()
+        {
+            // Arrange
+            var applicationData = new ApplicationData("Valid Name") { Id = 1, AreaId = 1 };
+
+            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(applicationData.Id)).ReturnsAsync((ApplicationData)null);
+            _applicationDataRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<ApplicationFilter>()))
+                .ReturnsAsync(new PagedResult<ApplicationData> { Result = new List<ApplicationData>(), Page = 1, PageSize = 10, Total = 0 });
+
+            // Act
+            var result = await _applicationDataService.UpdateAsync(applicationData);
+
+            // Assert
+            Assert.Equal(OperationStatus.NotFound, result.Status);
+        }
+
     }
 }
