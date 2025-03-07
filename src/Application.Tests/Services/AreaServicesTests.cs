@@ -167,7 +167,7 @@ namespace Application.Tests.Services
             var result = await _areaService.GetItemAsync(area.Id);
 
             // Assert
-
+            Assert.IsType<Area>(result);
             Assert.IsType<Area>(result);
         }
 
@@ -198,7 +198,7 @@ namespace Application.Tests.Services
             var areaService = new AreaService(_unitOfWorkMock.Object, localizer, areaValidator);
 
             // Act
-            var result = await ((Stellantis.ProjectName.Application.Interfaces.Services.IEntityServiceBase<Area>)areaService).UpdateAsync(area);
+            var result = await areaService.UpdateAsync(area);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
@@ -217,7 +217,7 @@ namespace Application.Tests.Services
             var areaService = new AreaService(_unitOfWorkMock.Object, localizer, validatorMock.Object);
 
             // Act
-            var result = await ((Stellantis.ProjectName.Application.Interfaces.Services.IEntityServiceBase<Area>)areaService).UpdateAsync(area);
+            var result = await areaService.UpdateAsync(area);
 
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
@@ -239,7 +239,7 @@ namespace Application.Tests.Services
             var areaService = new AreaService(_unitOfWorkMock.Object, localizer, validatorMock.Object);
 
             // Act
-            var result = await ((Stellantis.ProjectName.Application.Interfaces.Services.IEntityServiceBase<Area>)areaService).UpdateAsync(area);
+            var result = await areaService.UpdateAsync(area);
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);

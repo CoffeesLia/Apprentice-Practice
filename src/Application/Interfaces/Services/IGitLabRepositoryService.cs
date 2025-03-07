@@ -1,7 +1,6 @@
 ﻿using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Application.Models;
-using Stellantis.ProjectName.Filters;
 
 namespace Stellantis.ProjectName.Application.Interfaces.Services
 {
