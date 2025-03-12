@@ -4,6 +4,7 @@ using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Domain.Entities;
+using Stellantis.ProjectName.Filters;
 using FluentValidation.Results;
 
 namespace Stellantis.ProjectName.Domain.Services
@@ -11,9 +12,9 @@ namespace Stellantis.ProjectName.Domain.Services
     public class GitLabRepositoryService : IGitLabRepositoryService
     {
         private const string ValidationErrorMessage = "Name, Description, and URL are required fields.";
-        private readonly List<EntityGitLabRep> _repositories = new List<EntityGitLabRep>();
+        private readonly List<EntityGitLabRepository> _repositories = new List<EntityGitLabRepository>();
 
-        async Task<OperationResult> IGitLabRepositoryService.CreateAsync(EntityGitLabRep newRepo)
+        async Task<OperationResult> IGitLabRepositoryService.CreateAsync(EntityGitLabRepository newRepo)
         {
             if (IsInvalidRepository(newRepo, out var validationResult))
             {
@@ -29,12 +30,12 @@ namespace Stellantis.ProjectName.Domain.Services
             return OperationResult.Complete(GitLabResource.RegisteredSuccessfully);
         }
 
-        public async Task<EntityGitLabRep?> GetRepositoryDetailsAsync(int id)
+        public async Task<EntityGitLabRepository?> GetRepositoryDetailsAsync(int id)
         {
             return _repositories.FirstOrDefault(repo => repo.Id == id);
         }
 
-        public async Task<OperationResult> UpdateAsync(EntityGitLabRep updatedRepo, string v)
+        public async Task<OperationResult> UpdateAsync(EntityGitLabRepository updatedRepo, string v)
         {
             var existingRepo = _repositories.FirstOrDefault(repo => repo.Id == updatedRepo.Id);
             if (existingRepo == null)
@@ -56,7 +57,7 @@ namespace Stellantis.ProjectName.Domain.Services
             return OperationResult.Complete(GitLabResource.UpdatedSuccessfully);
         }
 
-        public async Task<OperationResult> CreateAsync(EntityGitLabRep item)
+        public async Task<OperationResult> CreateAsync(EntityGitLabRepository item)
         {
             return await ((IGitLabRepositoryService)this).CreateAsync(item);
         }
@@ -73,12 +74,12 @@ namespace Stellantis.ProjectName.Domain.Services
             return OperationResult.Complete(GitLabResource.DeletedSuccessfully);
         }
 
-        public async Task<EntityGitLabRep?> GetItemAsync(int id)
+        public async Task<EntityGitLabRepository?> GetItemAsync(int id)
         {
             return await GetRepositoryDetailsAsync(id);
         }
 
-        public async Task<PagedResult<EntityGitLabRep>> GetListAsync(GitLabFilter filter)
+        public async Task<PagedResult<EntityGitLabRepository>> GetListAsync(GitLabFilter filter)
         {
             var filteredRepos = _repositories.AsQueryable();
 
@@ -97,7 +98,7 @@ namespace Stellantis.ProjectName.Domain.Services
                 filteredRepos = filteredRepos.Where(repo => repo.Url.Contains(filter.Url));
             }
 
-            var result = new PagedResult<EntityGitLabRep>
+            var result = new PagedResult<EntityGitLabRepository>
             {
                 Result = filteredRepos.ToList(),
                 Page = 1,
@@ -108,7 +109,7 @@ namespace Stellantis.ProjectName.Domain.Services
             return await Task.FromResult(result);
         }
 
-        public async IAsyncEnumerable<EntityGitLabRep> ListRepositories()
+        public async IAsyncEnumerable<EntityGitLabRepository> ListRepositories()
         {
             foreach (var repo in _repositories)
             {
@@ -117,12 +118,12 @@ namespace Stellantis.ProjectName.Domain.Services
             }
         }
 
-        Task<OperationResult> IEntityServiceBase<EntityGitLabRep>.UpdateAsync(EntityGitLabRep item)
+        Task<OperationResult> IEntityServiceBase<EntityGitLabRepository>.UpdateAsync(EntityGitLabRepository item)
         {
             return UpdateAsync(item, ValidationErrorMessage);
         }
 
-        private bool IsInvalidRepository(EntityGitLabRep repo, out ValidationResult validationResult)
+        private bool IsInvalidRepository(EntityGitLabRepository repo, out ValidationResult validationResult)
         {
             var failures = new List<ValidationFailure>();
 
@@ -150,7 +151,7 @@ namespace Stellantis.ProjectName.Domain.Services
             return _repositories.Any(repo => repo.Url == url && (!id.HasValue || repo.Id != id.Value));
         }
 
-        private void UpdateRepository(EntityGitLabRep existingRepo, EntityGitLabRep updatedRepo)
+        private void UpdateRepository(EntityGitLabRepository existingRepo, EntityGitLabRepository updatedRepo)
         {
             existingRepo.Name = updatedRepo.Name;
             existingRepo.Description = updatedRepo.Description;
