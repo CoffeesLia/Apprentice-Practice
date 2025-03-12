@@ -67,5 +67,10 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         {
             return await Context.Set<ApplicationData>().AnyAsync(a => a.Name == name && a.Id != id).ConfigureAwait(false);
         }
+
+        public Task<ApplicationData?> GetFullByIdAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

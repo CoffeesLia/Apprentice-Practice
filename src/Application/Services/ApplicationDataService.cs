@@ -28,11 +28,6 @@ namespace Stellantis.ProjectName.Application.Services
 
        
 
-        public async Task<PagedResult<ApplicationData>> GetListAsync(ApplicationFilter applicationFilter)
-        {
-            return await Repository.GetListAsync(applicationFilter).ConfigureAwait(false);
-        }
-
         public override async Task<OperationResult> CreateAsync(ApplicationData item)
         {
             ArgumentNullException.ThrowIfNull(item);
@@ -96,6 +91,23 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.Conflict(localizer[nameof(ApplicationDataResources.AlreadyExists)]);
             }
             return await base.UpdateAsync(item).ConfigureAwait(false);
+        }
+
+        public async Task<PagedResult<ApplicationData>> GetListAsync(ApplicationFilter applicationFilter)
+        {
+            applicationFilter ??= new ApplicationFilter();
+            return await UnitOfWork.ApplicationDataRepository.GetListAsync(applicationFilter).ConfigureAwait(false);
+
+        }
+
+        public override async Task <OperationResult> DeleteAsync(int id)
+        {
+            var item = await Repository.GetFullByIdAsync(id).ConfigureAwait(false);
+            if (item == null)
+                return OperationResult.NotFound(Localizer[nameof(ApplicationDataResources.NotFound)]);
+            return await base.DeleteAsync(item).ConfigureAwait(false);
+
+
         }
     }
 }

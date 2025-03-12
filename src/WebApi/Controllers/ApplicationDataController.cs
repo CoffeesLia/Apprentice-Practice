@@ -30,12 +30,22 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         protected override IApplicationDataService Service => (IApplicationDataService)base.Service;
 
         [HttpPost]
-        public async Task <IActionResult> CreateAsync([FromBody]  ApplicationDataDto itemDto)
+        public async Task<IActionResult> CreateAsync([FromBody] ApplicationDataDto itemDto)
         {
-            
-            return await CreateBaseAsync<ApplicationVm>(itemDto);
-
+            var result = await CreateBaseAsync<ApplicationVm>(itemDto).ConfigureAwait(false);
+            if (result is OkObjectResult okResult && okResult.Value is ApplicationVm applicationVm)
+            {
+                return CreatedAtAction(nameof(GetAsync), new { id = applicationVm.Id }, applicationVm);
+            }
+            return result;
         }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ApplicationVm>> GetAsync(int id)
+        {
+            return await GetAsync<ApplicationVm>(id).ConfigureAwait(false); 
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> GetListAsync([FromQuery] ApplicationDataFilterDto filterDto)
@@ -50,6 +60,13 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         {
             return await UpdateBaseAsync<ApplicationVm>(id, itemDto).ConfigureAwait(false);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteAsync(int id)
+        {
+            return await DeleteAsync(id).ConfigureAwait(false);
+        }
+
     }
 
 }
