@@ -34,29 +34,7 @@ namespace Stellantis.ProjectName.Domain.Services
         {
             return _repositories.FirstOrDefault(repo => repo.Id == id);
         }
-
-        public async Task<OperationResult> UpdateAsync(EntityGitLabRepository updatedRepo, string v)
-        {
-            var existingRepo = _repositories.FirstOrDefault(repo => repo.Id == updatedRepo.Id);
-            if (existingRepo == null)
-            {
-                return OperationResult.NotFound(GitLabResource.RepositoryNotFound);
-            }
-
-            if (IsInvalidRepository(updatedRepo, out var validationResult))
-            {
-                return OperationResult.InvalidData(validationResult.ToString(), validationResult);
-            }
-
-            if (RepositoryUrlExists(updatedRepo.Url, updatedRepo.Id))
-            {
-                return OperationResult.Conflict(GitLabResource.ExistentRepositoryUrl);
-            }
-
-            UpdateRepository(existingRepo, updatedRepo);
-            return OperationResult.Complete(GitLabResource.UpdatedSuccessfully);
-        }
-
+       
         public async Task<OperationResult> CreateAsync(EntityGitLabRepository item)
         {
             return await ((IGitLabRepositoryService)this).CreateAsync(item);
@@ -157,6 +135,28 @@ namespace Stellantis.ProjectName.Domain.Services
             existingRepo.Description = updatedRepo.Description;
             existingRepo.Url = updatedRepo.Url;
             existingRepo.ApplicationId = updatedRepo.ApplicationId;
+        }
+
+        public async Task<OperationResult> UpdateAsync(EntityGitLabRepository updatedRepo, string v)
+        {
+            var existingRepo = _repositories.FirstOrDefault(repo => repo.Id == updatedRepo.Id);
+            if (existingRepo == null)
+            {
+                return OperationResult.NotFound(GitLabResource.RepositoryNotFound);
+            }
+
+            if (IsInvalidRepository(updatedRepo, out var validationResult))
+            {
+                return OperationResult.InvalidData(validationResult.ToString(), validationResult);
+            }
+
+            if (RepositoryUrlExists(updatedRepo.Url, updatedRepo.Id))
+            {
+                return OperationResult.Conflict(GitLabResource.ExistentRepositoryUrl);
+            }
+
+            UpdateRepository(existingRepo, updatedRepo);
+            return OperationResult.Complete(GitLabResource.UpdatedSuccessfully);
         }
     }
 }
