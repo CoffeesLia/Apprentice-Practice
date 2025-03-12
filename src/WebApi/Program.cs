@@ -3,6 +3,9 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Stellantis.ProjectName.Application.Interfaces.Repositories;
+using Stellantis.ProjectName.Application.Interfaces.Services;
+using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Infrastructure.Data;
 using Stellantis.ProjectName.IoC;
 using Stellantis.ProjectName.WebApi;
@@ -54,6 +57,8 @@ switch (databaseType)
     default:
         throw new NotSupportedException(databaseType);
 }
+
+builder.Services.AddScoped<IMemberService, MemberService>();
 
 builder.Services.AddLocalization();
 

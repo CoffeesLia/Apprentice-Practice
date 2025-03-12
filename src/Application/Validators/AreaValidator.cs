@@ -10,7 +10,7 @@ using Stellantis.ProjectName.Application.Resources;
 
 namespace Stellantis.ProjectName.Application.Validators
 {
-    internal class AreaValidator : AbstractValidator<Area>
+    public class AreaValidator : AbstractValidator<Area>
     {
         internal const int MinimumLength = 3;
         internal const int MaximumLength = 255; 

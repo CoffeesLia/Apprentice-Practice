@@ -117,28 +117,25 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DeletedSuccessfully" xml:space="preserve">
-    <value>Successfully deleted.</value>
-  </data>
-  <data name="Description" xml:space="preserve">
-    <value>Description is required.</value>
-  </data>
   <data name="ExistentRepositoryUrl" xml:space="preserve">
-    <value>A Repository with this Url already exist</value>
+    <value>A repository with the same URL already exists.</value>
   </data>
   <data name="Name" xml:space="preserve">
-    <value>The is required.</value>
+    <value>Name is required</value>
   </data>
   <data name="RegisteredSuccessfully" xml:space="preserve">
-    <value>Successfully registered.</value>
+    <value>Repository created successfully.</value>
   </data>
   <data name="RepositoryNotFound" xml:space="preserve">
     <value>Repository not found.</value>
   </data>
+  <data name="DeletedSuccessfully" xml:space="preserve">
+    <value>Repository deleted successfully</value>
+  </data>
   <data name="UpdatedSuccessfully" xml:space="preserve">
-    <value>Successfully update.</value>
+    <value>Repository updated successfully.</value>
   </data>
   <data name="Url" xml:space="preserve">
-    <value>Url is required.</value>
+    <value>Url is required</value>
   </data>
 </root>

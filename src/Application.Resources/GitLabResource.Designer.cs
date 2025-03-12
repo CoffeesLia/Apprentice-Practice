@@ -61,7 +61,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Successfully deleted..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Repository deleted successfully.
         /// </summary>
         public static string DeletedSuccessfully {
             get {
@@ -70,7 +70,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Description is required..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Description is required.
         /// </summary>
         public static string Description {
             get {
@@ -79,7 +79,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a A Repository with this Url already exist.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a A repository with the same URL already exists..
         /// </summary>
         public static string ExistentRepositoryUrl {
             get {
@@ -88,7 +88,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a The is required..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Name is required.
         /// </summary>
         public static string Name {
             get {
@@ -97,7 +97,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Successfully registered..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Repository created successfully..
         /// </summary>
         public static string RegisteredSuccessfully {
             get {
@@ -115,7 +115,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Successfully update..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Repository updated successfully..
         /// </summary>
         public static string UpdatedSuccessfully {
             get {
@@ -124,7 +124,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Url is required..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Url is required.
         /// </summary>
         public static string Url {
             get {
