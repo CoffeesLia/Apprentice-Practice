@@ -60,10 +60,66 @@ namespace Stellantis.ProjectName.Application.Services
 
             return await base.CreateAsync(item).ConfigureAwait(false);
         }
-
         public async Task<PagedResult<Responsible>> GetListAsync(ResponsibleFilter responsibleFilter)
         {
             return await Repository.GetListAsync(responsibleFilter).ConfigureAwait(false);
         }
+
+        public async Task<Responsible?> GetItemAsync(int id)
+        {
+            return await Repository.GetByIdAsync(id).ConfigureAwait(false);
+        }
+
+        public override async Task<OperationResult> UpdateAsync(Responsible item)
+        {
+            ArgumentNullException.ThrowIfNull(item);
+
+            // Validação do objeto Responsible
+            var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
+            if (!validationResult.IsValid)
+            {
+                return OperationResult.InvalidData(validationResult);
+            }
+
+            // Verificação se o e-mail já existe para outro responsável
+            var existingResponsible = await Repository.GetByEmailAsync(item.Email).ConfigureAwait(false);
+            if (existingResponsible != null && existingResponsible.Id != item.Id)
+            {
+                return OperationResult.Conflict(_localizer[nameof(ResponsibleResource.AlreadyExists)]);
+            }
+
+            // Verificação se o nome é obrigatório
+            if (string.IsNullOrWhiteSpace(item.Nome))
+            {
+                return OperationResult.InvalidData(new ValidationResult(new List<ValidationFailure>
+                {
+                    new ValidationFailure(nameof(item.Nome), _localizer["NameRequired"])
+                }));
+            }
+
+            // Verificação se a área é obrigatória
+            if (string.IsNullOrWhiteSpace(item.Area))
+            {
+                return OperationResult.InvalidData(new ValidationResult(new List<ValidationFailure>
+                {
+                    new ValidationFailure(nameof(item.Area), _localizer["AreaRequired"])
+                }));
+            }
+
+            return await base.UpdateAsync(item).ConfigureAwait(false);
+        }
+
+        public override async Task<OperationResult> DeleteAsync(int id)
+        {
+            var responsible = await Repository.GetByIdAsync(id).ConfigureAwait(false);
+            if (responsible == null)
+            {
+                return OperationResult.NotFound(_localizer[nameof(OperationResult.NotFound)]);
+            }
+
+            await Repository.DeleteAsync(id).ConfigureAwait(false);
+            return OperationResult.Complete(_localizer[nameof(ResponsibleResource.DeletedSuccessfully)]);
+        }
+
     }
 }

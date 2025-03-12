@@ -13,7 +13,7 @@ using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.ViewModels;
 using Stellantis.ProjectName.Application.Resources;
 using Xunit;
-/*
+
 namespace Stellantis.ProjectName.WebApi.Tests.Controllers
 {
     public class AreaControllerBaseTests
@@ -140,4 +140,3 @@ namespace Stellantis.ProjectName.WebApi.Tests.Controllers
         }
     }
 }
-*/

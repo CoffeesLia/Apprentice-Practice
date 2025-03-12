@@ -118,5 +118,171 @@ namespace Stellantis.ProjectName.Tests.Services
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
         }
+        [Fact]
+        public async Task GetListAsync_ShouldReturnPagedResult_WhenCalledWithValidFilter()
+        {
+            // Arrange
+            var filter = new ResponsibleFilter { Email = "test@example.com" };
+            var pagedResult = new PagedResult<Responsible>
+            {
+                Result = new List<Responsible> { new Responsible { Email = "test@example.com", Nome = "Test", Area = "IT" } },
+                Page = 1,
+                PageSize = 10,
+                Total = 1
+            };
+            _responsibleRepositoryMock.Setup(r => r.GetListAsync(filter)).ReturnsAsync(pagedResult);
+
+            // Act
+            var result = await _responsibleService.GetListAsync(filter);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(1, result.Total);
+            Assert.Single(result.Result);
+        }
+
+        [Fact]
+        public async Task GetItemAsync_ShouldReturnResponsible_WhenResponsibleExists()
+        {
+            // Arrange
+            var responsible = new Responsible { Id = 1, Email = "test@example.com", Nome = "Test", Area = "IT" };
+            _responsibleRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(responsible);
+
+            // Act
+            var result = await _responsibleService.GetItemAsync(1);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(responsible, result);
+        }
+
+        [Fact]
+        public async Task GetItemAsync_ShouldReturnNull_WhenResponsibleDoesNotExist()
+        {
+            // Arrange
+            _responsibleRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync((Responsible?)null);
+
+            // Act
+            var result = await _responsibleService.GetItemAsync(1);
+
+            // Assert
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_ShouldReturnInvalidData_WhenValidationFails()
+        {
+            // Arrange
+            var responsible = new Responsible { Id = 1, Email = "test@example.com" };
+            var validationResult = new ValidationResult(new List<ValidationFailure> { new ValidationFailure("Email", "Invalid email") });
+            _validatorMock.Setup(v => v.ValidateAsync(responsible, default)).ReturnsAsync(validationResult);
+
+            // Act
+            var result = await _responsibleService.UpdateAsync(responsible);
+
+            // Assert
+            Assert.Equal(OperationStatus.InvalidData, result.Status);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_ShouldReturnConflict_WhenEmailAlreadyExistsForAnotherResponsible()
+        {
+            // Arrange
+            var responsible = new Responsible { Id = 1, Email = "test@example.com" };
+            var existingResponsible = new Responsible { Id = 2, Email = "test@example.com" };
+            var validationResult = new ValidationResult();
+            _validatorMock.Setup(v => v.ValidateAsync(responsible, default)).ReturnsAsync(validationResult);
+            _responsibleRepositoryMock.Setup(r => r.GetByEmailAsync(responsible.Email)).ReturnsAsync(existingResponsible);
+            _localizerMock.Setup(l => l[nameof(ResponsibleResource.AlreadyExists)]).Returns(new LocalizedString(nameof(ResponsibleResource.AlreadyExists), "Email already exists"));
+
+            // Act
+            var result = await _responsibleService.UpdateAsync(responsible);
+
+            // Assert
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_ShouldReturnInvalidData_WhenNameIsEmpty()
+        {
+            // Arrange
+            var responsible = new Responsible { Id = 1, Email = "test@example.com", Nome = "" };
+            var validationResult = new ValidationResult();
+            _validatorMock.Setup(v => v.ValidateAsync(responsible, default)).ReturnsAsync(validationResult);
+            _localizerMock.Setup(l => l["NameRequired"]).Returns(new LocalizedString("NameRequired", "Name is required"));
+
+            // Act
+            var result = await _responsibleService.UpdateAsync(responsible);
+
+            // Assert
+            Assert.Equal(OperationStatus.InvalidData, result.Status);
+            Assert.Contains(result.Errors, e => e == "Name is required");
+        }
+
+        [Fact]
+        public async Task UpdateAsync_ShouldReturnInvalidData_WhenAreaIsEmpty()
+        {
+            // Arrange
+            var responsible = new Responsible { Id = 1, Email = "test@example.com", Nome = "Test", Area = "" };
+            var validationResult = new ValidationResult();
+            _validatorMock.Setup(v => v.ValidateAsync(responsible, default)).ReturnsAsync(validationResult);
+            _localizerMock.Setup(l => l["AreaRequired"]).Returns(new LocalizedString("AreaRequired", "Area is required"));
+
+            // Act
+            var result = await _responsibleService.UpdateAsync(responsible);
+
+            // Assert
+            Assert.Equal(OperationStatus.InvalidData, result.Status);
+            Assert.Contains(result.Errors, e => e == "Area is required");
+        }
+
+        [Fact]
+        public async Task UpdateAsync_ShouldReturnSuccess_WhenUpdateIsSuccessful()
+        {
+            // Arrange
+            var responsible = new Responsible { Id = 1, Email = "test@example.com", Nome = "Test", Area = "IT" };
+            var validationResult = new ValidationResult();
+            _validatorMock.Setup(v => v.ValidateAsync(responsible, default)).ReturnsAsync(validationResult);
+            _responsibleRepositoryMock.Setup(r => r.GetByEmailAsync(responsible.Email)).ReturnsAsync((Responsible?)null);
+            _responsibleRepositoryMock.Setup(r => r.UpdateAsync(responsible, true)).Returns(Task.CompletedTask);
+
+            // Act
+            var result = await _responsibleService.UpdateAsync(responsible);
+
+            // Assert
+            Assert.Equal(OperationStatus.Success, result.Status);
+        }
+
+        [Fact]
+        public async Task DeleteAsync_ShouldReturnNotFound_WhenResponsibleDoesNotExist()
+        {
+            // Arrange
+            _responsibleRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync((Responsible?)null);
+            _localizerMock.Setup(l => l[nameof(OperationStatus.NotFound)]).Returns(new LocalizedString(nameof(OperationStatus.NotFound), "Responsible not found"));
+
+            // Act
+            var result = await _responsibleService.DeleteAsync(1);
+
+            // Assert
+            Assert.Equal(OperationStatus.NotFound, result.Status);
+            Assert.Equal("Responsible not found", result.Message);
+        }
+
+        [Fact]
+        public async Task DeleteAsync_ShouldReturnSuccess_WhenDeleteIsSuccessful()
+        {
+            // Arrange
+            var responsible = new Responsible { Id = 1, Email = "test@example.com", Nome = "Test", Area = "IT" };
+            _responsibleRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(responsible);
+            _localizerMock.Setup(l => l[nameof(ResponsibleResource.DeletedSuccessfully)]).Returns(new LocalizedString(nameof(ResponsibleResource.DeletedSuccessfully), "Responsible deleted"));
+
+            // Act
+            var result = await _responsibleService.DeleteAsync(1);
+
+            // Assert
+            Assert.Equal(OperationStatus.Success, result.Status);
+            Assert.Equal(ResponsibleResource.DeletedSuccessfully, result.Message);
+        }
+
     }
 }

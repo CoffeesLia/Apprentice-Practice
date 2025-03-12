@@ -22,7 +22,7 @@ namespace Stellantis.ProjectName.Application.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class ResponsibleResource {
+    public class ResponsibleResource {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         ///   Retorna a instância de ResourceManager armazenada em cache usada por essa classe.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Stellantis.ProjectName.Application.Resources.ResponsibleResource", typeof(ResponsibleResource).Assembly);
@@ -51,7 +51,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         ///   pesquisas de recursos que usam essa classe de recurso de tipo de alta segurança.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -59,47 +59,56 @@ namespace Stellantis.ProjectName.Application.Resources {
                 resourceCulture = value;
             }
         }
-        
+
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a The Area is mandatory.
         /// </summary>
-        internal static string _AreaRequired__ {
+        public static string _AreaRequired__ {
             get {
                 return ResourceManager.GetString(" AreaRequired  ", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a The email already exists..
         /// </summary>
-        internal static string AlreadyExists {
+        public static string AlreadyExists {
             get {
                 return ResourceManager.GetString("AlreadyExists", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a .
+        /// </summary>
+        public static string DeletedSuccessfully {
+            get {
+                return ResourceManager.GetString("DeletedSuccessfully", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a The email must be valid.
         /// </summary>
-        internal static string EmailInvalid {
+        public static string EmailInvalid {
             get {
                 return ResourceManager.GetString("EmailInvalid", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Email is mandatory .
         /// </summary>
-        internal static string EmailRequired_ {
+        public static string EmailRequired_ {
             get {
                 return ResourceManager.GetString("EmailRequired ", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a .
         /// </summary>
-        internal static string NomeRequired {
+        public static string NomeRequired {
             get {
                 return ResourceManager.GetString("NomeRequired", resourceCulture);
             }
