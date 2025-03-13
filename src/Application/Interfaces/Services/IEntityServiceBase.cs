@@ -11,5 +11,6 @@ namespace Stellantis.ProjectName.Application.Interfaces.Services
         Task<OperationResult> DeleteAsync(int id);
         Task<TEntity?> GetItemAsync(int id); 
         Task<OperationResult> UpdateAsync(TEntity item);
+        Task<OperationResult> UpdateAsync(EntityGitLabRepository item, string v);
     }
 }
