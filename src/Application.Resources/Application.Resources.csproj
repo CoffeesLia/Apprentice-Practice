@@ -1,26 +1,25 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <AssemblyName>Stellantis.$(SolutionName).$(MSBuildProjectName)</AssemblyName>
+    <AnalysisLevel>latest-all</AnalysisLevel>
     <AssemblyInformationalVersion>1.0.0</AssemblyInformationalVersion>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <GeneratedAssemblyInfoFile>Properties\AssemblyInfo.cs</GeneratedAssemblyInfoFile>
-    <RootNamespace>Stellantis.$(SolutionName).$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
-    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+    <AssemblyName>Stellantis.$(SolutionName).$(MSBuildProjectName)</AssemblyName>
     <Authors>Stellantis</Authors>
     <Copyright>© Stellantis. All rights reserved.</Copyright>
-    <RepositoryUrl>https://gitlab.fcalatam.com/fca/architecture/application/dotnetcore/base-project.git</RepositoryUrl>
-    <RepositoryType></RepositoryType>
-    <PackageTags>AMS</PackageTags>
-    <PackageId>$(AssemblyName)</PackageId>
-    <Title>$(SolutionName)</Title>
-    <Product>$(SolutionName)</Product>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GeneratedAssemblyInfoFile>Properties\AssemblyInfo.cs</GeneratedAssemblyInfoFile>
+    <ImplicitUsings>enable</ImplicitUsings>
     <NeutralLanguage>en</NeutralLanguage>
     <NeutralResourcesLanguage>en</NeutralResourcesLanguage>
-</PropertyGroup>
+    <Nullable>enable</Nullable>
+    <PackageId>$(AssemblyName)</PackageId>
+    <PackageTags>AMS</PackageTags>
+    <Product>$(SolutionName)</Product>
+    <RepositoryUrl>https://gitlab.fcalatam.com/fca/architecture/application/dotnetcore/base-project.git</RepositoryUrl>
+    <RootNamespace>Stellantis.$(SolutionName).$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <TargetFramework>net8.0</TargetFramework>
+    <Title>$(SolutionName)</Title>
+  </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
@@ -69,6 +68,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="ApplicationDataResources.Designer.cs">
+      <DependentUpon>ApplicationDataResources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Update="AreaResources.pt-BR.Designer.cs">
       <DependentUpon>AreaResources.pt-BR.resx</DependentUpon>
       <DesignTime>True</DesignTime>
@@ -79,11 +83,24 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>FilterResources.resx</DependentUpon>
     </Compile>
+
     <Compile Update="ResponsibleResource.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>ResponsibleResource.resx</DependentUpon>
     </Compile>
+
+    <Compile Update="GitLabResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>GitLabResource.resx</DependentUpon>
+    </Compile>
+    <Compile Update="GitLabResource.pt-BR.Designer.cs">
+      <DependentUpon>GitLabResource.pt-BR.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+ </Compile>
+ 
     <Compile Update="ServiceResources.Designer.cs">
       <DependentUpon>ServiceResources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
@@ -92,6 +109,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="ApplicationDataResources.resx">
+      <LastGenOutput>ApplicationDataResources.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="ApplicationDataResources.pt-BR.resx">
+      <Generator></Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="AreaResources.pt-BR.resx">
       <Generator></Generator>
     </EmbeddedResource>
@@ -113,6 +137,14 @@
     <EmbeddedResource Update="GeneralResources - Copy.zh-CN.resx">
       <DependentUpon>GeneralResources.resx</DependentUpon>
       <Generator></Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="GitLabResource.pt-BR.resx">
+      <LastGenOutput>GitLabResource.pt-BR.Designer.cs</LastGenOutput>
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="GitLabResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>GitLabResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Messages - Copy %282%29.pt-br.resx">
       <SubType>Designer</SubType>
