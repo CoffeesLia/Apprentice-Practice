@@ -2,6 +2,7 @@
 using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Domain.Entities;
+using Stellantis.ProjectName.Filters;
 
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
@@ -17,7 +18,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] EntityGitLabRep newRepo)
+        public async Task<IActionResult> Create([FromBody] EntityGitLabRepository newRepo)
         {
             var result = await _gitLabRepositoryService.CreateAsync(newRepo).ConfigureAwait(false);
             if (result.Status == OperationStatus.InvalidData)
@@ -43,7 +44,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] EntityGitLabRep updatedRepo)
+        public async Task<IActionResult> Update(int id, [FromBody] EntityGitLabRepository updatedRepo)
         {
             updatedRepo.Id = id;
             var result = await _gitLabRepositoryService.UpdateAsync(updatedRepo).ConfigureAwait(false);
@@ -81,7 +82,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         }
 
         [HttpGet("async")]
-        public IAsyncEnumerable<EntityGitLabRep> ListRepositories()
+        public IAsyncEnumerable<EntityGitLabRepository> ListRepositories()
         {
             return _gitLabRepositoryService.ListRepositories();
         }
