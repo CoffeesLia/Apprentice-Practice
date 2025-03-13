@@ -34,7 +34,7 @@ namespace Stellantis.ProjectName.Application.Services
             var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
             if (!validationResult.IsValid)
             {
-                return OperationResult.InvalidData(validationResult.ToString(), validationResult);
+                return OperationResult.InvalidData(validationResult);
             }
 
             if (string.IsNullOrEmpty(item.Name))
@@ -79,7 +79,7 @@ namespace Stellantis.ProjectName.Application.Services
 
             if (!validationResult.IsValid)
             {
-                return OperationResult.InvalidData(validationResult.ToString(), validationResult);
+                return OperationResult.InvalidData(validationResult);
             }
 
             if (string.IsNullOrEmpty(item.Name))
