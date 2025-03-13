@@ -67,9 +67,7 @@ namespace Stellantis.ProjectName.Application.Models
         public static OperationResult Complete(string message = "")
 
         {
-
             return new OperationResult(OperationStatus.Success, message, []);
-
         }
 
         /// <summary>
@@ -79,15 +77,11 @@ namespace Stellantis.ProjectName.Application.Models
         /// </summary>
 
         /// <param name="message">The conflict message.</param>
-
         /// <returns>An <see cref="OperationResult"/> with conflict status.</returns>
-
         public static OperationResult Conflict(string message)
 
         {
-
             return new OperationResult(OperationStatus.Conflict, message, [message]);
-
         }
 
         /// <summary>
@@ -95,13 +89,9 @@ namespace Stellantis.ProjectName.Application.Models
         /// Creates an <see cref="OperationResult"/> representing invalid data.
 
         /// </summary>
-
         /// <param name="message">The invalid data message.</param>
-
         /// <returns>An <see cref="OperationResult"/> with invalid data status.</returns>
-
         internal static OperationResult InvalidData(ValidationResult result)
-
         {
 
             return new OperationResult(OperationStatus.InvalidData, "", result.Errors.Select(e => e.ErrorMessage));
@@ -121,9 +111,7 @@ namespace Stellantis.ProjectName.Application.Models
         public static OperationResult NotFound(string message)
 
         {
-
             return new OperationResult(OperationStatus.NotFound, message, [message]);
-
         }
 
     }

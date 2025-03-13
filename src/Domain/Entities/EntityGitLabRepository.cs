@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Stellantis.ProjectName.Domain.Entities
 {
-    public class EntityGitLabRep : EntityBase
+    public class EntityGitLabRepository : EntityBase
     {
         public string Name { get; set; }
         public string Description { get; set; }

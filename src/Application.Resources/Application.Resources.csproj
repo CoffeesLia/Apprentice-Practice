@@ -88,11 +88,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>GitLabResource.resx</DependentUpon>
     </Compile>
-    <Compile Update="GitLabResource.pt-BR.Designer.cs">
-      <DependentUpon>GitLabResource.pt-BR.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
     <Compile Update="ServiceResources.Designer.cs">
       <DependentUpon>ServiceResources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
@@ -131,8 +126,7 @@
       <Generator></Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="GitLabResource.pt-BR.resx">
-      <LastGenOutput>GitLabResource.pt-BR.Designer.cs</LastGenOutput>
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator></Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="GitLabResource.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
