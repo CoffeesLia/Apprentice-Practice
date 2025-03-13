@@ -154,7 +154,7 @@
       <Generator></Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="ResponsibleResource.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ResponsibleResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="ServiceResources.zh-CN.resx">
