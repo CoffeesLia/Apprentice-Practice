@@ -18,7 +18,7 @@ namespace Stellantis.ProjectName.Domain.Services
         {
             if (IsInvalidRepository(newRepo, out var validationResult))
             {
-                return OperationResult.InvalidData("Invalid data", validationResult);
+                return OperationResult.InvalidData(validationResult);
             }
 
             if (RepositoryUrlExists(newRepo.Url))
@@ -147,7 +147,7 @@ namespace Stellantis.ProjectName.Domain.Services
 
             if (IsInvalidRepository(updatedRepo, out var validationResult))
             {
-                return OperationResult.InvalidData(validationResult.ToString(), validationResult);
+                return OperationResult.InvalidData(validationResult);
             }
 
             if (RepositoryUrlExists(updatedRepo.Url, updatedRepo.Id))
