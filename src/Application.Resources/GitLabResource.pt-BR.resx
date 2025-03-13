@@ -141,4 +141,7 @@
   <data name="Description" xml:space="preserve">
     <value>A Descrição é obrigatória</value>
   </data>
+  <data name="ValidationErrorMessage" xml:space="preserve">
+    <value>Nome, Descrição e Url são obrigatórias.</value>
+  </data>
 </root>
