@@ -1,6 +1,4 @@
-﻿using Stellantis.ProjectName.Application.Models.Filters;
-
-namespace Stellantis.ProjectName.Application.Interfaces.Services
+﻿namespace Stellantis.ProjectName.Filters
 {
     public class GitLabFilter
     {
