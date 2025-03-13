@@ -133,6 +133,6 @@
     <value>Email is mandatory </value>
   </data>
   <data name="NomeRequired" xml:space="preserve">
-    <value />
+    <value>Name must be required</value>
   </data>
 </root>
