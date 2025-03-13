@@ -136,6 +136,12 @@
     <value>Repository updated successfully.</value>
   </data>
   <data name="Url" xml:space="preserve">
-    <value>Url is required</value>
+    <value>Url is required.</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Description is required.</value>
+  </data>
+  <data name="ValidationErrorMessage" xml:space="preserve">
+    <value>Name, Description, and URL are required fields.</value>
   </data>
 </root>

@@ -1,11 +1,11 @@
 ﻿using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Domain.Entities;
-using Stellantis.ProjectName.Filters;
+using Stellantis.ProjectName.Application.Interfaces.Services;
 
-namespace Stellantis.ProjectName.Application.Interfaces.Services
+namespace Stellantis.ProjectName.Application.Interfaces.Repositories
 {
-    public interface IGitLabRepositoryService : IEntityServiceBase<EntityGitLabRepository>
+    public interface IGitLabRepository : IEntityServiceBase<EntityGitLabRepository>
     {
         Task<PagedResult<EntityGitLabRepository>> GetListAsync(GitLabFilter filter);
         IAsyncEnumerable<EntityGitLabRepository> ListRepositories();

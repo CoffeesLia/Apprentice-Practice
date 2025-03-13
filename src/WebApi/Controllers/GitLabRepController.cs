@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Stellantis.ProjectName.Application.Interfaces.Services;
+using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Domain.Entities;
-using Stellantis.ProjectName.Filters;
 
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
@@ -10,9 +9,9 @@ namespace Stellantis.ProjectName.WebApi.Controllers
     [Route("api/[controller]")]
     internal class GitLabRepController : ControllerBase
     {
-        private readonly IGitLabRepositoryService _gitLabRepositoryService;
+        private readonly IGitLabRepository _gitLabRepositoryService;
 
-        public GitLabRepController(IGitLabRepositoryService gitLabRepositoryService)
+        public GitLabRepController(IGitLabRepository gitLabRepositoryService)
         {
             _gitLabRepositoryService = gitLabRepositoryService;
         }
