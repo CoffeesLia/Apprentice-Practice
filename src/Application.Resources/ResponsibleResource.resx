@@ -124,7 +124,7 @@
     <value>The email already exists.</value>
   </data>
   <data name="DeletedSuccessfully" xml:space="preserve">
-    <value />
+    <value>Successfully deleted</value>
   </data>
   <data name="EmailInvalid" xml:space="preserve">
     <value>The email must be valid</value>

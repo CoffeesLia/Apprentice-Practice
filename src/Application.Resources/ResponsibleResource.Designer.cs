@@ -79,7 +79,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
 
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a .
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Successfully deleted.
         /// </summary>
         public static string DeletedSuccessfully {
             get {
