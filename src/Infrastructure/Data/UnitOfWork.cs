@@ -9,6 +9,8 @@ namespace Stellantis.ProjectName.Infrastructure.Data
         private IDbContextTransaction? _transaction;
 
         public IAreaRepository AreaRepository => throw new NotImplementedException();
+        public IResponsibleRepository ResponsibleRepository => throw new NotImplementedException();
+
 
         public IApplicationDataRepository ApplicationDataRepository => throw new NotImplementedException();
 

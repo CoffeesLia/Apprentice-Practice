@@ -4,17 +4,17 @@ using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Domain.Entities;
-using Stellantis.ProjectName.Filters;
 using FluentValidation.Results;
+using Stellantis.ProjectName.Application.Interfaces.Repositories;
+using Stellantis.ProjectName.Filters;
 
 namespace Stellantis.ProjectName.Domain.Services
 {
-    public class GitLabRepositoryService : IGitLabRepositoryService
+    public class GitLabRepositoryService : IGitLabRepository
     {
-        private const string ValidationErrorMessage = "Name, Description, and URL are required fields.";
         private readonly List<EntityGitLabRepository> _repositories = new List<EntityGitLabRepository>();
 
-        async Task<OperationResult> IGitLabRepositoryService.CreateAsync(EntityGitLabRepository newRepo)
+        async Task<OperationResult> IGitLabRepository.CreateAsync(EntityGitLabRepository newRepo)
         {
             if (IsInvalidRepository(newRepo, out var validationResult))
             {
@@ -34,10 +34,10 @@ namespace Stellantis.ProjectName.Domain.Services
         {
             return _repositories.FirstOrDefault(repo => repo.Id == id);
         }
-       
+
         public async Task<OperationResult> CreateAsync(EntityGitLabRepository item)
         {
-            return await ((IGitLabRepositoryService)this).CreateAsync(item);
+            return await ((IGitLabRepository)this).CreateAsync(item);
         }
 
         public async Task<OperationResult> DeleteAsync(int id)
@@ -98,8 +98,9 @@ namespace Stellantis.ProjectName.Domain.Services
 
         Task<OperationResult> IEntityServiceBase<EntityGitLabRepository>.UpdateAsync(EntityGitLabRepository item)
         {
-            return UpdateAsync(item, ValidationErrorMessage);
+            return Task.FromResult(OperationResult.Conflict(GitLabResource.ValidationErrorMessage));
         }
+
 
         private bool IsInvalidRepository(EntityGitLabRepository repo, out ValidationResult validationResult)
         {
