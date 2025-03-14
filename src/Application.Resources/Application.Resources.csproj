@@ -131,8 +131,7 @@
       <Generator></Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="GitLabResource.pt-BR.resx">
-      <LastGenOutput>GitLabResource.pt-BR.Designer.cs</LastGenOutput>
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator></Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="GitLabResource.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
