@@ -22,14 +22,14 @@ namespace Stellantis.ProjectName.Application.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class FilterResources {
+    public class IntegrationResources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal FilterResources() {
+        internal IntegrationResources() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Stellantis.ProjectName.Application.Resources.FilterResources", typeof(FilterResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Stellantis.ProjectName.Application.Resources.IntegrationResources", typeof(IntegrationResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,11 +61,29 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Page must be greater than zero..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Id Not Found.
         /// </summary>
-        public static string PageGreaterThanZero {
+        public static string IdNotFound {
             get {
-                return ResourceManager.GetString("PageGreaterThanZero", resourceCulture);
+                return ResourceManager.GetString("IdNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a No Integrations.
+        /// </summary>
+        public static string NoIntegrations {
+            get {
+                return ResourceManager.GetString("NoIntegrations", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Update integration Not Found.
+        /// </summary>
+        public static string UpdateIntegration_NotFound {
+            get {
+                return ResourceManager.GetString("UpdateIntegration_NotFound", resourceCulture);
             }
         }
     }
