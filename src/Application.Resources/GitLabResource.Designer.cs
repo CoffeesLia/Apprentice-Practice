@@ -70,6 +70,15 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Description is required..
+        /// </summary>
+        public static string Description {
+            get {
+                return ResourceManager.GetString("Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a A repository with the same URL already exists..
         /// </summary>
         public static string ExistentRepositoryUrl {
@@ -115,11 +124,20 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Url is required.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Url is required..
         /// </summary>
         public static string Url {
             get {
                 return ResourceManager.GetString("Url", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Name, Description, and URL are required fields..
+        /// </summary>
+        public static string ValidationErrorMessage {
+            get {
+                return ResourceManager.GetString("ValidationErrorMessage", resourceCulture);
             }
         }
     }
