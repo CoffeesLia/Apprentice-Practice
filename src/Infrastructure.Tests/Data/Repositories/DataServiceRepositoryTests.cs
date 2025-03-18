@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Localization;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
@@ -19,7 +23,7 @@ namespace Infrastructure.Tests.Data.Repositories
 
         public DataServiceRepositoryTests()
         {
-            _contextMock = new Mock<Context>();
+            _contextMock = new Mock<Context>(new DbContextOptions<Context>());
             _localizerMock = new Mock<IStringLocalizer<DataServiceRepository>>();
         }
 
@@ -29,7 +33,8 @@ namespace Infrastructure.Tests.Data.Repositories
             // Arrange
             var service = new EDataService { Id = 1, Name = "Test Service" };
             var dbSetMock = new Mock<DbSet<EDataService>>();
-            dbSetMock.Setup(m => m.FindAsync(1)).ReturnsAsync(service);
+
+            dbSetMock.Setup(m => m.FindAsync(It.IsAny<object[]>())).ReturnsAsync(service);
             _contextMock.Setup(c => c.Set<EDataService>()).Returns(dbSetMock.Object);
 
             var repository = new DataServiceRepository(_contextMock.Object, _localizerMock.Object);
@@ -48,16 +53,18 @@ namespace Infrastructure.Tests.Data.Repositories
         {
             // Arrange
             var services = new List<EDataService>
-    {
-        new() { Id = 1, Name = "Service 1" },
-        new() { Id = 2, Name = "Service 2" }
-    };
+            {
+                new() { Id = 1, Name = "Service 1" },
+                new() { Id = 2, Name = "Service 2" }
+            }.AsQueryable();
+
             var dbSetMock = new Mock<DbSet<EDataService>>();
-            dbSetMock.As<IQueryable<EDataService>>().Setup(m => m.Provider).Returns(services.AsQueryable().Provider);
-            dbSetMock.As<IQueryable<EDataService>>().Setup(m => m.Expression).Returns(services.AsQueryable().Expression);
-            dbSetMock.As<IQueryable<EDataService>>().Setup(m => m.ElementType).Returns(services.AsQueryable().ElementType);
-            dbSetMock.As<IQueryable<EDataService>>().Setup(m => m.GetEnumerator()).Returns(services.AsQueryable().GetEnumerator());
-            dbSetMock.Setup(m => m.ToListAsync(It.IsAny<CancellationToken>())).ReturnsAsync(services);
+            dbSetMock.As<IQueryable<EDataService>>().Setup(m => m.Provider).Returns(services.Provider);
+            dbSetMock.As<IQueryable<EDataService>>().Setup(m => m.Expression).Returns(services.Expression);
+            dbSetMock.As<IQueryable<EDataService>>().Setup(m => m.ElementType).Returns(services.ElementType);
+            dbSetMock.As<IQueryable<EDataService>>().Setup(m => m.GetEnumerator()).Returns(services.GetEnumerator());
+
+            dbSetMock.Setup(m => m.ToListAsync(It.IsAny<CancellationToken>())).ReturnsAsync(services.ToList());
             _contextMock.Setup(c => c.Set<EDataService>()).Returns(dbSetMock.Object);
 
             var repository = new DataServiceRepository(_contextMock.Object, _localizerMock.Object);
@@ -70,13 +77,16 @@ namespace Infrastructure.Tests.Data.Repositories
             Assert.Equal(2, ((List<EDataService>)result).Count);
         }
 
-
         [Fact]
         public async Task AddServiceAsyncShouldAddService()
         {
             // Arrange
             var service = new EDataService { Id = 1, Name = "New Service" };
             var dbSetMock = new Mock<DbSet<EDataService>>();
+
+            dbSetMock.Setup(m => m.AddAsync(It.IsAny<EDataService>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync((EntityEntry<EDataService>)null); // We return null since we don’t need the entry.
+
             _contextMock.Setup(c => c.Set<EDataService>()).Returns(dbSetMock.Object);
 
             var repository = new DataServiceRepository(_contextMock.Object, _localizerMock.Object);
@@ -95,6 +105,7 @@ namespace Infrastructure.Tests.Data.Repositories
             // Arrange
             var service = new EDataService { Id = 1, Name = "Old Service" };
             var dbSetMock = new Mock<DbSet<EDataService>>();
+
             _contextMock.Setup(c => c.Set<EDataService>()).Returns(dbSetMock.Object);
 
             var repository = new DataServiceRepository(_contextMock.Object, _localizerMock.Object);
@@ -114,7 +125,10 @@ namespace Infrastructure.Tests.Data.Repositories
             // Arrange
             var service = new EDataService { Id = 1, Name = "Service to Delete" };
             var dbSetMock = new Mock<DbSet<EDataService>>();
-            dbSetMock.Setup(m => m.FindAsync(1)).ReturnsAsync(service);
+
+            dbSetMock.Setup(m => m.FindAsync(It.IsAny<object[]>())).ReturnsAsync(service);
+            dbSetMock.Setup(m => m.Remove(It.IsAny<EDataService>()));
+
             _contextMock.Setup(c => c.Set<EDataService>()).Returns(dbSetMock.Object);
 
             var repository = new DataServiceRepository(_contextMock.Object, _localizerMock.Object);
