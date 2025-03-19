@@ -70,6 +70,33 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Successfully created.
+        /// </summary>
+        public static string MessageSucess {
+            get {
+                return ResourceManager.GetString("MessageSucess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Name Is Required.
+        /// </summary>
+        public static string NameIsRequired {
+            get {
+                return ResourceManager.GetString("NameIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Name Validate Length.
+        /// </summary>
+        public static string NameValidateLength {
+            get {
+                return ResourceManager.GetString("NameValidateLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a No Integrations.
         /// </summary>
         public static string NoIntegrations {

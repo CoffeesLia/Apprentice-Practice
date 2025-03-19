@@ -120,6 +120,15 @@
   <data name="IdNotFound" xml:space="preserve">
     <value>Id Not Found</value>
   </data>
+  <data name="MessageSucess" xml:space="preserve">
+    <value>Successfully created</value>
+  </data>
+  <data name="NameIsRequired" xml:space="preserve">
+    <value>Name Is Required</value>
+  </data>
+  <data name="NameValidateLength" xml:space="preserve">
+    <value>Name Validate Length</value>
+  </data>
   <data name="NoIntegrations" xml:space="preserve">
     <value>No Integrations</value>
   </data>

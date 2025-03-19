@@ -10,8 +10,8 @@ namespace Stellantis.ProjectName.Application.Interfaces.Repositories
 {
     public interface IIntegrationRepository : IRepositoryEntityBase<Integration>
     {
-        Task<IEnumerable<Integration>> GetAllAsync();
-        Task<PagedResult<Integration>> CreateAsync(Integration integration);
-        Task<PagedResult<Integration>> UpdateAsync(Integration integration);
+        Task<IEnumerable<Integration>> GetListAsync();
+
+       
     }
 }

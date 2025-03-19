@@ -53,7 +53,15 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         }
 
 
-        public async Task<IEnumerable<Integration>> GetAllAsync()
+
+        public new async Task<Integration?> GetByIdAsync(int id)
+        {
+            var integration = await Context.Set<Integration>()
+                .FirstOrDefaultAsync(s => s.Id == id).ConfigureAwait(false);
+            return integration ?? throw new InvalidOperationException(_localizer[nameof(IntegrationResources.IdNotFound)]);
+        }
+
+        public async Task<IEnumerable<Integration>> GetListAsync()
         {
             var integrations = await Context.Set<Integration>().ToListAsync().ConfigureAwait(false);
             if (integrations == null || integrations.Count == 0)
@@ -61,14 +69,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 throw new InvalidOperationException(_localizer[nameof(IntegrationResources.NoIntegrations)]);
             }
             return integrations;
-        }
-
-
-        public new async Task<Integration?> GetByIdAsync(int id)
-        {
-            var integration = await Context.Set<Integration>()
-                .FirstOrDefaultAsync(s => s.Id == id).ConfigureAwait(false);
-            return integration ?? throw new InvalidOperationException(_localizer[nameof(IntegrationResources.IdNotFound)]);
         }
 
         public async Task<PagedResult<Integration>> UpdateAsync(Integration integration)
