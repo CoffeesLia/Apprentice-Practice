@@ -11,9 +11,7 @@ namespace Stellantis.ProjectName.Application.Interfaces.Repositories
     public interface IIntegrationRepository : IRepositoryEntityBase<Integration>
     {
         Task<IEnumerable<Integration>> GetAllAsync();
-        new Task<PagedResult<Integration>> CreateAsync(Integration integration);
+        Task<PagedResult<Integration>> CreateAsync(Integration integration);
         Task<PagedResult<Integration>> UpdateAsync(Integration integration);
-        Task DeleteAsync(int id);
-        Task<Integration?> GetByIdAsync(int id);
     }
 }

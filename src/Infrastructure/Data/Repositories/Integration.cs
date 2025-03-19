@@ -89,9 +89,5 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             };
         }
 
-        Task IIntegrationRepository.DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
