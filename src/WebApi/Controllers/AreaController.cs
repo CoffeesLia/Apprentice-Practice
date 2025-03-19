@@ -29,16 +29,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] AreaDto itemDto)
         {
-            if (itemDto == null)
-            {
-                return BadRequest(new { Message = _localizer[nameof(AreaResources.NameIsRequired)] });
-            }
-
-            if (string.IsNullOrWhiteSpace(itemDto.Name) || itemDto.Name.Length > 100)
-            {
-                return BadRequest(new { Message = string.Format(_localizer[nameof(AreaResources.NameValidateLength)], 1, 100) });
-            }
-
+          
             return await CreateBaseAsync<AreaVm>(itemDto);
         }
 

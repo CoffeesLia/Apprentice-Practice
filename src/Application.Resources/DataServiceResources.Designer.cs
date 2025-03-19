@@ -22,24 +22,24 @@ namespace Stellantis.ProjectName.Application.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class GitLabResource {
+    internal class DataServiceResources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal GitLabResource() {
+        internal DataServiceResources() {
         }
         
         /// <summary>
         ///   Retorna a instância de ResourceManager armazenada em cache usada por essa classe.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
+        internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Stellantis.ProjectName.Application.Resources.GitLabResource", typeof(GitLabResource).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Stellantis.ProjectName.Application.Resources.DataServiceResources", typeof(DataServiceResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -51,7 +51,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         ///   pesquisas de recursos que usam essa classe de recurso de tipo de alta segurança.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
+        internal static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -61,83 +61,56 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Repository deleted successfully.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Bad Request..
         /// </summary>
-        public static string DeletedSuccessfully {
+        internal static string BadRequest {
             get {
-                return ResourceManager.GetString("DeletedSuccessfully", resourceCulture);
+                return ResourceManager.GetString("BadRequest", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Description is required..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a No services found..
         /// </summary>
-        public static string Description {
+        internal static string GetAllServices_NoServicesFound {
             get {
-                return ResourceManager.GetString("Description", resourceCulture);
+                return ResourceManager.GetString("GetAllServices_NoServicesFound", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a A repository with the same URL already exists..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Service not found..
         /// </summary>
-        public static string ExistentRepositoryUrl {
+        internal static string GetServiceById_ServiceNotFound {
             get {
-                return ResourceManager.GetString("ExistentRepositoryUrl", resourceCulture);
+                return ResourceManager.GetString("GetServiceById_ServiceNotFound", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Name is required.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Name is required..
         /// </summary>
-        public static string Name {
+        internal static string NameIsRequired {
             get {
-                return ResourceManager.GetString("Name", resourceCulture);
+                return ResourceManager.GetString("NameIsRequired", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Repository created successfully..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Not Found..
         /// </summary>
-        public static string RegisteredSuccessfully {
+        internal static string NotFound {
             get {
-                return ResourceManager.GetString("RegisteredSuccessfully", resourceCulture);
+                return ResourceManager.GetString("NotFound", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Repository not found..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Service Name Already Exists..
         /// </summary>
-        public static string RepositoryNotFound {
+        internal static string ServiceNameAlreadyExists {
             get {
-                return ResourceManager.GetString("RepositoryNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Repository updated successfully..
-        /// </summary>
-        public static string UpdatedSuccessfully {
-            get {
-                return ResourceManager.GetString("UpdatedSuccessfully", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Url is required..
-        /// </summary>
-        public static string Url {
-            get {
-                return ResourceManager.GetString("Url", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Name, Description, and URL are required fields..
-        /// </summary>
-        public static string ValidationErrorMessage {
-            get {
-                return ResourceManager.GetString("ValidationErrorMessage", resourceCulture);
+                return ResourceManager.GetString("ServiceNameAlreadyExists", resourceCulture);
             }
         }
     }

@@ -117,31 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ExistentRepositoryUrl" xml:space="preserve">
-    <value>A repository with the same URL already exists.</value>
+  <data name="SquadDescriptionRequired" xml:space="preserve">
+    <value>需要小队描述。</value>
   </data>
-  <data name="Name" xml:space="preserve">
-    <value>Name is required</value>
+  <data name="SquadNameAlreadyExists" xml:space="preserve">
+    <value>已存在具有此名称的小队。</value>
   </data>
-  <data name="RegisteredSuccessfully" xml:space="preserve">
-    <value>Repository created successfully.</value>
+  <data name="SquadNameRequired" xml:space="preserve">
+    <value>需要小队名称。</value>
   </data>
-  <data name="RepositoryNotFound" xml:space="preserve">
-    <value>Repository not found.</value>
-  </data>
-  <data name="DeletedSuccessfully" xml:space="preserve">
-    <value>Repository deleted successfully</value>
-  </data>
-  <data name="UpdatedSuccessfully" xml:space="preserve">
-    <value>Repository updated successfully.</value>
-  </data>
-  <data name="Url" xml:space="preserve">
-    <value>Url is required.</value>
-  </data>
-  <data name="Description" xml:space="preserve">
-    <value>Description is required.</value>
-  </data>
-  <data name="ValidationErrorMessage" xml:space="preserve">
-    <value>Name, Description, and URL are required fields.</value>
+  <data name="SquadNotFound" xml:space="preserve">
+    <value>未找到小队名称。</value>
   </data>
 </root>

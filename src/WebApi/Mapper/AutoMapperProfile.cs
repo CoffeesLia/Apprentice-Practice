@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
@@ -19,6 +20,7 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(x => x.Applications, x => x.Ignore());
             CreateMap<AreaFilterDto, AreaFilter>();
 
+            CreateMap<DataServiceDto, DataService>();
         }
     }
 }

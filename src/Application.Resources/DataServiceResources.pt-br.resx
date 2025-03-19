@@ -117,31 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ExistentRepositoryUrl" xml:space="preserve">
-    <value>A repository with the same URL already exists.</value>
+  <data name="BadRequest" xml:space="preserve">
+    <value>Solicitação Falhou.</value>
   </data>
-  <data name="Name" xml:space="preserve">
-    <value>Name is required</value>
+  <data name="GetAllServices_NoServicesFound" xml:space="preserve">
+    <value>Nenhum serviço encontrado.</value>
   </data>
-  <data name="RegisteredSuccessfully" xml:space="preserve">
-    <value>Repository created successfully.</value>
+  <data name="GetServiceById_ServiceNotFound" xml:space="preserve">
+    <value>Serviço não encontrado.</value>
   </data>
-  <data name="RepositoryNotFound" xml:space="preserve">
-    <value>Repository not found.</value>
+  <data name="NameIsRequired" xml:space="preserve">
+    <value>Nome é obrigatório.</value>
   </data>
-  <data name="DeletedSuccessfully" xml:space="preserve">
-    <value>Repository deleted successfully</value>
+  <data name="NotFound" xml:space="preserve">
+    <value>Não encontrado.</value>
   </data>
-  <data name="UpdatedSuccessfully" xml:space="preserve">
-    <value>Repository updated successfully.</value>
-  </data>
-  <data name="Url" xml:space="preserve">
-    <value>Url is required.</value>
-  </data>
-  <data name="Description" xml:space="preserve">
-    <value>Description is required.</value>
-  </data>
-  <data name="ValidationErrorMessage" xml:space="preserve">
-    <value>Name, Description, and URL are required fields.</value>
+  <data name="ServiceNameAlreadyExists" xml:space="preserve">
+    <value>Esse nome de serviço já existe.</value>
   </data>
 </root>
