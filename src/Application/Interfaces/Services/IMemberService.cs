@@ -9,6 +9,7 @@ namespace Stellantis.ProjectName.Application.Interfaces.Services
 {
     public interface IMemberService
     {
-        void AddEntityMember(EntityMember entityMember);
+        Task AddEntityMemberAsync(EntityMember entityMember);
+        Task<EntityMember> GetMemberByIdAsync(Guid id);
     }
 }

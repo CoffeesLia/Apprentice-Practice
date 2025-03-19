@@ -117,16 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AlreadyExists" xml:space="preserve">
-    <value>The name already exits.</value>
+  <data name="MemberAddedSuccessfully" xml:space="preserve">
+    <value>Membro adicionado com sucesso.</value>
   </data>
-  <data name="NameIsRequired" xml:space="preserve">
-    <value>The name is required.</value>
+  <data name="MemberEmailAlreadyExists" xml:space="preserve">
+    <value>Esse e-mail já existe.</value>
   </data>
-  <data name="NameValidateLength" xml:space="preserve">
-    <value>The name must be between {0} and {1} characters long.</value>
+  <data name="MemberIdNotFound" xml:space="preserve">
+    <value>Id não pôde ser encontrada. Tente novamente.</value>
   </data>
-  <data name="Undeleted" xml:space="preserve">
-    <value>You cannot delete an area that has associated applications.</value>
+  <data name="MemberRequiredFieldsMissing" xml:space="preserve">
+    <value>Todos os campos obrigatórios devem ser preenchidos. </value>
   </data>
 </root>

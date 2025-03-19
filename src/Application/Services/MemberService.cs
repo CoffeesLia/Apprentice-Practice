@@ -23,9 +23,9 @@ namespace Stellantis.ProjectName.Application.Services
             _localizer = localizer;
         }
 
-        public void AddEntityMember(EntityMember entityMember)
+        public async Task AddEntityMemberAsync(EntityMember entityMember)
         {
-            if (!_memberRepository.IsEmailUnique(entityMember.Email))
+            if (!await Task.Run(() => _memberRepository.IsEmailUnique(entityMember.Email)))
             {
                 throw new InvalidOperationException(_localizer["MemberEmailAlreadyExists"]);
             }
@@ -35,7 +35,12 @@ namespace Stellantis.ProjectName.Application.Services
                 throw new ArgumentException(_localizer["MemberRequiredFieldsMissing"]);
             }
 
-            _memberRepository.AddEntityMember(entityMember);
+            await _memberRepository.AddEntityMemberAsync(entityMember);
+        }
+
+        public Task<EntityMember> GetMemberByIdAsync(Guid id)
+        {
+            throw new NotImplementedException();
         }
     }
 }
