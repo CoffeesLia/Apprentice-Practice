@@ -101,6 +101,28 @@ namespace Stellantis.ProjectName.WebApi.Tests.Controllers
             Assert.Equal("Test Area", pagedResultVm.Result.First().Name);
         }
 
+        [Fact]
+        // Teste para verificar se UpdateAsync retorna Success quando a atualização é bem-sucedida
+        public async Task UpdateAsync_ShouldReturnSuccess_WhenUpdateIsSuccessful()
+        {
+            // Arrange
+            var areaDto = new AreaDto { Id = 1, Name = "Updated Area" };
+            var area = new Area("Updated Area") { Id = 1 };
+            var areaVm = new AreaVm { Id = 1, Name = "Updated Area" };
+
+            _mapperMock.Setup(m => m.Map<Area>(areaDto)).Returns(area);
+            _mapperMock.Setup(m => m.Map<AreaVm>(area)).Returns(areaVm);
+            _serviceMock.Setup(s => s.UpdateAsync(area)).ReturnsAsync(OperationResult.Complete("Success"));
+
+            // Act
+            var result = await _controller.UpdateAsync(1, areaDto);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal(200, okResult.StatusCode);
+            Assert.Equal(areaVm, okResult.Value);
+        }
+
 
         [Fact]
         public async Task DeleteAsync_ShouldReturnNoContent_WhenDeleteIsSuccessful()

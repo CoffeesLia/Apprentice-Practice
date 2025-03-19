@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Stellantis.ProjectName.Application.Interfaces.Services;
+using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Domain.Entities;
 
@@ -7,19 +7,19 @@ namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class GitLabRepController : ControllerBase
+    internal class GitLabRepController : ControllerBase
     {
-        private readonly IGitLabRepositoryService _gitLabRepositoryService;
+        private readonly IGitLabRepository _gitLabRepositoryService;
 
-        public GitLabRepController(IGitLabRepositoryService gitLabRepositoryService)
-        {   
+        public GitLabRepController(IGitLabRepository gitLabRepositoryService)
+        {
             _gitLabRepositoryService = gitLabRepositoryService;
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] EntityGitLabRep newRepo)
+        public async Task<IActionResult> Create([FromBody] EntityGitLabRepository newRepo)
         {
-            var result = await _gitLabRepositoryService.CreateAsync(newRepo);
+            var result = await _gitLabRepositoryService.CreateAsync(newRepo).ConfigureAwait(false);
             if (result.Status == OperationStatus.InvalidData)
             {
                 return BadRequest(result);
@@ -30,5 +30,60 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             }
             return Ok(result);
         }
-    }   
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(int id)
+        {
+            var repo = await _gitLabRepositoryService.GetRepositoryDetailsAsync(id).ConfigureAwait(false);
+            if (repo == null)
+            {
+                return NotFound();
+            }
+            return Ok(repo);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] EntityGitLabRepository updatedRepo)
+        {
+            updatedRepo.Id = id;
+            var result = await _gitLabRepositoryService.UpdateAsync(updatedRepo).ConfigureAwait(false);
+            if (result.Status == OperationStatus.NotFound)
+            {
+                return NotFound(result);
+            }
+            if (result.Status == OperationStatus.InvalidData)
+            {
+                return BadRequest(result);
+            }
+            if (result.Status == OperationStatus.Conflict)
+            {
+                return Conflict(result);
+            }
+            return Ok(result);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var result = await _gitLabRepositoryService.DeleteAsync(id).ConfigureAwait(false);
+            if (result.Status == OperationStatus.NotFound)
+            {
+                return NotFound(result);
+            }
+            return Ok(result);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> List([FromQuery] GitLabFilter filter)
+        {
+            var result = await _gitLabRepositoryService.GetListAsync(filter).ConfigureAwait(false);
+            return Ok(result);
+        }
+
+        [HttpGet("async")]
+        public IAsyncEnumerable<EntityGitLabRepository> ListRepositories()
+        {
+            return _gitLabRepositoryService.ListRepositories();
+        }
+    }
 }

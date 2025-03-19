@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <AnalysisLevel>latest-all</AnalysisLevel>
@@ -83,10 +83,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>FilterResources.resx</DependentUpon>
     </Compile>
-    <Compile Update="GitLabResource.Designer.cs">
+
+    <Compile Update="ResponsibleResource.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>GitLabResource.resx</DependentUpon>
+      <DependentUpon>ResponsibleResource.resx</DependentUpon>
     </Compile>
     <Compile Update="GitLabResource.pt-BR.Designer.cs">
       <DependentUpon>GitLabResource.pt-BR.resx</DependentUpon>
@@ -131,8 +132,7 @@
       <Generator></Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="GitLabResource.pt-BR.resx">
-      <LastGenOutput>GitLabResource.pt-BR.Designer.cs</LastGenOutput>
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator></Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="GitLabResource.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

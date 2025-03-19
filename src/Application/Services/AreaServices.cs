@@ -75,5 +75,10 @@ namespace Stellantis.ProjectName.Application.Services
             var areas = await GetListAsync(filter).ConfigureAwait(false);
             return !areas.Result.Any(a => a.Id != id);
         }
+
+        public Task<OperationResult> UpdateAsync(EntityGitLabRepository item, string v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

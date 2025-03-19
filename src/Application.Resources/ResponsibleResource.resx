@@ -117,31 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ExistentRepositoryUrl" xml:space="preserve">
-    <value>A repository with the same URL already exists.</value>
+  <data name=" AreaRequired  " xml:space="preserve">
+    <value>The Area is mandatory</value>
   </data>
-  <data name="Name" xml:space="preserve">
-    <value>Name is required</value>
-  </data>
-  <data name="RegisteredSuccessfully" xml:space="preserve">
-    <value>Repository created successfully.</value>
-  </data>
-  <data name="RepositoryNotFound" xml:space="preserve">
-    <value>Repository not found.</value>
+  <data name="AlreadyExists" xml:space="preserve">
+    <value>The email already exists.</value>
   </data>
   <data name="DeletedSuccessfully" xml:space="preserve">
-    <value>Repository deleted successfully</value>
+    <value>Successfully deleted</value>
   </data>
-  <data name="UpdatedSuccessfully" xml:space="preserve">
-    <value>Repository updated successfully.</value>
+  <data name="EmailInvalid" xml:space="preserve">
+    <value>The email must be valid</value>
   </data>
-  <data name="Url" xml:space="preserve">
-    <value>Url is required.</value>
+  <data name="EmailRequired " xml:space="preserve">
+    <value>Email is mandatory </value>
   </data>
-  <data name="Description" xml:space="preserve">
-    <value>Description is required.</value>
-  </data>
-  <data name="ValidationErrorMessage" xml:space="preserve">
-    <value>Name, Description, and URL are required fields.</value>
+  <data name="NomeRequired" xml:space="preserve">
+    <value>Name must be required</value>
   </data>
 </root>

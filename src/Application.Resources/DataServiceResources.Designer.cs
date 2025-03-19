@@ -22,14 +22,14 @@ namespace Stellantis.ProjectName.Application.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class GitLabResources___Cópia {
+    internal class DataServiceResources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal GitLabResources___Cópia() {
+        internal DataServiceResources() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Stellantis.ProjectName.Application.Resources.GitLabResources - Cópia", typeof(GitLabResources___Cópia).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Stellantis.ProjectName.Application.Resources.DataServiceResources", typeof(DataServiceResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,6 +57,60 @@ namespace Stellantis.ProjectName.Application.Resources {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Bad Request..
+        /// </summary>
+        internal static string BadRequest {
+            get {
+                return ResourceManager.GetString("BadRequest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a No services found..
+        /// </summary>
+        internal static string GetAllServices_NoServicesFound {
+            get {
+                return ResourceManager.GetString("GetAllServices_NoServicesFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Service not found..
+        /// </summary>
+        internal static string GetServiceById_ServiceNotFound {
+            get {
+                return ResourceManager.GetString("GetServiceById_ServiceNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Name is required..
+        /// </summary>
+        internal static string NameIsRequired {
+            get {
+                return ResourceManager.GetString("NameIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Not Found..
+        /// </summary>
+        internal static string NotFound {
+            get {
+                return ResourceManager.GetString("NotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Service Name Already Exists..
+        /// </summary>
+        internal static string ServiceNameAlreadyExists {
+            get {
+                return ResourceManager.GetString("ServiceNameAlreadyExists", resourceCulture);
             }
         }
     }

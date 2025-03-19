@@ -120,6 +120,16 @@
   <data name="AlreadyExists" xml:space="preserve">
     <value>O nome já existe.</value>
   </data>
+  <data name="MemberAddedSuccessfully" xml:space="preserve">
+    <value>Membro adicionado com sucesso.</value>
+  </data>
+  <data name="MemberEmailAlreadyExists" xml:space="preserve">
+    <value>Este e-mail já existe.</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="MemberRequiredFieldsMissing" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
   <data name="NameIsRequired" xml:space="preserve">
     <value>O nome é obrigatório.</value>
   </data>
