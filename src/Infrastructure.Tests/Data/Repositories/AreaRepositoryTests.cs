@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
@@ -95,8 +96,7 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
             // Assert
             Assert.True(result);
         }
-
-       
+   
 
         [Fact]
         public async Task DeleteAsync_ShouldRemoveArea_WhenCalled()
@@ -113,6 +113,53 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
 
             // Assert
             Assert.Null(result);
+        }
+
+        [Fact]
+        public async Task VerifyAplicationsExistsAsync_ShouldReturnTrue_WhenApplicationsExist()
+        {
+            // Arrange
+            var area = _fixture.Create<Area>();
+            var application = _fixture.Build<ApplicationData>()
+                .With(a => a.Area, area)
+                .Create();
+            area.Applications.Add(application);
+
+            await _context.Set<Area>().AddAsync(area);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.VerifyAplicationsExistsAsync(area.Id);
+
+            // Assert
+            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task VerifyAplicationsExistsAsync_ShouldReturnFalse_WhenNoApplicationsExist()
+        {
+            // Arrange
+            var area = _fixture.Create<Area>();
+
+            await _context.Set<Area>().AddAsync(area);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.VerifyAplicationsExistsAsync(area.Id);
+
+            // Assert
+            Assert.False(result);
+        }
+
+        [Fact]
+        public async Task VerifyAplicationsExistsAsync_ShouldThrowArgumentException_WhenAreaDoesNotExist()
+        {
+            // Arrange
+            var id = _fixture.Create<int>();
+
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _repository.VerifyAplicationsExistsAsync(id));
+            Assert.Equal(AreaResources.Undeleted, exception.Message);
         }
     }
 }

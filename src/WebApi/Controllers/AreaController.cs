@@ -64,14 +64,11 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(int id)
+        public override async Task<IActionResult> DeleteAsync(int id)
         {
-            return await DeleteAsync(id).ConfigureAwait(false);
+            return await base.DeleteAsync(id).ConfigureAwait(false);
         }
 
-        public Task<IActionResult> EditAreaAsync(int id, [FromBody] AreaDto updatedAreaDto)
-        {
-            throw new NotImplementedException();
-        }
+       
     }
 }
