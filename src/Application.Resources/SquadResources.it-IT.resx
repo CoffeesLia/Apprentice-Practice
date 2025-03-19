@@ -117,16 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NotFound" xml:space="preserve">
-    <value>Not found.</value>
+  <data name="SquadDescriptionRequired" xml:space="preserve">
+    <value>La descrizione del squad è obbligatoria.</value>
   </data>
-  <data name="DeletedSuccessfully" xml:space="preserve">
-    <value>Deleted Successfully.</value>
+  <data name="SquadNameAlreadyExists" xml:space="preserve">
+    <value>Esiste già un squad con questo nome.</value>
   </data>
-  <data name="RegisteredSuccessfully" xml:space="preserve">
-    <value>Registered Successfully.</value>
+  <data name="SquadNameRequired" xml:space="preserve">
+    <value>Il nome del squad è obbligatorio.</value>
   </data>
-  <data name="UpdatedSuccessfully" xml:space="preserve">
-    <value>Updated Successfully.</value>
+  <data name="SquadNotFound" xml:space="preserve">
+    <value>Il nome del squad non è stato trovato.</value>
   </data>
 </root>

@@ -129,16 +129,4 @@
   <data name="UpdatedSuccessfully" xml:space="preserve">
     <value>Atualizado com sucesso.</value>
   </data>
-  <data name="SquadNameRequired" xml:space="preserve">
-    <value>O nome do squad é obrigatório.</value>
-  </data>
-  <data name="SquadDescriptionRequired" xml:space="preserve">
-    <value>A descrição do squad é obrigatória.</value>
-  </data>
-  <data name="SquadNameAlreadyExists" xml:space="preserve">
-    <value>Um squad com esse nome já existe.</value>
-  </data>
-  <data name="SquadNotFound" xml:space="preserve">
-    <value>Squad não encontrado.</value>
-  </data>
 </root>
