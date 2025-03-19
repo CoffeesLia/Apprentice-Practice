@@ -22,14 +22,14 @@ namespace Stellantis.ProjectName.Application.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class ServiceResources {
+    public class SquadResources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal ServiceResources() {
+        internal SquadResources() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Stellantis.ProjectName.Application.Resources.ServiceResources", typeof(ServiceResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Stellantis.ProjectName.Application.Resources.SquadResources", typeof(SquadResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,38 +61,38 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Deleted Successfully..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Squad description is required..
         /// </summary>
-        public static string DeletedSuccessfully {
+        public static string SquadDescriptionRequired {
             get {
-                return ResourceManager.GetString("DeletedSuccessfully", resourceCulture);
+                return ResourceManager.GetString("SquadDescriptionRequired", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Not found..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a A squad with this name already exists..
         /// </summary>
-        public static string NotFound {
+        public static string SquadNameAlreadyExists {
             get {
-                return ResourceManager.GetString("NotFound", resourceCulture);
+                return ResourceManager.GetString("SquadNameAlreadyExists", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Registered Successfully..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Squad name is required..
         /// </summary>
-        public static string RegisteredSuccessfully {
+        public static string SquadNameRequired {
             get {
-                return ResourceManager.GetString("RegisteredSuccessfully", resourceCulture);
+                return ResourceManager.GetString("SquadNameRequired", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Updated Successfully..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Squad not found..
         /// </summary>
-        public static string UpdatedSuccessfully {
+        public static string SquadNotFound {
             get {
-                return ResourceManager.GetString("UpdatedSuccessfully", resourceCulture);
+                return ResourceManager.GetString("SquadNotFound", resourceCulture);
             }
         }
     }
