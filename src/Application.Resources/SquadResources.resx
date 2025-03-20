@@ -117,19 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AlreadyExists" xml:space="preserve">
-    <value>O nome ja existe.</value>
+  <data name="SquadDescriptionRequired" xml:space="preserve">
+    <value>Squad description is required.</value>
   </data>
-  <data name="ApplicationNotFound" xml:space="preserve">
-    <value>Aplicação não encontrada</value>
+  <data name="SquadNameAlreadyExists" xml:space="preserve">
+    <value>A squad with this name already exists.</value>
   </data>
-  <data name="NameRequired" xml:space="preserve">
-    <value>O nome é obrigatório.</value>
+  <data name="SquadNameRequired" xml:space="preserve">
+    <value>Squad name is required.</value>
   </data>
-  <data name="NameValidateLength" xml:space="preserve">
-    <value>O nome deve ter entre {0} e {1} caracteres.</value>
-  </data>
-  <data name="NotFound" xml:space="preserve">
-    <value>Aplicação não pode ser encontrada</value>
+  <data name="SquadNotFound" xml:space="preserve">
+    <value>Squad not found.</value>
   </data>
 </root>

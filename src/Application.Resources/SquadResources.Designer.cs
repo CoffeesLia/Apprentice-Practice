@@ -22,14 +22,14 @@ namespace Stellantis.ProjectName.Application.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class ApplicationDataResources {
+    public class SquadResources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal ApplicationDataResources() {
+        internal SquadResources() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Stellantis.ProjectName.Application.Resources.ApplicationDataResources", typeof(ApplicationDataResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Stellantis.ProjectName.Application.Resources.SquadResources", typeof(SquadResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,47 +61,38 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a The name already exits..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Squad description is required..
         /// </summary>
-        public static string AlreadyExists {
+        public static string SquadDescriptionRequired {
             get {
-                return ResourceManager.GetString("AlreadyExists", resourceCulture);
+                return ResourceManager.GetString("SquadDescriptionRequired", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Application not found.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a A squad with this name already exists..
         /// </summary>
-        public static string ApplicationNotFound {
+        public static string SquadNameAlreadyExists {
             get {
-                return ResourceManager.GetString("ApplicationNotFound", resourceCulture);
+                return ResourceManager.GetString("SquadNameAlreadyExists", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a The name is required..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Squad name is required..
         /// </summary>
-        public static string NameRequired {
+        public static string SquadNameRequired {
             get {
-                return ResourceManager.GetString("NameRequired", resourceCulture);
+                return ResourceManager.GetString("SquadNameRequired", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a The name must be between {0} and {1} characters long..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Squad not found..
         /// </summary>
-        public static string NameValidateLength {
+        public static string SquadNotFound {
             get {
-                return ResourceManager.GetString("NameValidateLength", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Application cannot be found.
-        /// </summary>
-        public static string NotFound {
-            get {
-                return ResourceManager.GetString("NotFound", resourceCulture);
+                return ResourceManager.GetString("SquadNotFound", resourceCulture);
             }
         }
     }

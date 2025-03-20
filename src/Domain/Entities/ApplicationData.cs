@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,8 +10,11 @@ namespace Stellantis.ProjectName.Domain.Entities
     {
         public string? Name { get; set; } = Name;
         public int AreaId { get; set; }
-        public Area Area { get; set; }
+        public Area Area { get; set; } = null!;
 
         public ICollection<Integration> Integration { get; } = new List<Integration>();
+
+        
+
     }
 }

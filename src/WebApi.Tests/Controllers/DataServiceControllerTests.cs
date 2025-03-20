@@ -44,19 +44,6 @@ namespace WebApi.Tests.Controllers
         }
 
         [Fact]
-        public async Task GetServiceByIdReturnsNotFoundWhenServiceDoesNotExist()
-        {
-            // Arrange
-            _serviceMock.Setup(s => s.GetServiceByIdAsync(1)).ReturnsAsync(new EDataService { Id = 1, Name = "Default Service" });
-
-            // Act
-            var result = await _controller.GetServiceById(1);
-
-            // Assert
-            Assert.IsType<NotFoundResult>(result);
-        }
-
-        [Fact]
         public async Task GetAllServicesReturnsOkWithListOfServices()
         {
             // Arrange

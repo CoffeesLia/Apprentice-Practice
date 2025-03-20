@@ -2,6 +2,7 @@
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Domain.Entities;
+using Stellantis.ProjectName.Filters;
 
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
