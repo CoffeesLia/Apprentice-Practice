@@ -22,24 +22,24 @@ namespace Stellantis.ProjectName.Application.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class ApplicationDataResources {
+    internal class DataServiceResources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal ApplicationDataResources() {
+        internal DataServiceResources() {
         }
         
         /// <summary>
         ///   Retorna a instância de ResourceManager armazenada em cache usada por essa classe.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
+        internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Stellantis.ProjectName.Application.Resources.ApplicationDataResources", typeof(ApplicationDataResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Stellantis.ProjectName.Application.Resources.DataServiceResources", typeof(DataServiceResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -51,7 +51,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         ///   pesquisas de recursos que usam essa classe de recurso de tipo de alta segurança.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
+        internal static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -61,47 +61,56 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a The name already exits..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Bad Request..
         /// </summary>
-        public static string AlreadyExists {
+        internal static string BadRequest {
             get {
-                return ResourceManager.GetString("AlreadyExists", resourceCulture);
+                return ResourceManager.GetString("BadRequest", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Application not found.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a No services found..
         /// </summary>
-        public static string ApplicationNotFound {
+        internal static string GetAllServices_NoServicesFound {
             get {
-                return ResourceManager.GetString("ApplicationNotFound", resourceCulture);
+                return ResourceManager.GetString("GetAllServices_NoServicesFound", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a The name is required..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Service not found..
         /// </summary>
-        public static string NameRequired {
+        internal static string GetServiceById_ServiceNotFound {
             get {
-                return ResourceManager.GetString("NameRequired", resourceCulture);
+                return ResourceManager.GetString("GetServiceById_ServiceNotFound", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a The name must be between {0} and {1} characters long..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Name is required..
         /// </summary>
-        public static string NameValidateLength {
+        internal static string NameIsRequired {
             get {
-                return ResourceManager.GetString("NameValidateLength", resourceCulture);
+                return ResourceManager.GetString("NameIsRequired", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Application cannot be found.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Not Found..
         /// </summary>
-        public static string NotFound {
+        internal static string NotFound {
             get {
                 return ResourceManager.GetString("NotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Service Name Already Exists..
+        /// </summary>
+        internal static string ServiceNameAlreadyExists {
+            get {
+                return ResourceManager.GetString("ServiceNameAlreadyExists", resourceCulture);
             }
         }
     }

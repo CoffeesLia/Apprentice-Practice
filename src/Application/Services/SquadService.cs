@@ -15,9 +15,9 @@ namespace Stellantis.ProjectName.Application.Services
     public class SquadService : ISquadService
     {
         private readonly ISquadRepository _squadRepository;
-        private readonly IStringLocalizer<ServiceResources> _localizer;
+        private readonly IStringLocalizer<SquadResources> _localizer;
 
-        public SquadService(ISquadRepository squadRepository, IStringLocalizer<ServiceResources> localizer)
+        public SquadService(ISquadRepository squadRepository, IStringLocalizer<SquadResources> localizer)
         {
             _squadRepository = squadRepository;
             _localizer = localizer;
@@ -27,17 +27,17 @@ namespace Stellantis.ProjectName.Application.Services
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                throw new ArgumentException(_localizer["SquadNameRequired"]);
+                throw new ArgumentException(_localizer[nameof(SquadResources.SquadNameRequired)]);
             }
             if (string.IsNullOrWhiteSpace(description))
             {
-                throw new ArgumentException(_localizer["SquadDescriptionRequired"]);
+                throw new ArgumentException(_localizer[nameof(SquadResources.SquadDescriptionRequired)]);
             }
 
             var existingSquad = _squadRepository.GetByName(name);
             if (existingSquad != null)
             {
-                throw new InvalidOperationException(_localizer["SquadNameAlreadyExists"]);
+                throw new InvalidOperationException(_localizer[nameof(SquadResources.SquadNameAlreadyExists)]);
             }
             var squad = new EntitySquad
             {
@@ -53,7 +53,7 @@ namespace Stellantis.ProjectName.Application.Services
             var squad = _squadRepository.GetById(id);
             if (squad == null)
             {
-                throw new KeyNotFoundException(_localizer["SquadNotFound"]);
+                throw new KeyNotFoundException(_localizer[nameof(SquadResources.SquadNotFound)]);
             }
             return squad;
         }
@@ -62,23 +62,23 @@ namespace Stellantis.ProjectName.Application.Services
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                throw new ArgumentException(_localizer["SquadNameRequired"]);
+                throw new ArgumentException(_localizer[nameof(SquadResources.SquadNameRequired)]);
             }
             if (string.IsNullOrWhiteSpace(description))
             {
-                throw new ArgumentException(_localizer["SquadDescriptionRequired"]);
+                throw new ArgumentException(_localizer[nameof(SquadResources.SquadDescriptionRequired)]);
             }
 
             var squad = _squadRepository.GetById(id);
             if (squad == null)
             {
-                throw new KeyNotFoundException(_localizer["SquadNotFound"]);
+                throw new KeyNotFoundException(_localizer[nameof(SquadResources.SquadNotFound)]);
             }
 
             var existingSquad = _squadRepository.GetByName(name);
             if (existingSquad != null && existingSquad.Id != id)
             {
-                throw new InvalidOperationException(_localizer["SquadNameAlreadyExists"]);
+                throw new InvalidOperationException(_localizer[nameof(SquadResources.SquadNameAlreadyExists)]);
             }
 
             squad.Name = name;

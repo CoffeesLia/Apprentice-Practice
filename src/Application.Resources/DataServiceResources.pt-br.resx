@@ -117,19 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AlreadyExists" xml:space="preserve">
-    <value>O nome ja existe.</value>
+  <data name="BadRequest" xml:space="preserve">
+    <value>Solicitação Falhou.</value>
   </data>
-  <data name="ApplicationNotFound" xml:space="preserve">
-    <value>Aplicação não encontrada</value>
+  <data name="GetAllServices_NoServicesFound" xml:space="preserve">
+    <value>Nenhum serviço encontrado.</value>
   </data>
-  <data name="NameRequired" xml:space="preserve">
-    <value>O nome é obrigatório.</value>
+  <data name="GetServiceById_ServiceNotFound" xml:space="preserve">
+    <value>Serviço não encontrado.</value>
   </data>
-  <data name="NameValidateLength" xml:space="preserve">
-    <value>O nome deve ter entre {0} e {1} caracteres.</value>
+  <data name="NameIsRequired" xml:space="preserve">
+    <value>Nome é obrigatório.</value>
   </data>
   <data name="NotFound" xml:space="preserve">
-    <value>Aplicação não pode ser encontrada</value>
+    <value>Não encontrado.</value>
+  </data>
+  <data name="ServiceNameAlreadyExists" xml:space="preserve">
+    <value>Esse nome de serviço já existe.</value>
   </data>
 </root>

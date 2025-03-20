@@ -8,16 +8,17 @@ using System;
 using Xunit;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Domain.Entity;
+using Stellantis.ProjectName.Application.Resources;
 
 namespace Stellantis.ProjectName.Tests.Services
 {
     public class SquadServiceTests
     {
-        private readonly Mock<IStringLocalizer<ServiceResources>> _localizerMock;
+        private readonly Mock<IStringLocalizer<SquadResources>> _localizerMock; // Altere ServiceResources para SquadResources
 
         public SquadServiceTests()
         {
-            _localizerMock = new Mock<IStringLocalizer<ServiceResources>>();
+            _localizerMock = new Mock<IStringLocalizer<SquadResources>>(); // Altere ServiceResources para SquadResources
             _localizerMock.Setup(x => x["SquadNameRequired"]).Returns(new LocalizedString("SquadNameRequired", "O nome do squad é obrigatório."));
             _localizerMock.Setup(x => x["SquadDescriptionRequired"]).Returns(new LocalizedString("SquadDescriptionRequired", "A descrição do squad é obrigatória."));
             _localizerMock.Setup(x => x["SquadNameAlreadyExists"]).Returns(new LocalizedString("SquadNameAlreadyExists", "Um squad com esse nome já existe."));
@@ -162,4 +163,3 @@ namespace Stellantis.ProjectName.Tests.Services
         }
     }
 }
-
