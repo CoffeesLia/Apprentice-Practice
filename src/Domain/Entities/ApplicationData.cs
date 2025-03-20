@@ -10,6 +10,6 @@ namespace Stellantis.ProjectName.Domain.Entities
     {
         public string? Name { get; set; } = Name;
         public int AreaId { get; set; }
-        public Area Area { get; set; }
+        public Area Area { get; set; } = null!;
     }
 }

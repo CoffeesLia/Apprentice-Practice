@@ -51,7 +51,7 @@ namespace WebApi.Tests.Controllers
             var result = await _controller.CreateAsync(applicationDataDto);
 
             // Assert
-            var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
+            Assert.IsType<CreatedAtActionResult>(result);
             
         }
 
@@ -82,14 +82,14 @@ namespace WebApi.Tests.Controllers
             var filter = new ApplicationFilter { Name = "Valid Name" };
             var pagedResult = new PagedResult<ApplicationData>
             {
-                Result = new List<ApplicationData> { new ApplicationData("Valid Name") },
+                Result = [new ApplicationData("Valid Name") ],
                 Page = 1,
                 PageSize = 10,
                 Total = 1
             };
             var pagedVmResult = new PagedResult<ApplicationVm>
             {
-                Result = new List<ApplicationVm> { new ApplicationVm { Name = "Valid Name" } },
+                Result = [new ApplicationVm { Name = "Valid Name" }],
                 Page = 1,
                 PageSize = 10,
                 Total = 1
@@ -128,34 +128,50 @@ namespace WebApi.Tests.Controllers
             Assert.Equal(200, okResult.StatusCode);
         }
 
+
+
         [Fact]
-        public async Task DeleteAsyncShouldReturnNoContentWhenDeleteIsSuccessful()
+        public async Task DeleteAsyncReturnsNoContentWhenDeletionIsSuccessful()
         {
             // Arrange
             int id = 1;
-            _serviceMock.Setup(s => s.DeleteAsync(id)).ReturnsAsync(OperationResult.Complete());
+            _serviceMock.Setup(service => service.DeleteAsync(id)).ReturnsAsync(OperationResult.Complete());
 
-            var result = await _serviceMock.Object.DeleteAsync(id);
+            // Act
+            var result = await _controller.DeleteAsync(id);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.Equal(OperationStatus.Success, result.Status);
+            Assert.IsType<NoContentResult>(result);
         }
 
         [Fact]
-        public async Task DeleteAsyncShouldReturnNotFoundWhenEntityDoesNotExist()
+        public async Task DeleteAsyncReturnsNotFoundWhenItemDoesNotExist()
         {
             // Arrange
             int id = 1;
-            _serviceMock.Setup(s => s.DeleteAsync(id)).ReturnsAsync(OperationResult.NotFound("Entity not found"));
+            _serviceMock.Setup(service => service.DeleteAsync(id)).ReturnsAsync(OperationResult.NotFound("Item not found"));
 
-            var result = await _serviceMock.Object.DeleteAsync(id);
+            // Act
+            var result = await _controller.DeleteAsync(id);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.Equal(OperationStatus.NotFound, result.Status);
-            Assert.Contains("Entity not found", result.Errors);
+            Assert.IsType<NotFoundResult>(result);
         }
+
+        [Fact]
+        public async Task DeleteAsyncReturnsConflictWhenThereIsAConflict()
+        {
+            // Arrange
+            int id = 1;
+            _serviceMock.Setup(service => service.DeleteAsync(id)).ReturnsAsync(OperationResult.Conflict("Conflict occurred"));
+
+            // Act
+            var result = await _controller.DeleteAsync(id);
+
+            // Assert
+            Assert.IsType<ConflictObjectResult>(result);
+        }
+
     }
 }
 

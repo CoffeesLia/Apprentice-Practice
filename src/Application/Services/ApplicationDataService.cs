@@ -21,29 +21,31 @@ namespace Stellantis.ProjectName.Application.Services
     public class ApplicationDataService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<ApplicationData> validator)
         : EntityServiceBase<ApplicationData>(unitOfWork, localizerFactory, validator), IApplicationDataService
     {
-        private IStringLocalizer localizer => localizerFactory.Create(typeof(ApplicationDataResources));
 
+        private new IStringLocalizer Localizer => localizerFactory.Create(typeof(ApplicationDataResources));
+
+        
         protected override IApplicationDataRepository Repository =>
             UnitOfWork.ApplicationDataRepository;
-
-       
 
         public override async Task<OperationResult> CreateAsync(ApplicationData item)
         {
             ArgumentNullException.ThrowIfNull(item);
+
+            if (string.IsNullOrEmpty(item.Name))
+            {
+                return OperationResult.Conflict(Localizer[nameof(ApplicationDataResources.NameRequired)]);
+            }
+
             var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
             if (!validationResult.IsValid)
             {
                 return OperationResult.InvalidData(validationResult);
             }
 
-            if (string.IsNullOrEmpty(item.Name))
-            {
-                return OperationResult.Conflict(localizer[nameof(ApplicationDataResources.NameRequired)]);
-            }
             if (!await IsApplicationNameUniqueAsync(item.Name).ConfigureAwait(false))
             {
-                return OperationResult.Conflict(localizer[nameof(ApplicationDataResources.AlreadyExists)]);
+                return OperationResult.Conflict(Localizer[nameof(ApplicationDataResources.AlreadyExists)]);
             }
             return await base.CreateAsync(item).ConfigureAwait(false);
         }
@@ -54,41 +56,36 @@ namespace Stellantis.ProjectName.Application.Services
             var applicationData = await Repository.GetByIdAsync(id).ConfigureAwait(false);
             if (applicationData == null)
             {
-                return OperationResult.NotFound(localizer[nameof(ApplicationDataResources.ApplicationNotFound)]);
+                return OperationResult.NotFound(Localizer[nameof(ApplicationDataResources.ApplicationNotFound)]);
             }
             var result = new
             {
                 applicationData.Name,
                 applicationData.Area
             };
-            return OperationResult.Complete(result.ToString());
+            return OperationResult.Complete(result.ToString() ?? string.Empty);
         }
 
         public async Task<bool> IsApplicationNameUniqueAsync(string name, int? id = null)
         {
             var filter = new ApplicationFilter { Name = name };
             var applicationData = await GetListAsync(filter).ConfigureAwait(false);
-            return !applicationData.Result.Any(a => a.Id != id); ;
+            return !applicationData.Result.Any(a => a.Id != id); 
         }
 
 
         public override async Task<OperationResult> UpdateAsync(ApplicationData item)
         {
             ArgumentNullException.ThrowIfNull(item);
-            var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
-
-            if (!validationResult.IsValid)
-            {
-                return OperationResult.InvalidData(validationResult);
-            }
 
             if (string.IsNullOrEmpty(item.Name))
             {
-                return OperationResult.Conflict(localizer[nameof(ApplicationDataResources.NameRequired)]);
+                return OperationResult.Conflict(Localizer[nameof(ApplicationDataResources.NameRequired)]);
             }
+
             if (!await IsApplicationNameUniqueAsync(item.Name).ConfigureAwait(false))
             {
-                return OperationResult.Conflict(localizer[nameof(ApplicationDataResources.AlreadyExists)]);
+                return OperationResult.Conflict(Localizer[nameof(ApplicationDataResources.AlreadyExists)]);
             }
             return await base.UpdateAsync(item).ConfigureAwait(false);
         }
@@ -104,7 +101,7 @@ namespace Stellantis.ProjectName.Application.Services
         {
             var item = await Repository.GetFullByIdAsync(id).ConfigureAwait(false);
             if (item == null)
-                return OperationResult.NotFound(Localizer[nameof(ApplicationDataResources.NotFound)]);
+                return OperationResult.NotFound(base.Localizer[nameof(ApplicationDataResources.NotFound)]);
             return await base.DeleteAsync(item).ConfigureAwait(false);
 
 

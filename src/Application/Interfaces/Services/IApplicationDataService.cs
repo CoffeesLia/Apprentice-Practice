@@ -11,7 +11,7 @@ namespace Stellantis.ProjectName.Application.Interfaces.Services
     public interface IApplicationDataService : IEntityServiceBase<ApplicationData>
     {
         Task<PagedResult<ApplicationData>> GetListAsync(ApplicationFilter applicationFilter);
-        Task<bool> IsApplicationNameUniqueAsync(string nameApplication, int? id = null);
+        Task<bool> IsApplicationNameUniqueAsync(string name, int? id = null);
 
     }
 }

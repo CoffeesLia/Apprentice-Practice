@@ -15,30 +15,18 @@ namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [Route("api/applications")]
 
-    public sealed class ApplicationDataControllerBase : 
-        EntityControllerBase<ApplicationData, ApplicationDataDto > 
+    internal sealed class ApplicationDataControllerBase(IApplicationDataService service,
+        IMapper mapper, IStringLocalizerFactory localizerFactory) : 
+        EntityControllerBase<ApplicationData, ApplicationDataDto >(service, mapper, localizerFactory) 
     {
-        private readonly IStringLocalizer localizer;
-
-        public ApplicationDataControllerBase(IApplicationDataService service, 
-            IMapper mapper, IStringLocalizerFactory localizerFactory)
-            : base(service, mapper, localizerFactory)
-        {
-            localizer = localizerFactory.Create(typeof(ApplicationDataResources));
-        }
-
         protected override IApplicationDataService Service => (IApplicationDataService)base.Service;
 
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] ApplicationDataDto itemDto)
         {
-            var result = await CreateBaseAsync<ApplicationVm>(itemDto).ConfigureAwait(false);
-            if (result is OkObjectResult okResult && okResult.Value is ApplicationVm applicationVm)
-            {
-                return CreatedAtAction(nameof(GetAsync), new { id = applicationVm.Id }, applicationVm);
-            }
-            return result;
+            return await CreateBaseAsync<ApplicationVm>(itemDto).ConfigureAwait(false);
         }
+
 
         [HttpGet("{id}")]
         public async Task<ActionResult<ApplicationVm>> GetAsync(int id)
@@ -62,9 +50,10 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(int id)
+        public override async Task<IActionResult> DeleteAsync(int id)
         {
-            return await DeleteAsync(id).ConfigureAwait(false);
+            var result = await base.DeleteAsync(id).ConfigureAwait(false);
+            return result;
         }
 
     }
