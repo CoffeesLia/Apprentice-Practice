@@ -10,7 +10,7 @@ using Stellantis.ProjectName.Domain.Entities;
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
     public class DataServiceRepository(Context context, IStringLocalizer<DataServiceRepository> localizer)
-        : RepositoryBase<EDataService, Context>(context), IDataServiceRepository
+        : RepositoryBase<EDataService, Context>(context)
     {
         private readonly IStringLocalizer<DataServiceRepository> _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
 
