@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
-using Stellantis.ProjectName.Application.Interfaces.Repositories;
-using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
@@ -14,11 +12,10 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
     {
         private readonly IStringLocalizer<DataServiceRepository> _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
 
-        public async Task<EDataService> GetServiceByIdAsync(int id)
+        public async Task<EDataService> GetServiceByIdAsync(int serviceId)
         {
-            var service = await Context.Set<EDataService>()
-                .FirstOrDefaultAsync(s => s.Id == id).ConfigureAwait(false);
-            return service ?? throw new InvalidOperationException(_localizer["GetServiceById_ServiceNotFound", id]);
+            var service = await Context.Set<EDataService>().FirstOrDefaultAsync(s => s.Id == serviceId).ConfigureAwait(false);
+            return service ?? throw new InvalidOperationException(_localizer["GetServiceById_ServiceNotFound", serviceId].Value);
         }
 
         public async Task<IEnumerable<EDataService>> GetAllServicesAsync()
@@ -49,18 +46,22 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         public async Task UpdateServiceAsync(EDataService service)
         {
-            Context.Set<EDataService>().Update(service);
+            ArgumentNullException.ThrowIfNull(service, nameof(service));
+
+            var existingEntity = await Context.Set<EDataService>().FindAsync(service.Id).ConfigureAwait(false)
+                ?? throw new InvalidOperationException(_localizer["ServiceNotFound", service.Id]);
+
+            Context.Entry(existingEntity).CurrentValues.SetValues(service);
             await Context.SaveChangesAsync().ConfigureAwait(false);
         }
 
         public async Task DeleteServiceAsync(int id)
         {
             var service = await Context.Set<EDataService>().FindAsync(id).ConfigureAwait(false);
-            if (service != null)
-            {
-                Context.Set<EDataService>().Remove(service);
-                await Context.SaveChangesAsync().ConfigureAwait(false);
-            }
+            _ = service ?? throw new InvalidOperationException(_localizer["ServiceNotFound", id]);
+
+            Context.Set<EDataService>().Remove(service);
+            await Context.SaveChangesAsync().ConfigureAwait(false);
         }
     }
 }

@@ -66,6 +66,8 @@ namespace Application.Tests
         [InlineData("NotFound", "Not Found.")]
         [InlineData("ServiceNameAlreadyExists", "Service Name Already Exists.")]
         [InlineData("NameValidateLength", "Name must be between 3 and 50 characters.")]
+        [InlineData("ServiceCannotBeNull", "Service Cannot Be Null.")]
+        [InlineData("NameRequired", "Service Name is required.")]
         public void DataServiceResourcesShouldReturnCorrectString(string resourceName, string expectedValue)
         {
             // Arrange
@@ -118,7 +120,8 @@ namespace Application.Tests
             Assert.Equal("Not Found.", DataServiceResources.NotFound);
             Assert.Equal("Service Name Already Exists.", DataServiceResources.ServiceNameAlreadyExists);
             Assert.Equal("Name must be between 3 and 50 characters.", DataServiceResources.NameValidateLength);
-
+            Assert.Equal("Service Cannot Be Null.", DataServiceResources.ServiceCannotBeNull);
+            Assert.Equal("Service Name is required.", DataServiceResources.NameRequired);
         }
     }
 }

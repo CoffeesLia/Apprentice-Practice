@@ -121,5 +121,21 @@ namespace Stellantis.ProjectName.Application.Resources {
                 return ResourceManager.GetString("NameValidateLength", resourceCulture);
             }
         }
+
+        public static string ServiceCannotBeNull
+        {
+            get
+            {
+                return ResourceManager.GetString("ServiceCannotBeNull", resourceCulture);
+            }
+        }
+
+        public static string NameRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("NameRequired", resourceCulture);
+            }
+        }
     }
 }
