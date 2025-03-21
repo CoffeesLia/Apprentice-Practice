@@ -11,19 +11,12 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         {
         }
 
-        public async Task<Responsible?> GetByEmailAsync(string email)
-        {
-            return await Context.Set<Responsible>().FirstOrDefaultAsync(r => r.Email == email).ConfigureAwait(false);
-        }
-
         public async Task<PagedResult<Responsible>> GetListAsync(ResponsibleFilter filter)
         {
-            if (filter == null)
-            {
-                throw new ArgumentNullException(nameof(filter));
-            }
+            ArgumentNullException.ThrowIfNull(filter);
 
             IQueryable<Responsible> query = Context.Set<Responsible>();
+
 
             if (!string.IsNullOrEmpty(filter.Email))
             {
@@ -80,32 +73,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             return await Context.Set<Responsible>().FindAsync(id).ConfigureAwait(false);
         }
 
-        public async Task<bool> VerifyAplicationsExistsAsync(int id)
-        {
-            var responsible = await Context.Set<Responsible>()
-                .FirstOrDefaultAsync(r => r.Id == id)
-                .ConfigureAwait(false);
-
-            if (responsible == null)
-            {
-                throw new ArgumentException("Responsible not found.");
-            }
-
-            return !string.IsNullOrEmpty(responsible.Area);
-        }
-
-        public async Task CreateAsync(Responsible entity, bool saveChanges = true)
-        {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
-            await Context.Set<Responsible>().AddAsync(entity).ConfigureAwait(false);
-            if (saveChanges)
-            {
-                await SaveChangesAsync().ConfigureAwait(false);
-            }
-        }
+      
     }
 }

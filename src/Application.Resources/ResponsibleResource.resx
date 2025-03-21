@@ -120,7 +120,7 @@
   <data name=" AreaRequired  " xml:space="preserve">
     <value>The Area is mandatory</value>
   </data>
-  <data name="AlreadyExists" xml:space="preserve">
+  <data name="EmailExists" xml:space="preserve">
     <value>The email already exists.</value>
   </data>
   <data name="DeletedSuccessfully" xml:space="preserve">
@@ -132,7 +132,7 @@
   <data name="EmailRequired " xml:space="preserve">
     <value>Email is mandatory </value>
   </data>
-  <data name="NomeRequired" xml:space="preserve">
+  <data name="NameRequired" xml:space="preserve">
     <value>Name must be required</value>
   </data>
 </root>
