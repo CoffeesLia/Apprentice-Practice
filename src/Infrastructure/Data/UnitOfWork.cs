@@ -6,15 +6,14 @@ using Stellantis.ProjectName.Infrastructure.Data.Repositories;
 
 namespace Stellantis.ProjectName.Infrastructure.Data
 {
-    public class UnitOfWork(Context context) : IUnitOfWork
+    public class UnitOfWork(Context context, IStringLocalizer<DataServiceRepository>? localizer = null) : IUnitOfWork
     {
         private IDbContextTransaction? _transaction;
-        private readonly IStringLocalizer<DataServiceRepository>? _localizer;
         private IDataServiceRepository? _dataServiceRepository;
 
         public IAreaRepository AreaRepository => throw new NotImplementedException();
-        public IResponsibleRepository ResponsibleRepository => throw new NotImplementedException();
 
+        public IResponsibleRepository ResponsibleRepository => throw new NotImplementedException();
 
         public IApplicationDataRepository ApplicationDataRepository => throw new NotImplementedException();
 
@@ -22,7 +21,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data
         {
             get
             {
-                return _dataServiceRepository ??= new DataServiceRepository(context, _localizer!);
+                return _dataServiceRepository ??= (IDataServiceRepository)new DataServiceRepository(context, localizer!);
             }
         }
 

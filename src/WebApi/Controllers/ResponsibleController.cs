@@ -9,7 +9,6 @@ using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.ViewModels;
 
 
-
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [Route("api/responsible")]
@@ -23,6 +22,12 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             return await CreateBaseAsync<ResponsibleVm>(itemDto);
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ResponsibleVm>> GetAsync(int id)
+        {
+            return await GetAsync<ResponsibleVm>(id);
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetListAsync([FromQuery] ResponsibleFilter filterDto)
         {
@@ -32,48 +37,16 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             return Ok(resultVm);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetAsync(int id)
-        {
-            var responsible = await ((IResponsibleService)Service).GetItemAsync(id).ConfigureAwait(false);
-            if (responsible == null)
-            {
-                return NotFound();
-            }
-            var responsibleVm = Mapper.Map<ResponsibleVm>(responsible);
-            return Ok(responsibleVm);
-        }
-
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] ResponsibleDto itemDto)
         {
-            var item = Mapper.Map<Responsible>(itemDto);
-            item.Id = id;
-            var result = await ((IResponsibleService)Service).UpdateAsync(item).ConfigureAwait(false);
-            if (result.Status == OperationStatus.Conflict)
-            {
-                return Conflict(result.Message);
-            }
-            if (result.Status == OperationStatus.InvalidData)
-            {
-                return BadRequest(result.Errors);
-            }
-            if (result.Status == OperationStatus.NotFound)
-            {
-                return NotFound(result.Message);
-            }
-            return Ok(result.Message);
+            return await base.UpdateBaseAsync<ResponsibleVm>(id, itemDto);
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(int id)
+        public override async Task<IActionResult> DeleteAsync(int id)
         {
-            var result = await ((IResponsibleService)Service).DeleteAsync(id).ConfigureAwait(false);
-            if (result.Status == OperationStatus.NotFound)
-            {
-                return NotFound(result.Message);
-            }
-            return Ok(result.Message);
+            return await base.DeleteAsync(id).ConfigureAwait(false);
         }
     }
 }
