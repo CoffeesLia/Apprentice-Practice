@@ -76,7 +76,7 @@ namespace Stellantis.ProjectName.Application.Services
             return !areas.Result.Any(a => a.Id != id);
         }
 
-        public Task<OperationResult> UpdateAsync(EntityGitLabRepository item, string v)
+        public Task<OperationResult> UpdateAsync(GitRepo item, string v)
         {
             throw new NotImplementedException();
         }

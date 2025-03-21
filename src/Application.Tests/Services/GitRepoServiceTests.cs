@@ -16,7 +16,7 @@ namespace Stellantis.ProjectName.Application.Tests.Services
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private readonly Mock<IStringLocalizerFactory> _localizerFactoryMock;
         private readonly Mock<IValidator<GitRepo>> _validatorMock;
-        private readonly Application.Services.GitRepoService _gitRepoService;
+        private readonly GitRepoService _gitRepoService;
         public GitRepoServiceTests()
         {
             _unitOfWorkMock = new Mock<IUnitOfWork>();

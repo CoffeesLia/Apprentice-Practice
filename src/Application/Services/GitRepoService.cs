@@ -9,9 +9,8 @@ using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces;
 using FluentValidation;
-using Stellantis.ProjectName.Application.Services;
 
-namespace Stellantis.ProjectName.Domain.Services
+namespace Stellantis.ProjectName.Application.Services
 {
     public class GitRepoService : EntityServiceBase<GitRepo>, IGitRepoService
     {
