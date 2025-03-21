@@ -82,8 +82,16 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         public async Task<bool> VerifyAplicationsExistsAsync(int id)
         {
-            // Implementação fictícia, ajuste conforme necessário
-            return await Context.Set<Responsible>().AnyAsync(r => r.Id == id && r.Area != null).ConfigureAwait(false);
+            var responsible = await Context.Set<Responsible>()
+                .FirstOrDefaultAsync(r => r.Id == id)
+                .ConfigureAwait(false);
+
+            if (responsible == null)
+            {
+                throw new ArgumentException("Responsible not found.");
+            }
+
+            return !string.IsNullOrEmpty(responsible.Area);
         }
 
         public async Task CreateAsync(Responsible entity, bool saveChanges = true)
