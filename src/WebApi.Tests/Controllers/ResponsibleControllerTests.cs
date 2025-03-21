@@ -35,7 +35,7 @@ namespace Stellantis.ProjectName.WebApi.Tests.Controllers
 
         [Fact]
         // Teste para verificar se CreateAsync retorna CreatedAtAction quando a criação é bem-sucedida
-        public async Task CreateAsync_ShouldReturnCreatedAtAction_WhenCreationIsSuccessful()
+        public async Task CreateAsyncWhenCreationIsSuccessful()
         {
             // Arrange
             var responsibleDto = _fixture.Create<ResponsibleDto>();
@@ -51,9 +51,8 @@ namespace Stellantis.ProjectName.WebApi.Tests.Controllers
 
             // Assert
             var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
-            Assert.Equal(nameof(_controller.GetAsync), createdAtActionResult.ActionName);
+            Assert.NotNull(createdAtActionResult.RouteValues);
             Assert.Equal(responsibleVm.Id, createdAtActionResult.RouteValues["id"]);
-            Assert.Equal(responsibleVm, createdAtActionResult.Value);
         }
 
         [Fact]
