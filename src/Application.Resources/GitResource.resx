@@ -141,4 +141,7 @@
   <data name="RepositoryCantBeNull" xml:space="preserve">
     <value>Repository can't be null</value>
   </data>
+  <data name="AlreadyExists" xml:space="preserve">
+    <value>Already Exists</value>
+  </data>
 </root>

@@ -13,15 +13,17 @@ using Stellantis.ProjectName.Application.Services;
 
 namespace Stellantis.ProjectName.Domain.Services
 {
-    public class GitRepoService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<GitRepo> validator)
-         : EntityServiceBase<GitRepo>(unitOfWork, localizerFactory, validator), IGitRepoService
+    public class GitRepoService : EntityServiceBase<GitRepo>, IGitRepoService
     {
         protected override IGitRepoRepository Repository => UnitOfWork.GitRepoRepository;
 
         private readonly List<GitRepo> _repositories = new();
+        public GitRepoService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<GitRepo> validator)
+            : base(unitOfWork, localizerFactory, validator)
+        { }
+        
 
-    }
-            public override async Task<OperationResult> CreateAsync(GitRepo item)
+        public override async Task<OperationResult> CreateAsync(GitRepo item)
         {
             if (IsInvalidRepository(item, out var validationResult))
             {
@@ -39,7 +41,6 @@ namespace Stellantis.ProjectName.Domain.Services
 
         public async Task<OperationResult> DeleteAsync(int id, GitRepo item)
         {
-
             var existingRepo = _repositories.FirstOrDefault(repo => repo.Id == id);
             if (existingRepo == null)
             {
@@ -68,8 +69,6 @@ namespace Stellantis.ProjectName.Domain.Services
                 filteredRepos = filteredRepos.Where(repo => repo.Url.Contains(filter.Url));
             }
 
-
-
             var result = new PagedResult<GitRepo>
             {
                 Result = filteredRepos.ToList(),
@@ -94,7 +93,6 @@ namespace Stellantis.ProjectName.Domain.Services
         {
             return Task.FromResult(OperationResult.Conflict(GitResource.ValidationErrorMessage));
         }
-
 
         private bool IsInvalidRepository(GitRepo repo, out ValidationResult validationResult)
         {
@@ -153,6 +151,7 @@ namespace Stellantis.ProjectName.Domain.Services
             UpdateRepository(existingRepo, updatedRepo);
             return OperationResult.Complete(Localizer[ServiceResources.UpdatedSuccessfully]);
         }
+
         public async Task<bool> VerifyAplicationsExistsAsync(int id)
         {
             return await Repository.AnyAsync(a => a.Id == id).ConfigureAwait(false);
