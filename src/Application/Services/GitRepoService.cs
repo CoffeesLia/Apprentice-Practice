@@ -48,7 +48,7 @@ namespace Stellantis.ProjectName.Domain.Services
             return await base.DeleteAsync(item).ConfigureAwait(false);
         }
 
-        public async Task<PagedResult<GitRepo>> GetListAsync(GitLabFilter filter)
+        public async Task<PagedResult<GitRepo>> GetListAsync(GitRepoFilter filter)
         {
             var filteredRepos = _repositories.AsQueryable();
 

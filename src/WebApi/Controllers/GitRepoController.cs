@@ -59,7 +59,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> List([FromQuery] GitLabFilter filter)
+        public async Task<IActionResult> List([FromQuery] GitRepoFilter filter)
         {
             var result = await _gitRepoService.GetListAsync(filter).ConfigureAwait(false);
             return Ok(result);

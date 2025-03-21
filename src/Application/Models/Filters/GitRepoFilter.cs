@@ -1,6 +1,6 @@
 ﻿namespace Stellantis.ProjectName.Application.Models.Filters
 {
-    public class GitLabFilter : Filter
+    public class GitRepoFilter : Filter
     {
         public required string Name { get; set; }
         public required string Description { get; set; }
