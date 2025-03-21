@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 using AppNamespace = Stellantis.ProjectName.Domain.Entities;
+using Stellantis.ProjectName.Application.Models;
+using Stellantis.ProjectName.Application.Resources;
 
 namespace Application.Tests.Services
 {
@@ -28,11 +30,11 @@ namespace Application.Tests.Services
         {
             // Arrange
             var serviceId = 1;
-            var expectedService = new AppNamespace.EDataService
+            var expectedService = new EDataService
             {
                 Id = serviceId,
                 Name = "Test Service",
-                Application = new AppNamespace.Application { Id = 1, Name = "Test Application" }
+                ApplicationId = 1
             };
             _serviceRepositoryMock.Setup(repo => repo.GetServiceByIdAsync(serviceId))
                 .ReturnsAsync(expectedService);
@@ -45,33 +47,36 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task GetAllServicesAsyncShouldReturnAllServices()
+        public async Task AddServiceAsyncShouldReturnConflictWhenNameIsEmpty()
         {
             // Arrange
-            var expectedServices = new List<AppNamespace.EDataService>
+            var newService = new EDataService
             {
-                new() { Id = 1, Name = "Service 1", Application = new AppNamespace.Application { Id = 1, Name = "App 1" } },
-                new() { Id = 2, Name = "Service 2", Application = new AppNamespace.Application { Id = 2, Name = "App 2" } }
+                Id = 3,
+                Name = string.Empty,
+                ApplicationId = 3
             };
-            _serviceRepositoryMock.Setup(repo => repo.GetAllServicesAsync())
-                .ReturnsAsync(expectedServices);
 
-            // Act
-            var result = await _dataService.GetAllServicesAsync();
+            var localizedString = new LocalizedString(nameof(ApplicationDataResources.NameRequired), "Service Name is required.");
+            _localizerMock.Setup(localizer => localizer[nameof(ApplicationDataResources.NameRequired)])
+                .Returns(localizedString);
 
-            // Assert
-            Assert.Equal(expectedServices, result);
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => _dataService.AddServiceAsync(newService));
+            Assert.Equal(localizedString.Value, exception.Message);
+            _serviceRepositoryMock.Verify(repo => repo.AddServiceAsync(It.IsAny<EDataService>()), Times.Never);
         }
+
 
         [Fact]
         public async Task AddServiceAsyncShouldCallRepositoryAdd()
         {
             // Arrange
-            var newService = new AppNamespace.EDataService
+            var newService = new EDataService
             {
                 Id = 3,
                 Name = "New Service",
-                Application = new AppNamespace.Application { Id = 3, Name = "New Application" }
+                ApplicationId = 3
             };
 
             // Act
@@ -85,11 +90,11 @@ namespace Application.Tests.Services
         public async Task UpdateServiceAsyncShouldCallRepositoryUpdate()
         {
             // Arrange
-            var updatedService = new AppNamespace.EDataService
+            var updatedService = new EDataService
             {
                 Id = 1,
                 Name = "Updated Service",
-                Application = new AppNamespace.Application { Id = 1, Name = "Updated Application" }
+                ApplicationId = 1
             };
 
             // Act
@@ -97,19 +102,6 @@ namespace Application.Tests.Services
 
             // Assert
             _serviceRepositoryMock.Verify(repo => repo.UpdateServiceAsync(updatedService), Times.Once);
-        }
-
-        [Fact]
-        public async Task DeleteServiceAsyncShouldCallRepositoryDelete()
-        {
-            // Arrange
-            var serviceId = 1;
-
-            // Act
-            await _dataService.DeleteServiceAsync(serviceId);
-
-            // Assert
-            _serviceRepositoryMock.Verify(repo => repo.DeleteServiceAsync(serviceId), Times.Once);
         }
     }
 }

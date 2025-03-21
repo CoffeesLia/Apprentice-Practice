@@ -28,17 +28,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
 
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] AreaDto itemDto)
-        {
-            if (itemDto == null)
-            {
-                return BadRequest(new { Message = _localizer[nameof(AreaResources.NameIsRequired)] });
-            }
-
-            if (string.IsNullOrWhiteSpace(itemDto.Name) || itemDto.Name.Length > 100)
-            {
-                return BadRequest(new { Message = string.Format(_localizer[nameof(AreaResources.NameValidateLength)], 1, 100) });
-            }
-
+        {         
             return await CreateBaseAsync<AreaVm>(itemDto);
         }
 
@@ -64,14 +54,11 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(int id)
+        public override async Task<IActionResult> DeleteAsync(int id)
         {
-            return await DeleteAsync(id).ConfigureAwait(false);
+            return await base.DeleteAsync(id).ConfigureAwait(false);
         }
 
-        public Task<IActionResult> EditAreaAsync(int id, [FromBody] AreaDto updatedAreaDto)
-        {
-            throw new NotImplementedException();
-        }
+       
     }
 }

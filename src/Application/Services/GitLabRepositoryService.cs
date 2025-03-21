@@ -6,6 +6,7 @@ using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Domain.Entities;
 using FluentValidation.Results;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
+using Stellantis.ProjectName.Filters;
 
 namespace Stellantis.ProjectName.Domain.Services
 {
@@ -33,7 +34,7 @@ namespace Stellantis.ProjectName.Domain.Services
         {
             return _repositories.FirstOrDefault(repo => repo.Id == id);
         }
-       
+
         public async Task<OperationResult> CreateAsync(EntityGitLabRepository item)
         {
             return await ((IGitLabRepository)this).CreateAsync(item);
