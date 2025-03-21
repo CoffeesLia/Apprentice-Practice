@@ -13,14 +13,15 @@ using Stellantis.ProjectName.Application.Services;
 
 namespace Stellantis.ProjectName.Domain.Services
 {
-    public class GitLabRepoService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<GitRepo> validator)
+    public class GitRepoService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<GitRepo> validator)
          : EntityServiceBase<GitRepo>(unitOfWork, localizerFactory, validator), IGitRepoService
     {
-        private IStringLocalizer _localizer => localizerFactory.Create(typeof(GitResource));
         protected override IGitRepoRepository Repository => UnitOfWork.GitRepoRepository;
-        private readonly List<GitRepo> _repositories = new List<GitRepo>();
 
-        public override async Task<OperationResult> CreateAsync(GitRepo item)
+        private readonly List<GitRepo> _repositories = new();
+
+    }
+            public override async Task<OperationResult> CreateAsync(GitRepo item)
         {
             if (IsInvalidRepository(item, out var validationResult))
             {
@@ -101,17 +102,17 @@ namespace Stellantis.ProjectName.Domain.Services
 
             if (string.IsNullOrWhiteSpace(repo.Name))
             {
-                OperationResult.Complete(_localizer[nameof(GitResource.NameIsRequired)]);
+                OperationResult.Complete(Localizer[nameof(GitResource.NameIsRequired)]);
             }
 
             if (string.IsNullOrWhiteSpace(repo.Description))
             {
-                OperationResult.Complete(_localizer[nameof(GitResource.DescriptionIsRequired)]);
+                OperationResult.Complete(Localizer[nameof(GitResource.DescriptionIsRequired)]);
             }
 
             if (string.IsNullOrWhiteSpace(repo.Url))
             {
-                OperationResult.Complete(_localizer[nameof(GitResource.UrlIsRequired)]);
+                OperationResult.Complete(Localizer[nameof(GitResource.UrlIsRequired)]);
             }
 
             validationResult = new ValidationResult(failures);

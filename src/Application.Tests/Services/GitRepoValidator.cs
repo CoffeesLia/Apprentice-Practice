@@ -1,14 +1,23 @@
-﻿using Microsoft.Extensions.Localization;
+﻿using FluentValidation;
+using Microsoft.Extensions.Localization;
+using Stellantis.ProjectName.Application.Models;
+using Stellantis.ProjectName.Application.Resources;
+using Stellantis.ProjectName.Domain.Entities;
 
 namespace Application.Tests.Services
 {
-    internal class GitRepoValidator
+    public class GitRepoValidator : AbstractValidator<GitRepo>
     {
-        private IStringLocalizerFactory localizer;
-
-        public GitRepoValidator(IStringLocalizerFactory localizer)
+        public GitRepoValidator(IStringLocalizer<GitRepoValidator> localizer)
         {
-            this.localizer = localizer;
+            RuleFor(repo => repo.Name)
+                .NotEmpty().WithMessage(localizer[nameof(GitResource.NameIsRequired)]);
+
+            RuleFor(repo => repo.Description)
+                .NotEmpty().WithMessage(localizer[nameof(GitResource.DescriptionIsRequired)]);
+
+            RuleFor(repo => repo.Url)
+                .NotEmpty().WithMessage(localizer[nameof(GitResource.UrlIsRequired)]);
         }
     }
 }
