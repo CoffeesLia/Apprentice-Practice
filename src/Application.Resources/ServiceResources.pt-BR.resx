@@ -141,4 +141,7 @@
   <data name="SquadNotFound" xml:space="preserve">
     <value>Squad não encontrado.</value>
   </data>
+  <data name="MemberUpdatedSuccessfully" xml:space="preserve">
+    <value>Membro atualizado com sucesso. </value>
+  </data>
 </root>

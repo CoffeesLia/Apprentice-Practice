@@ -120,13 +120,22 @@
   <data name="MemberAddedSuccessfully" xml:space="preserve">
     <value>Membro adicionado com sucesso.</value>
   </data>
+  <data name="MemberDeletedSuccessfully" xml:space="preserve">
+    <value>Membro deletado com sucesso.</value>
+  </data>
   <data name="MemberEmailAlreadyExists" xml:space="preserve">
     <value>Esse e-mail já existe.</value>
   </data>
   <data name="MemberIdNotFound" xml:space="preserve">
-    <value>Id não pôde ser encontrada. Tente novamente.</value>
+    <value>ID do membro não foi encontrada.</value>
+  </data>
+  <data name="MemberNameIsRequired" xml:space="preserve">
+    <value>O nome do membro é obrigatório.</value>
   </data>
   <data name="MemberRequiredFieldsMissing" xml:space="preserve">
-    <value>Todos os campos obrigatórios devem ser preenchidos. </value>
+    <value>Todos os campos obrigatórios devem ser preenchidos.</value>
+  </data>
+  <data name="MemberUpdatedSuccessfully" xml:space="preserve">
+    <value>Membro atualizado com sucesso. </value>
   </data>
 </root>

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Stellantis.ProjectName.Application.Models.Filters
 {
-    internal class MemberFIlter
+    internal class MemberFilter
     {
         public string? Name { get; set; }
         public string? Role { get; set; }

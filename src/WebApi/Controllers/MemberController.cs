@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Domain.Entities;
-using Stellantis.ProjectName.WebApi.Dto;
+using Stellantis.ProjectName.WebApi.ViewModels;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Resources;
 using AutoMapper;
@@ -25,13 +25,14 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         }
 
         [HttpPost]
-        [ServiceFilter(typeof(ValidateMemberDtoFilter))]
-        public async Task<IActionResult> AddMember([FromBody] MemberDto memberDto)
+        [ServiceFilter(typeof(ValidateMemberVmFilter))]
+        public async Task<IActionResult> AddMember([FromBody] MemberVm memberVm)
         {
             try
             {
-                var entityMember = _mapper.Map<EntityMember>(memberDto);
-                await _memberService.AddEntityMemberAsync(entityMember);
+                var entityMember = _mapper.Map<EntityMember>(memberVm);
+                entityMember.Id = Guid.NewGuid();
+                await _memberService.AddEntityMemberAsync(entityMember).ConfigureAwait(false);
                 return Ok(_localizer["MemberAddedSuccessfully"]);
             }
             catch (Exception ex)
@@ -43,13 +44,52 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetMemberById(Guid id)
         {
-            var member = await _memberService.GetMemberByIdAsync(id);
+            var member = await _memberService.GetMemberByIdAsync(id).ConfigureAwait(false);
             if (member == null)
             {
                 return NotFound(_localizer["MemberIdNotFound"]);
             }
-            var memberDto = _mapper.Map<MemberDto>(member);
-            return Ok(memberDto);
+            var memberVm = _mapper.Map<MemberVm>(member);
+            return Ok(memberVm);
+        }
+
+        [HttpPut("{id}")]
+        [ServiceFilter(typeof(ValidateMemberVmFilter))]
+        public async Task<IActionResult> UpdateMember(Guid id, [FromBody] MemberVm memberVm)
+        {
+            try
+            {
+                var entityMember = _mapper.Map<EntityMember>(memberVm);
+                entityMember.Id = id;
+                await _memberService.UpdateEntityMemberAsync(entityMember).ConfigureAwait(false);
+                return Ok(_localizer["MemberUpdatedSuccessfully"]);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetMembers([FromQuery] string? name, [FromQuery] string? email, [FromQuery] string? role)
+        {
+            var members = await _memberService.GetMembersAsync(name, email, role).ConfigureAwait(false);
+            var membersVms = _mapper.Map<IEnumerable<MemberVm>>(members);
+            return Ok(membersVms);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteMember(Guid id)
+        {
+            try
+            {
+                await _memberService.DeleteMemberByIdAsync(id).ConfigureAwait(false);
+                return Ok(_localizer["MemberDeletedSuccessfully"]);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

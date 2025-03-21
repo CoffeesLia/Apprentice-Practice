@@ -1,17 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Stellantis.ProjectName.WebApi.Dto;
+using Stellantis.ProjectName.WebApi.ViewModels;
 
 namespace Stellantis.ProjectName.WebApi.Filters
 {
-    public class ValidateMemberDtoFilter : IActionFilter
+    public class ValidateMemberVmFilter : IActionFilter
     {
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            if (context.ActionArguments.ContainsKey("memberDto"))
+            if (context.ActionArguments.ContainsKey("memberVm"))
             {
-                var memberDto = context.ActionArguments["memberDto"] as MemberDto;
-                if (memberDto == null || string.IsNullOrEmpty(memberDto.Name) || string.IsNullOrEmpty(memberDto.Role) || memberDto.Cost <= 0)
+                var memberVm = context.ActionArguments["memberVm"] as MemberVm;
+                if (memberVm == null || string.IsNullOrEmpty(memberVm.Name) || string.IsNullOrEmpty(memberVm.Role) || memberVm.Cost <= 0)
                 {
                     context.Result = new BadRequestObjectResult("MemberRequiredFieldsMissing");
                 }

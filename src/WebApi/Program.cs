@@ -16,6 +16,7 @@ using System.Globalization;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
 using Stellantis.ProjectName.WebApi.Dto.Validators;
 using Stellantis.ProjectName.WebApi.Dto;
+using Stellantis.ProjectName.Domain.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,7 +65,8 @@ switch (databaseType)
 
 builder.Services.AddScoped<IMemberService, MemberService>();
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
-builder.Services.AddScoped<ValidateMemberDtoFilter>(); 
+builder.Services.AddScoped<ValidateMemberVmFilter>(); 
+builder.Services.AddTransient<IValidator<EntityMember>, MemberValidator>(); 
 
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");

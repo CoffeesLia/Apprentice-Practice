@@ -37,5 +37,60 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         {
             throw new NotImplementedException();
         }
+
+        public async Task UpdateEntityMemberAsync(EntityMember entityMember)
+        {
+            var existingMember = _members.FirstOrDefault(m => m.Id == entityMember.Id);
+            if (existingMember == null)
+            {
+                throw new KeyNotFoundException("MemberNotFound");
+            }
+
+            existingMember.Name = entityMember.Name;
+            existingMember.Role = entityMember.Role;
+            existingMember.Cost = entityMember.Cost;
+            existingMember.Email = entityMember.Email;
+
+            await Task.CompletedTask;   
+        }
+
+        public async Task<IEnumerable<EntityMember>> GetMembersAsync(string? name, string? email, string? role)
+        {
+            var query = _members.AsQueryable();
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                query = query.Where(m => m.Name.Contains(name, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (!string.IsNullOrEmpty(email))
+            {
+                query = query.Where(m => m.Email.Contains(email, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (!string.IsNullOrEmpty(role))
+            {
+                query = query.Where(m => m.Role.Contains(role, StringComparison.OrdinalIgnoreCase));
+            }
+
+            return await Task.FromResult(query.ToList());
+        }
+
+        public async Task DeleteMemberAsync(Guid id)
+        {
+            var member = _members.FirstOrDefault(m => m.Id == id);
+            if (member == null)
+            {
+                throw new KeyNotFoundException("MemberNotFound");
+            }
+
+            _members.Remove(member);
+            await Task.CompletedTask;
+        }
+
+        public Task<bool>? IsEmailUnique(string email, Guid id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -70,6 +70,15 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Member updated successfully..
+        /// </summary>
+        public static string MemberUpdatedSuccessfully {
+            get {
+                return ResourceManager.GetString("MemberUpdatedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Not found..
         /// </summary>
         public static string NotFound {
@@ -130,6 +139,46 @@ namespace Stellantis.ProjectName.Application.Resources {
             get {
                 return ResourceManager.GetString("UpdatedSuccessfully", resourceCulture);
             }
+        }
+
+        public static object MemberCostMustBeGreaterThanZero()
+        {
+            throw new NotImplementedException();
+        }
+
+        public static object MemberEmailInvalid()
+        {
+            throw new NotImplementedException();
+        }
+
+        public static object MemberEmailIsRequired()
+        {
+            throw new NotImplementedException();
+        }
+
+        public static object MemberEmailValidateLength()
+        {
+            throw new NotImplementedException();
+        }
+
+        public static object MemberNameIsRequired()
+        {
+            throw new NotImplementedException();
+        }
+
+        public static object MemberNameValidateLength()
+        {
+            throw new NotImplementedException();
+        }
+
+        public static object MemberRoleIsRequired()
+        {
+            throw new NotImplementedException();
+        }
+
+        public static object MemberRoleValidateLength()
+        {
+            throw new NotImplementedException();
         }
     }
 }

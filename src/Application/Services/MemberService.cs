@@ -25,7 +25,9 @@ namespace Stellantis.ProjectName.Application.Services
 
         public async Task AddEntityMemberAsync(EntityMember entityMember)
         {
-            if (!await Task.Run(() => _memberRepository.IsEmailUnique(entityMember.Email)))
+            ArgumentNullException.ThrowIfNull(entityMember, nameof(entityMember));
+
+            if (!await Task.Run(() => _memberRepository.IsEmailUnique(entityMember.Email)).ConfigureAwait(false))
             {
                 throw new InvalidOperationException(_localizer["MemberEmailAlreadyExists"]);
             }
@@ -35,10 +37,47 @@ namespace Stellantis.ProjectName.Application.Services
                 throw new ArgumentException(_localizer["MemberRequiredFieldsMissing"]);
             }
 
-            await _memberRepository.AddEntityMemberAsync(entityMember);
+            await _memberRepository.AddEntityMemberAsync(entityMember).ConfigureAwait(false);
         }
 
-        public Task<EntityMember> GetMemberByIdAsync(Guid id)
+        public async Task<EntityMember> GetMemberByIdAsync(Guid id)
+        {
+            return await _memberRepository.GetMemberByIdAsync(id).ConfigureAwait(false);
+        }
+
+        public async Task UpdateEntityMemberAsync(EntityMember entityMember)
+        {
+            ArgumentNullException.ThrowIfNull(entityMember, nameof(entityMember));
+
+            if (!await Task.Run(() => _memberRepository.IsEmailUnique(entityMember.Email, entityMember.Id)).ConfigureAwait(false))
+            {
+                throw new InvalidOperationException(_localizer["MemberEmailAlreadyExists"]);
+            }
+
+            if (string.IsNullOrEmpty(entityMember.Name) || string.IsNullOrEmpty(entityMember.Role) || entityMember.Cost <= 0)
+            {
+                throw new ArgumentException(_localizer["MemberRequiredFieldsMissing"]);
+            }
+
+            await _memberRepository.UpdateEntityMemberAsync(entityMember).ConfigureAwait(false);
+        }
+
+        public async Task<IEnumerable<EntityMember>> GetMembersAsync(string? name, string? email, string? role)
+        {
+            return await _memberRepository.GetMembersAsync(name, email, role).ConfigureAwait(false);
+        }
+
+        public async Task DeleteMemberAsync(Guid id)
+        {
+            await _memberRepository.DeleteMemberAsync(id).ConfigureAwait(false);
+        }
+
+        public Task DeleteMemberByIdAsync(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IMemberService.DeleteMemberAsync(Guid memberid)
         {
             throw new NotImplementedException();
         }

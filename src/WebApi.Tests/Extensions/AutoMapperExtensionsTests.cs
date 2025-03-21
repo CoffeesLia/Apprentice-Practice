@@ -7,7 +7,7 @@ namespace WebApi.Tests.Extensions
     public class AutoMapperExtensionTests
     {
         [Fact]
-        public void RegisterMapper_RegisterAutoMapper()
+        public void RegisterMapperRegisterAutoMapper()
         {
             // Arrange
             var services = new ServiceCollection();

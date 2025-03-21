@@ -27,59 +27,107 @@ namespace Stellantis.ProjectName.Application.Tests.Services
         }
 
         [Fact]
-        public void AddEntityMember_ShouldThrowException_WhenEmailIsNotUnique()
+        public async Task AddEntityMember_ShouldThrowException_WhenEmailIsNotUnique()
         {
             //arrange
             var entityMember = new EntityMember
             {
+                Id = Guid.NewGuid(),
                 Name = "Ana",
                 Role = "Developer",
                 Cost = 1000,
                 Email = "ana.souza7@exemplo.com"
             };
 
-            _memberRepositoryMock.Setup(repo => repo.IsEmailUnique(entityMember.Email)).Returns(false);
+            _memberRepositoryMock.Setup(repo => repo.IsEmailUnique(entityMember.Email, entityMember.Id));
+            _localizerMock.Setup(localizer => localizer["MemberEmailAlreadyExists"]).Returns(new LocalizedString("MemberEmailAlreadyExists", "This e-mail already exists"));
 
             //actEassert
-            Assert.Throws<InvalidOperationException>(() => _memberService.AddEntityMember(entityMember));
+            var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => _memberService.UpdateEntityMemberAsync(entityMember));
+            _localizerMock.Verify(localizer => localizer["MemberEmailAlreadyExists"], Times.Once);
+            Assert.Equal("This e-mail already exists", exception.Message);
         }
 
         [Fact]
-        public void AddEntityMember_ShouldThrowException_WhenRequiredFieldsAreNotFilled()
+        public async Task UpdateEntityMember_ShouldThrowException_WhenRequiredFieldsAreNotFilled()
         {
             //arrange
             var entityMember = new EntityMember
             {
+                Id = Guid.NewGuid(),
                 Name = "",
                 Role = "",
                 Cost = 0,
                 Email = "ana.souza7@exemplo.com"
             };
 
+            _localizerMock.Setup(localizer => localizer["MemberRequiredFieldsMissing"]).Returns(new LocalizedString("MemberRequiredFieldsMissing", "All required fields must be completed. "));
+
             //actEassert
-            Assert.Throws<ArgumentException>(() => _memberService.AddEntityMember(entityMember));
+            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _memberService.UpdateEntityMemberAsync(entityMember));
+            _localizerMock.Verify(localizer => localizer["MemberRequiredFieldsMissing"], Times.Once);
+            Assert.Equal("All required fields must be completed.", exception.Message);
 
         }
 
         [Fact]
-        public void AddEntityMember_ShouldAddMember_WhenAllFieldsAreValid()
+        public async Task UpdateEntityMemberShouldUpdateMemberWhenAllFieldsAreValid()
         {
             //arrange
             var entityMember = new EntityMember
             {
+                Id = Guid.NewGuid(),
                 Name = "Ana",
                 Role = "Developer",
                 Cost = 1000,
                 Email = "ana.souza7@exemplo.com"
             };
 
-            _memberRepositoryMock.Setup(repo => repo.IsEmailUnique(entityMember.Email)).Returns(true);
+            _memberRepositoryMock.Setup(repo => repo.IsEmailUnique(entityMember.Email, entityMember.Id));
 
             //act
-            _memberService.AddEntityMember(entityMember);
+            await _memberService.AddEntityMemberAsync(entityMember);
 
             //assert
-            _memberRepositoryMock.Verify(repo => repo.AddEntityMember(entityMember), Times.Once);
+            _memberRepositoryMock.Verify(repo => repo.UpdateEntityMemberAsync(entityMember), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetMemberByIdAsync_ShouldReturnMember_WhenMemberExists()
+        {
+            //arrange
+            var id = Guid.NewGuid();
+            var entityMember = new EntityMember
+            {
+                Id = id,
+                Name = "Ana",
+                Role = "Developer",
+                Cost = 1000,
+                Email = "ana.souza7@exemplo.com"
+            };
+
+            _memberRepositoryMock.Setup(repo => repo.GetMemberByIdAsync(id)).ReturnsAsync(entityMember);
+
+            //act
+            var result = await _memberService.GetMemberByIdAsync(id);
+
+            //assert
+            Assert.Equal(entityMember, result);
+        }
+
+        [Fact]
+        public async Task GetMemberByIdAsync_ShouldReturnNull_WhenMemberDoesNotExist()
+        {
+            //arrange
+            var id = Guid.NewGuid();
+
+            _memberRepositoryMock.Setup(repo => repo.GetMemberByIdAsync(id)).ReturnsAsync((EntityMember)null);
+
+            //act
+            var result = await _memberService.GetMemberByIdAsync(id);
+
+            //assert
+            Assert.Null(result);
         }
     }
 }

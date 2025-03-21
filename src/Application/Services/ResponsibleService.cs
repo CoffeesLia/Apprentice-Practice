@@ -65,7 +65,7 @@ namespace Stellantis.ProjectName.Application.Services
             return await Repository.GetListAsync(responsibleFilter).ConfigureAwait(false);
         }
 
-        public async Task<Responsible?> GetItemAsync(int id)
+        public new async Task<Responsible?> GetItemAsync(int id)
         {
             return await Repository.GetByIdAsync(id).ConfigureAwait(false);
         }
