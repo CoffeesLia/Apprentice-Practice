@@ -8,8 +8,9 @@ namespace Stellantis.Domain.EntityConfig
     {
         public void Configure(EntityTypeBuilder<Responsible> builder)
         {
+            ArgumentNullException.ThrowIfNull(builder);
             builder.ToTable("Responsible");
-            builder.HasKey(r => r.Email);
+            builder.HasKey(r => r.Id);
 
             builder.Property(r => r.Email)
                 .IsRequired()
