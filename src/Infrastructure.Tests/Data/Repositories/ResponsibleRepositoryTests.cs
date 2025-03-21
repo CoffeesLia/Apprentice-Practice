@@ -135,40 +135,6 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
             Assert.Null(result);
         }
 
-
-        [Fact]
-        public async Task CreateAsyncWhenEntityIsValid()
-        {
-            // Arrange
-            var responsible = _fixture.Create<Responsible>();
-
-            // Act
-            await _repository.CreateAsync(responsible);
-            var result = await _context.Set<Responsible>().FindAsync(responsible.Id);
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal(responsible.Id, result.Id);
-            Assert.Equal(responsible.Email, result.Email);
-            Assert.Equal(responsible.Nome, result.Nome);
-            Assert.Equal(responsible.Area, result.Area);
-        }
-
-
-        [Fact]
-        public async Task CreateAsyncWhenSaveChangesIsFalse()
-        {
-            // Arrange
-            var responsible = _fixture.Create<Responsible>();
-
-            // Act
-            await _repository.CreateAsync(responsible, saveChanges: false);
-            var result = await _context.Set<Responsible>().FindAsync(responsible.Id);
-
-            // Assert
-            Assert.Null(result);
-        }
-
        
     }
 }

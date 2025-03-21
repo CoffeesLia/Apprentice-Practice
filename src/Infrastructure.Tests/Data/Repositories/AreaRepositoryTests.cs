@@ -9,6 +9,7 @@ using Xunit;
 
 namespace Stellantis.ProjectName.Tests.Data.Repositories
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1001:Tipos que têm campos descartáveis devem ser descartáveis", Justification = "<Pendente>")]
     public class AreaRepositoryTests
     {
         private readonly Context _context;
@@ -25,7 +26,7 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
         }
 
         [Fact]
-        public async Task GetByIdAsync_ShouldReturnArea_WhenIdExists()
+        public async Task GetByIdAsyncWhenIdExists()
         {
             // Arrange
             var area = _fixture.Create<Area>();
@@ -41,7 +42,7 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
         }
 
         [Fact]
-        public async Task GetByIdAsync_ShouldReturnNull_WhenIdDoesNotExist()
+        public async Task GetByIdAsyncWhenIdDoesNotExist()
         {
             // Arrange
             var id = _fixture.Create<int>();
@@ -54,7 +55,7 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
         }
 
         [Fact]
-        public async Task GetListAsync_ShouldReturnPagedResult_WhenCalled()
+        public async Task GetListAsyncWhenCalled()
         {
             // Arrange
             var filter = new AreaFilter
@@ -82,7 +83,7 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
         }
 
         [Fact]
-        public async Task VerifyNameAlreadyExistsAsyncShouldReturnTrueWhenNameExists()
+        public async Task VerifyNameAlreadyExistsAsyncWhenNameExists()
         {
             // Arrange
             var name = _fixture.Create<string>();
@@ -99,7 +100,7 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
    
 
         [Fact]
-        public async Task DeleteAsync_ShouldRemoveArea_WhenCalled()
+        public async Task DeleteAsyncWhenCalled()
         {
             // Arrange
             var area = _fixture.Create<Area>();
@@ -116,7 +117,7 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
         }
 
         [Fact]
-        public async Task VerifyAplicationsExistsAsync_ShouldReturnTrue_WhenApplicationsExist()
+        public async Task VerifyAplicationsExistsAsyncWhenApplicationsExist()
         {
             // Arrange
             var area = _fixture.Create<Area>();
@@ -136,7 +137,7 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
         }
 
         [Fact]
-        public async Task VerifyAplicationsExistsAsync_ShouldReturnFalse_WhenNoApplicationsExist()
+        public async Task VerifyAplicationsExistsAsyncWhenNoApplicationsExist()
         {
             // Arrange
             var area = _fixture.Create<Area>();
@@ -152,7 +153,7 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
         }
 
         [Fact]
-        public async Task VerifyAplicationsExistsAsync_ShouldThrowArgumentException_WhenAreaDoesNotExist()
+        public async Task VerifyAplicationsExistsAsyncWhenAreaDoesNotExist()
         {
             // Arrange
             var id = _fixture.Create<int>();
