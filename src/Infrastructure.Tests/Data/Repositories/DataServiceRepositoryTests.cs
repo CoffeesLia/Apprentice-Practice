@@ -190,7 +190,7 @@ namespace Infrastructure.Tests.Data.Repositories
             var serviceId = 1;
             var service = new EDataService { Id = serviceId, Name = "Service to Delete" };
 
-            var dbSetMock = MockDbSet(new List<EDataService> { service });
+            var dbSetMock = MockDbSet([service]);
             dbSetMock.Setup(m => m.FindAsync(serviceId)).ReturnsAsync(service);
             _contextMock.Setup(c => c.Set<EDataService>()).Returns(dbSetMock.Object);
             _contextMock.Setup(c => c.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
@@ -238,7 +238,6 @@ namespace Infrastructure.Tests.Data.Repositories
         }
     }
 
-    // Helper classes for async mocking
     internal class TestAsyncEnumerator<T>(IEnumerator<T> inner) : IAsyncEnumerator<T>
     {
         private readonly IEnumerator<T> _inner = inner;

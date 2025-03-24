@@ -3,6 +3,7 @@ using Moq;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Application.Resources;
+using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -181,6 +182,34 @@ namespace Application.Tests.Services
 
             // Assert
             _serviceRepositoryMock.Verify(repo => repo.DeleteServiceAsync(serviceId), Times.Once);
+        }
+
+        [Fact]
+        public void DataServiceFilterShouldCreateInstanceWithValidData()
+        {
+            // Arrange
+            var name = "Test Service";
+            var page = 1;
+            var pageSize = 10;
+            var sort = "Name";
+            var sortDir = "asc";
+
+            // Act
+            var filter = new DataServiceFilter
+            {
+                Name = name,
+                Page = page,
+                PageSize = pageSize,
+                Sort = sort,
+                SortDir = sortDir
+            };
+
+            // Assert
+            Assert.Equal(name, filter.Name);
+            Assert.Equal(page, filter.Page);
+            Assert.Equal(pageSize, filter.PageSize);
+            Assert.Equal(sort, filter.Sort);
+            Assert.Equal(sortDir, filter.SortDir);
         }
     }
 }

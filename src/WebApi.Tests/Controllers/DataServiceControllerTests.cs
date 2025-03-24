@@ -204,7 +204,7 @@ namespace WebApi.Tests.Controllers
             var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
             var messageProperty = notFoundResult.Value?.GetType().GetProperty("Message");
             var message = messageProperty != null ? messageProperty.GetValue(notFoundResult.Value, null) as string : null;
-            Assert.Equal("No services found.", message); // Verifica a mensagem correta
+            Assert.Equal("No services found.", message);
         }
 
         [Fact]
