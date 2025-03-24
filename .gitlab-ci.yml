@@ -8,9 +8,9 @@ variables:
   REPOSITORY_URL: 924431524709.dkr.ecr.us-east-1.amazonaws.com/digital-esb-app-esb-baseproject-esb
 
 stages:
+  - test  
   - security
   - build
-  - test  
   - deploy
 
 before_script:
@@ -20,7 +20,7 @@ before_script:
   - echo $IMAGE_TAG $CI_COMMIT_REF_NAME $VERSION
   - echo $REPOSITORY_URL
 
-Test:
+test:
   image: mcr.microsoft.com/dotnet/sdk:8.0
   stage: test
   script:
