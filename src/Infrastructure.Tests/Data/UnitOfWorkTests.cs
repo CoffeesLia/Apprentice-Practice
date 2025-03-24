@@ -1,19 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.Localization;
 using Moq;
 using Stellantis.ProjectName.Infrastructure.Data;
-using Stellantis.ProjectName.Infrastructure.Data.Repositories;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Infrastructure.Tests.Data
 {
-    public class UnitOfWorkTests : IDisposable
+    public class UnitOfWorkTests
     {
         private readonly Context _context;
         private readonly UnitOfWork _unitOfWork;
-        private readonly Mock<IStringLocalizer<DataServiceRepository>> _mockLocalizer;
 
         public UnitOfWorkTests()
         {
@@ -21,24 +18,23 @@ namespace Infrastructure.Tests.Data
                 .UseInMemoryDatabase(databaseName: nameof(UnitOfWorkTests))
                 .Options;
             _context = new Context(options);
-            _mockLocalizer = new Mock<IStringLocalizer<DataServiceRepository>>();
-            _unitOfWork = new UnitOfWork(_context, _mockLocalizer.Object);
+            _unitOfWork = new UnitOfWork(_context);
         }
 
         [Fact]
         [SuppressMessage("Minor Code Smell", "S1481:Unused local variables should be removed", Justification = "It's a temporary code.")]
         [SuppressMessage("Blocker Code Smell", "S2699:Tests should include assertions", Justification = "It's a temporary code.")]
         [SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "It's a temporary code.")]
-        public void CreateWhenNullForRepositories()
+        public void Create_WhenNullForRepositories()
         {
             // Act
-            UnitOfWork unitOfWork = new(_context, _mockLocalizer.Object);
+            UnitOfWork unitOfWork = new(_context);
 
             // Assert
         }
 
         [Fact]
-        public void BeginTransactionShouldStartTransaction()
+        public void BeginTransaction_ShouldStartTransaction()
         {
             // Arrange
             var mockTransaction = new Mock<IDbContextTransaction>();
@@ -47,7 +43,7 @@ namespace Infrastructure.Tests.Data
             var context = new Mock<Context>(new DbContextOptions<Context>());
             context.Setup(c => c.Database).Returns(mockDatabase.Object);
 
-            var unitOfWork = new UnitOfWork(context.Object, _mockLocalizer.Object);
+            var unitOfWork = new UnitOfWork(context.Object);
 
             // Act
             unitOfWork.BeginTransaction();
@@ -57,14 +53,14 @@ namespace Infrastructure.Tests.Data
         }
 
         [Fact]
-        public async Task CommitAsyncWhenNotBebunTransction()
+        public async Task CommitAsync_WhenNotBebunTransction()
         {
             await _unitOfWork.CommitAsync();
             Assert.True(true);
         }
 
         [Fact]
-        public void DisposeItWhenTransactionIsNull()
+        public void DisposeIt_WhenTransactionIsNull()
         {
             _unitOfWork.DisposeIt();
             Assert.True(true);
@@ -79,7 +75,7 @@ namespace Infrastructure.Tests.Data
             mockDatabase.Setup(db => db.BeginTransaction()).Returns(mockTransaction.Object);
             var context = new Mock<Context>(new DbContextOptions<Context>());
             context.Setup(c => c.Database).Returns(mockDatabase.Object);
-            var unitOfWork = new UnitOfWork(context.Object, _mockLocalizer.Object);
+            var unitOfWork = new UnitOfWork(context.Object);
 
             // Act
             unitOfWork.BeginTransaction();
@@ -90,7 +86,7 @@ namespace Infrastructure.Tests.Data
         }
 
         [Fact]
-        public async Task CommitAsyncShouldCallSaveChangesOnContext()
+        public async Task CommitAsync_ShouldCallSaveChangesOnContext()
         {
             // Arrange
             var mockTransaction = new Mock<IDbContextTransaction>();
@@ -99,7 +95,7 @@ namespace Infrastructure.Tests.Data
             var context = new Mock<Context>(new DbContextOptions<Context>());
             context.Setup(c => c.Database).Returns(mockDatabase.Object);
             context.Setup(c => c.SaveChangesAsync(default)).ReturnsAsync(1);
-            var unitOfWork = new UnitOfWork(context.Object, _mockLocalizer.Object);
+            var unitOfWork = new UnitOfWork(context.Object);
 
             unitOfWork.BeginTransaction();
 
@@ -111,7 +107,7 @@ namespace Infrastructure.Tests.Data
         }
 
         [Fact]
-        public async Task CommitAsyncShouldRollbackTransactionOnException()
+        public async Task CommitAsync_ShouldRollbackTransactionOnException()
         {
             // Arrange
             var mockTransaction = new MockDbContextTransaction();
@@ -123,7 +119,7 @@ namespace Infrastructure.Tests.Data
             context
                 .Setup(c => c.Database)
                 .Returns(mockDatabase.Object);
-            var unitOfWork = new UnitOfWork(context.Object, _mockLocalizer.Object);
+            var unitOfWork = new UnitOfWork(context.Object);
 
             unitOfWork.BeginTransaction();
 
@@ -131,10 +127,6 @@ namespace Infrastructure.Tests.Data
             await Assert.ThrowsAnyAsync<Exception>(() => unitOfWork.CommitAsync());
             Assert.True(mockTransaction.RollbackAsyncHasCalled());
         }
-
-        public void Dispose()
-        {
-            _context.Dispose();
-        }
     }
 }
+
