@@ -12,7 +12,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data
         private IDbContextTransaction? _transaction;
 
         public IAreaRepository AreaRepository { get; } = new AreaRepository(context);
-        public IIntegrationRepository IntegrationRepository { get; } = new IntegrationRepository(context, localizer);
         public IResponsibleRepository ResponsibleRepository { get; } = new ResponsibleRepository(context);
         public IApplicationDataRepository ApplicationDataRepository { get; } = new ApplicationDataRepository(context);
 
