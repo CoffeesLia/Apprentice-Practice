@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using LinqKit;
 using Stellantis.ProjectName.Application.Resources;
 using System.Data.Entity;
+using Microsoft.Identity.Client;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
@@ -15,11 +16,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
     {
         public GitRepoRepository(Context context) : base(context)
         {
-        }
-
-        public async Task<bool> VerifyAplicationsExistsAsync(int id)
-        {
-            return await Context.Set<GitRepo>().AnyAsync(a => a.Id == id).ConfigureAwait(false);
         }
 
         public async Task DeleteAsync(int id, bool saveChanges = true)
@@ -53,7 +49,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             }
         }
 
-        public Task<PagedResult<GitRepo>> GetListAsync(GitLabFilter filter)
+        public Task<PagedResult<GitRepo>> GetListAsync(GitRepoFilter filter)
         {
             throw new NotImplementedException();
         }
@@ -76,6 +72,17 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         {
             return await Context.Set<GitRepo>().AnyAsync(expression).ConfigureAwait(false);
         }
+
+        public async Task<bool> VerifyUrlAlreadyExistsAsync(string url)
+        {
+            return await Context.Set<GitRepo>().AnyAsync(a => a.Url == url).ConfigureAwait(false);
+        }
+
+        public async Task<bool> VerifyAplicationsExistsAsync(int id)
+        {
+            return await Context.Set<GitRepo>().AnyAsync(repo => repo.ApplicationId == id).ConfigureAwait(false);
+        }
+
     }
 }
 

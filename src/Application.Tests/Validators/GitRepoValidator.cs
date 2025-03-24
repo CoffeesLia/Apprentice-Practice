@@ -4,7 +4,7 @@ using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
 
-namespace Application.Tests.Services
+namespace Application.Tests.Validators
 {
     public class GitRepoValidator : AbstractValidator<GitRepo>
     {

@@ -29,13 +29,13 @@ namespace Stellantis.ProjectName.Application.Tests.Services
         public async Task CreateAsyncShouldReturnInvalidDataWhenRepositoryIsInvalid()
         {
             // Arrange
-            var gitRepo = new GitRepo { Name = "", Description = "", Url = "" };
+            var gitRepo = new GitRepo("InvalidRepo") { Name = "", Description = "", Url = "", Application = new ApplicationData("App") };
             var validationResult = new ValidationResult(new List<ValidationFailure>
-                {
-                    new ValidationFailure("Name", "Name is required"),
-                    new ValidationFailure("Description", "Description is required"),
-                    new ValidationFailure("Url", "Url is required")
-                });
+                    {
+                        new ValidationFailure("Name", "Name is required"),
+                        new ValidationFailure("Description", "Description is required"),
+                        new ValidationFailure("Url", "Url is required")
+                    });
 
             _validatorMock.Setup(v => v.ValidateAsync(gitRepo, default)).ReturnsAsync(validationResult);
 
@@ -50,7 +50,7 @@ namespace Stellantis.ProjectName.Application.Tests.Services
         public async Task CreateAsyncShouldReturnConflictWhenRepositoryUrlExists()
         {
             // Arrange
-            var gitRepo = new GitRepo { Name = "Repo1", Description = "Description1", Url = "http://repo1.com" };
+            var gitRepo = new GitRepo("Repo1") { Name = "Repo1", Description = "Description1", Url = "http://repo1.com", Application = new ApplicationData("App") };
             await _gitRepoService.CreateAsync(gitRepo);
 
             // Act
@@ -64,7 +64,7 @@ namespace Stellantis.ProjectName.Application.Tests.Services
         public async Task CreateAsyncShouldReturnSuccessWhenRepositoryIsValid()
         {
             // Arrange
-            var gitRepo = new GitRepo { Name = "Repo1", Description = "Description1", Url = "http://repo1.com" };
+            var gitRepo = new GitRepo("Repo1") { Name = "Repo1", Description = "Description1", Url = "http://repo1.com", Application = new ApplicationData("App") };
             var validationResult = new ValidationResult();
 
             _validatorMock.Setup(v => v.ValidateAsync(gitRepo, default)).ReturnsAsync(validationResult);

@@ -11,8 +11,8 @@ namespace Stellantis.ProjectName.Application.Interfaces.Repositories
         IAsyncEnumerable<GitRepo> ListRepositories();
         Task<GitRepo?> GetRepositoryDetailsAsync(int id);
         Task<OperationResult> CreateAsync(GitRepo newRepo);
-        Task<bool> VerifyAplicationsExistsAsync(int id);
+        Task<bool>VerifyAplicationsExistsAsync(int id);
         Task<bool> AnyAsync(Expression<Func<GitRepo, bool>> expression); // Adicionado
-        void VerifyUrlAlreadyExistsAsync(string url);
+        Task<bool> VerifyUrlAlreadyExistsAsync(string url);
     }
 }

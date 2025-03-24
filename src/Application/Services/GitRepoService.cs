@@ -1,5 +1,4 @@
-﻿
-using Stellantis.ProjectName.Application.Interfaces.Repositories;
+﻿using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
@@ -12,15 +11,16 @@ using FluentValidation;
 
 namespace Stellantis.ProjectName.Application.Services
 {
-    public class GitRepoService : EntityServiceBase<GitRepo>, IGitRepoService
-    {
+    public class GitRepoService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<GitRepo> validator)
+           : EntityServiceBase<GitRepo>(unitOfWork, localizerFactory, validator), IGitRepoService
+        {
+
+        private new IStringLocalizer Localizer => localizerFactory.Create(typeof(GitResource));
+
         protected override IGitRepoRepository Repository => UnitOfWork.GitRepoRepository;
 
         private readonly List<GitRepo> _repositories = new();
-        public GitRepoService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<GitRepo> validator)
-            : base(unitOfWork, localizerFactory, validator)
-        { }
-        
+
 
         public override async Task<OperationResult> CreateAsync(GitRepo item)
         {
