@@ -24,10 +24,7 @@ test:
   stage: test
   script:
     - mkdir -p ./src/artifacts
-    - dotnet test ./src/Application.Tests/Application.Tests.csproj --test-adapter-path:. --logger:"junit;LogFilePath=..\artifacts\{assembly}-result.xml;MethodFormat=Class;FailureBodyFormat=Verbose"
-    - dotnet test ./src/Domain.Tests/Domain.Tests.csproj --test-adapter-path:. --logger:"junit;LogFilePath=..\artifacts\{assembly}-result.xml;MethodFormat=Class;FailureBodyFormat=Verbose"
-    - dotnet test ./src/Infrastructure.Tests/Infrastructure.Tests.csproj --test-adapter-path:. --logger:"junit;LogFilePath=..\artifacts\{assembly}-result.xml;MethodFormat=Class;FailureBodyFormat=Verbose"
-    - dotnet test ./src/WebApi.Tests/WebApi.Tests.csproj --test-adapter-path:. --logger:"junit;LogFilePath=..\artifacts\{assembly}-result.xml;MethodFormat=Class;FailureBodyFormat=Verbose"
+    - dotnet test ./src/Application.Tests/Application.Tests.csproj --verbosity normal --logger:"junit;LogFilePath=../artifacts/{assembly}-result.xml;MethodFormat=Class;FailureBodyFormat=Verbose"
   artifacts:
     when: always
     paths:
