@@ -10,8 +10,10 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
     {
         public async Task<EDataService?> GetServiceByIdAsync(int serviceId)
         {
-            return await Context.Set<EDataService>().FindAsync(serviceId).ConfigureAwait(false);
+            var service = await Context.Set<EDataService>().FindAsync(serviceId).ConfigureAwait(false);
+            return service == null ? throw new InvalidOperationException($"Service with ID {serviceId} not found.") : service;
         }
+
 
         public async Task<IEnumerable<EDataService>> GetAllServicesAsync()
         {
@@ -58,14 +60,11 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         public async Task DeleteServiceAsync(int id, bool saveChanges = true)
         {
-            var service = await GetServiceByIdAsync(id).ConfigureAwait(false);
-            if (service != null)
+            var service = await GetServiceByIdAsync(id).ConfigureAwait(false) ?? throw new InvalidOperationException($"Service with ID {id} not found.");
+            Context.Set<EDataService>().Remove(service);
+            if (saveChanges)
             {
-                Context.Set<EDataService>().Remove(service);
-                if (saveChanges)
-                {
-                    await SaveChangesAsync().ConfigureAwait(false);
-                }
+                await SaveChangesAsync().ConfigureAwait(false);
             }
         }
     }

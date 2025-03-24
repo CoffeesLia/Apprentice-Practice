@@ -25,7 +25,7 @@ namespace Infrastructure.Tests.Data.Repositories
         {
             _contextMock = new Mock<Context>(new DbContextOptions<Context>());
             _localizerMock = new Mock<IStringLocalizer<DataServiceRepository>>();
-            _repository = new DataServiceRepository(_contextMock.Object, _localizerMock.Object);
+            _repository = new DataServiceRepository(_contextMock.Object);
         }
 
         [Fact]
@@ -35,7 +35,13 @@ namespace Infrastructure.Tests.Data.Repositories
             var serviceId = 1;
             var service = new EDataService { Id = serviceId, Name = "Test Service" };
 
-            Mock<DbSet<EDataService>> dbSetMock = MockDbSet([service]);
+            var dbSetMock = new Mock<DbSet<EDataService>>();
+            dbSetMock.As<IQueryable<EDataService>>().Setup(m => m.Provider).Returns(new TestAsyncQueryProvider<EDataService>(new List<EDataService> { service }.AsQueryable().Provider));
+            dbSetMock.As<IQueryable<EDataService>>().Setup(m => m.Expression).Returns(new List<EDataService> { service }.AsQueryable().Expression);
+            dbSetMock.As<IQueryable<EDataService>>().Setup(m => m.ElementType).Returns(new List<EDataService> { service }.AsQueryable().ElementType);
+            dbSetMock.As<IQueryable<EDataService>>().Setup(m => m.GetEnumerator()).Returns(new List<EDataService> { service }.AsQueryable().GetEnumerator());
+            dbSetMock.Setup(m => m.FindAsync(serviceId)).ReturnsAsync(service);
+
             _contextMock.Setup(c => c.Set<EDataService>()).Returns(dbSetMock.Object);
 
             // Act
@@ -55,12 +61,9 @@ namespace Infrastructure.Tests.Data.Repositories
             var dbSetMock = MockDbSet(new List<EDataService>());
             _contextMock.Setup(c => c.Set<EDataService>()).Returns(dbSetMock.Object);
 
-            var localizedString = new LocalizedString("GetServiceById_ServiceNotFound", $"Service with ID {serviceId} not found.");
-            _localizerMock.Setup(l => l["GetServiceById_ServiceNotFound", serviceId]).Returns(localizedString);
-
             // Act & Assert
             var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => _repository.GetServiceByIdAsync(serviceId));
-            Assert.Equal(localizedString.Value, exception.Message);
+            Assert.Equal($"Service with ID {serviceId} not found.", exception.Message);
         }
 
         [Fact]
@@ -152,7 +155,7 @@ namespace Infrastructure.Tests.Data.Repositories
 
             using (var context = new Context(options))
             {
-                var repository = new DataServiceRepository(context, _localizerMock.Object);
+                var repository = new DataServiceRepository(context);
 
                 var service = new EDataService { Id = 1, Name = "Updated Service" };
 
@@ -212,12 +215,9 @@ namespace Infrastructure.Tests.Data.Repositories
             var dbSetMock = MockDbSet(new List<EDataService>());
             _contextMock.Setup(c => c.Set<EDataService>()).Returns(dbSetMock.Object);
 
-            var localizedString = new LocalizedString("ServiceNotFound", $"Service with ID {serviceId} not found.");
-            _localizerMock.Setup(l => l["ServiceNotFound", serviceId]).Returns(localizedString);
-
             // Act & Assert
             var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => _repository.DeleteServiceAsync(serviceId));
-            Assert.Equal(localizedString.Value, exception.Message);
+            Assert.Equal($"Service with ID {serviceId} not found.", exception.Message);
         }
 
         private static Mock<DbSet<T>> MockDbSet<T>(List<T> data) where T : class
