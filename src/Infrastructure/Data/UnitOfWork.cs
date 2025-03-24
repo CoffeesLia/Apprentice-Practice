@@ -5,24 +5,36 @@ using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Infrastructure.Data;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
 using Stellantis.ProjectName.Infrastructure.Repositories;
-
 namespace Stellantis.ProjectName.Infrastructure.Data
+
 {
-public class UnitOfWork(Context context) : IUnitOfWork
+
+    public class UnitOfWork : IUnitOfWork
     {
         private IDbContextTransaction? _transaction;
-        private readonly Context context = context;
+        private readonly Context _context;
 
-        public IAreaRepository AreaRepository { get; } = new AreaRepository(context);
-        public IIntegrationRepository IntegrationRepository { get; } = new IntegrationRepository(context);
-        public IResponsibleRepository ResponsibleRepository { get; } = new ResponsibleRepository(context);
-        public IApplicationDataRepository ApplicationDataRepository { get; } = new ApplicationDataRepository(context);
-        public ISquadRepository SquadRepository { get;  } = new SquadRepository(context);
-        public IDataServiceRepository DataServiceRepository => throw new NotImplementedException();
+        public IAreaRepository AreaRepository { get; }
+        public IIntegrationRepository IntegrationRepository { get; }
+        public IResponsibleRepository ResponsibleRepository { get; }
+        public IApplicationDataRepository ApplicationDataRepository { get; }
+        public ISquadRepository SquadRepository { get; }
+        public IDataServiceRepository DataServiceRepository { get; }
+
+        // Construtor corrigido
+        public UnitOfWork(Context context)
+        {
+            _context = context;
+            AreaRepository = new AreaRepository(context);
+            IntegrationRepository = new IntegrationRepository(context);
+            ResponsibleRepository = new ResponsibleRepository(context);
+            ApplicationDataRepository = new ApplicationDataRepository(context);
+            SquadRepository = new SquadRepository(context);
+        }
 
         public void BeginTransaction()
         {
-            _transaction = context.Database.BeginTransaction();
+            _transaction = _context.Database.BeginTransaction();
         }
 
         public async Task CommitAsync()
@@ -43,10 +55,10 @@ public class UnitOfWork(Context context) : IUnitOfWork
                 throw;
             }
         }
-
         internal void DisposeIt()
         {
             throw new NotImplementedException();
         }
     }
 }
+
