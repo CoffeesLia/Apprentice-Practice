@@ -3,24 +3,29 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Domain.Entities;
-using Stellantis.ProjectName.Application.Interfaces.Repositories;
-using LinqKit;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
-    internal class DataServiceRepository(Context context) : RepositoryEntityBase<EDataService, Context>(context), IDataServiceRepository
+    public class DataServiceRepository(Context context) : RepositoryBase<EDataService, Context>(context)
     {
-        public async Task<EDataService?> GetServiceByIdAsync(int id)
+        public async Task<EDataService?> GetServiceByIdAsync(int serviceId)
         {
-            return await Context.Set<EDataService>().FindAsync(id).ConfigureAwait(false);
+            var service = await Context.Set<EDataService>().FindAsync(serviceId).ConfigureAwait(false);
+            return service == null ? throw new InvalidOperationException($"Service with ID {serviceId} not found.") : service;
         }
+
 
         public async Task<IEnumerable<EDataService>> GetAllServicesAsync()
         {
-            return await Context.Set<EDataService>().ToListAsync().ConfigureAwait(false);
+            var services = await Context.Set<EDataService>().ToListAsync().ConfigureAwait(false);
+            if (services == null || services.Count == 0)
+            {
+                throw new InvalidOperationException("No services found.");
+            }
+            return services;
         }
 
-        public async Task AddServiceAsync(EDataService service)
+        public async Task AddServiceAsync(EDataService service, bool saveChanges = true)
         {
             ArgumentNullException.ThrowIfNull(service, nameof(service));
 
@@ -29,37 +34,38 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             if (existingService != null)
             {
-                return;
+                throw new InvalidOperationException($"Service with name {service.Name ?? string.Empty} already exists.");
             }
 
             await Context.Set<EDataService>().AddAsync(service).ConfigureAwait(false);
-            await SaveChangesAsync().ConfigureAwait(false);
-        }
-
-        public async Task DeleteServiceAsync(int id)
-        {
-            var service = await GetServiceByIdAsync(id).ConfigureAwait(false);
-            if (service == null)
+            if (saveChanges)
             {
-                return;
+                await SaveChangesAsync().ConfigureAwait(false);
             }
-
-            Context.Set<EDataService>().Remove(service);
-            await SaveChangesAsync().ConfigureAwait(false);
         }
 
-        public async Task UpdateServiceAsync(EDataService service)
+        public async Task UpdateServiceAsync(EDataService service, bool saveChanges = true)
         {
             ArgumentNullException.ThrowIfNull(service, nameof(service));
 
-            var existingEntity = await Context.Set<EDataService>().FindAsync(service.Id).ConfigureAwait(false);
-            if (existingEntity == null)
-            {
-                return;
-            }
+            var existingEntity = await Context.Set<EDataService>().FindAsync(service.Id).ConfigureAwait(false)
+                ?? throw new InvalidOperationException($"Service with ID {service.Id} not found.");
 
             Context.Entry(existingEntity).CurrentValues.SetValues(service);
-            await SaveChangesAsync().ConfigureAwait(false);
+            if (saveChanges)
+            {
+                await SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
+        public async Task DeleteServiceAsync(int id, bool saveChanges = true)
+        {
+            var service = await GetServiceByIdAsync(id).ConfigureAwait(false) ?? throw new InvalidOperationException($"Service with ID {id} not found.");
+            Context.Set<EDataService>().Remove(service);
+            if (saveChanges)
+            {
+                await SaveChangesAsync().ConfigureAwait(false);
+            }
         }
     }
 }
