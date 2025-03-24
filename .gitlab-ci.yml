@@ -1,4 +1,4 @@
-image: 253882794486.dkr.ecr.us-east-1.amazonaws.com/build-tools:b2e32bc1-net6
+image: 253882794486.dkr.ecr.us-east-1.amazonaws.com/build-tools:master-net8
 
 include:
   - project: "fca/architecture/IaC/cloud-digital/common-ci"
@@ -14,7 +14,6 @@ stages:
   - deploy
 
 before_script:
-  - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 924431524709.dkr.ecr.us-east-1.amazonaws.com
   - IMAGE_TAG="$(echo $CI_COMMIT_SHA | head -c 8)"
   - VERSION=$(date +"%Y%m%d%H%M")
   - echo $IMAGE_TAG $CI_COMMIT_REF_NAME $VERSION
