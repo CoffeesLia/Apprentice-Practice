@@ -193,7 +193,6 @@ namespace Application.Tests.Services
             var pageSize = 10;
             var sort = "Name";
             var sortDir = "asc";
-            var applicationId = 1;
 
             // Act
             var filter = new DataServiceFilter
@@ -202,8 +201,7 @@ namespace Application.Tests.Services
                 Page = page,
                 PageSize = pageSize,
                 Sort = sort,
-                SortDir = sortDir,
-                ApplicationId = applicationId
+                SortDir = sortDir
             };
 
             // Assert
@@ -212,7 +210,6 @@ namespace Application.Tests.Services
             Assert.Equal(pageSize, filter.PageSize);
             Assert.Equal(sort, filter.Sort);
             Assert.Equal(sortDir, filter.SortDir);
-            Assert.Equal(applicationId, filter.ApplicationId);
         }
     }
 }
