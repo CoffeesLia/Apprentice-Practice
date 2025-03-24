@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Domain.Entities;
 using System;
@@ -11,10 +12,12 @@ namespace Stellantis.ProjectName.WebAPI.Controllers
     public class SquadController : ControllerBase
     {
         private readonly ISquadService _squadService;
+        private readonly IMapper _mapper;
 
-        public SquadController(ISquadService squadService)
+        public SquadController(ISquadService squadService, IMapper mapper)
         {
             _squadService = squadService;
+            _mapper = mapper;
         }
 
         // AMS-53: Create a new squad
@@ -43,7 +46,8 @@ namespace Stellantis.ProjectName.WebAPI.Controllers
             try
             {
                 var squad = _squadService.GetSquadById(id);
-                return Ok(squad);
+                var squadDto = _mapper.Map<SquadDto>(squad);
+                return Ok(squadDto);
             }
             catch (KeyNotFoundException ex)
             {
@@ -83,6 +87,13 @@ namespace Stellantis.ProjectName.WebAPI.Controllers
 
     public class UpdateSquadRequest
     {
+        public string Name { get; set; }
+        public string Description { get; set; }
+    }
+
+    public class SquadDto
+    {
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
     }
