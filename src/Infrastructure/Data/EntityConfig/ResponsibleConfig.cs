@@ -16,7 +16,7 @@ namespace Stellantis.Domain.EntityConfig
                 .IsRequired()
                 .HasMaxLength(100);
 
-            builder.Property(r => r.Nome)
+            builder.Property(r => r.Name)
                 .IsRequired()
                 .HasMaxLength(200);
 

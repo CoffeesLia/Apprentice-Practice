@@ -8,10 +8,15 @@ using Stellantis.ProjectName.Infrastructure.Repositories;
 
 namespace Stellantis.ProjectName.Infrastructure.Data
 {
+
 public class UnitOfWork(Context context) : IUnitOfWork
+
+    public class UnitOfWork(Context context) : IUnitOfWork
+
     {
         private IDbContextTransaction? _transaction;
         private readonly Context context = context;
+
 
         public IAreaRepository AreaRepository { get; } = new AreaRepository(context);
         public IIntegrationRepository IntegrationRepository { get; } = new IntegrationRepository(context);
@@ -20,6 +25,7 @@ public class UnitOfWork(Context context) : IUnitOfWork
         public ISquadRepository SquadRepository => throw new NotImplementedException();
         public IDataServiceRepository DataServiceRepository => throw new NotImplementedException();
 
+        
         public void BeginTransaction()
         {
             _transaction = context.Database.BeginTransaction();

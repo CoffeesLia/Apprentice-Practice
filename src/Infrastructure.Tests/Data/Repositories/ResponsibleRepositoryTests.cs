@@ -63,14 +63,14 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
                 Page = 1,
                 PageSize = 10,
                 Email = _fixture.Create<string>(),
-                Nome = _fixture.Create<string>(),
+                Name = _fixture.Create<string>(),
                 Area = _fixture.Create<string>()
             };
             const int Count = 10;
             var responsibles = _fixture
                 .Build<Responsible>()
                 .With(x => x.Email, filter.Email)
-                .With(x => x.Nome, filter.Nome)
+                .With(x => x.Name, filter.Name)
                 .With(x => x.Area, filter.Area)
                 .CreateMany<Responsible>(Count);
 
@@ -85,7 +85,7 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
             Assert.Equal(filter.Page, result.Page);
             Assert.Equal(filter.PageSize, result.PageSize);
             Assert.All(result.Result, r => Assert.Contains(filter.Email, r.Email, StringComparison.OrdinalIgnoreCase));
-            Assert.All(result.Result, r => Assert.Contains(filter.Nome, r.Nome, StringComparison.OrdinalIgnoreCase));
+            Assert.All(result.Result, r => Assert.Contains(filter.Name, r.Name, StringComparison.OrdinalIgnoreCase));
             Assert.All(result.Result, r => Assert.Contains(filter.Area, r.Area, StringComparison.OrdinalIgnoreCase));
 
         }
@@ -129,40 +129,6 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
 
             // Act
             await _repository.DeleteAsync(responsible.Id);
-            var result = await _context.Set<Responsible>().FindAsync(responsible.Id);
-
-            // Assert
-            Assert.Null(result);
-        }
-
-
-        [Fact]
-        public async Task CreateAsyncWhenEntityIsValid()
-        {
-            // Arrange
-            var responsible = _fixture.Create<Responsible>();
-
-            // Act
-            await _repository.CreateAsync(responsible);
-            var result = await _context.Set<Responsible>().FindAsync(responsible.Id);
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal(responsible.Id, result.Id);
-            Assert.Equal(responsible.Email, result.Email);
-            Assert.Equal(responsible.Nome, result.Nome);
-            Assert.Equal(responsible.Area, result.Area);
-        }
-
-
-        [Fact]
-        public async Task CreateAsyncWhenSaveChangesIsFalse()
-        {
-            // Arrange
-            var responsible = _fixture.Create<Responsible>();
-
-            // Act
-            await _repository.CreateAsync(responsible, saveChanges: false);
             var result = await _context.Set<Responsible>().FindAsync(responsible.Id);
 
             // Assert

@@ -77,5 +77,10 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             return area.Applications.Any();
         }
+
+        public Task<bool> GetByIdWithApplicationsAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
