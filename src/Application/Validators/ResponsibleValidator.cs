@@ -16,7 +16,7 @@ namespace Stellantis.ProjectName.Application.Validators
                 .NotEmpty().WithMessage(localizer[nameof(ResponsibleResource.EmailRequired)])
                 .EmailAddress().WithMessage(localizer[nameof(ResponsibleResource.EmailInvalid)]);
 
-            RuleFor(r => r.Nome)
+            RuleFor(r => r.Name)
                 .NotEmpty().WithMessage(localizer[nameof(ResponsibleResource.NameRequired)]);
 
             RuleFor(r => r.Area)
