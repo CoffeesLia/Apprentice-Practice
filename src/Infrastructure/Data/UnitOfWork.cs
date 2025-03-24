@@ -3,6 +3,7 @@ using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
+using Stellantis.ProjectName.Infrastructure.Repositories;
 
 namespace Stellantis.ProjectName.Infrastructure.Data
 {
@@ -10,7 +11,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data
     {
         private IDbContextTransaction? _transaction;
         private IDataServiceRepository? _dataServiceRepository;
-
+        private ISquadRepository? _squadRepository;
         public IAreaRepository AreaRepository => throw new NotImplementedException();
 
         public IResponsibleRepository ResponsibleRepository => throw new NotImplementedException();
@@ -22,6 +23,14 @@ namespace Stellantis.ProjectName.Infrastructure.Data
             get
             {
                 return _dataServiceRepository ??= (IDataServiceRepository)new DataServiceRepository(context, localizer!);
+            }
+        }
+
+        public ISquadRepository SquadRepository
+        {
+            get
+            {
+                return _squadRepository ??= new SquadRepository(context);
             }
         }
 
