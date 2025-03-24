@@ -1,11 +1,13 @@
 ﻿using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Interfaces.Services;
+using Stellantis.ProjectName.Application.Models;
+using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Services
 {
-    public class DataService(IDataServiceRepository serviceRepository, IStringLocalizer<DataService> localizer) : IDataService
+    public class DataService(IDataServiceRepository serviceRepository, IStringLocalizer<DataService> localizer)
     {
         private readonly IDataServiceRepository _serviceRepository = serviceRepository ?? throw new ArgumentNullException(nameof(serviceRepository));
         private readonly IStringLocalizer<DataService> _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
@@ -21,9 +23,14 @@ namespace Stellantis.ProjectName.Application.Services
             return await _serviceRepository.GetAllServicesAsync().ConfigureAwait(false);
         }
 
-        public async Task AddServiceAsync(EDataService service)
+        public async Task<OperationResult> AddServiceAsync(EDataService service)
         {
             ArgumentNullException.ThrowIfNull(service, nameof(service));
+
+            if (string.IsNullOrWhiteSpace(service.Name))
+            {
+                throw new InvalidOperationException(_localizer[nameof(ApplicationDataResources.NameRequired)]);
+            }
 
             var existingService = (await _serviceRepository.GetAllServicesAsync().ConfigureAwait(false))
                 .FirstOrDefault(s => s.Name == service.Name);
@@ -34,6 +41,8 @@ namespace Stellantis.ProjectName.Application.Services
             }
 
             await _serviceRepository.AddServiceAsync(service).ConfigureAwait(false);
+
+            return OperationResult.Complete();
         }
 
         public async Task UpdateServiceAsync(EDataService service)

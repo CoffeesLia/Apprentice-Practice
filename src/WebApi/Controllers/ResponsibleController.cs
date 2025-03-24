@@ -8,12 +8,13 @@ using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.ViewModels;
 
-
+#pragma warning disable CA2007 // Considere chamar ConfigureAwait na tarefa esperada
 
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [Route("api/responsible")]
-   
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Maintainability", "CA1515:Considere tornar internos os tipos públicos", Justification = "<Pendente>")]
     public sealed class ResponsibleController(IResponsibleService service, IMapper mapper, IStringLocalizerFactory localizerFactory)
         : EntityControllerBase<Responsible, ResponsibleDto>(service, mapper, localizerFactory)
     {
@@ -21,6 +22,12 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         public async Task<IActionResult> CreateAsync([FromBody] ResponsibleDto itemDto)
         {
             return await CreateBaseAsync<ResponsibleVm>(itemDto);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ResponsibleVm>> GetAsync(int id)
+        {
+            return await GetAsync<ResponsibleVm>(id);
         }
 
         [HttpGet]
@@ -32,48 +39,17 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             return Ok(resultVm);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetAsync(int id)
-        {
-            var responsible = await ((IResponsibleService)Service).GetItemAsync(id).ConfigureAwait(false);
-            if (responsible == null)
-            {
-                return NotFound();
-            }
-            var responsibleVm = Mapper.Map<ResponsibleVm>(responsible);
-            return Ok(responsibleVm);
-        }
-
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] ResponsibleDto itemDto)
         {
-            var item = Mapper.Map<Responsible>(itemDto);
-            item.Id = id;
-            var result = await ((IResponsibleService)Service).UpdateAsync(item).ConfigureAwait(false);
-            if (result.Status == OperationStatus.Conflict)
-            {
-                return Conflict(result.Message);
-            }
-            if (result.Status == OperationStatus.InvalidData)
-            {
-                return BadRequest(result.Errors);
-            }
-            if (result.Status == OperationStatus.NotFound)
-            {
-                return NotFound(result.Message);
-            }
-            return Ok(result.Message);
+            return await base.UpdateBaseAsync<ResponsibleVm>(id, itemDto);
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(int id)
+        public override async Task<IActionResult> DeleteAsync(int id)
         {
-            var result = await ((IResponsibleService)Service).DeleteAsync(id).ConfigureAwait(false);
-            if (result.Status == OperationStatus.NotFound)
-            {
-                return NotFound(result.Message);
-            }
-            return Ok(result.Message);
+            return await base.DeleteAsync(id).ConfigureAwait(false);
         }
     }
 }
+#pragma warning restore CA2007 // Considere chamar ConfigureAwait na tarefa esperada

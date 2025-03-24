@@ -95,5 +95,13 @@ namespace Stellantis.ProjectName.Application.Resources {
                 return ResourceManager.GetString("SquadNotFound", resourceCulture);
             }
         }
+
+        public static string NameValidateLength
+        {
+            get
+            {
+                return ResourceManager.GetString("NameValidateLength", resourceCulture);
+            }
+        }
     }
 }

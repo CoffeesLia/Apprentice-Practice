@@ -23,11 +23,12 @@ namespace Stellantis.ProjectName.Application.Services
             _localizer = localizerFactory.Create(typeof(ResponsibleResource));
         }
 
+
         public override async Task<OperationResult> CreateAsync(Responsible item)
         {
             ArgumentNullException.ThrowIfNull(item);
 
-            // Validação do objeto Responsible
+            // Validação do objeto pelo FluentValidation
             var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
             if (!validationResult.IsValid)
             {
@@ -37,73 +38,40 @@ namespace Stellantis.ProjectName.Application.Services
             // Verificação se o e-mail já existe
             if (await Repository.VerifyEmailAlreadyExistsAsync(item.Email).ConfigureAwait(false))
             {
-                return OperationResult.Conflict(_localizer[nameof(ResponsibleResource.AlreadyExists)]);
-            }
-
-            // Verificação se o nome é obrigatório
-            if (string.IsNullOrWhiteSpace(item.Nome))
-            {
-                return OperationResult.InvalidData(new ValidationResult(new List<ValidationFailure>
-                {
-                    new ValidationFailure(nameof(item.Nome), _localizer["NameRequired"])
-                }));
-            }
-
-            // Verificação se a área é obrigatória
-            if (string.IsNullOrWhiteSpace(item.Area))
-            {
-                return OperationResult.InvalidData(new ValidationResult(new List<ValidationFailure>
-                {
-                    new ValidationFailure(nameof(item.Area), _localizer["AreaRequired"])
-                }));
+                return OperationResult.Conflict(_localizer[nameof(ResponsibleResource.EmailExists)]);
             }
 
             return await base.CreateAsync(item).ConfigureAwait(false);
         }
+
         public async Task<PagedResult<Responsible>> GetListAsync(ResponsibleFilter responsibleFilter)
         {
-            return await Repository.GetListAsync(responsibleFilter).ConfigureAwait(false);
+            responsibleFilter ??= new ResponsibleFilter();
+            return await UnitOfWork.ResponsibleRepository.GetListAsync(responsibleFilter).ConfigureAwait(false);
         }
 
-        public async Task<Responsible?> GetItemAsync(int id)
+        public new async Task<OperationResult> GetItemAsync(int id)
         {
-            return await Repository.GetByIdAsync(id).ConfigureAwait(false);
+            return await Repository.GetByIdAsync(id).ConfigureAwait(false) is Responsible responsible
+                ? OperationResult.Complete()
+                : OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
         }
 
         public override async Task<OperationResult> UpdateAsync(Responsible item)
         {
             ArgumentNullException.ThrowIfNull(item);
 
-            // Validação do objeto Responsible
+            // Validação do objeto pelo FluentValidation
             var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
             if (!validationResult.IsValid)
             {
                 return OperationResult.InvalidData(validationResult);
             }
 
-            // Verificação se o e-mail já existe para outro responsável
-            var existingResponsible = await Repository.GetByEmailAsync(item.Email).ConfigureAwait(false);
-            if (existingResponsible != null && existingResponsible.Id != item.Id)
+            // Verificação se o e-mail já existe
+            if (await Repository.VerifyEmailAlreadyExistsAsync(item.Email).ConfigureAwait(false))
             {
-                return OperationResult.Conflict(_localizer[nameof(ResponsibleResource.AlreadyExists)]);
-            }
-
-            // Verificação se o nome é obrigatório
-            if (string.IsNullOrWhiteSpace(item.Nome))
-            {
-                return OperationResult.InvalidData(new ValidationResult(new List<ValidationFailure>
-                {
-                    new ValidationFailure(nameof(item.Nome), _localizer["NameRequired"])
-                }));
-            }
-
-            // Verificação se a área é obrigatória
-            if (string.IsNullOrWhiteSpace(item.Area))
-            {
-                return OperationResult.InvalidData(new ValidationResult(new List<ValidationFailure>
-                {
-                    new ValidationFailure(nameof(item.Area), _localizer["AreaRequired"])
-                }));
+                return OperationResult.Conflict(_localizer[nameof(ResponsibleResource.EmailExists)]);
             }
 
             return await base.UpdateAsync(item).ConfigureAwait(false);
@@ -111,14 +79,12 @@ namespace Stellantis.ProjectName.Application.Services
 
         public override async Task<OperationResult> DeleteAsync(int id)
         {
-            var responsible = await Repository.GetByIdAsync(id).ConfigureAwait(false);
-            if (responsible == null)
+            var item = await Repository.GetByIdAsync(id).ConfigureAwait(false);
+            if (item == null)
             {
                 return OperationResult.NotFound(_localizer[nameof(OperationResult.NotFound)]);
             }
-
-            await Repository.DeleteAsync(id).ConfigureAwait(false);
-            return OperationResult.Complete(_localizer[nameof(ResponsibleResource.DeletedSuccessfully)]);
+            return await base.DeleteAsync(item).ConfigureAwait(false);
         }
 
     }

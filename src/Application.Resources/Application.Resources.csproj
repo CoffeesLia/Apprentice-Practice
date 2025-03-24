@@ -73,6 +73,11 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
+    <Compile Update="AreaResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>AreaResources.resx</DependentUpon>
+    </Compile>
     <Compile Update="AreaResources.pt-BR.Designer.cs">
       <DependentUpon>AreaResources.pt-BR.resx</DependentUpon>
       <DesignTime>True</DesignTime>
@@ -123,7 +128,8 @@
       <Generator></Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="AreaResources.resx">
-      <Generator></Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>AreaResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="FilterResources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

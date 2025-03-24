@@ -1,12 +1,13 @@
-﻿using Moq;
-using Microsoft.Extensions.Localization;
+﻿using Microsoft.Extensions.Localization;
+using Moq;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Services;
+using Stellantis.ProjectName.Application.Resources;
+using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
-using AppNamespace = Stellantis.ProjectName.Domain.Entities;
 
 namespace Application.Tests.Services
 {
@@ -24,34 +25,13 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task GetServiceByIdAsyncShouldReturnServiceData()
-        {
-            // Arrange
-            var serviceId = 1;
-            var expectedService = new AppNamespace.EDataService
-            {
-                Id = serviceId,
-                Name = "Test Service",
-                Application = new AppNamespace.Application { Id = 1, Name = "Test Application" }
-            };
-            _serviceRepositoryMock.Setup(repo => repo.GetServiceByIdAsync(serviceId))
-                .ReturnsAsync(expectedService);
-
-            // Act
-            var result = await _dataService.GetServiceByIdAsync(serviceId);
-
-            // Assert
-            Assert.Equal(expectedService, result);
-        }
-
-        [Fact]
         public async Task GetAllServicesAsyncShouldReturnAllServices()
         {
             // Arrange
-            var expectedServices = new List<AppNamespace.EDataService>
+            var expectedServices = new List<EDataService>
             {
-                new() { Id = 1, Name = "Service 1", Application = new AppNamespace.Application { Id = 1, Name = "App 1" } },
-                new() { Id = 2, Name = "Service 2", Application = new AppNamespace.Application { Id = 2, Name = "App 2" } }
+                new() { Id = 1, Name = "Service 1", ApplicationId = 1 },
+                new() { Id = 2, Name = "Service 2", ApplicationId = 2 }
             };
             _serviceRepositoryMock.Setup(repo => repo.GetAllServicesAsync())
                 .ReturnsAsync(expectedServices);
@@ -64,14 +44,56 @@ namespace Application.Tests.Services
         }
 
         [Fact]
+        public async Task GetServiceByIdAsyncShouldReturnServiceData()
+        {
+            // Arrange
+            var serviceId = 1;
+            var expectedService = new EDataService
+            {
+                Id = serviceId,
+                Name = "Test Service",
+                ApplicationId = 1
+            };
+            _serviceRepositoryMock.Setup(repo => repo.GetServiceByIdAsync(serviceId))
+                .ReturnsAsync(expectedService);
+
+            // Act
+            var result = await _dataService.GetServiceByIdAsync(serviceId);
+
+            // Assert
+            Assert.Equal(expectedService, result);
+        }
+
+        [Fact]
+        public async Task AddServiceAsyncShouldReturnConflictWhenNameIsEmpty()
+        {
+            // Arrange
+            var newService = new EDataService
+            {
+                Id = 3,
+                Name = string.Empty,
+                ApplicationId = 3
+            };
+
+            var localizedString = new LocalizedString(nameof(DataServiceResources.NameRequired), "Service Name is required.");
+            _localizerMock.Setup(localizer => localizer[nameof(DataServiceResources.NameRequired)])
+                .Returns(localizedString);
+
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => _dataService.AddServiceAsync(newService));
+            Assert.Equal(localizedString.Value, exception.Message);
+            _serviceRepositoryMock.Verify(repo => repo.AddServiceAsync(It.IsAny<EDataService>()), Times.Never);
+        }
+
+        [Fact]
         public async Task AddServiceAsyncShouldCallRepositoryAdd()
         {
             // Arrange
-            var newService = new AppNamespace.EDataService
+            var newService = new EDataService
             {
                 Id = 3,
                 Name = "New Service",
-                Application = new AppNamespace.Application { Id = 3, Name = "New Application" }
+                ApplicationId = 3
             };
 
             // Act
@@ -82,14 +104,64 @@ namespace Application.Tests.Services
         }
 
         [Fact]
+        public async Task AddServiceAsyncShouldSetDescription()
+        {
+            // Arrange
+            var newService = new EDataService
+            {
+                Id = 3,
+                Name = "New Service",
+                Description = "This is a test description.",
+                ApplicationId = 3
+            };
+
+            // Act
+            await _dataService.AddServiceAsync(newService);
+
+            // Assert
+            _serviceRepositoryMock.Verify(repo => repo.AddServiceAsync(It.Is<EDataService>(s => s.Description == "This is a test description.")), Times.Once);
+        }
+
+        [Fact]
+        public async Task AddServiceAsyncShouldReturnConflictWhenServiceNameAlreadyExists()
+        {
+            // Arrange
+            var newService = new EDataService
+            {
+                Id = 3,
+                Name = "Existing Service",
+                ApplicationId = 3
+            };
+
+            var existingService = new EDataService
+            {
+                Id = 1,
+                Name = "Existing Service",
+                ApplicationId = 1
+            };
+
+            _serviceRepositoryMock.Setup(repo => repo.GetAllServicesAsync())
+                .ReturnsAsync([existingService]);
+
+            var localizedString = new LocalizedString(nameof(DataServiceResources.ServiceNameAlreadyExists), "Service name already exists.");
+            _localizerMock.Setup(localizer => localizer[nameof(DataServiceResources.ServiceNameAlreadyExists), newService.Name])
+                .Returns(localizedString);
+
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => _dataService.AddServiceAsync(newService));
+            Assert.Equal(localizedString.Value, exception.Message);
+            _serviceRepositoryMock.Verify(repo => repo.AddServiceAsync(It.IsAny<EDataService>()), Times.Never);
+        }
+
+        [Fact]
         public async Task UpdateServiceAsyncShouldCallRepositoryUpdate()
         {
             // Arrange
-            var updatedService = new AppNamespace.EDataService
+            var updatedService = new EDataService
             {
                 Id = 1,
                 Name = "Updated Service",
-                Application = new AppNamespace.Application { Id = 1, Name = "Updated Application" }
+                ApplicationId = 1
             };
 
             // Act
@@ -110,6 +182,34 @@ namespace Application.Tests.Services
 
             // Assert
             _serviceRepositoryMock.Verify(repo => repo.DeleteServiceAsync(serviceId), Times.Once);
+        }
+
+        [Fact]
+        public void DataServiceFilterShouldCreateInstanceWithValidData()
+        {
+            // Arrange
+            var name = "Test Service";
+            var page = 1;
+            var pageSize = 10;
+            var sort = "Name";
+            var sortDir = "asc";
+
+            // Act
+            var filter = new DataServiceFilter
+            {
+                Name = name,
+                Page = page,
+                PageSize = pageSize,
+                Sort = sort,
+                SortDir = sortDir
+            };
+
+            // Assert
+            Assert.Equal(name, filter.Name);
+            Assert.Equal(page, filter.Page);
+            Assert.Equal(pageSize, filter.PageSize);
+            Assert.Equal(sort, filter.Sort);
+            Assert.Equal(sortDir, filter.SortDir);
         }
     }
 }
