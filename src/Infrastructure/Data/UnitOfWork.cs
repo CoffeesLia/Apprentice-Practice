@@ -7,13 +7,24 @@ using Stellantis.ProjectName.Infrastructure.Data.Repositories;
 
 namespace Stellantis.ProjectName.Infrastructure.Data
 {
-    public class UnitOfWork(Context context, IStringLocalizer<DataServiceRepository> localizer) : IUnitOfWork
+    public class UnitOfWork : IUnitOfWork
     {
         private IDbContextTransaction? _transaction;
+        private readonly Context context;
 
-        public IAreaRepository AreaRepository { get; } = new AreaRepository(context);
-        public IResponsibleRepository ResponsibleRepository { get; } = new ResponsibleRepository(context);
-        public IApplicationDataRepository ApplicationDataRepository { get; } = new ApplicationDataRepository(context);
+        public UnitOfWork(Context context, IStringLocalizer<DataServiceRepository> localizer)
+        {
+            this.context = context;
+            AreaRepository = new AreaRepository(context);
+            IntegrationRepository = new IntegrationRepository(context, localizer);
+            ResponsibleRepository = new ResponsibleRepository(context);
+            ApplicationDataRepository = new ApplicationDataRepository(context);
+        }
+
+        public IAreaRepository AreaRepository { get; }
+        public IIntegrationRepository IntegrationRepository { get; }
+        public IResponsibleRepository ResponsibleRepository { get; }
+        public IApplicationDataRepository ApplicationDataRepository { get; }
 
         public void BeginTransaction()
         {
@@ -37,6 +48,11 @@ namespace Stellantis.ProjectName.Infrastructure.Data
                 }
                 throw;
             }
+        }
+
+        internal void DisposeIt()
+        {
+            throw new NotImplementedException();
         }
     }
 }

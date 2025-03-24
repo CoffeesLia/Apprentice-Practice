@@ -20,8 +20,8 @@ namespace Stellantis.ProjectName.Application.Services
         : EntityServiceBase<Integration>(unitOfWork, localizerFactory, validator), IIntegrationService
     {
         private new IStringLocalizer Localizer => localizerFactory.Create(typeof(IntegrationResources));
-        protected override IIntegrationRepository Repository => unitOfWork.IntegrationRepository;
 
+        protected override IIntegrationRepository Repository => UnitOfWork.IntegrationRepository;
         public async Task<PagedResult<Integration>> GetListAsync(IntegrationFilter filter)
         {
             Expression<Func<Integration, bool>>? filterExpression = null;
