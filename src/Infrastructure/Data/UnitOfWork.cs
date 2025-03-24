@@ -6,7 +6,7 @@ using Stellantis.ProjectName.Infrastructure.Data.Repositories;
 
 namespace Stellantis.ProjectName.Infrastructure.Data
 {
-    public class UnitOfWork(Context context, IStringLocalizer<DataServiceRepository>? localizer = null) : IUnitOfWork
+    public class UnitOfWork(Context context) : IUnitOfWork
     {
         private IDbContextTransaction? _transaction;
         private IDataServiceRepository? _dataServiceRepository;
@@ -21,7 +21,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data
         {
             get
             {
-                return _dataServiceRepository ??= (IDataServiceRepository)new DataServiceRepository(context, localizer!);
+                return _dataServiceRepository ??= (IDataServiceRepository)new DataServiceRepository(context);
             }
         }
 
