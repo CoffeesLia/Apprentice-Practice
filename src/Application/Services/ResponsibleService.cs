@@ -37,7 +37,7 @@ namespace Stellantis.ProjectName.Application.Services
             // Verificação se o e-mail já existe
             if (await Repository.VerifyEmailAlreadyExistsAsync(item.Email).ConfigureAwait(false))
             {
-                return OperationResult.Conflict(_localizer[nameof(ResponsibleResource.AlreadyExists)]);
+                return OperationResult.Conflict(_localizer[nameof(ResponsibleResource.EmailExists)]);
             }
 
             // Verificação se o nome é obrigatório
@@ -45,7 +45,7 @@ namespace Stellantis.ProjectName.Application.Services
             {
                 return OperationResult.InvalidData(new ValidationResult(new List<ValidationFailure>
                 {
-                    new ValidationFailure(nameof(item.Nome), _localizer["NameRequired"])
+                    new ValidationFailure(nameof(item.Nome), _localizer[nameof(ResponsibleResource.NameRequired)])
                 }));
             }
 
@@ -54,20 +54,23 @@ namespace Stellantis.ProjectName.Application.Services
             {
                 return OperationResult.InvalidData(new ValidationResult(new List<ValidationFailure>
                 {
-                    new ValidationFailure(nameof(item.Area), _localizer["AreaRequired"])
+                    new ValidationFailure(nameof(item.Area), _localizer[nameof(ResponsibleResource.AreaRequired)])
                 }));
             }
-
             return await base.CreateAsync(item).ConfigureAwait(false);
         }
+
         public async Task<PagedResult<Responsible>> GetListAsync(ResponsibleFilter responsibleFilter)
         {
-            return await Repository.GetListAsync(responsibleFilter).ConfigureAwait(false);
+            responsibleFilter ??= new ResponsibleFilter();
+            return await UnitOfWork.ResponsibleRepository.GetListAsync(responsibleFilter).ConfigureAwait(false);
         }
 
-        public async Task<Responsible?> GetItemAsync(int id)
+        public new async Task<OperationResult> GetItemAsync(int id)
         {
-            return await Repository.GetByIdAsync(id).ConfigureAwait(false);
+            return await Repository.GetByIdAsync(id).ConfigureAwait(false) is Responsible responsible
+                ? OperationResult.Complete()
+                : OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
         }
 
         public override async Task<OperationResult> UpdateAsync(Responsible item)
@@ -81,11 +84,10 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.InvalidData(validationResult);
             }
 
-            // Verificação se o e-mail já existe para outro responsável
-            var existingResponsible = await Repository.GetByEmailAsync(item.Email).ConfigureAwait(false);
-            if (existingResponsible != null && existingResponsible.Id != item.Id)
+            // Verificação se o e-mail já existe
+            if (await Repository.VerifyEmailAlreadyExistsAsync(item.Email).ConfigureAwait(false))
             {
-                return OperationResult.Conflict(_localizer[nameof(ResponsibleResource.AlreadyExists)]);
+                return OperationResult.Conflict(_localizer[nameof(ResponsibleResource.EmailExists)]);
             }
 
             // Verificação se o nome é obrigatório
@@ -93,7 +95,7 @@ namespace Stellantis.ProjectName.Application.Services
             {
                 return OperationResult.InvalidData(new ValidationResult(new List<ValidationFailure>
                 {
-                    new ValidationFailure(nameof(item.Nome), _localizer["NameRequired"])
+                    new ValidationFailure(nameof(item.Nome), _localizer[nameof(ResponsibleResource.NameRequired)])
                 }));
             }
 
@@ -102,7 +104,7 @@ namespace Stellantis.ProjectName.Application.Services
             {
                 return OperationResult.InvalidData(new ValidationResult(new List<ValidationFailure>
                 {
-                    new ValidationFailure(nameof(item.Area), _localizer["AreaRequired"])
+                    new ValidationFailure(nameof(item.Area), _localizer[nameof(ResponsibleResource.AreaRequired)])
                 }));
             }
 
@@ -111,14 +113,12 @@ namespace Stellantis.ProjectName.Application.Services
 
         public override async Task<OperationResult> DeleteAsync(int id)
         {
-            var responsible = await Repository.GetByIdAsync(id).ConfigureAwait(false);
-            if (responsible == null)
+            var item = await Repository.GetByIdAsync(id).ConfigureAwait(false);
+            if (item == null)
             {
                 return OperationResult.NotFound(_localizer[nameof(OperationResult.NotFound)]);
             }
-
-            await Repository.DeleteAsync(id).ConfigureAwait(false);
-            return OperationResult.Complete(_localizer[nameof(ResponsibleResource.DeletedSuccessfully)]);
+            return await base.DeleteAsync(item).ConfigureAwait(false);
         }
 
     }

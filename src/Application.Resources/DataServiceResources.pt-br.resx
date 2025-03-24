@@ -129,8 +129,17 @@
   <data name="NameIsRequired" xml:space="preserve">
     <value>Nome é obrigatório.</value>
   </data>
+  <data name="NameRequired" xml:space="preserve">
+    <value>O Serviço precisa ter um nome.</value>
+  </data>
+  <data name="NameValidateLength" xml:space="preserve">
+    <value>O nome deve ter entre 3 e 50 caracteres.</value>
+  </data>
   <data name="NotFound" xml:space="preserve">
     <value>Não encontrado.</value>
+  </data>
+  <data name="ServiceCannotBeNull" xml:space="preserve">
+    <value>Serviço não pode ser nulo.</value>
   </data>
   <data name="ServiceNameAlreadyExists" xml:space="preserve">
     <value>Esse nome de serviço já existe.</value>

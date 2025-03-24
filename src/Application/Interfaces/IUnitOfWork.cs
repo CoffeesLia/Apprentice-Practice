@@ -8,9 +8,10 @@ namespace Stellantis.ProjectName.Application.Interfaces
 
         public IIntegrationRepository IntegrationRepository { get; }
         IResponsibleRepository ResponsibleRepository { get; }
+
         public IDataServiceRepository DataServiceRepository { get; }
         public IApplicationDataRepository ApplicationDataRepository { get; }                
-
+       
         Task CommitAsync();
         void BeginTransaction();
     }
