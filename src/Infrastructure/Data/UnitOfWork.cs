@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
@@ -7,6 +7,7 @@ using Stellantis.ProjectName.Infrastructure.Data.Repositories;
 
 namespace Stellantis.ProjectName.Infrastructure.Data
 {
+<<<<<<< src/Infrastructure/Data/UnitOfWork.cs
     public class UnitOfWork(Context context, IStringLocalizer<DataServiceRepository> localizer) : IUnitOfWork
     {
         private IDbContextTransaction? _transaction;
