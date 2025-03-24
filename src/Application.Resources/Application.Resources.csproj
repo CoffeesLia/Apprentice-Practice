@@ -214,8 +214,7 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="SquadResources.pt-BR.resx">
-      <LastGenOutput>SquadResources.pt-BR.Designer.cs</LastGenOutput>
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator></Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="SquadResources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
