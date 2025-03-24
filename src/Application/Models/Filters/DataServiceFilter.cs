@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Stellantis.ProjectName.Application.Models.Filters
 {
-    internal class DataServiceFilter : Filter
+    public class DataServiceFilter : Filter
     {
         public required string Name { get; set; }
+        public required int ApplicationId { get; set; }
     }
 }
