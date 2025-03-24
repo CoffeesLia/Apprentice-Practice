@@ -14,5 +14,6 @@ namespace Stellantis.ProjectName.Application.Interfaces.Repositories
         IEnumerable<EntitySquad> GetAll();
         EntitySquad GetById(Guid id);
         void Update(EntitySquad squad);
+        void Delete(EntitySquad squad); 
     }
 }

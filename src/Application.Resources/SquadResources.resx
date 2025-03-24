@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="SquadCreatedSuccessfully" xml:space="preserve">
+    <value>Successfully created squad.</value>
+  </data>
   <data name="SquadDescriptionRequired" xml:space="preserve">
     <value>Squad description is required.</value>
   </data>
@@ -128,5 +131,11 @@
   </data>
   <data name="SquadNotFound" xml:space="preserve">
     <value>Squad not found.</value>
+  </data>
+  <data name="SquadSuccessfullyDeleted" xml:space="preserve">
+    <value>Squad successfully deleted.</value>
+  </data>
+  <data name="SquadUpdatedSuccessfully" xml:space="preserve">
+    <value>Squad successfully updated</value>
   </data>
 </root>
