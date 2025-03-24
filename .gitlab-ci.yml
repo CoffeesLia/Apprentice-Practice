@@ -8,7 +8,7 @@ variables:
   REPOSITORY_URL: 924431524709.dkr.ecr.us-east-1.amazonaws.com/digital-esb-app-esb-baseproject-esb
 
 stages:
-  - test  
+  - test
   - security
   - build
   - deploy
@@ -24,7 +24,8 @@ test:
   image: mcr.microsoft.com/dotnet/sdk:8.0
   stage: test
   script:
-    - 'dotnet test ./src/Application.Tests/Application.Tests.csproj --test-adapter-path:. --logger:"junit;LogFilePath=..\artifacts\{assembly}-result.xml;MethodFormat=Class;FailureBodyFormat=Verbose"'
+    - mkdir -p ./src/artifacts
+    - dotnet test ./src/Application.Tests/Application.Tests.csproj --test-adapter-path:. --logger:"junit;LogFilePath=..\artifacts\{assembly}-result.xml;MethodFormat=Class;FailureBodyFormat=Verbose"
   artifacts:
     when: always
     paths:
