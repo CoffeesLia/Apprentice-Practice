@@ -10,6 +10,7 @@ variables:
 stages:
   - security
   - build
+  - test  
   - deploy
 
 before_script:
@@ -18,6 +19,19 @@ before_script:
   - VERSION=$(date +"%Y%m%d%H%M")
   - echo $IMAGE_TAG $CI_COMMIT_REF_NAME $VERSION
   - echo $REPOSITORY_URL
+
+Test:
+  image: mcr.microsoft.com/dotnet/sdk:8.0
+  stage: test
+  script:
+    - 'dotnet test ./src/Application.Tests/Application.Tests.csproj --test-adapter-path:. --logger:"junit;LogFilePath=..\artifacts\{assembly}-result.xml;MethodFormat=Class;FailureBodyFormat=Verbose"'
+  artifacts:
+    when: always
+    paths:
+      - ./src/artifacts/*-result.xml
+    reports:
+      junit:
+        - ./src/artifacts/*-result.xml
 
 web-build:
   stage: build
