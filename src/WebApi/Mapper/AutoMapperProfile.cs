@@ -21,6 +21,8 @@ namespace Stellantis.ProjectName.WebApi.Mapper
             CreateMap<AreaFilterDto, AreaFilter>();
 
             CreateMap<DataServiceDto, DataService>();
+
+            CreateMap<SquadDto, SquadService>(); 
         }
     }
 }
