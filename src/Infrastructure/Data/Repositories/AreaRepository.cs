@@ -67,5 +67,10 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         {
             throw new NotImplementedException();
         }
+
+        public Task<bool> GetByIdWithApplicationsAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
