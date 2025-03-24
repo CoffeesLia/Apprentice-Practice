@@ -18,7 +18,6 @@ public class UnitOfWork(Context context) : IUnitOfWork
         public IResponsibleRepository ResponsibleRepository { get; } = new ResponsibleRepository(context);
         public IApplicationDataRepository ApplicationDataRepository { get; } = new ApplicationDataRepository(context);
         public ISquadRepository SquadRepository => throw new NotImplementedException();
-        public IAreaRepository AreaRepository => throw new NotImplementedException();
         public IDataServiceRepository DataServiceRepository => throw new NotImplementedException();
 
         public void BeginTransaction()
