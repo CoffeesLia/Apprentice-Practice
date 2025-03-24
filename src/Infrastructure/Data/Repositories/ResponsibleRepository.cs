@@ -23,9 +23,9 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 query = query.Where(r => r.Email.Contains(filter.Email));
             }
 
-            if (!string.IsNullOrEmpty(filter.Nome))
+            if (!string.IsNullOrEmpty(filter.Name))
             {
-                query = query.Where(r => r.Nome.Contains(filter.Nome));
+                query = query.Where(r => r.Name.Contains(filter.Name));
             }
 
             if (!string.IsNullOrEmpty(filter.Area))

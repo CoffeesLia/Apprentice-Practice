@@ -23,11 +23,12 @@ namespace Stellantis.ProjectName.Application.Services
             _localizer = localizerFactory.Create(typeof(ResponsibleResource));
         }
 
+
         public override async Task<OperationResult> CreateAsync(Responsible item)
         {
             ArgumentNullException.ThrowIfNull(item);
 
-            // Validação do objeto Responsible
+            // Validação do objeto pelo FluentValidation
             var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
             if (!validationResult.IsValid)
             {
@@ -40,23 +41,6 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.Conflict(_localizer[nameof(ResponsibleResource.EmailExists)]);
             }
 
-            // Verificação se o nome é obrigatório
-            if (string.IsNullOrWhiteSpace(item.Nome))
-            {
-                return OperationResult.InvalidData(new ValidationResult(new List<ValidationFailure>
-                {
-                    new ValidationFailure(nameof(item.Nome), _localizer[nameof(ResponsibleResource.NameRequired)])
-                }));
-            }
-
-            // Verificação se a área é obrigatória
-            if (string.IsNullOrWhiteSpace(item.Area))
-            {
-                return OperationResult.InvalidData(new ValidationResult(new List<ValidationFailure>
-                {
-                    new ValidationFailure(nameof(item.Area), _localizer[nameof(ResponsibleResource.AreaRequired)])
-                }));
-            }
             return await base.CreateAsync(item).ConfigureAwait(false);
         }
 
@@ -77,7 +61,7 @@ namespace Stellantis.ProjectName.Application.Services
         {
             ArgumentNullException.ThrowIfNull(item);
 
-            // Validação do objeto Responsible
+            // Validação do objeto pelo FluentValidation
             var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
             if (!validationResult.IsValid)
             {
@@ -88,24 +72,6 @@ namespace Stellantis.ProjectName.Application.Services
             if (await Repository.VerifyEmailAlreadyExistsAsync(item.Email).ConfigureAwait(false))
             {
                 return OperationResult.Conflict(_localizer[nameof(ResponsibleResource.EmailExists)]);
-            }
-
-            // Verificação se o nome é obrigatório
-            if (string.IsNullOrWhiteSpace(item.Nome))
-            {
-                return OperationResult.InvalidData(new ValidationResult(new List<ValidationFailure>
-                {
-                    new ValidationFailure(nameof(item.Nome), _localizer[nameof(ResponsibleResource.NameRequired)])
-                }));
-            }
-
-            // Verificação se a área é obrigatória
-            if (string.IsNullOrWhiteSpace(item.Area))
-            {
-                return OperationResult.InvalidData(new ValidationResult(new List<ValidationFailure>
-                {
-                    new ValidationFailure(nameof(item.Area), _localizer[nameof(ResponsibleResource.AreaRequired)])
-                }));
             }
 
             return await base.UpdateAsync(item).ConfigureAwait(false);

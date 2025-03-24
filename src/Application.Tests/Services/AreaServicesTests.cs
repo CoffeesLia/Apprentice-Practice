@@ -83,7 +83,7 @@ namespace Application.Tests.Services
         public async Task CreateAsync_ShouldReturnInvalidData_WhenNameExceedsMaxLength()
         {
             // Arrange
-            var area = new Area(new string('A', 256)); // Nome com 256 caracteres
+            var area = new Area(new string('A', 256)); // Name com 256 caracteres
 
             // Act
             var result = await _areaService.CreateAsync(area);
