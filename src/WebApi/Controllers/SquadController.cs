@@ -77,6 +77,15 @@ namespace Stellantis.ProjectName.WebAPI.Controllers
                 return Conflict(new { Message = ex.Message });
             }
         }
+
+        // AMS-56: List all squads
+        [HttpGet]
+        public IActionResult GetAllSquads([FromQuery] string name = null)
+        {
+            var squads = _squadService.GetAllSquads(name);
+            var squadDtos = _mapper.Map<IEnumerable<SquadDto>>(squads);
+            return Ok(squadDtos);
+        }
     }
 
     public class CreateSquadRequest

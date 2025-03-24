@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Interfaces.Services;
@@ -84,6 +82,15 @@ namespace Stellantis.ProjectName.Application.Services
             squad.Name = name;
             squad.Description = description;
             _squadRepository.Update(squad);
+        }
+
+        public IEnumerable<EntitySquad> GetAllSquads(string name = null)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return _squadRepository.GetAll();
+            }
+            return _squadRepository.GetAll().Where(s => s.Name.Contains(name, StringComparison.OrdinalIgnoreCase));
         }
     }
 }
