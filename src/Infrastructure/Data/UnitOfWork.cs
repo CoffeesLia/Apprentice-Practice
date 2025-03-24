@@ -19,12 +19,14 @@ namespace Stellantis.ProjectName.Infrastructure.Data
             IntegrationRepository = new IntegrationRepository(context, localizer);
             ResponsibleRepository = new ResponsibleRepository(context);
             ApplicationDataRepository = new ApplicationDataRepository(context);
+            DataServiceRepository = new DataServiceRepository(context, localizer);
         }
 
         public IAreaRepository AreaRepository { get; }
         public IIntegrationRepository IntegrationRepository { get; }
         public IResponsibleRepository ResponsibleRepository { get; }
         public IApplicationDataRepository ApplicationDataRepository { get; }
+        public IDataServiceRepository DataServiceRepository { get; }
 
         public void BeginTransaction()
         {
