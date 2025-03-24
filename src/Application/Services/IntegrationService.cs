@@ -1,4 +1,4 @@
-﻿
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Localization;
@@ -8,79 +8,79 @@ using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Application.Interfaces;
+using FluentValidation;
+using System.Linq.Expressions;
 
 namespace Stellantis.ProjectName.Application.Services
 {
-    public class IntegrationService : IEntityServiceBase<Integration>
+
+
+    public class IntegrationService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<Integration> validator)
+        : EntityServiceBase<Integration>(unitOfWork, localizerFactory, validator), IIntegrationService
     {
-        private readonly IIntegrationRepository _integrationRepository;
-        private readonly IStringLocalizer<ServiceResources> _localizer;
+        private new IStringLocalizer Localizer => localizerFactory.Create(typeof(IntegrationResources));
+        protected override IIntegrationRepository Repository => unitOfWork.IntegrationRepository;
 
-        public IntegrationService(IIntegrationRepository integrationRepository, IStringLocalizer<ServiceResources> localizer)
+        public async Task<PagedResult<Integration>> GetListAsync(IntegrationFilter filter)
         {
-            _integrationRepository = integrationRepository;
-            _localizer = localizer;
+            Expression<Func<Integration, bool>>? filterExpression = null;
+
+            if (!string.IsNullOrEmpty(filter.Name))
+            {
+                OperationResult.Conflict(Localizer[IntegrationResources.NameIsRequired]);
+            }
+
+            return await Repository.GetListAsync(filterExpression, filter.Sort, filter.SortDir, null, filter.Page, filter.PageSize).ConfigureAwait(false);
         }
 
-        public async Task<PagedResult<Integration>> GetListAsync(AreaFilter areaFilter)
+        public override async Task<OperationResult> CreateAsync(Integration item)
         {
-            ArgumentNullException.ThrowIfNull(areaFilter);
-
-            var integrations = await _integrationRepository.GetListAsync(
-                x => (string.IsNullOrEmpty(areaFilter.Name) || x.Name.Contains(areaFilter.Name)),
-                areaFilter.Sort,
-                areaFilter.SortDir,
-                null,
-                areaFilter.Page,
-                areaFilter.PageSize
-            ).ConfigureAwait(false);
-
-            return integrations;
-        }
-
-        public async Task<OperationResult> CreateAsync(Integration item)
-        {
-
             ArgumentNullException.ThrowIfNull(item);
-            var existingIntegration = await _integrationRepository.GetByIdAsync(item.Id).ConfigureAwait(false);
+            var existingIntegration = await Repository.GetByIdAsync(item.Id).ConfigureAwait(false);
             if (existingIntegration != null)
             {
-                return OperationResult.Conflict(_localizer[ServiceResources.SquadNameAlreadyExists]);
+                return OperationResult.Conflict(Localizer[IntegrationResources.MessageConflict]);
             }
 
-            await _integrationRepository.CreateAsync(item).ConfigureAwait(false);
-            return OperationResult.Complete(_localizer[ServiceResources.RegisteredSuccessfully]);
+            await Repository.CreateAsync(item).ConfigureAwait(false);
+            return OperationResult.Complete(Localizer[IntegrationResources.MessageSucess]);
         }
 
-        public async Task<OperationResult> DeleteAsync(int id)
+        public new async Task<OperationResult> DeleteAsync(int id)
         {
-            var integration = await _integrationRepository.GetByIdAsync(id).ConfigureAwait(false);
+            var integration = await Repository.GetByIdAsync(id).ConfigureAwait(false);
             if (integration == null)
             {
-                return OperationResult.NotFound(_localizer[ServiceResources.NotFound]);
+                return OperationResult.NotFound(Localizer[IntegrationResources.MessageNotFound]);
             }
 
-            await _integrationRepository.DeleteAsync(id).ConfigureAwait(false);
-            return OperationResult.Complete(_localizer[ServiceResources.DeletedSuccessfully]);
+            await Repository.DeleteAsync(id).ConfigureAwait(false);
+            return OperationResult.Complete(Localizer[IntegrationResources.DeletedSuccessfully]);
         }
 
-        public async Task<Integration?> GetItemAsync(int id)
+        public new async Task<Integration?> GetItemAsync(int id)
         {
-            return await _integrationRepository.GetByIdAsync(id).ConfigureAwait(false);
+            var integration = await Repository.GetByIdAsync(id).ConfigureAwait(false);
+            if (integration == null)
+            {
+                throw new KeyNotFoundException(Localizer[IntegrationResources.MessageNotFound]);
+            }
+            return integration;
         }
 
-        public async Task<OperationResult> UpdateAsync(Integration item)
+        public override async Task<OperationResult> UpdateAsync(Integration item)
         {
             ArgumentNullException.ThrowIfNull(item);
 
-            var existingIntegration = await _integrationRepository.GetByIdAsync(item.Id).ConfigureAwait(false);
+            var existingIntegration = await Repository.GetByIdAsync(item.Id).ConfigureAwait(false);
             if (existingIntegration == null)
             {
-                return OperationResult.NotFound(_localizer[ServiceResources.NotFound]);
+                return OperationResult.NotFound(Localizer[IntegrationResources.NameIsRequired]);
             }
 
-            await _integrationRepository.UpdateAsync(item).ConfigureAwait(false);
-            return OperationResult.Complete(_localizer[ServiceResources.UpdatedSuccessfully]);
+            await Repository.UpdateAsync(item).ConfigureAwait(false);
+            return OperationResult.Complete(Localizer[IntegrationResources.UpdatedSuccessfully]);
         }
     }
 }

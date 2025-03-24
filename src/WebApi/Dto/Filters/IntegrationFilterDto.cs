@@ -1,6 +1,6 @@
-﻿namespace Stellantis.ProjectName.WebApi.Dto.Filters
+﻿namespace Stellantis.ProjectName.WebApi.Dto.Filters;
+internal class IntegrationFilterDto : FilterDto
 {
-    public class IntegrationFilterDto
-    {
-    }
+    public string? Name { get; set; }
+    public ApplicationDataDto ApplicationDataDto { get; set; } = null!;
 }

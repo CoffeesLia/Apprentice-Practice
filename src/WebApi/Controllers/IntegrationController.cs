@@ -15,64 +15,62 @@ namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [Route("api/Integration")]
     [ApiController]
-    public class IntegrationController : ControllerBase
+    internal sealed class IntegrationControllerBase : EntityControllerBase<Integration, IntegrationDto>
     {
-        private readonly IIntegrationService _integrationService;
-        private readonly IStringLocalizer<IntegrationController> _localizer;
+        private readonly IStringLocalizer _localizer;
 
-        public IntegrationController(IIntegrationService integrationService, IStringLocalizer<IntegrationController> localizer)
+        public IntegrationControllerBase(IIntegrationService service, IMapper mapper, IStringLocalizerFactory localizerFactory)
+            : base(service, mapper, localizerFactory)
         {
-            _integrationService = integrationService;
-            _localizer = localizer;
+            ArgumentNullException.ThrowIfNull(localizerFactory);
+            _localizer = localizerFactory.Create(typeof(IntegrationResources));
         }
+        protected override IIntegrationService Service => (IIntegrationService)base.Service;
 
         [HttpPost]
-        public async Task<IActionResult> CreateAsync([FromBody] IntegrationDto itemDto)
+        public async Task<IActionResult> CreateAsync([FromBody] IntegrationDto integrationDto)
         {
-            if (itemDto == null)
-            {
-                return BadRequest(new { Message = _localizer[nameof(IntegrationResources.NameIsRequired)] });
-            }
-
-            if (string.IsNullOrWhiteSpace(itemDto.Name) || itemDto.Name.Length > 255)
-            {
-                return BadRequest(new { Message = string.Format(_localizer[nameof(IntegrationResources.NameValidateLength)], 3, 255) });
-            }
-
-            var integration = new Integration
-            {
-                Name = itemDto.Name,
-                Description = itemDto.Description
-            };
-
-            await _integrationService.CreateAsync(integration).ConfigureAwait(false);
-
-            return Ok(new { Message = _localizer[nameof(IntegrationResources.MessageSucess)], Data = integration });
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(int id)
-        {
-            await _integrationService.DeleteAsync(id).ConfigureAwait(false);
-            return Ok(new { Message = _localizer[nameof(IntegrationResources.MessageSucess)] });
+            ArgumentNullException.ThrowIfNull(integrationDto);
+            var localizedMessage = _localizer[IntegrationResources.MessageSucess];
+            var result = await CreateBaseAsync<AreaVm>(integrationDto).ConfigureAwait(false);
+            return Ok(new { Message = localizedMessage, Result = result });
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAsync(int id, [FromBody] IntegrationDto itemDto)
+        public async Task<IActionResult> UpdateAsync(int id, [FromBody] IntegrationDto integrationDto)
         {
-
-            var integration = new Integration
-            {
-                Id = id,
-                Name = itemDto.Name,
-                Description = itemDto.Description
-            };
-
-            await _integrationService.UpdateAsync(integration).ConfigureAwait(false);
-
-            return Ok(new { Message = _localizer[nameof(IntegrationResources.MessageSucess)], Data = integration });
+            ArgumentNullException.ThrowIfNull(integrationDto);
+            var localizedMessage = _localizer[IntegrationResources.UpdatedSuccessfully];
+            var result = await UpdateBaseAsync<AreaVm>(id, integrationDto).ConfigureAwait(false);
+            return Ok(new { Message = localizedMessage, Result = result });
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<IntegrationVM>> GetAsync(int id)
+        {
+            var localizedMessage = _localizer["GettingIntegration"];
+            var result = await GetAsync<IntegrationVM>(id).ConfigureAwait(false);
+            return Ok(new { Message = localizedMessage, Result = result });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetListAsync([FromQuery] IntegrationFilterDto filterDto)
+        {
+            ArgumentNullException.ThrowIfNull(filterDto);
+            var localizedMessage = _localizer[IntegrationResources.GettingIntegrationList];
+            var filter = Mapper.Map<IntegrationFilter>(filterDto);
+            var pagedResult = await Service.GetListAsync(filter).ConfigureAwait(false);
+            var result = Mapper.Map<PagedResultVm<IntegrationVM>>(pagedResult);
+            return Ok(new { Message = localizedMessage, Result = result });
+        }
+
+        [HttpDelete("{id}")]
+        public override async Task<IActionResult> DeleteAsync(int id)
+        {
+            var localizedMessage = _localizer[nameof(IntegrationResources.DeletedSuccessfully)];
+            var result = await DeleteAsync(id).ConfigureAwait(false);
+            return Ok(new { Message = localizedMessage, Result = result });
+        }
     }
 }
 

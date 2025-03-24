@@ -6,6 +6,8 @@ namespace Stellantis.ProjectName.Application.Interfaces
     {
         public IAreaRepository AreaRepository { get; }
 
+        public IIntegrationRepository IntegrationRepository { get; }
+
         IResponsibleRepository ResponsibleRepository { get; }
 
         public IApplicationDataRepository ApplicationDataRepository { get; }                
@@ -14,3 +16,4 @@ namespace Stellantis.ProjectName.Application.Interfaces
         void BeginTransaction();
     }
 }
+

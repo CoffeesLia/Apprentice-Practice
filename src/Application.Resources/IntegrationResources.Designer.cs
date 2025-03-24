@@ -61,11 +61,47 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Deleted Successfully.
+        /// </summary>
+        public static string DeletedSuccessfully {
+            get {
+                return ResourceManager.GetString("DeletedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Getting Integration List.
+        /// </summary>
+        public static string GettingIntegrationList {
+            get {
+                return ResourceManager.GetString("GettingIntegrationList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Id Not Found.
         /// </summary>
         public static string IdNotFound {
             get {
                 return ResourceManager.GetString("IdNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Message Conflict.
+        /// </summary>
+        public static string MessageConflict {
+            get {
+                return ResourceManager.GetString("MessageConflict", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Message Not Found.
+        /// </summary>
+        public static string MessageNotFound {
+            get {
+                return ResourceManager.GetString("MessageNotFound", resourceCulture);
             }
         }
         
@@ -88,7 +124,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Name Validate Length.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a The name must be between {0} and {1} characters long..
         /// </summary>
         public static string NameValidateLength {
             get {
@@ -106,11 +142,11 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Update integration Not Found.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Update integration Not Found..
         /// </summary>
-        public static string UpdateIntegration_NotFound {
+        public static string UpdatedSuccessfully {
             get {
-                return ResourceManager.GetString("UpdateIntegration_NotFound", resourceCulture);
+                return ResourceManager.GetString("UpdatedSuccessfully", resourceCulture);
             }
         }
     }

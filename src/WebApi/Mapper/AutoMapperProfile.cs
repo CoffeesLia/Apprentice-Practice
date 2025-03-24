@@ -23,4 +23,14 @@ namespace Stellantis.ProjectName.WebApi.Mapper
             CreateMap<DataServiceDto, DataService>();
         }
     }
+    internal class IntegrationAutoMapperProfile : Profile
+    {
+        public IntegrationAutoMapperProfile()
+        {
+                CreateMap<Integration, IntegrationVM>()
+                    .ForMember(dest => dest.ApplicationData,
+                               opt => opt.MapFrom(src => src.ApplicationData));  
+        }
+    }
 }
+
