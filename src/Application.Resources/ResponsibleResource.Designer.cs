@@ -63,18 +63,9 @@ namespace Stellantis.ProjectName.Application.Resources {
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a The Area is mandatory.
         /// </summary>
-        public static string AreaRequired {
+        public static string _AreaRequired__ {
             get {
                 return ResourceManager.GetString(" AreaRequired  ", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a The email already exists..
-        /// </summary>
-        public static string EmailExists {
-            get {
-                return ResourceManager.GetString("EmailExists", resourceCulture);
             }
         }
         
@@ -84,6 +75,15 @@ namespace Stellantis.ProjectName.Application.Resources {
         public static string DeletedSuccessfully {
             get {
                 return ResourceManager.GetString("DeletedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a The email already exists..
+        /// </summary>
+        public static string EmailExists {
+            get {
+                return ResourceManager.GetString("EmailExists", resourceCulture);
             }
         }
         
@@ -99,7 +99,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Email is mandatory .
         /// </summary>
-        public static string EmailRequired {
+        public static string EmailRequired_ {
             get {
                 return ResourceManager.GetString("EmailRequired ", resourceCulture);
             }

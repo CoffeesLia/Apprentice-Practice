@@ -129,7 +129,7 @@
   <data name="EmailInvalid" xml:space="preserve">
     <value>O e-mail deve ser válido</value>
   </data>
-  <data name="EmailRequired " xml:space="preserve">
+  <data name="EmailRequired" xml:space="preserve">
     <value>O email é obrigatório </value>
   </data>
   <data name="NameRequired" xml:space="preserve">
