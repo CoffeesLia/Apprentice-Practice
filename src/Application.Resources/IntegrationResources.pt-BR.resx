@@ -117,28 +117,34 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AlreadyExists" xml:space="preserve">
-    <value>The name already exits.</value>
+  <data name="DeletedSuccessfully" xml:space="preserve">
+    <value>Integração excluída com sucesso.</value>
   </data>
-  <data name="NotFound" xml:space="preserve">
-    <value>Area not found.</value>
+  <data name="GettingIntegrationList" xml:space="preserve">
+    <value>Lista de integrações recuperada com sucesso.</value>
   </data>
-  <data name="MemberAddedSuccessfully" xml:space="preserve">
-    <value>Member added successfully.</value>
+  <data name="IdNotFound" xml:space="preserve">
+    <value>Id não encontrado.</value>
   </data>
-  <data name="MemberEmailAlreadyExists" xml:space="preserve">
-    <value>This e-mail already exists.</value>
+  <data name="MessageConflict" xml:space="preserve">
+    <value>A integração já existe.</value>
   </data>
-  <data name="MemberRequiredFieldsMissing" xml:space="preserve">
-    <value>All mandatory fields must be completed.</value>
+  <data name="MessageNotFound" xml:space="preserve">
+    <value>Integração não encontrada.</value>
+  </data>
+  <data name="MessageSucess" xml:space="preserve">
+    <value>Integração criada com sucesso.</value>
   </data>
   <data name="NameIsRequired" xml:space="preserve">
-    <value>The name is required.</value>
+    <value>Nome é obrigatório.</value>
   </data>
   <data name="NameValidateLength" xml:space="preserve">
-    <value>The name must be between {0} and {1} characters long.</value>
+    <value>O nome deve ter entre {0} e {1} caracteres.</value>
   </data>
-  <data name="Undeleted" xml:space="preserve">
-    <value>You cannot delete an area that has associated applications.</value>
+  <data name="NoIntegrations" xml:space="preserve">
+    <value>Sem integrações.</value>
+  </data>
+  <data name="UpdatedSuccessfully" xml:space="preserve">
+    <value>Integração atualizada com sucesso.</value>
   </data>
 </root>

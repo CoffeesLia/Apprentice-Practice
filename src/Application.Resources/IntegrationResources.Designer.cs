@@ -22,14 +22,14 @@ namespace Stellantis.ProjectName.Application.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class AreaResources {
+    public class IntegrationResources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal AreaResources() {
+        internal IntegrationResources() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Stellantis.ProjectName.Application.Resources.AreaResources", typeof(AreaResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Stellantis.ProjectName.Application.Resources.IntegrationResources", typeof(IntegrationResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,43 +61,61 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a The name already exits..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Deleted Successfully.
         /// </summary>
-        public static string AlreadyExists {
+        public static string DeletedSuccessfully {
             get {
-                return ResourceManager.GetString("AlreadyExists", resourceCulture);
+                return ResourceManager.GetString("DeletedSuccessfully", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Member added successfully..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Getting Integration List.
         /// </summary>
-        public static string MemberAddedSuccessfully {
+        public static string GettingIntegrationList {
             get {
-                return ResourceManager.GetString("MemberAddedSuccessfully", resourceCulture);
+                return ResourceManager.GetString("GettingIntegrationList", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a This e-mail already exists..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Id Not Found.
         /// </summary>
-        public static string MemberEmailAlreadyExists {
+        public static string IdNotFound {
             get {
-                return ResourceManager.GetString("MemberEmailAlreadyExists", resourceCulture);
+                return ResourceManager.GetString("IdNotFound", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a All mandatory fields must be completed..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Message Conflict.
         /// </summary>
-        public static string MemberRequiredFieldsMissing {
+        public static string MessageConflict {
             get {
-                return ResourceManager.GetString("MemberRequiredFieldsMissing", resourceCulture);
+                return ResourceManager.GetString("MessageConflict", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a The name is required..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Message Not Found.
+        /// </summary>
+        public static string MessageNotFound {
+            get {
+                return ResourceManager.GetString("MessageNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Successfully created.
+        /// </summary>
+        public static string MessageSucess {
+            get {
+                return ResourceManager.GetString("MessageSucess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Name Is Required.
         /// </summary>
         public static string NameIsRequired {
             get {
@@ -115,20 +133,20 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Area not found..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a No Integrations.
         /// </summary>
-        public static string NotFound {
+        public static string NoIntegrations {
             get {
-                return ResourceManager.GetString("NotFound", resourceCulture);
+                return ResourceManager.GetString("NoIntegrations", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a You cannot delete an area that has associated applications..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Update integration Not Found..
         /// </summary>
-        public static string Undeleted {
+        public static string UpdatedSuccessfully {
             get {
-                return ResourceManager.GetString("Undeleted", resourceCulture);
+                return ResourceManager.GetString("UpdatedSuccessfully", resourceCulture);
             }
         }
     }

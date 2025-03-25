@@ -52,7 +52,7 @@ namespace WebApi.Tests.Controllers
 
             // Assert
             Assert.IsType<CreatedAtActionResult>(result);
-            
+
         }
 
         [Fact]
@@ -78,18 +78,22 @@ namespace WebApi.Tests.Controllers
         public async Task GetListAsyncShouldReturnPagedResultWhenCalledWithValidFilter()
         {
             // Arrange
-            var filterDto = new ApplicationDataFilterDto { Name = "Valid Name" };
+            var filterDto = new ApplicationDataFilterDto
+            {
+                Name = "Valid Name",
+                Area = new AreaFilterDto() 
+            };
             var filter = new ApplicationFilter { Name = "Valid Name" };
             var pagedResult = new PagedResult<ApplicationData>
             {
-                Result = [new ApplicationData("Valid Name") ],
+                Result = new List<ApplicationData> { new ApplicationData("Valid Name") },
                 Page = 1,
                 PageSize = 10,
                 Total = 1
             };
             var pagedVmResult = new PagedResult<ApplicationVm>
             {
-                Result = [new ApplicationVm { Name = "Valid Name" }],
+                Result = new List<ApplicationVm> { new ApplicationVm { Name = "Valid Name" } },
                 Page = 1,
                 PageSize = 10,
                 Total = 1
