@@ -27,6 +27,11 @@ namespace Stellantis.ProjectName.WebApi.Mapper
             CreateMap<SquadDto, EntitySquad>()
                 .ForMember(x => x.Id, x => x.Ignore());
             CreateMap<EntitySquad, SquadDto>();
+
+            CreateMap<ApplicationDataDto, ApplicationData>()
+               .ForMember(x => x.Id, x => x.Ignore());
+            CreateMap<ApplicationData, ApplicationVm>();
+            CreateMap<ApplicationDataFilterDto, ApplicationFilter>();
         }
     }
 }
