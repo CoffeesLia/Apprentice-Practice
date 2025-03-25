@@ -15,15 +15,17 @@ using System.Linq.Expressions;
 namespace Stellantis.ProjectName.Application.Services
 {
 
-
     public class IntegrationService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<Integration> validator)
         : EntityServiceBase<Integration>(unitOfWork, localizerFactory, validator), IIntegrationService
     {
         private new IStringLocalizer Localizer => localizerFactory.Create(typeof(IntegrationResources));
+        private readonly IStringLocalizerFactory localizerFactory = localizerFactory;
 
         protected override IIntegrationRepository Repository => UnitOfWork.IntegrationRepository;
+
         public async Task<PagedResult<Integration>> GetListAsync(IntegrationFilter filter)
         {
+            ArgumentNullException.ThrowIfNull(filter);
             Expression<Func<Integration, bool>>? filterExpression = null;
 
             if (!string.IsNullOrEmpty(filter.Name))
@@ -37,13 +39,14 @@ namespace Stellantis.ProjectName.Application.Services
         public override async Task<OperationResult> CreateAsync(Integration item)
         {
             ArgumentNullException.ThrowIfNull(item);
-            var existingIntegration = await Repository.GetByIdAsync(item.Id).ConfigureAwait(false);
-            if (existingIntegration != null)
+          
+            var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
+            if (!validationResult.IsValid)
             {
-                return OperationResult.Conflict(Localizer[IntegrationResources.MessageConflict]);
+                return OperationResult.InvalidData(validationResult);
             }
 
-            await Repository.CreateAsync(item).ConfigureAwait(false);
+            await Repository.CreateAsync(item).ConfigureAwait(true);
             return OperationResult.Complete(Localizer[IntegrationResources.MessageSucess]);
         }
 
@@ -81,6 +84,11 @@ namespace Stellantis.ProjectName.Application.Services
 
             await Repository.UpdateAsync(item).ConfigureAwait(false);
             return OperationResult.Complete(Localizer[IntegrationResources.UpdatedSuccessfully]);
+        }
+
+        public Task<bool> IsIntegrationNameUniqueAsync(string name, int? id = null)
+        {
+            throw new NotImplementedException();
         }
     }
 }

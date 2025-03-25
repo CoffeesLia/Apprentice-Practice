@@ -8,10 +8,10 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Stellantis.ProjectName.Domain.Entities
 {
-    public class Integration : EntityBase
+    public class Integration(string name, string description) : EntityBase
     {
-        public string Name { get; set; } = null!;
-        public string Description { get; set; } = null!;
+        public string Name { get; set; } = name;
+        public string Description { get; set; } = description;
         public ApplicationData ApplicationData { get; set; } = null!;
     }
 }
