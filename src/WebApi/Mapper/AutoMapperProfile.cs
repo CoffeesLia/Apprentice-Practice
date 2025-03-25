@@ -29,4 +29,14 @@ namespace Stellantis.ProjectName.WebApi.Mapper
             CreateMap<EntitySquad, SquadDto>();
         }
     }
+    internal class IntegrationAutoMapperProfile : Profile
+    {
+        public IntegrationAutoMapperProfile()
+        {
+                CreateMap<Integration, IntegrationVM>()
+                    .ForMember(dest => dest.ApplicationData,
+                               opt => opt.MapFrom(src => src.ApplicationData));  
+        }
+    }
 }
+
