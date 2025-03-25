@@ -22,14 +22,14 @@ namespace Stellantis.ProjectName.Application.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class GitLabResource {
+    public class GitResource {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal GitLabResource() {
+        internal GitResource() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Stellantis.ProjectName.Application.Resources.GitLabResource", typeof(GitLabResource).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Stellantis.ProjectName.Application.Resources.GitResource", typeof(GitResource).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,20 +61,20 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Repository deleted successfully.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Application not found..
         /// </summary>
-        public static string DeletedSuccessfully {
+        public static string ApplicationNotFound {
             get {
-                return ResourceManager.GetString("DeletedSuccessfully", resourceCulture);
+                return ResourceManager.GetString("ApplicationNotFound", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Description is required..
         /// </summary>
-        public static string Description {
+        public static string DescriptionIsRequired {
             get {
-                return ResourceManager.GetString("Description", resourceCulture);
+                return ResourceManager.GetString("DescriptionIsRequired", resourceCulture);
             }
         }
         
@@ -90,18 +90,18 @@ namespace Stellantis.ProjectName.Application.Resources {
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Name is required.
         /// </summary>
-        public static string Name {
+        public static string NameIsRequired {
             get {
-                return ResourceManager.GetString("Name", resourceCulture);
+                return ResourceManager.GetString("NameIsRequired", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Repository created successfully..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Repository can&apos;t be null.
         /// </summary>
-        public static string RegisteredSuccessfully {
+        public static string RepositoryCantBeNull {
             get {
-                return ResourceManager.GetString("RegisteredSuccessfully", resourceCulture);
+                return ResourceManager.GetString("RepositoryCantBeNull", resourceCulture);
             }
         }
         
@@ -115,25 +115,16 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Repository updated successfully..
-        /// </summary>
-        public static string UpdatedSuccessfully {
-            get {
-                return ResourceManager.GetString("UpdatedSuccessfully", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Url is required..
         /// </summary>
-        public static string Url {
+        public static string UrlIsRequired {
             get {
-                return ResourceManager.GetString("Url", resourceCulture);
+                return ResourceManager.GetString("UrlIsRequired", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Name, Description, and URL are required fields..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a NameIsRequired, Description, and URL are required fields..
         /// </summary>
         public static string ValidationErrorMessage {
             get {
