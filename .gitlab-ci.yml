@@ -25,6 +25,9 @@ test:
   script:
     - mkdir -p ./src/artifacts
     - dotnet test ./src/Application.Tests/Application.Tests.csproj --verbosity normal --logger:"junit;LogFilePath=../artifacts/{assembly}-result.xml;MethodFormat=Class;FailureBodyFormat=Verbose"
+    - dotnet test ./src/ApplicationDomain.Tests/Domain.Tests.csproj --verbosity normal --logger:"junit;LogFilePath=../artifacts/{assembly}-result.xml;MethodFormat=Class;FailureBodyFormat=Verbose"
+    - dotnet test ./src/Infrastructure.Tests/Infrastructure.Tests.csproj --verbosity normal --logger:"junit;LogFilePath=../artifacts/{assembly}-result.xml;MethodFormat=Class;FailureBodyFormat=Verbose"
+    - dotnet test ./src/WebApi.Tests/WebApi.Tests.csproj --verbosity normal --logger:"junit;LogFilePath=../artifacts/{assembly}-result.xml;MethodFormat=Class;FailureBodyFormat=Verbose"
   artifacts:
     when: always
     paths:
