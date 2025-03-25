@@ -117,31 +117,34 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ExistentRepositoryUrl" xml:space="preserve">
-    <value>A repository with the same URL already exists.</value>
-  </data>
-  <data name="Name" xml:space="preserve">
-    <value>Name is required</value>
-  </data>
-  <data name="RegisteredSuccessfully" xml:space="preserve">
-    <value>Repository created successfully.</value>
-  </data>
-  <data name="RepositoryNotFound" xml:space="preserve">
-    <value>Repository not found.</value>
-  </data>
   <data name="DeletedSuccessfully" xml:space="preserve">
-    <value>Repository deleted successfully</value>
+    <value>Deleted Successfully</value>
+  </data>
+  <data name="GettingIntegrationList" xml:space="preserve">
+    <value>Getting Integration List</value>
+  </data>
+  <data name="IdNotFound" xml:space="preserve">
+    <value>Id Not Found</value>
+  </data>
+  <data name="MessageConflict" xml:space="preserve">
+    <value>Message Conflict</value>
+  </data>
+  <data name="MessageNotFound" xml:space="preserve">
+    <value>Message Not Found</value>
+  </data>
+  <data name="MessageSucess" xml:space="preserve">
+    <value>Successfully created</value>
+  </data>
+  <data name="NameIsRequired" xml:space="preserve">
+    <value>Name Is Required</value>
+  </data>
+  <data name="NameValidateLength" xml:space="preserve">
+    <value>The name must be between {0} and {1} characters long.</value>
+  </data>
+  <data name="NoIntegrations" xml:space="preserve">
+    <value>No Integrations</value>
   </data>
   <data name="UpdatedSuccessfully" xml:space="preserve">
-    <value>Repository updated successfully.</value>
-  </data>
-  <data name="Url" xml:space="preserve">
-    <value>Url is required.</value>
-  </data>
-  <data name="Description" xml:space="preserve">
-    <value>Description is required.</value>
-  </data>
-  <data name="ValidationErrorMessage" xml:space="preserve">
-    <value>Name, Description, and URL are required fields.</value>
+    <value>Update integration Not Found.</value>
   </data>
 </root>

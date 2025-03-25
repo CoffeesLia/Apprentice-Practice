@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Domain.Entities;
@@ -36,8 +36,15 @@ namespace Stellantis.ProjectName.WebApi.Mapper
             CreateMap<ResponsibleFilterDto, ResponsibleFilter>();
 
 
+            CreateMap<ApplicationDataDto, ApplicationData>()
+               .ForMember(x => x.Id, x => x.Ignore());
+            CreateMap<ApplicationData, ApplicationVm>();
+            CreateMap<ApplicationDataFilterDto, ApplicationFilter>();
 
-
+            CreateMap<Integration, IntegrationVM>()
+                .ForMember(dest => dest.ApplicationData,
+                opt => opt.MapFrom(src => src.ApplicationData)); 
         }
     }
 }
+

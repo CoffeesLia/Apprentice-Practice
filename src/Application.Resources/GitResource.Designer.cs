@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Stellantis.ProjectName.WebApi.Resources {
+namespace Stellantis.ProjectName.Application.Resources {
     using System;
     
     
@@ -22,14 +22,14 @@ namespace Stellantis.ProjectName.WebApi.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class ControllerResources {
+    public class GitResource {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal ControllerResources() {
+        internal GitResource() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace Stellantis.ProjectName.WebApi.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Stellantis.ProjectName.WebApi.Resources.ControllerResources", typeof(ControllerResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Stellantis.ProjectName.Application.Resources.GitResource", typeof(GitResource).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,20 +61,74 @@ namespace Stellantis.ProjectName.WebApi.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Data cannot be null..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Application not found..
         /// </summary>
-        public static string CannotBeNull {
+        public static string ApplicationNotFound {
             get {
-                return ResourceManager.GetString("CannotBeNull", resourceCulture);
+                return ResourceManager.GetString("ApplicationNotFound", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a ID mismatch..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Description is required..
         /// </summary>
-        public static string IdMismatch {
+        public static string DescriptionIsRequired {
             get {
-                return ResourceManager.GetString("IdMismatch", resourceCulture);
+                return ResourceManager.GetString("DescriptionIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a A repository with the same URL already exists..
+        /// </summary>
+        public static string ExistentRepositoryUrl {
+            get {
+                return ResourceManager.GetString("ExistentRepositoryUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Name is required.
+        /// </summary>
+        public static string NameIsRequired {
+            get {
+                return ResourceManager.GetString("NameIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Repository can&apos;t be null.
+        /// </summary>
+        public static string RepositoryCantBeNull {
+            get {
+                return ResourceManager.GetString("RepositoryCantBeNull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Repository not found..
+        /// </summary>
+        public static string RepositoryNotFound {
+            get {
+                return ResourceManager.GetString("RepositoryNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Url is required..
+        /// </summary>
+        public static string UrlIsRequired {
+            get {
+                return ResourceManager.GetString("UrlIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a NameIsRequired, Description, and URL are required fields..
+        /// </summary>
+        public static string ValidationErrorMessage {
+            get {
+                return ResourceManager.GetString("ValidationErrorMessage", resourceCulture);
             }
         }
     }

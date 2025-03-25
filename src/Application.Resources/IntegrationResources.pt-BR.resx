@@ -117,22 +117,34 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AreaRequired" xml:space="preserve">
-    <value>The Area is mandatory</value>
-  </data>
-  <data name="EmailExists" xml:space="preserve">
-    <value>The email already exists.</value>
-  </data>
   <data name="DeletedSuccessfully" xml:space="preserve">
-    <value>Successfully deleted</value>
+    <value>Integração excluída com sucesso.</value>
   </data>
-  <data name="EmailInvalid" xml:space="preserve">
-    <value>The email must be valid</value>
+  <data name="GettingIntegrationList" xml:space="preserve">
+    <value>Lista de integrações recuperada com sucesso.</value>
   </data>
-  <data name="EmailRequired" xml:space="preserve">
-    <value>Email is mandatory </value>
+  <data name="IdNotFound" xml:space="preserve">
+    <value>Id não encontrado.</value>
   </data>
-  <data name="NameRequired" xml:space="preserve">
-    <value>Name must be required</value>
+  <data name="MessageConflict" xml:space="preserve">
+    <value>A integração já existe.</value>
+  </data>
+  <data name="MessageNotFound" xml:space="preserve">
+    <value>Integração não encontrada.</value>
+  </data>
+  <data name="MessageSucess" xml:space="preserve">
+    <value>Integração criada com sucesso.</value>
+  </data>
+  <data name="NameIsRequired" xml:space="preserve">
+    <value>Nome é obrigatório.</value>
+  </data>
+  <data name="NameValidateLength" xml:space="preserve">
+    <value>O nome deve ter entre {0} e {1} caracteres.</value>
+  </data>
+  <data name="NoIntegrations" xml:space="preserve">
+    <value>Sem integrações.</value>
+  </data>
+  <data name="UpdatedSuccessfully" xml:space="preserve">
+    <value>Integração atualizada com sucesso.</value>
   </data>
 </root>
