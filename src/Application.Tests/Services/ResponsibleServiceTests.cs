@@ -39,14 +39,16 @@ namespace Stellantis.ProjectName.Application.Services.Tests
         {
             // Arrange
             var responsible = _fixture.Build<Responsible>()
-                                      .With(r => r.Nome, string.Empty)
+                                      .With(r => r.Name, string.Empty)
                                       .With(r => r.Area, string.Empty)
                                       .Create();
+
             var validationResult = new ValidationResult(new List<ValidationFailure>
             {
-                new ValidationFailure(nameof(responsible.Nome), "Name is required"),
-                new ValidationFailure(nameof(responsible.Area), "Area is required")
+                new ValidationFailure(nameof(responsible.Name), ResponsibleResource.NameRequired),
+                new ValidationFailure(nameof(responsible.Area), ResponsibleResource.AreaRequired)
             });
+
             _validatorMock.Setup(v => v.ValidateAsync(responsible, default)).ReturnsAsync(validationResult);
 
             // Act
@@ -54,6 +56,8 @@ namespace Stellantis.ProjectName.Application.Services.Tests
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
+            Assert.Contains(ResponsibleResource.NameRequired, result.Errors);
+            Assert.Contains(ResponsibleResource.AreaRequired, result.Errors);
         }
 
         [Fact]
@@ -134,12 +138,17 @@ namespace Stellantis.ProjectName.Application.Services.Tests
         public async Task UpdateAsyncWhenValidationFails()
         {
             // Arrange
-            var responsible = _fixture.Create<Responsible>();
+            var responsible = _fixture.Build<Responsible>()
+                                      .With(r => r.Name, string.Empty)
+                                      .With(r => r.Area, string.Empty)
+                                      .Create();
+
             var validationResult = new ValidationResult(new List<ValidationFailure>
             {
-                new ValidationFailure(nameof(responsible.Nome), "Name is required"),
-                new ValidationFailure(nameof(responsible.Area), "Area is required")
+                new ValidationFailure(nameof(responsible.Name), ResponsibleResource.NameRequired),
+                new ValidationFailure(nameof(responsible.Area), ResponsibleResource.AreaRequired)
             });
+
             _validatorMock.Setup(v => v.ValidateAsync(responsible, default)).ReturnsAsync(validationResult);
 
             // Act
@@ -147,6 +156,8 @@ namespace Stellantis.ProjectName.Application.Services.Tests
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
+            Assert.Contains(ResponsibleResource.NameRequired, result.Errors);
+            Assert.Contains(ResponsibleResource.AreaRequired, result.Errors);
         }
 
         [Fact]
@@ -171,6 +182,7 @@ namespace Stellantis.ProjectName.Application.Services.Tests
             var responsible = _fixture.Create<Responsible>();
             _validatorMock.Setup(v => v.ValidateAsync(responsible, default)).ReturnsAsync(new ValidationResult());
             _unitOfWorkMock.Setup(u => u.ResponsibleRepository.VerifyEmailAlreadyExistsAsync(responsible.Email)).ReturnsAsync(false);
+            _unitOfWorkMock.Setup(u => u.ResponsibleRepository.GetByIdAsync(responsible.Id)).ReturnsAsync(responsible);
 
             // Act
             var result = await _service.UpdateAsync(responsible);

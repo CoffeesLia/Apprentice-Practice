@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Stellantis.ProjectName.Domain.Entities
 {
-    public class ApplicationData(string Name) : EntityBase
+    public class ApplicationData(string name) : EntityBase
     {
-        public string? Name { get; set; } = Name;
+        public string? Name { get; set; } = name;
         public int AreaId { get; set; }
         public Area Area { get; set; } = null!;
 
@@ -17,4 +17,5 @@ namespace Stellantis.ProjectName.Domain.Entities
         
 
     }
+
 }

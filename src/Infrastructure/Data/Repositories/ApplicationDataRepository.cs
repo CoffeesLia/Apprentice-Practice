@@ -6,13 +6,17 @@ using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models.Filters;
 using LinqKit;
-
+using System.Linq.Expressions;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
-    internal class ApplicationDataRepository(Context context) : RepositoryEntityBase<ApplicationData, Context>(context), IApplicationDataRepository
+    public class ApplicationDataRepository : RepositoryBase<ApplicationData, Context>, IApplicationDataRepository
     {
-        public new async Task DeleteAsync(int id, bool saveChanges = true)
+        public ApplicationDataRepository(Context context) : base(context)
+        {
+        }
+
+        public async Task DeleteAsync(int id, bool saveChanges = true)
         {
             var entity = await GetByIdAsync(id).ConfigureAwait(false);
             if (entity != null)
@@ -25,7 +29,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             }
         }
 
-        public new async Task<ApplicationData?> GetByIdAsync(int id)
+        public async Task<ApplicationData?> GetByIdAsync(int id)
         {
             return await Context.Set<ApplicationData>().FindAsync(id).ConfigureAwait(false);
         }
@@ -43,7 +47,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             return await GetListAsync(filter: filters, page: applicationFilter.Page, sort: applicationFilter.Sort, sortDir: applicationFilter.SortDir).ConfigureAwait(false);
         }
-
 
 
         public async Task<bool> IsApplicationNameUniqueAsync(string name, int? id = null)

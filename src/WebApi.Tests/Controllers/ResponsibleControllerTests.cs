@@ -70,7 +70,7 @@ namespace Stellantis.ProjectName.WebApi.Tests.Controllers
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
             var returnedVm = Assert.IsType<ResponsibleVm>(okResult.Value);
             Assert.Equal(responsibleVm.Id, returnedVm.Id);
-            Assert.Equal(responsibleVm.Nome, returnedVm.Nome);
+            Assert.Equal(responsibleVm.Name, returnedVm.Name);
             Assert.Equal(responsibleVm.Email, returnedVm.Email);
             Assert.Equal(responsibleVm.Area, returnedVm.Area);
         }
@@ -93,7 +93,7 @@ namespace Stellantis.ProjectName.WebApi.Tests.Controllers
             var okResult = Assert.IsType<OkObjectResult>(result);
             var returnedPagedResultVm = Assert.IsType<PagedResult<ResponsibleVm>>(okResult.Value);
             Assert.Equal(pagedResultVm.Result.Count(), returnedPagedResultVm.Result.Count());
-            Assert.Equal(pagedResultVm.Result.First().Nome, returnedPagedResultVm.Result.First().Nome);
+            Assert.Equal(pagedResultVm.Result.First().Name, returnedPagedResultVm.Result.First().Name);
         }
 
         [Fact]
