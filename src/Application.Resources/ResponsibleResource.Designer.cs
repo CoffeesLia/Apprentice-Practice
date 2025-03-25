@@ -63,9 +63,9 @@ namespace Stellantis.ProjectName.Application.Resources {
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a The Area is mandatory.
         /// </summary>
-        public static string _AreaRequired__ {
+        public static string AreaRequired {
             get {
-                return ResourceManager.GetString(" AreaRequired  ", resourceCulture);
+                return ResourceManager.GetString("AreaRequired", resourceCulture);
             }
         }
         
@@ -99,9 +99,9 @@ namespace Stellantis.ProjectName.Application.Resources {
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Email is mandatory .
         /// </summary>
-        public static string EmailRequired_ {
+        public static string EmailRequired {
             get {
-                return ResourceManager.GetString("EmailRequired ", resourceCulture);
+                return ResourceManager.GetString("EmailRequired", resourceCulture);
             }
         }
         
