@@ -20,8 +20,8 @@ namespace Stellantis.ProjectName.Infrastructure.Data
         public IApplicationDataRepository ApplicationDataRepository { get; }
         public ISquadRepository SquadRepository { get; }
         public IDataServiceRepository DataServiceRepository { get; }
-
-        // Construtor corrigido
+        public IGitRepoRepository GitRepoRepository { get; }
+        
         public UnitOfWork(Context context)
         {
             _context = context;

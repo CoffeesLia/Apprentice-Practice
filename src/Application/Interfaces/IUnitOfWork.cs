@@ -13,8 +13,9 @@ namespace Stellantis.ProjectName.Application.Interfaces
         public IDataServiceRepository DataServiceRepository { get; }
 
         public IApplicationDataRepository ApplicationDataRepository { get; }                
-
         public ISquadRepository SquadRepository { get; }    
+
+        public IGitRepoRepository GitRepoRepository { get; }
 
         Task CommitAsync();
         void BeginTransaction();

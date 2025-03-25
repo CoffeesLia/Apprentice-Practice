@@ -1,63 +1,55 @@
-﻿
+﻿using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Domain.Entities;
 using FluentValidation.Results;
-using Stellantis.ProjectName.Application.Interfaces.Repositories;
-using Stellantis.ProjectName.Filters;
+using Microsoft.Extensions.Localization;
+using Stellantis.ProjectName.Application.Interfaces;
+using FluentValidation;
 
-namespace Stellantis.ProjectName.Domain.Services
+namespace Stellantis.ProjectName.Application.Services
 {
-    public class GitLabRepositoryService : IGitLabRepository
-    {
-        private readonly List<EntityGitLabRepository> _repositories = new List<EntityGitLabRepository>();
-
-        async Task<OperationResult> IGitLabRepository.CreateAsync(EntityGitLabRepository newRepo)
+    public class GitRepoService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<GitRepo> validator)
+           : EntityServiceBase<GitRepo>(unitOfWork, localizerFactory, validator), IGitRepoService
         {
-            if (IsInvalidRepository(newRepo, out var validationResult))
+
+        private new IStringLocalizer Localizer => localizerFactory.Create(typeof(GitResource));
+
+        protected override IGitRepoRepository Repository => UnitOfWork.GitRepoRepository;
+
+        private readonly List<GitRepo> _repositories = new();
+
+
+        public override async Task<OperationResult> CreateAsync(GitRepo item)
+        {
+            if (IsInvalidRepository(item, out var validationResult))
             {
                 return OperationResult.InvalidData(validationResult);
             }
 
-            if (RepositoryUrlExists(newRepo.Url))
+            if (RepositoryUrlExists(item.Url))
             {
-                return OperationResult.Conflict(GitLabResource.ExistentRepositoryUrl);
+                return OperationResult.Conflict(GitResource.ExistentRepositoryUrl);
             }
 
-            _repositories.Add(newRepo);
-            return OperationResult.Complete(GitLabResource.RegisteredSuccessfully);
+            _repositories.Add(item);
+            return await base.CreateAsync(item).ConfigureAwait(false);
         }
 
-        public async Task<EntityGitLabRepository?> GetRepositoryDetailsAsync(int id)
-        {
-            return _repositories.FirstOrDefault(repo => repo.Id == id);
-        }
-
-        public async Task<OperationResult> CreateAsync(EntityGitLabRepository item)
-        {
-            return await ((IGitLabRepository)this).CreateAsync(item);
-        }
-
-        public async Task<OperationResult> DeleteAsync(int id)
+        public async Task<OperationResult> DeleteAsync(int id, GitRepo item)
         {
             var existingRepo = _repositories.FirstOrDefault(repo => repo.Id == id);
             if (existingRepo == null)
             {
-                return OperationResult.NotFound(GitLabResource.RepositoryNotFound);
+                return OperationResult.NotFound(GitResource.RepositoryNotFound);
             }
 
-            _repositories.Remove(existingRepo);
-            return OperationResult.Complete(GitLabResource.DeletedSuccessfully);
+            return await base.DeleteAsync(item).ConfigureAwait(false);
         }
 
-        public async Task<EntityGitLabRepository?> GetItemAsync(int id)
-        {
-            return await GetRepositoryDetailsAsync(id);
-        }
-
-        public async Task<PagedResult<EntityGitLabRepository>> GetListAsync(GitLabFilter filter)
+        public async Task<PagedResult<GitRepo>> GetListAsync(GitRepoFilter filter)
         {
             var filteredRepos = _repositories.AsQueryable();
 
@@ -76,7 +68,7 @@ namespace Stellantis.ProjectName.Domain.Services
                 filteredRepos = filteredRepos.Where(repo => repo.Url.Contains(filter.Url));
             }
 
-            var result = new PagedResult<EntityGitLabRepository>
+            var result = new PagedResult<GitRepo>
             {
                 Result = filteredRepos.ToList(),
                 Page = 1,
@@ -87,7 +79,7 @@ namespace Stellantis.ProjectName.Domain.Services
             return await Task.FromResult(result);
         }
 
-        public async IAsyncEnumerable<EntityGitLabRepository> ListRepositories()
+        public async IAsyncEnumerable<GitRepo> ListRepositories()
         {
             foreach (var repo in _repositories)
             {
@@ -96,33 +88,32 @@ namespace Stellantis.ProjectName.Domain.Services
             }
         }
 
-        Task<OperationResult> IEntityServiceBase<EntityGitLabRepository>.UpdateAsync(EntityGitLabRepository item)
+        Task<OperationResult> IEntityServiceBase<GitRepo>.UpdateAsync(GitRepo item)
         {
-            return Task.FromResult(OperationResult.Conflict(GitLabResource.ValidationErrorMessage));
+            return Task.FromResult(OperationResult.Conflict(GitResource.ValidationErrorMessage));
         }
 
-
-        private bool IsInvalidRepository(EntityGitLabRepository repo, out ValidationResult validationResult)
+        private bool IsInvalidRepository(GitRepo repo, out ValidationResult validationResult)
         {
             var failures = new List<ValidationFailure>();
 
             if (string.IsNullOrWhiteSpace(repo.Name))
             {
-                failures.Add(new ValidationFailure("Name", GitLabResource.Name));
+                OperationResult.Complete(Localizer[nameof(GitResource.NameIsRequired)]);
             }
 
             if (string.IsNullOrWhiteSpace(repo.Description))
             {
-                failures.Add(new ValidationFailure("Description", GitLabResource.Description));
+                OperationResult.Complete(Localizer[nameof(GitResource.DescriptionIsRequired)]);
             }
 
             if (string.IsNullOrWhiteSpace(repo.Url))
             {
-                failures.Add(new ValidationFailure("Url", GitLabResource.Url));
+                OperationResult.Complete(Localizer[nameof(GitResource.UrlIsRequired)]);
             }
 
             validationResult = new ValidationResult(failures);
-            return failures.Any();
+            return failures.Count != 0;
         }
 
         private bool RepositoryUrlExists(string url, int? id = null)
@@ -130,7 +121,7 @@ namespace Stellantis.ProjectName.Domain.Services
             return _repositories.Any(repo => repo.Url == url && (!id.HasValue || repo.Id != id.Value));
         }
 
-        private void UpdateRepository(EntityGitLabRepository existingRepo, EntityGitLabRepository updatedRepo)
+        private static void UpdateRepository(GitRepo existingRepo, GitRepo updatedRepo)
         {
             existingRepo.Name = updatedRepo.Name;
             existingRepo.Description = updatedRepo.Description;
@@ -138,12 +129,12 @@ namespace Stellantis.ProjectName.Domain.Services
             existingRepo.ApplicationId = updatedRepo.ApplicationId;
         }
 
-        public async Task<OperationResult> UpdateAsync(EntityGitLabRepository updatedRepo, string v)
+        public async Task<OperationResult> UpdateAsync(GitRepo updatedRepo)
         {
             var existingRepo = _repositories.FirstOrDefault(repo => repo.Id == updatedRepo.Id);
             if (existingRepo == null)
             {
-                return OperationResult.NotFound(GitLabResource.RepositoryNotFound);
+                return OperationResult.NotFound(GitResource.RepositoryNotFound);
             }
 
             if (IsInvalidRepository(updatedRepo, out var validationResult))
@@ -153,11 +144,18 @@ namespace Stellantis.ProjectName.Domain.Services
 
             if (RepositoryUrlExists(updatedRepo.Url, updatedRepo.Id))
             {
-                return OperationResult.Conflict(GitLabResource.ExistentRepositoryUrl);
+                return OperationResult.Conflict(GitResource.ExistentRepositoryUrl);
             }
 
             UpdateRepository(existingRepo, updatedRepo);
-            return OperationResult.Complete(GitLabResource.UpdatedSuccessfully);
+            return OperationResult.Complete(Localizer[ServiceResources.UpdatedSuccessfully]);
+        }
+
+        public async Task<bool> VerifyAplicationsExistsAsync(int id)
+        {
+            return await Repository.AnyAsync(a => a.Id == id).ConfigureAwait(false);
         }
     }
+
 }
+

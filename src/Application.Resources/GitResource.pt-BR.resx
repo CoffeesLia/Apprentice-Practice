@@ -120,28 +120,28 @@
   <data name="ExistentRepositoryUrl" xml:space="preserve">
     <value>Um repositório com este mesmo Url já existe</value>
   </data>
-  <data name="Name" xml:space="preserve">
+  <data name="NameIsRequired" xml:space="preserve">
     <value>O Nome é obrigatório</value>
-  </data>
-  <data name="RegisteredSuccessfully" xml:space="preserve">
-    <value>Repositório criado com sucesso</value>
   </data>
   <data name="RepositoryNotFound" xml:space="preserve">
     <value>Repositório não encontrado</value>
   </data>
-  <data name="DeletedSuccessfully" xml:space="preserve">
-    <value>Repositório deletado com sucesso</value>
-  </data>
-  <data name="UpdatedSuccessfully" xml:space="preserve">
-    <value>Repositório editado com sucesso</value>
-  </data>
-  <data name="Url" xml:space="preserve">
+  <data name="UrlIsRequired" xml:space="preserve">
     <value>O Url é obrigatório</value>
   </data>
-  <data name="Description" xml:space="preserve">
+  <data name="DescriptionIsRequired" xml:space="preserve">
     <value>A Descrição é obrigatória</value>
   </data>
   <data name="ValidationErrorMessage" xml:space="preserve">
     <value>Nome, Descrição e Url são obrigatórias.</value>
+  </data>
+  <data name="ApplicationNotFound" xml:space="preserve">
+    <value>Aplicação não encontrada.</value>
+  </data>
+  <data name="RepositoryCantBeNull" xml:space="preserve">
+    <value>Repositório não pode ser nulo</value>
+  </data>
+  <data name="AlreadyExists" xml:space="preserve">
+    <value>Já existe.</value>
   </data>
 </root>
