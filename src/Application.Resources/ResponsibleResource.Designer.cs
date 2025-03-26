@@ -61,7 +61,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a The Area is mandatory.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a The Area is mandatory..
         /// </summary>
         public static string _AreaRequired__ {
             get {
@@ -70,7 +70,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Successfully deleted.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Successfully deleted..
         /// </summary>
         public static string DeletedSuccessfully {
             get {
@@ -88,7 +88,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a The email must be valid.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a The email must be valid..
         /// </summary>
         public static string EmailInvalid {
             get {
@@ -97,7 +97,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Email is mandatory .
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Email is mandatory..
         /// </summary>
         public static string EmailRequired_ {
             get {
@@ -106,7 +106,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Name must be required.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Name must be required..
         /// </summary>
         public static string NameRequired {
             get {

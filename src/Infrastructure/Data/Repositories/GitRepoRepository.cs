@@ -4,10 +4,7 @@ using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Domain.Entities;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using LinqKit;
-using Stellantis.ProjectName.Application.Resources;
 using System.Data.Entity;
-using Microsoft.Identity.Client;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
@@ -83,6 +80,15 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             return await Context.Set<GitRepo>().AnyAsync(repo => repo.ApplicationId == id).ConfigureAwait(false);
         }
 
+        async Task IRepositoryEntityBase<GitRepo>.DeleteAsync(int id, bool saveChanges)
+        {
+            await DeleteAsync(id, saveChanges).ConfigureAwait(false);
+        }
+
+        public Task<bool> DeleteAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 

@@ -61,6 +61,24 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Already Exists..
+        /// </summary>
+        public static string AlreadyExists {
+            get {
+                return ResourceManager.GetString("AlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Application Id is required..
+        /// </summary>
+        public static string ApplicationIdIsRequired {
+            get {
+                return ResourceManager.GetString("ApplicationIdIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Application not found..
         /// </summary>
         public static string ApplicationNotFound {
@@ -88,7 +106,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Name is required.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Name is required..
         /// </summary>
         public static string NameIsRequired {
             get {
@@ -97,7 +115,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Repository can&apos;t be null.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Repository can&apos;t be null..
         /// </summary>
         public static string RepositoryCantBeNull {
             get {
@@ -111,6 +129,15 @@ namespace Stellantis.ProjectName.Application.Resources {
         public static string RepositoryNotFound {
             get {
                 return ResourceManager.GetString("RepositoryNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Url is Invalid..
+        /// </summary>
+        public static string UrlIsInvalid {
+            get {
+                return ResourceManager.GetString("UrlIsInvalid", resourceCulture);
             }
         }
         
