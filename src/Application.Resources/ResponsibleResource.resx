@@ -118,21 +118,21 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AreaRequired" xml:space="preserve">
-    <value>The Area is mandatory</value>
+    <value>The Area is mandatory.</value>
   </data>
   <data name="EmailExists" xml:space="preserve">
     <value>The email already exists.</value>
   </data>
   <data name="DeletedSuccessfully" xml:space="preserve">
-    <value>Successfully deleted</value>
+    <value>Successfully deleted.</value>
   </data>
   <data name="EmailInvalid" xml:space="preserve">
-    <value>The email must be valid</value>
+    <value>The email must be valid.</value>
   </data>
   <data name="EmailRequired" xml:space="preserve">
-    <value>Email is mandatory </value>
+    <value>Email is mandatory.</value>
   </data>
   <data name="NameRequired" xml:space="preserve">
-    <value>Name must be required</value>
+    <value>Name must be required.</value>
   </data>
 </root>

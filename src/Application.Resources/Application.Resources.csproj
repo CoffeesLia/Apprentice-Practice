@@ -88,10 +88,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>FilterResources.resx</DependentUpon>
     </Compile>
-    <Compile Update="GitLabResource.Designer.cs">
+    <Compile Update="GitResource.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>GitLabResource.resx</DependentUpon>
+      <DependentUpon>GitResource.resx</DependentUpon>
+    </Compile>
     <Compile Update="IntegrationResources.Designer.cs">
       <DependentUpon>IntegrationResources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
@@ -158,6 +159,10 @@
     <EmbeddedResource Update="GitLabResource.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>GitLabResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="GitResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>GitResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="IntegrationResources.resx">
       <LastGenOutput>IntegrationResources.Designer.cs</LastGenOutput>

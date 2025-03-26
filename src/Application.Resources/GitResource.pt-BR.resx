@@ -144,4 +144,10 @@
   <data name="AlreadyExists" xml:space="preserve">
     <value>Já existe.</value>
   </data>
+  <data name="UrlIsInvalid" xml:space="preserve">
+    <value>O Url é inválido.</value>
+  </data>
+  <data name="ApplicationIdIsRequired" xml:space="preserve">
+    <value>O Id da aplicação é obrigatória.</value>
+  </data>
 </root>
