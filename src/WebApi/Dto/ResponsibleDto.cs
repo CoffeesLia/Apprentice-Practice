@@ -4,7 +4,7 @@
     public class ResponsibleDto
     {
         public required string Email { get; set; }
-        public required string Nome { get; set; }
+        public required string Name { get; set; }
         public required string Area { get; set; }
     }
 }

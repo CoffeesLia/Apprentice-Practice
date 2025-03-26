@@ -10,10 +10,11 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Validators
 {
-    internal class DataServiceValidator : AbstractValidator<EDataService>
+    public class DataServiceValidator : AbstractValidator<EDataService>
     {
-        internal const int MinimumLength = 3;
-        internal const int MaximumLength = 255;
+        public const int MinimumLength = 3;
+        public const int MaximumLength = 255;
+
         public DataServiceValidator(IStringLocalizerFactory localizerFactory)
         {
             ArgumentNullException.ThrowIfNull(localizerFactory);
@@ -27,4 +28,3 @@ namespace Stellantis.ProjectName.Application.Validators
         }
     }
 }
-

@@ -16,8 +16,8 @@ namespace Stellantis.ProjectName.WebApi.Controllers
     [Route("api/applications")]
 
     internal sealed class ApplicationDataControllerBase(IApplicationDataService service,
-        IMapper mapper, IStringLocalizerFactory localizerFactory) : 
-        EntityControllerBase<ApplicationData, ApplicationDataDto >(service, mapper, localizerFactory) 
+        IMapper mapper, IStringLocalizerFactory localizerFactory) :
+        EntityControllerBase<ApplicationData, ApplicationDataDto>(service, mapper, localizerFactory)
     {
         protected override IApplicationDataService Service => (IApplicationDataService)base.Service;
 
@@ -31,7 +31,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ApplicationVm>> GetAsync(int id)
         {
-            return await GetAsync<ApplicationVm>(id).ConfigureAwait(false); 
+            return await GetAsync<ApplicationVm>(id).ConfigureAwait(false);
         }
 
 

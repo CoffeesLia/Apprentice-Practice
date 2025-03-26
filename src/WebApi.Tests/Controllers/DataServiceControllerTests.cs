@@ -7,9 +7,11 @@ using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Controllers;
+using Stellantis.ProjectName.Application.Validators;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Xunit;
+using FluentValidation.TestHelper;
 
 namespace WebApi.Tests.Controllers
 {
@@ -20,6 +22,8 @@ namespace WebApi.Tests.Controllers
         private readonly Mock<IMapper> _mapperMock = new();
         private readonly Mock<IStringLocalizerFactory> _localizerMock = new();
         private readonly DataServiceController _controller;
+        private readonly Mock<IStringLocalizerFactory> _localizerFactoryMock;
+        private readonly DataServiceValidator _validator;
 
         public DataServiceControllerTests()
         {
@@ -28,6 +32,10 @@ namespace WebApi.Tests.Controllers
                      .Returns(new LocalizedString(nameof(DataServiceController.GetServiceById) + "_ServiceNotFound", "Service not found."));
             localizer.Setup(l => l[nameof(DataServiceController.GetAllServices) + "_NoServicesFound"])
                      .Returns(new LocalizedString(nameof(DataServiceController.GetAllServices) + "_NoServicesFound", "No services found."));
+            localizer.Setup(l => l[nameof(DataServiceResources.ServiceCannotBeNull)])
+                     .Returns(new LocalizedString(nameof(DataServiceResources.ServiceCannotBeNull), "Service cannot be null."));
+            localizer.Setup(l => l[nameof(DataServiceResources.ServiceNameAlreadyExists)])
+                     .Returns(new LocalizedString(nameof(DataServiceResources.ServiceNameAlreadyExists), "Service Name Already Exists."));
             _localizerMock.Setup(l => l.Create(typeof(DataServiceResources))).Returns(localizer.Object);
 
             _controller = new DataServiceController(
@@ -36,6 +44,12 @@ namespace WebApi.Tests.Controllers
                 _mapperMock.Object,
                 _localizerMock.Object
             );
+            _localizerFactoryMock = new Mock<IStringLocalizerFactory>();
+            localizer.Setup(l => l[nameof(DataServiceResources.NameValidateLength), It.IsAny<object[]>()])
+                     .Returns(new LocalizedString(nameof(DataServiceResources.NameValidateLength), "Name must be between {0} and {1} characters."));
+
+            _localizerFactoryMock.Setup(l => l.Create(typeof(DataServiceResources))).Returns(localizer.Object);
+            _validator = new DataServiceValidator(_localizerFactoryMock.Object);
         }
 
         [Fact]
@@ -43,10 +57,10 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             var services = new List<EDataService>
-    {
-        new() { Id = 1, Name = "Service 1", ApplicationId = 1 },
-        new() { Id = 2, Name = "Service 2", ApplicationId = 2 }
-    };
+            {
+                new() { Id = 1, Name = "Service 1", ApplicationId = 1 },
+                new() { Id = 2, Name = "Service 2", ApplicationId = 2 }
+            };
             _serviceMock.Setup(s => s.GetAllServicesAsync()).ReturnsAsync(services);
 
             // Act
@@ -112,11 +126,6 @@ namespace WebApi.Tests.Controllers
             var service = new EDataService { Id = 1, Name = "Existing Service", ApplicationId = 1 };
             _serviceMock.Setup(s => s.GetServiceByIdAsync(service.Id)).ReturnsAsync(service);
 
-            var localizer = new Mock<IStringLocalizer>();
-            localizer.Setup(l => l[nameof(DataServiceResources.ServiceNameAlreadyExists)])
-                .Returns(new LocalizedString(nameof(DataServiceResources.ServiceNameAlreadyExists), "Service Name Already Exists."));
-            _localizerMock.Setup(l => l.Create(typeof(DataServiceResources))).Returns(localizer.Object);
-
             // Act
             var result = await _controller.AddService(service);
 
@@ -151,7 +160,7 @@ namespace WebApi.Tests.Controllers
 
             var localizer = new Mock<IStringLocalizer>();
             localizer.Setup(l => l[nameof(DataServiceController.GetServiceById) + "_ServiceNotFound"])
-                     .Returns(new LocalizedString(nameof(DataServiceController.GetServiceById) + "_ServiceNotFound", string.Empty)); // Simula mensagem localizada vazia
+                     .Returns(new LocalizedString(nameof(DataServiceController.GetServiceById) + "_ServiceNotFound", "Service not found."));
             _localizerMock.Setup(l => l.Create(typeof(DataServiceResources))).Returns(localizer.Object);
 
             // Act
@@ -171,11 +180,6 @@ namespace WebApi.Tests.Controllers
             _serviceMock.Setup(s => s.GetServiceByIdAsync(It.IsAny<int>()))
                         .ReturnsAsync((EDataService?)null);
 
-            var localizer = new Mock<IStringLocalizer>();
-            localizer.Setup(l => l[nameof(DataServiceController.GetServiceById) + "_ServiceNotFound"])
-                     .Returns(new LocalizedString(nameof(DataServiceController.GetServiceById) + "_ServiceNotFound", "Service not found."));
-            _localizerMock.Setup(l => l.Create(typeof(DataServiceResources))).Returns(localizer.Object);
-
             // Act
             var result = await _controller.GetServiceById(1);
 
@@ -193,11 +197,6 @@ namespace WebApi.Tests.Controllers
             _serviceMock.Setup(s => s.GetAllServicesAsync())
                         .ReturnsAsync([]);
 
-            var localizer = new Mock<IStringLocalizer>();
-            localizer.Setup(l => l[nameof(DataServiceController.GetAllServices) + "_NoServicesFound"])
-                     .Returns(new LocalizedString(nameof(DataServiceController.GetAllServices) + "_NoServicesFound", "No services found."));
-            _localizerMock.Setup(l => l.Create(typeof(DataServiceResources))).Returns(localizer.Object);
-
             // Act
             var result = await _controller.GetAllServices();
 
@@ -205,7 +204,7 @@ namespace WebApi.Tests.Controllers
             var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
             var messageProperty = notFoundResult.Value?.GetType().GetProperty("Message");
             var message = messageProperty != null ? messageProperty.GetValue(notFoundResult.Value, null) as string : null;
-            Assert.Equal("No services found.", message); // Verifica a mensagem correta
+            Assert.Equal("No services found.", message);
         }
 
         [Fact]
@@ -213,11 +212,6 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             _serviceMock.Setup(s => s.GetAllServicesAsync()).ReturnsAsync([]);
-
-            var localizer = new Mock<IStringLocalizer>();
-            localizer.Setup(l => l[nameof(DataServiceController.GetAllServices) + "_NoServicesFound"])
-                     .Returns(new LocalizedString(nameof(DataServiceController.GetAllServices) + "_NoServicesFound", string.Empty)); // Simula mensagem localizada vazia
-            _localizerMock.Setup(l => l.Create(typeof(DataServiceResources))).Returns(localizer.Object);
 
             // Act
             var result = await _controller.GetAllServices();
@@ -243,6 +237,22 @@ namespace WebApi.Tests.Controllers
         }
 
         [Fact]
+        public async Task AddServiceReturnsBadRequestWhenServiceIsNull()
+        {
+            // Arrange
+            EDataService? service = null;
+
+            // Act
+            var result = await _controller.AddService(service!);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            var messageProperty = badRequestResult.Value?.GetType().GetProperty("Message");
+            var message = messageProperty != null ? messageProperty.GetValue(badRequestResult.Value, null) as string : null;
+            Assert.Equal("Service cannot be null.", message);
+        }
+
+        [Fact]
         public async Task UpdateServiceReturnsBadRequestWhenServiceIsNull()
         {
             // Arrange
@@ -253,23 +263,128 @@ namespace WebApi.Tests.Controllers
 
             // Assert
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Equal("Service cannot be null", badRequestResult.Value);
+            var messageProperty = badRequestResult.Value?.GetType().GetProperty("Message");
+            var message = messageProperty != null ? messageProperty.GetValue(badRequestResult.Value, null) as string : null;
+            Assert.Equal("Service cannot be null.", message);
         }
 
         [Fact]
         public async Task UpdateServiceReturnsBadRequestWhenServiceIsInvalid()
         {
             // Arrange
-            var service = new EDataService { Id = 1, Name = "Invalid Service" }; 
-            _controller.ModelState.AddModelError("Name", "Required"); 
+            var service = new EDataService { Id = 1, Name = "Invalid Service" };
+            _controller.ModelState.AddModelError("Name", "Required");
 
             // Act
             var result = await _controller.UpdateService(1, service);
 
             // Assert
-            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result); 
-            var modelState = Assert.IsType<SerializableError>(badRequestResult.Value); 
-            Assert.True(modelState.ContainsKey("Name")); 
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            var modelState = Assert.IsType<SerializableError>(badRequestResult.Value);
+            Assert.True(modelState.ContainsKey("Name"));
+        }
+
+        [Fact]
+        public void DataServiceFilterDtoShouldCreateInstanceWithValidData()
+        {
+            // Arrange
+            var name = "Test Service";
+            var area = new AreaFilterDto { Name = "Test Area" };
+
+            // Act
+            var dto = new DataServiceFilterDto
+            {
+                Name = name,
+                Area = area
+            };
+
+            // Assert
+            Assert.Equal(name, dto.Name);
+            Assert.Equal(area, dto.Area);
+        }
+
+        [Fact]
+        public void DataServiceDtoShouldCreateInstanceWithValidData()
+        {
+            // Arrange
+            var name = "Test Service";
+            var description = "Test Description";
+            var applicationId = 1;
+
+            // Act
+            var dto = new DataServiceDto
+            {
+                Name = name,
+                Description = description,
+                ApplicationId = applicationId
+            };
+
+            // Assert
+            Assert.Equal(name, dto.Name);
+            Assert.Equal(description, dto.Description);
+            Assert.Equal(applicationId, dto.ApplicationId);
+        }
+
+        [Fact]
+        public void DataServiceDtoShouldAllowNullDescription()
+        {
+            // Arrange
+            var name = "Test Service";
+            var applicationId = 1;
+
+            // Act
+            var dto = new DataServiceDto
+            {
+                Name = name,
+                Description = null,
+                ApplicationId = applicationId
+            };
+
+            // Assert
+            Assert.Equal(name, dto.Name);
+            Assert.Null(dto.Description);
+            Assert.Equal(applicationId, dto.ApplicationId);
+        }
+
+        [Fact]
+        public void ShouldHaveErrorWhenNameIsTooShort()
+        {
+            // Arrange
+            var model = new EDataService { Name = "ab" };
+
+            // Act
+            var result = _validator.TestValidate(model);
+
+            // Assert
+            result.ShouldHaveValidationErrorFor(x => x.Name)
+                  .WithErrorMessage(_localizerFactoryMock.Object.Create(typeof(DataServiceResources))[nameof(DataServiceResources.NameValidateLength), DataServiceValidator.MinimumLength, DataServiceValidator.MaximumLength]);
+        }
+
+        [Fact]
+        public void ShouldHaveErrorWhenNameIsTooLong()
+        {
+            // Arrange
+            var model = new EDataService { Name = new string('a', 256) };
+
+            // Act
+            var result = _validator.TestValidate(model);
+
+            // Assert
+            result.ShouldHaveValidationErrorFor(x => x.Name)
+                  .WithErrorMessage(_localizerFactoryMock.Object.Create(typeof(DataServiceResources))[nameof(DataServiceResources.NameValidateLength), DataServiceValidator.MinimumLength, DataServiceValidator.MaximumLength]);
+        }
+
+        [Fact]
+        public void ShouldNotHaveErrorWhenNameIsValid()
+        {
+            // Arrange
+            var model = new EDataService { Name = "ValidName" };
+
+            // Act
+            var result = _validator.TestValidate(model);
+
+            // Assert
+            result.ShouldNotHaveValidationErrorFor(x => x.Name);
         }
     }
 }

@@ -70,6 +70,33 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Member added successfully..
+        /// </summary>
+        public static string MemberAddedSuccessfully {
+            get {
+                return ResourceManager.GetString("MemberAddedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a This e-mail already exists..
+        /// </summary>
+        public static string MemberEmailAlreadyExists {
+            get {
+                return ResourceManager.GetString("MemberEmailAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a All mandatory fields must be completed..
+        /// </summary>
+        public static string MemberRequiredFieldsMissing {
+            get {
+                return ResourceManager.GetString("MemberRequiredFieldsMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a The name is required..
         /// </summary>
         public static string NameIsRequired {
@@ -84,6 +111,15 @@ namespace Stellantis.ProjectName.Application.Resources {
         public static string NameValidateLength {
             get {
                 return ResourceManager.GetString("NameValidateLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Area not found..
+        /// </summary>
+        public static string NotFound {
+            get {
+                return ResourceManager.GetString("NotFound", resourceCulture);
             }
         }
         

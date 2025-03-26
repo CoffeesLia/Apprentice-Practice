@@ -77,5 +77,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             return area.Applications.Any();
         }
+
+  
     }
 }

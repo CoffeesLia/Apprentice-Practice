@@ -121,15 +121,12 @@
     <value>The name already exits.</value>
   </data>
   <data name="ApplicationNotFound" xml:space="preserve">
-    <value>Application not found</value>
+    <value>Application cannot be found</value>
   </data>
   <data name="NameRequired" xml:space="preserve">
     <value>The name is required.</value>
   </data>
   <data name="NameValidateLength" xml:space="preserve">
     <value>The name must be between {0} and {1} characters long.</value>
-  </data>
-  <data name="NotFound" xml:space="preserve">
-    <value>Application cannot be found</value>
   </data>
 </root>

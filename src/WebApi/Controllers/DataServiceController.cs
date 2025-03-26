@@ -23,28 +23,19 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             var service = await _serviceService.GetServiceByIdAsync(id).ConfigureAwait(false);
             if (service == null)
             {
-                var localizedMessage = _localizer[nameof(GetServiceById) + "_ServiceNotFound"];
-                if (localizedMessage == null || string.IsNullOrEmpty(localizedMessage.Value))
-                {
-                    return NotFound(new { Message = "Service not found." });
-                }
-                return NotFound(new { Message = localizedMessage.Value });
+                var localizedMessage = _localizer[nameof(GetServiceById) + "_ServiceNotFound"].Value;
+                return NotFound(new { Message = localizedMessage });
             }
             return Ok(service);
         }
 
-        [HttpGet]
         public async Task<IActionResult> GetAllServices()
         {
             var services = await _serviceService.GetAllServicesAsync().ConfigureAwait(false);
             if (!services.Any())
             {
-                var localizedMessage = _localizer[nameof(GetAllServices) + "_NoServicesFound"];
-                if (localizedMessage == null || string.IsNullOrEmpty(localizedMessage.Value))
-                {
-                    return NotFound(new { Message = "No services found." });
-                }
-                return NotFound(new { Message = localizedMessage.Value });
+                var localizedMessage = _localizer[nameof(GetAllServices) + "_NoServicesFound"].Value;
+                return NotFound(new { Message = localizedMessage });
             }
             return Ok(services);
         }
@@ -54,7 +45,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         {
             if (service == null)
             {
-                return BadRequest("Service cannot be null");
+                return BadRequest(new { Message = _localizer[nameof(DataServiceResources.ServiceCannotBeNull)].Value });
             }
 
             if (!ModelState.IsValid)
@@ -65,9 +56,8 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             var existingService = await _serviceService.GetServiceByIdAsync(service.Id).ConfigureAwait(false);
             if (existingService != null)
             {
-                var localizedMessage = _localizer[nameof(DataServiceResources.ServiceNameAlreadyExists)];
-                var message = localizedMessage?.Value ?? "Service Name Already Exists.";
-                return Conflict(new { Message = message });
+                var localizedMessage = _localizer[nameof(DataServiceResources.ServiceNameAlreadyExists)].Value;
+                return Conflict(new { Message = localizedMessage });
             }
 
             await _serviceService.AddServiceAsync(service).ConfigureAwait(false);
@@ -79,10 +69,15 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         {
             if (service == null)
             {
-                return BadRequest("Service cannot be null");
+                return BadRequest(new { Message = _localizer[nameof(DataServiceResources.ServiceCannotBeNull)].Value });
             }
 
-            if (id != service.Id || !ModelState.IsValid)
+            if (id != service.Id)
+            {
+                return BadRequest();
+            }
+
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }

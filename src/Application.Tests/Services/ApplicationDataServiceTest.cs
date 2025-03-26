@@ -15,6 +15,8 @@ using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using Xunit;
 using AutoFixture;
+using Stellantis.ProjectName.Application.Resources;
+using Microsoft.Extensions.Localization;
 
 namespace Application.Tests.Services
 {
@@ -23,6 +25,7 @@ namespace Application.Tests.Services
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private readonly Mock<IApplicationDataRepository> _applicationDataRepositoryMock;
         private readonly ApplicationDataService _applicationDataService;
+
 
         public ApplicationDataServiceTest()
         {
@@ -37,6 +40,7 @@ namespace Application.Tests.Services
             _applicationDataService = new ApplicationDataService(_unitOfWorkMock.Object, localizer, applicationDataValidator);
         }
 
+      
         [Fact]
         public async Task CreateAsyncShouldReturnSuccessWhenApplicationDataIsValid()
         {
@@ -64,7 +68,9 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
+            Assert.Equal(string.Format(ApplicationDataResources.NameValidateLength, ApplicationDataValidator.MinimumLength, ApplicationDataValidator.MaximumLength), result.Errors.First());
         }
+
 
         [Fact]
         public async Task CreateAsyncShouldReturnConflictWhenNameAlreadyExists()
@@ -81,8 +87,10 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
-        }
+            Assert.Equal(ApplicationDataResources.AlreadyExists, result.Message);
 
+        }
+        
         [Fact]
         public async Task CreateAsyncShouldReturnConflictWhenNameIsNullOrEmptyOrWhitespace()
         {
@@ -92,6 +100,9 @@ namespace Application.Tests.Services
             var result = await _applicationDataService.CreateAsync(applicationData);
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal(ApplicationDataResources.NameRequired, result.Message);
+
+
         }
 
 
@@ -128,6 +139,9 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(OperationStatus.NotFound, result.Status);
+            Assert.Equal(ApplicationDataResources.ApplicationNotFound, result.Message);
+
+
         }
 
         [Fact]
@@ -156,6 +170,7 @@ namespace Application.Tests.Services
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
 
+
         }
 
         [Fact]
@@ -174,6 +189,9 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal(ApplicationDataResources.AlreadyExists, result.Message);
+            
+
         }
 
         [Fact]
@@ -191,7 +209,9 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(OperationStatus.NotFound, result.Status);
+
         }
+        
 
         [Fact]
         public async Task GetListAsyncShouldReturnPagedResultWhenCalledWithValidFilter()
@@ -246,6 +266,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(OperationStatus.NotFound, result.Status);
+
         }
 
     }

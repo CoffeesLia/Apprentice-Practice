@@ -1,7 +1,8 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Domain.Entities;
+using Stellantis.ProjectName.Domain.Entity;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.ViewModels;
@@ -21,6 +22,29 @@ namespace Stellantis.ProjectName.WebApi.Mapper
             CreateMap<AreaFilterDto, AreaFilter>();
 
             CreateMap<DataServiceDto, DataService>();
+
+            // Correção do mapeamento de Squad
+            CreateMap<SquadDto, EntitySquad>()
+                .ForMember(x => x.Id, x => x.Ignore());
+            CreateMap<EntitySquad, SquadDto>();
+
+            // Adicionando mapeamento para Responsible
+            CreateMap<ResponsibleDto, Responsible>()
+                .ForMember(x => x.Id, x => x.Ignore());
+            CreateMap<Responsible, ResponsibleVm>()
+                .ForMember(dest => dest.Area, opt => opt.MapFrom(src => src.Area));
+            CreateMap<ResponsibleFilterDto, ResponsibleFilter>();
+
+
+            CreateMap<ApplicationDataDto, ApplicationData>()
+               .ForMember(x => x.Id, x => x.Ignore());
+            CreateMap<ApplicationData, ApplicationVm>();
+            CreateMap<ApplicationDataFilterDto, ApplicationFilter>();
+
+            CreateMap<Integration, IntegrationVM>()
+                .ForMember(dest => dest.ApplicationData,
+                opt => opt.MapFrom(src => src.ApplicationData)); 
         }
     }
 }
+
