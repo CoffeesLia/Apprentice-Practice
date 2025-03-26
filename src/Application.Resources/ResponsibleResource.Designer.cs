@@ -65,7 +65,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         /// </summary>
         public static string AreaRequired {
             get {
-                return ResourceManager.GetString(" AreaRequired  ", resourceCulture);
+                return ResourceManager.GetString("AreaRequired", resourceCulture);
             }
         }
         
@@ -101,7 +101,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         /// </summary>
         public static string EmailRequired {
             get {
-                return ResourceManager.GetString("EmailRequired ", resourceCulture);
+                return ResourceManager.GetString("EmailRequired", resourceCulture);
             }
         }
         

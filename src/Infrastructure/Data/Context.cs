@@ -12,6 +12,8 @@ namespace Stellantis.ProjectName.Infrastructure.Data
         public DbSet<Responsible> Responsibles { get; set; } 
         public DbSet<Area> Areas { get; set; }
         public DbSet<EntitySquad> Squads { get; set; }
+        public DbSet<Integration> Integrations { get; set; }
+        
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

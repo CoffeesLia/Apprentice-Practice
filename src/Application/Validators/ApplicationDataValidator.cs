@@ -10,21 +10,20 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Validators
 {
-    internal class ApplicationDataValidator : AbstractValidator<ApplicationData>
+    public class ApplicationDataValidator : AbstractValidator<ApplicationData>
     {
-        internal const int MinimumLength = 3;
-        internal const int MaximumLength = 255;
+        public const int MinimumLength = 3;
+        public const int MaximumLength = 255;
         public ApplicationDataValidator(IStringLocalizerFactory localizerFactory)
         {
             ArgumentNullException.ThrowIfNull(localizerFactory);
             var localizer = localizerFactory.Create(typeof(ApplicationDataResources));
 
             RuleFor(x => x.Name)
-               .MinimumLength(MinimumLength)
-               .WithMessage(localizer[nameof(ApplicationDataResources.NameValidateLength), MinimumLength, MaximumLength])
-               .MaximumLength(MaximumLength)
-               .WithMessage(localizer[nameof(ApplicationDataResources.NameValidateLength), MinimumLength, MaximumLength]);
+                .NotEmpty()
+                .WithMessage(localizer[nameof(ApplicationDataResources.NameRequired)])
+                .Length(MinimumLength, MaximumLength)
+                .WithMessage(localizer[nameof(ApplicationDataResources.NameValidateLength), MinimumLength, MaximumLength]);
         }
     }
 }
-

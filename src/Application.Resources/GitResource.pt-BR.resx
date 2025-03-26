@@ -117,22 +117,31 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AreaRequired" xml:space="preserve">
-    <value>The Area is mandatory</value>
+  <data name="ExistentRepositoryUrl" xml:space="preserve">
+    <value>Um repositório com este mesmo Url já existe</value>
   </data>
-  <data name="EmailExists" xml:space="preserve">
-    <value>The email already exists.</value>
+  <data name="NameIsRequired" xml:space="preserve">
+    <value>O Nome é obrigatório</value>
   </data>
-  <data name="DeletedSuccessfully" xml:space="preserve">
-    <value>Successfully deleted</value>
+  <data name="RepositoryNotFound" xml:space="preserve">
+    <value>Repositório não encontrado</value>
   </data>
-  <data name="EmailInvalid" xml:space="preserve">
-    <value>The email must be valid</value>
+  <data name="UrlIsRequired" xml:space="preserve">
+    <value>O Url é obrigatório</value>
   </data>
-  <data name="EmailRequired" xml:space="preserve">
-    <value>Email is mandatory </value>
+  <data name="DescriptionIsRequired" xml:space="preserve">
+    <value>A Descrição é obrigatória</value>
   </data>
-  <data name="NameRequired" xml:space="preserve">
-    <value>Name must be required</value>
+  <data name="ValidationErrorMessage" xml:space="preserve">
+    <value>Nome, Descrição e Url são obrigatórias.</value>
+  </data>
+  <data name="ApplicationNotFound" xml:space="preserve">
+    <value>Aplicação não encontrada.</value>
+  </data>
+  <data name="RepositoryCantBeNull" xml:space="preserve">
+    <value>Repositório não pode ser nulo</value>
+  </data>
+  <data name="AlreadyExists" xml:space="preserve">
+    <value>Já existe.</value>
   </data>
 </root>
