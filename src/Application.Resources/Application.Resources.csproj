@@ -16,7 +16,7 @@
     <PackageTags>AMS</PackageTags>
     <Product>$(SolutionName)</Product>
     <RepositoryUrl>https://gitlab.fcalatam.com/fca/architecture/application/dotnetcore/base-project.git</RepositoryUrl>
-    <RootNamespace>Stellantis.$(SolutionName).$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <RootNamespace>Stellantis.ProjectName.Application.Resources</RootNamespace>
     <TargetFramework>net8.0</TargetFramework>
     <Title>$(SolutionName)</Title>
   </PropertyGroup>
