@@ -9,7 +9,7 @@ variables:
 
 stages:
   - test
-  - sonar
+  - quality
   - build
 #  - deploy
 
