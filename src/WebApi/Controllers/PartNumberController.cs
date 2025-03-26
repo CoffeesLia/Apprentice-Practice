@@ -10,6 +10,7 @@ using Stellantis.ProjectName.WebApi.ViewModels;
 
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
+    [Authorize]
     [Route("api/partnumbers")]
     public sealed class PartNumberController(IMapper mapper, IPartNumberService partNumberService, IStringLocalizerFactory localizerFactory) :
         EntityControllerBase<PartNumberDto, PartNumberVm, PartNumber>(mapper, partNumberService, localizerFactory)
