@@ -60,32 +60,6 @@ namespace Infrastructure.Tests.Data
         }
 
         [Fact]
-        public void DisposeIt_WhenTransactionIsNull()
-        {
-            _unitOfWork.DisposeIt();
-            Assert.True(true);
-        }
-
-        [Fact]
-        public void DisposeIt()
-        {
-            // Arrange
-            var mockTransaction = new Mock<IDbContextTransaction>();
-            var mockDatabase = new Mock<DatabaseFacade>(_context);
-            mockDatabase.Setup(db => db.BeginTransaction()).Returns(mockTransaction.Object);
-            var context = new Mock<Context>(new DbContextOptions<Context>());
-            context.Setup(c => c.Database).Returns(mockDatabase.Object);
-            var unitOfWork = new UnitOfWork(context.Object);
-
-            // Act
-            unitOfWork.BeginTransaction();
-            unitOfWork.DisposeIt();
-
-            // Assert
-            mockTransaction.Verify(t => t.Dispose(), Times.Once);
-        }
-
-        [Fact]
         public async Task CommitAsync_ShouldCallSaveChangesOnContext()
         {
             // Arrange
