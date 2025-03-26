@@ -86,14 +86,14 @@ namespace WebApi.Tests.Controllers
             var filter = new ApplicationFilter { Name = "Valid Name" };
             var pagedResult = new PagedResult<ApplicationData>
             {
-                Result = new List<ApplicationData> { new ApplicationData("Valid Name") },
+                Result = [new ApplicationData("Valid Name")],
                 Page = 1,
                 PageSize = 10,
                 Total = 1
             };
             var pagedVmResult = new PagedResult<ApplicationVm>
             {
-                Result = new List<ApplicationVm> { new ApplicationVm { Name = "Valid Name" } },
+                Result = [new ApplicationVm { Name = "Valid Name" }],
                 Page = 1,
                 PageSize = 10,
                 Total = 1
