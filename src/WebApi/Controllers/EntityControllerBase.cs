@@ -17,6 +17,9 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         where TEntity : EntityBase
         where TEntityDto : class
     {
+        private IIntegrationService integrationService;
+        private IStringLocalizerFactory localizerFactory;
+
         protected virtual IEntityServiceBase<TEntity> Service { get; }
         protected IMapper Mapper { get; }
         protected IStringLocalizer Localizer { get; }
@@ -26,6 +29,13 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             Service = service ?? throw new ArgumentNullException(nameof(service));
             Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             Localizer = localizerFactory.Create(typeof(ControllerResources));
+        }
+
+        protected EntityControllerBase(IIntegrationService integrationService, IMapper mapper, IStringLocalizerFactory localizerFactory)
+        {
+            this.integrationService = integrationService;
+            Mapper = mapper;
+            this.localizerFactory = localizerFactory;
         }
 
         protected async Task<IActionResult> CreateBaseAsync<TEntityVm>(TEntityDto itemDto) where TEntityVm : EntityVmBase
