@@ -7,7 +7,6 @@ namespace Stellantis.ProjectName.Application.Interfaces.Repositories
     public interface IIntegrationRepository : IRepositoryEntityBase<Integration>
     {
         Task<PagedResult<Integration>> GetListAsync(IntegrationFilter filter);
-        Task<bool> VerifyNameExistsAsync(int id);
-
+     
     }
 }

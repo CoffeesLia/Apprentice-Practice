@@ -22,17 +22,13 @@ namespace Application.Tests.Services
     {
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private readonly Mock<IIntegrationRepository> _integrationRepositoryMock;
-        private readonly IntegrationService integrationService;
 
         public IntegrationServiceTests()
         {
             CultureInfo.CurrentCulture = new CultureInfo("en-US");
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _integrationRepositoryMock = new Mock<IIntegrationRepository>();
-            var localizer = Helpers.LocalizerFactorHelper.Create();
-            var integrationValidator = new IntegrationValidator(localizer);
             _unitOfWorkMock.Setup(u => u.IntegrationRepository).Returns(_integrationRepositoryMock.Object);
-            integrationService = new IntegrationService(_unitOfWorkMock.Object, localizer, integrationValidator);
         }
 
         [Fact]
@@ -40,10 +36,10 @@ namespace Application.Tests.Services
         {
             // Arrange
             var integration = new Integration("Eu", "aaa");
-            var validationResult = new ValidationResult(new List<ValidationFailure>
-            {
+            var validationResult = new ValidationResult(
+            [
                 new ValidationFailure("Name", "Name is too short")
-            });
+            ]);
             var validatorMock = new Mock<IValidator<Integration>>();
             validatorMock.Setup(v => v.ValidateAsync(integration, It.IsAny<CancellationToken>()))
                          .ReturnsAsync(validationResult);
@@ -116,5 +112,79 @@ namespace Application.Tests.Services
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
         }
+        [Fact]
+        public async Task GetItemAsyncShouldReturnKeyNotFoundExceptionWhenIntegrationDoesNotExist()
+        {
+            // Arrange
+            var integration = new Integration("Test Integration", "aaa");
+            var validationResult = new ValidationResult();
+            var validatorMock = new Mock<IValidator<Integration>>();
+            validatorMock.Setup(v => v.ValidateAsync(integration, It.IsAny<CancellationToken>()))
+                         .ReturnsAsync(validationResult);
+            _integrationRepositoryMock.Setup(repo => repo.GetByIdAsync(integration.Id))
+                                      .ReturnsAsync((Integration)null!);
+            var localizer = Helpers.LocalizerFactorHelper.Create();
+            var testIntegrationService = new IntegrationService(_unitOfWorkMock.Object, localizer, validatorMock.Object);
+            // Act
+            async Task Act() => await testIntegrationService.GetItemAsync(integration.Id).ConfigureAwait(false);
+            // Assert
+            await Assert.ThrowsAsync<KeyNotFoundException>(Act);
+        }
+        [Fact]
+        public async Task GetItemAsyncShouldReturnIntegrationWhenIntegrationExists()
+        {
+            // Arrange
+            var integration = new Integration("Test Integration", "aaa");
+            var validationResult = new ValidationResult();
+            var validatorMock = new Mock<IValidator<Integration>>();
+            validatorMock.Setup(v => v.ValidateAsync(integration, It.IsAny<CancellationToken>()))
+                         .ReturnsAsync(validationResult);
+            _integrationRepositoryMock.Setup(repo => repo.GetByIdAsync(integration.Id))
+                                      .ReturnsAsync(integration);
+            var localizer = Helpers.LocalizerFactorHelper.Create();
+            var testIntegrationService = new IntegrationService(_unitOfWorkMock.Object, localizer, validatorMock.Object);
+            // Act
+            var result = await testIntegrationService.GetItemAsync(integration.Id);
+            // Assert
+            Assert.Equal(integration, result);
+        }
+        [Fact]
+        public async Task UpdateAsyncShouldReturnIntegrationUpdatewhenIntegrationExists()
+        {
+            // Arrange
+            var integration = new Integration("Test Integration", "aaa");
+            var validationResult = new ValidationResult();
+            var validatorMock = new Mock<IValidator<Integration>>();
+            validatorMock.Setup(v => v.ValidateAsync(integration, It.IsAny<CancellationToken>()))
+                         .ReturnsAsync(validationResult);
+            _integrationRepositoryMock.Setup(repo => repo.GetByIdAsync(integration.Id))
+                                      .ReturnsAsync(integration);
+            var localizer = Helpers.LocalizerFactorHelper.Create();
+            var testIntegrationService = new IntegrationService(_unitOfWorkMock.Object, localizer, validatorMock.Object);
+            // Act
+            var result = await testIntegrationService.UpdateAsync(integration);
+            // Assert
+            Assert.Equal(OperationStatus.Success, result.Status);
+        }
+
+        [Fact]
+        public async Task UpdateAsyncReturnIntegrationUpdateWhenIntegrationDoesNotExist()
+        {
+            //Arrange
+            var integration = new Integration("Test Integration", "aaa");
+            var validationResult = new ValidationResult();
+            var validatorMock = new Mock<IValidator<Integration>>();
+            validatorMock.Setup(v => v.ValidateAsync(integration, It.IsAny<CancellationToken>()))
+                         .ReturnsAsync(validationResult);
+            _integrationRepositoryMock.Setup(repo => repo.GetByIdAsync(integration.Id))
+                                      .ReturnsAsync((Integration)null!);
+            var localizer = Helpers.LocalizerFactorHelper.Create();
+            var testIntegrationService = new IntegrationService(_unitOfWorkMock.Object, localizer, validatorMock.Object);
+            //Act
+            var result = await testIntegrationService.UpdateAsync(integration);
+            //Assert
+            Assert.Equal(OperationStatus.NotFound, result.Status);
+        }
     }
 }
+ 
