@@ -88,6 +88,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>FilterResources.resx</DependentUpon>
     </Compile>
+    <Compile Update="GitResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>GitResource.resx</DependentUpon>
+    </Compile>
     <Compile Update="IntegrationResources.Designer.cs">
       <DependentUpon>IntegrationResources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
