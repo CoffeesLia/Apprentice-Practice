@@ -69,8 +69,9 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
             const int Count = 10;
             var responsibles = _fixture
                 .Build<Responsible>()
-                .With(x => x.Name, filter.Name) // Garante correspondência com o filtro de Nome
-                .With(x => x.Email, filter.Email) // Garante correspondência com o filtro de Email
+                .With(x => x.Name, filter.Name)
+                .With(x => x.Email, filter.Email)
+                .Without(x => x.Area)
                 .With(x => x.AreaId, filter.AreaId)
                 .CreateMany<Responsible>(Count);
 
@@ -89,6 +90,7 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
             Assert.Equal(filter.Page, result.Page); // Verifica a página solicitada
             Assert.Equal(filter.PageSize, result.PageSize); // Verifica o tamanho da página retornada
         }
+
         [Fact]
         public async Task VerifyEmailAlreadyExistsAsyncWhenEmailExists()
         {

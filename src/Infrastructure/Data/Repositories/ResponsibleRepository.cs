@@ -19,12 +19,12 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             if (!string.IsNullOrEmpty(filter.Email))
             {
-                query = query.Where(r => r.Email == filter.Email); // Filtro exato por Email
+                query = query.Where(r => r.Email.Contains(filter.Email)); // Filtro exato por Email
             }
 
             if (!string.IsNullOrEmpty(filter.Name))
             {
-                query = query.Where(r => r.Name == filter.Name); // Filtro exato por Nome
+                query = query.Where(r => r.Name.Contains(filter.Name)); // Filtro exato por Nome
             }
 
             if (filter.AreaId != 0)
