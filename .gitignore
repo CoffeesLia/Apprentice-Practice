@@ -271,3 +271,4 @@ __pycache__/
 /src/TestsCoverageReport
 /src/Application.Tests/Services/SquadServiceTestes.cs
 /src/Domain/Entities/EntitieSquad.cs
+/src/Application/Services/ResponsibleService.cs
