@@ -97,7 +97,6 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
             // Assert
             Assert.True(result);
         }
-   
 
         [Fact]
         public async Task DeleteAsyncWhenCalled()

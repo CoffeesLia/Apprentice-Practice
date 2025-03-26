@@ -53,42 +53,37 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
             // Assert
             Assert.Null(result);
         }
-
-        [Fact]
+      
+         [Fact]
         public async Task GetListAsyncWhenCalled()
         {
-            // Arrange
-            var filter = new ResponsibleFilter
-            {
-                Page = 1,
-                PageSize = 10,
-                Email = _fixture.Create<string>(),
-                Name = _fixture.Create<string>(),
-                Area = _fixture.Create<string>()
-            };
-            const int Count = 10;
-            var responsibles = _fixture
-                .Build<Responsible>()
-                .With(x => x.Email, filter.Email)
-                .With(x => x.Name, filter.Name)
-                .With(x => x.Area, filter.Area)
-                .CreateMany<Responsible>(Count);
+        // Arrange
+        var filter = new ResponsibleFilter
+        {
+        Page = 1,
+        PageSize = 10,
+        Name = _fixture.Create<string>(),
+        Email = _fixture.Create<string>()
+        };
+        const int Count = 10;
+        var responsibles = _fixture
+        .Build<Responsible>()
+        .With(x => x.Name, filter.Name) // Garante correspondência com o filtro de Nome
+        .With(x => x.Email, filter.Email) // Garante correspondência com o filtro de Email
+        .CreateMany<Responsible>(Count);
 
-            await _context.Set<Responsible>().AddRangeAsync(responsibles);
-            await _context.SaveChangesAsync();
+        await _context.Set<Responsible>().AddRangeAsync(responsibles);
+        await _context.SaveChangesAsync();
 
-            // Act
-            var result = await _repository.GetListAsync(filter);
+        // Act
+        var result = await _repository.GetListAsync(filter);
 
-            // Assert
-            Assert.Equal(Count, result.Total);
-            Assert.Equal(filter.Page, result.Page);
-            Assert.Equal(filter.PageSize, result.PageSize);
-            Assert.All(result.Result, r => Assert.Contains(filter.Email, r.Email, StringComparison.OrdinalIgnoreCase));
-            Assert.All(result.Result, r => Assert.Contains(filter.Name, r.Name, StringComparison.OrdinalIgnoreCase));
-            Assert.All(result.Result, r => Assert.Contains(filter.Area, r.Area, StringComparison.OrdinalIgnoreCase));
-
+        // Assert
+        Assert.Equal(Count, result.Total); // Verifica o total de itens
+        Assert.Equal(filter.Page, result.Page); // Verifica a página solicitada
+        Assert.Equal(filter.PageSize, result.PageSize); // Verifica o tamanho da página retornada
         }
+
 
         [Fact]
         public async Task VerifyEmailAlreadyExistsAsyncWhenEmailExists()

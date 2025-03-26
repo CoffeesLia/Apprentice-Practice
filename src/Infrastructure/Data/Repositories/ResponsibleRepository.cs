@@ -17,20 +17,19 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             IQueryable<Responsible> query = Context.Set<Responsible>();
 
-
             if (!string.IsNullOrEmpty(filter.Email))
             {
-                query = query.Where(r => r.Email.Contains(filter.Email));
+                query = query.Where(r => r.Email == filter.Email); // Filtro exato por Email
             }
 
             if (!string.IsNullOrEmpty(filter.Name))
             {
-                query = query.Where(r => r.Name.Contains(filter.Name));
+                query = query.Where(r => r.Name == filter.Name); // Filtro exato por Nome
             }
 
-            if (!string.IsNullOrEmpty(filter.Area))
+            if (filter.AreaId != 0)
             {
-                query = query.Where(r => r.Area.Contains(filter.Area));
+                query = query.Where(r => r.AreaId == filter.AreaId); // Filtra pelo AreaId diretamente
             }
 
             return await GetPagedResultAsync(query, filter.Page, filter.PageSize).ConfigureAwait(false);
