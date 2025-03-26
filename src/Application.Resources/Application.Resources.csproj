@@ -155,6 +155,10 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>GitLabResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Update="GitResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>GitResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Update="IntegrationResources.resx">
       <LastGenOutput>IntegrationResources.Designer.cs</LastGenOutput>
       <Generator>PublicResXFileCodeGenerator</Generator>
