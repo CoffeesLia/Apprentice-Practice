@@ -61,11 +61,20 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a The Area is mandatory.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a The Area is mandatory..
         /// </summary>
         public static string AreaRequired {
             get {
-                return ResourceManager.GetString(" AreaRequired  ", resourceCulture);
+                return ResourceManager.GetString("AreaRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Successfully deleted..
+        /// </summary>
+        public static string DeletedSuccessfully {
+            get {
+                return ResourceManager.GetString("DeletedSuccessfully", resourceCulture);
             }
         }
         
@@ -79,16 +88,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Successfully deleted.
-        /// </summary>
-        public static string DeletedSuccessfully {
-            get {
-                return ResourceManager.GetString("DeletedSuccessfully", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a The email must be valid.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a The email must be valid..
         /// </summary>
         public static string EmailInvalid {
             get {
@@ -97,16 +97,16 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Email is mandatory .
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Email is mandatory..
         /// </summary>
         public static string EmailRequired {
             get {
-                return ResourceManager.GetString("EmailRequired ", resourceCulture);
+                return ResourceManager.GetString("EmailRequired", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Name must be required.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Name must be required..
         /// </summary>
         public static string NameRequired {
             get {

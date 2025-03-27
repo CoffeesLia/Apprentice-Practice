@@ -61,15 +61,6 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Successfully created squad..
-        /// </summary>
-        public static string SquadCreatedSuccessfully {
-            get {
-                return ResourceManager.GetString("SquadCreatedSuccessfully", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Squad description is required..
         /// </summary>
         public static string SquadDescriptionRequired {

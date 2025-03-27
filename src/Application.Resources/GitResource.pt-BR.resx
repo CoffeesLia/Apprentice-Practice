@@ -118,30 +118,36 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ExistentRepositoryUrl" xml:space="preserve">
-    <value>A repository with the same URL already exists.</value>
+    <value>Um repositório com este mesmo Url já existe</value>
   </data>
-  <data name="Name" xml:space="preserve">
-    <value>Name is required</value>
-  </data>
-  <data name="RegisteredSuccessfully" xml:space="preserve">
-    <value>Repository created successfully.</value>
+  <data name="NameIsRequired" xml:space="preserve">
+    <value>O Nome é obrigatório</value>
   </data>
   <data name="RepositoryNotFound" xml:space="preserve">
-    <value>Repository not found.</value>
+    <value>Repositório não encontrado</value>
   </data>
-  <data name="DeletedSuccessfully" xml:space="preserve">
-    <value>Repository deleted successfully</value>
+  <data name="UrlIsRequired" xml:space="preserve">
+    <value>O Url é obrigatório</value>
   </data>
-  <data name="UpdatedSuccessfully" xml:space="preserve">
-    <value>Repository updated successfully.</value>
-  </data>
-  <data name="Url" xml:space="preserve">
-    <value>Url is required.</value>
-  </data>
-  <data name="Description" xml:space="preserve">
-    <value>Description is required.</value>
+  <data name="DescriptionIsRequired" xml:space="preserve">
+    <value>A Descrição é obrigatória</value>
   </data>
   <data name="ValidationErrorMessage" xml:space="preserve">
-    <value>Name, Description, and URL are required fields.</value>
+    <value>Nome, Descrição e Url são obrigatórias.</value>
+  </data>
+  <data name="ApplicationNotFound" xml:space="preserve">
+    <value>Aplicação não encontrada.</value>
+  </data>
+  <data name="RepositoryCantBeNull" xml:space="preserve">
+    <value>Repositório não pode ser nulo</value>
+  </data>
+  <data name="AlreadyExists" xml:space="preserve">
+    <value>Já existe.</value>
+  </data>
+  <data name="UrlIsInvalid" xml:space="preserve">
+    <value>O Url é inválido.</value>
+  </data>
+  <data name="ApplicationIdIsRequired" xml:space="preserve">
+    <value>O Id da aplicação é obrigatória.</value>
   </data>
 </root>

@@ -57,7 +57,7 @@ namespace Application.Tests.Services
             var area = new Area("Test Area");
             var pagedResult = new PagedResult<Area>
             {
-                Result = new List<Area> { new Area("Test Area") { Id = 1 } },
+                Result = [new Area("Test Area") { Id = 1 }],
                 Page = 1,
                 PageSize = 10,
                 Total = 1

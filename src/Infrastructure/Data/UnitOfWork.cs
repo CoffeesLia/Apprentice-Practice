@@ -1,14 +1,11 @@
 using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
-using Stellantis.ProjectName.Infrastructure.Data;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
 using Stellantis.ProjectName.Infrastructure.Repositories;
+
 namespace Stellantis.ProjectName.Infrastructure.Data
-
 {
-
     public class UnitOfWork : IUnitOfWork
     {
         private IDbContextTransaction? _transaction;
@@ -20,8 +17,8 @@ namespace Stellantis.ProjectName.Infrastructure.Data
         public IApplicationDataRepository ApplicationDataRepository { get; }
         public ISquadRepository SquadRepository { get; }
         public IDataServiceRepository DataServiceRepository { get; }
-
-        // Construtor corrigido
+        public IGitRepoRepository GitRepoRepository { get; }
+        
         public UnitOfWork(Context context)
         {
             _context = context;
@@ -42,23 +39,14 @@ namespace Stellantis.ProjectName.Infrastructure.Data
             try
             {
                 if (_transaction != null)
-                {
                     await _transaction.CommitAsync().ConfigureAwait(false);
-                }
             }
             catch
             {
                 if (_transaction != null)
-                {
                     await _transaction.RollbackAsync().ConfigureAwait(false);
-                }
                 throw;
             }
         }
-        internal void DisposeIt()
-        {
-            throw new NotImplementedException();
-        }
     }
 }
-
