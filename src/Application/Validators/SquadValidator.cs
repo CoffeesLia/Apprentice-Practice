@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 using FluentValidation;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Resources;
-using Stellantis.ProjectName.Domain.Entities;
+using Stellantis.ProjectName.Domain.Entity;
 
 namespace Stellantis.ProjectName.Application.Validators
 {
-    internal class SquadValidator : AbstractValidator<EDataService>
+    internal class SquadValidator : AbstractValidator<EntitySquad>      
     {
         internal const int MinimumLength = 3;
         internal const int MaximumLength = 255;

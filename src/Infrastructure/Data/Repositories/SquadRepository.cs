@@ -47,5 +47,10 @@ namespace Stellantis.ProjectName.Infrastructure.Repositories
         {
             _context.Squads.Remove(squad);
         }
+
+        public void Delete(EntitySquad squad)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
