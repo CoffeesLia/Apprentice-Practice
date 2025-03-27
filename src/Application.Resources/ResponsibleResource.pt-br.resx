@@ -123,11 +123,8 @@
   <data name="EmailExists" xml:space="preserve">
     <value>O e-mail já existe</value>
   </data>
-  <data name="DeletedSuccessfully" xml:space="preserve">
-    <value>Deletado com sucesso</value>
-  </data>
-  <data name="EmailInvalid" xml:space="preserve">
-    <value>O e-mail deve ser válido</value>
+  <data name="ResponsibleNotFound" xml:space="preserve">
+    <value>Responsável não encontrado</value>
   </data>
   <data name="EmailRequired" xml:space="preserve">
     <value>O email é obrigatório </value>

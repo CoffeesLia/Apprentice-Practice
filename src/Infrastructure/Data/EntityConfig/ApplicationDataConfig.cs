@@ -9,11 +9,11 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
     {
         public void Configure(EntityTypeBuilder<ApplicationData> builder)
         {
-            builder.ToTable("ApplicationData");
-             
-            builder.HasKey(ad => ad.Id)
+            ArgumentNullException.ThrowIfNull(builder);
 
-                ;
+            builder.ToTable("ApplicationData");
+
+            builder.HasKey(ad => ad.Id);
 
             builder.Property(ad => ad.Name)
                 .IsRequired()

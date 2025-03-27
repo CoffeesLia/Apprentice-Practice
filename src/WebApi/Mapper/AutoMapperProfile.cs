@@ -38,9 +38,11 @@ namespace Stellantis.ProjectName.WebApi.Mapper
 
 
             CreateMap<ApplicationDataDto, ApplicationData>()
-               .ForMember(x => x.Id, x => x.Ignore());
+        .ForMember(x => x.Id, x => x.Ignore())
+        .ForMember(x => x.Integration, opt => opt.Ignore()); 
             CreateMap<ApplicationData, ApplicationVm>();
-            CreateMap<ApplicationDataFilterDto, ApplicationFilter>();
+            CreateMap<ApplicationDataFilterDto, ApplicationFilter>()
+                .ForMember(x => x.AreaId, opt => opt.MapFrom(src => src.AreaId)); 
 
             CreateMap<Integration, IntegrationVM>()
                 .ForMember(dest => dest.ApplicationData,
