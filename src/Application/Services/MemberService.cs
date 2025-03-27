@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Interfaces.Services;
-using Stellantis.ProjectName.Domain.Entities;
-using Stellantis.ProjectName.Application.Resources;
-using Microsoft.Extensions.Localization;
 
 namespace Stellantis.ProjectName.Application.Services
 {
