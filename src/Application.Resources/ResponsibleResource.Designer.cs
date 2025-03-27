@@ -70,29 +70,11 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Successfully deleted..
-        /// </summary>
-        public static string DeletedSuccessfully {
-            get {
-                return ResourceManager.GetString("DeletedSuccessfully", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a The email already exists..
         /// </summary>
         public static string EmailExists {
             get {
                 return ResourceManager.GetString("EmailExists", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a The email must be valid..
-        /// </summary>
-        public static string EmailInvalid {
-            get {
-                return ResourceManager.GetString("EmailInvalid", resourceCulture);
             }
         }
         
@@ -111,6 +93,15 @@ namespace Stellantis.ProjectName.Application.Resources {
         public static string NameRequired {
             get {
                 return ResourceManager.GetString("NameRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Person responsible not found.
+        /// </summary>
+        public static string ResponsibleNotFound {
+            get {
+                return ResourceManager.GetString("ResponsibleNotFound", resourceCulture);
             }
         }
     }

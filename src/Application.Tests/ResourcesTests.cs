@@ -52,6 +52,7 @@ namespace Application.Tests
                     var value = cultureResourceSet.GetString(key!);
                     Assert.False(string.IsNullOrEmpty(value), $"Missing resource for key '{key}' in culture '{culture}'");
                 }
+                
             }
         }
     }
