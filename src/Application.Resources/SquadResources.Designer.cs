@@ -61,6 +61,24 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a The name must be between {0} and {1} characters long..
+        /// </summary>
+        public static string NameValidateLength {
+            get {
+                return ResourceManager.GetString("NameValidateLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Successfully created squad..
+        /// </summary>
+        public static string SquadCreatedSuccessfully {
+            get {
+                return ResourceManager.GetString("SquadCreatedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Squad description is required..
         /// </summary>
         public static string SquadDescriptionRequired {
@@ -93,6 +111,24 @@ namespace Stellantis.ProjectName.Application.Resources {
         public static string SquadNotFound {
             get {
                 return ResourceManager.GetString("SquadNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Squad successfully deleted..
+        /// </summary>
+        public static string SquadSuccessfullyDeleted {
+            get {
+                return ResourceManager.GetString("SquadSuccessfullyDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Squad successfully updated.
+        /// </summary>
+        public static string SquadUpdatedSuccessfully {
+            get {
+                return ResourceManager.GetString("SquadUpdatedSuccessfully", resourceCulture);
             }
         }
     }
