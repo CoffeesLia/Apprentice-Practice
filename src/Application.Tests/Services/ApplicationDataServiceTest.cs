@@ -40,6 +40,9 @@ namespace Application.Tests.Services
             _applicationDataService = new ApplicationDataService(_unitOfWorkMock.Object, localizer, applicationDataValidator);
         }
 
+
+
+
       
         [Fact]
         public async Task CreateAsyncShouldReturnSuccessWhenApplicationDataIsValid()

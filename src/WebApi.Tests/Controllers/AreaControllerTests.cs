@@ -13,7 +13,7 @@ using Stellantis.ProjectName.WebApi.ViewModels;
 using AutoFixture;
 
 
-namespace Stellantis.ProjectName.WebApi.Tests.Controllers
+namespace WebApi.Tests.Controllers
 {
     public class AreaControllerBaseTests
     {
