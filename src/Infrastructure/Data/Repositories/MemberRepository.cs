@@ -60,17 +60,17 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             if (!string.IsNullOrEmpty(name))
             {
-                query = query.Where(m => m.Name.Contains(name, StringComparison.OrdinalIgnoreCase));
+                query = query.Where(m => m.Name.Contains(name));
             }
 
             if (!string.IsNullOrEmpty(email))
             {
-                query = query.Where(m => m.Email.Contains(email, StringComparison.OrdinalIgnoreCase));
+                query = query.Where(m => m.Email.Contains(email));
             }
 
             if (!string.IsNullOrEmpty(role))
             {
-                query = query.Where(m => m.Role.Contains(role, StringComparison.OrdinalIgnoreCase));
+                query = query.Where(m => m.Role.Contains(role));
             }
 
             return await Task.FromResult(query.ToList());
