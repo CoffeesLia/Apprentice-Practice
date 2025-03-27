@@ -22,7 +22,7 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
-        public void Add_ShouldAddSquad()
+        public void AddShouldAddSquad()
         {
             using (var context = new Context(_dbContextOptions))
             {
@@ -39,7 +39,7 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
-        public void GetById_ShouldReturnSquad_WhenSquadExists()
+        public void GetByIdShouldReturnSquadWhenSquadExists()
         {
             using (var context = new Context(_dbContextOptions))
             {
@@ -57,7 +57,7 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
-        public void GetById_ShouldReturnNull_WhenSquadDoesNotExist()
+        public void GetByIdShouldReturnNullWhenSquadDoesNotExist()
         {
             using (var context = new Context(_dbContextOptions))
             {
@@ -69,7 +69,7 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
-        public void GetByName_ShouldReturnSquad_WhenSquadExists()
+        public void GetByNameShouldReturnSquadWhenSquadExists()
         {
             using (var context = new Context(_dbContextOptions))
             {
@@ -86,7 +86,7 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
-        public void GetByName_ShouldReturnNull_WhenSquadDoesNotExist()
+        public void GetByNameShouldReturnNullWhenSquadDoesNotExist()
         {
             using (var context = new Context(_dbContextOptions))
             {
@@ -96,29 +96,41 @@ namespace Infrastructure.Tests.Data.Repositories
                 Assert.Null(retrievedSquad);
             }
         }
-
         [Fact]
-        public void GetAll_ShouldReturnAllSquads()
+        public void GetAllShouldReturnAllSquads()
         {
-            using (var context = new Context(_dbContextOptions))
+            // Recria o banco de dados em memória para garantir um estado limpo
+            var options = new DbContextOptionsBuilder<Context>()
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .Options;
+
+            using (var context = new Context(options))
             {
+                // Arrange
                 var squads = new List<EntitySquad>
-                {
-                    new EntitySquad { Id = Guid.NewGuid(), Name = "Squad1", Description = "Description1" },
-                    new EntitySquad { Id = Guid.NewGuid(), Name = "Squad2", Description = "Description2" }
-                };
+        {
+            new EntitySquad { Id = Guid.NewGuid(), Name = "Squad1", Description = "Description1" },
+            new EntitySquad { Id = Guid.NewGuid(), Name = "Squad2", Description = "Description2" }
+        };
                 context.Squads.AddRange(squads);
                 context.SaveChanges();
 
                 var repository = new SquadRepository(context);
+
+                // Act
                 var retrievedSquads = repository.GetAll();
 
+                // Assert
+                Assert.NotNull(retrievedSquads);
                 Assert.Equal(2, retrievedSquads.Count());
+                Assert.Contains(retrievedSquads, s => s.Name == "Squad1");
+                Assert.Contains(retrievedSquads, s => s.Name == "Squad2");
             }
         }
 
+
         [Fact]
-        public void Update_ShouldUpdateSquad()
+        public void UpdateShouldUpdateSquad()
         {
             using (var context = new Context(_dbContextOptions))
             {
@@ -138,7 +150,7 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
-        public void Delete_ShouldRemoveSquad()
+        public void DeleteShouldRemoveSquad()
         {
             using (var context = new Context(_dbContextOptions))
             {
