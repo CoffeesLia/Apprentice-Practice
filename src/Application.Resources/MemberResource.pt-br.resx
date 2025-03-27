@@ -120,11 +120,23 @@
   <data name="MemberAddedSuccessfully" xml:space="preserve">
     <value>Membro adicionado com sucesso.</value>
   </data>
+  <data name="MemberCostMustBeGreaterThanZero" xml:space="preserve">
+    <value>O custo do membro deve ser maior que zero.</value>
+  </data>
   <data name="MemberDeletedSuccessfully" xml:space="preserve">
     <value>Membro deletado com sucesso.</value>
   </data>
   <data name="MemberEmailAlreadyExists" xml:space="preserve">
     <value>Esse e-mail já existe.</value>
+  </data>
+  <data name="MemberEmailInvalid" xml:space="preserve">
+    <value>Email do membro é inválido.</value>
+  </data>
+  <data name="MemberEmailIsRequired" xml:space="preserve">
+    <value>Email do membro é obrigatório.</value>
+  </data>
+  <data name="MemberEmailValidateLength" xml:space="preserve">
+    <value>checar o número de caracteres do email do membro.</value>
   </data>
   <data name="MemberIdNotFound" xml:space="preserve">
     <value>ID do membro não foi encontrada.</value>
@@ -132,8 +144,17 @@
   <data name="MemberNameIsRequired" xml:space="preserve">
     <value>O nome do membro é obrigatório.</value>
   </data>
+  <data name="MemberNameValidateLength" xml:space="preserve">
+    <value>Checagem de tamanho do nome do membro.</value>
+  </data>
   <data name="MemberRequiredFieldsMissing" xml:space="preserve">
     <value>Todos os campos obrigatórios devem ser preenchidos.</value>
+  </data>
+  <data name="MemberRoleIsRequired" xml:space="preserve">
+    <value>Função do membro é obrigatória.</value>
+  </data>
+  <data name="MemberRoleValidateLength" xml:space="preserve">
+    <value>Checar o número de caracteres no papel do membro.</value>
   </data>
   <data name="MemberUpdatedSuccessfully" xml:space="preserve">
     <value>Membro atualizado com sucesso. </value>

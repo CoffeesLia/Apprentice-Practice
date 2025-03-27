@@ -129,7 +129,6 @@
   <data name="UpdatedSuccessfully" xml:space="preserve">
     <value>Updated Successfully.</value>
   </data>
-<<<<<<< HEAD
   <data name="SquadNameRequired" xml:space="preserve">
     <value>Squad name is required</value>
   </data>
@@ -145,6 +144,4 @@
   <data name="MemberUpdatedSuccessfully" xml:space="preserve">
     <value>Member updated successfully.</value>
   </data>
-=======
->>>>>>> develop
 </root>

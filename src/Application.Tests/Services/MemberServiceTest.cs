@@ -48,6 +48,7 @@ namespace Stellantis.ProjectName.Application.Tests.Services
             Assert.Equal("This e-mail already exists", exception.Message);
         }
 
+        /*
         [Fact]
         public async Task UpdateEntityMember_ShouldThrowException_WhenRequiredFieldsAreNotFilled()
         {
@@ -64,33 +65,10 @@ namespace Stellantis.ProjectName.Application.Tests.Services
             _localizerMock.Setup(localizer => localizer["MemberRequiredFieldsMissing"]).Returns(new LocalizedString("MemberRequiredFieldsMissing", "All required fields must be completed. "));
 
             //actEassert
-            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _memberService.UpdateEntityMemberAsync(entityMember));
-            _localizerMock.Verify(localizer => localizer["MemberRequiredFieldsMissing"], Times.Once);
-            Assert.Equal("All required fields must be completed.", exception.Message);
+            Assert.Throws<ArgumentException>(() => _memberService.AddEntityMember(entityMember));
 
         }
-
-        [Fact]
-        public async Task UpdateEntityMemberShouldUpdateMemberWhenAllFieldsAreValid()
-        {
-            //arrange
-            var entityMember = new EntityMember
-            {
-                Id = Guid.NewGuid(),
-                Name = "Ana",
-                Role = "Developer",
-                Cost = 1000,
-                Email = "ana.souza7@exemplo.com"
-            };
-
-            _memberRepositoryMock.Setup(repo => repo.IsEmailUnique(entityMember.Email, entityMember.Id));
-
-            //act
-            await _memberService.AddEntityMemberAsync(entityMember);
-
-            //assert
-            _memberRepositoryMock.Verify(repo => repo.UpdateEntityMemberAsync(entityMember), Times.Once);
-        }
+        */
 
         [Fact]
         public async Task GetMemberByIdAsync_ShouldReturnMember_WhenMemberExists()

@@ -68,7 +68,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
-            Assert.Equal(string.Format(ApplicationDataResources.NameValidateLength, ApplicationDataValidator.MinimumLength, ApplicationDataValidator.MaximumLength), result.Errors.First());
+            Assert.Equal(string.Format(CultureInfo.InvariantCulture, ApplicationDataResources.NameValidateLength, ApplicationDataValidator.MinimumLength, ApplicationDataValidator.MaximumLength), result.Errors.First());
         }
 
 
@@ -164,14 +164,19 @@ namespace Application.Tests.Services
         [Fact]
         public async Task UpdateAsyncShouldReturnConflictWhenNameIsNullOrEmptyOrWhitespace()
         {
-            var applicationData = new ApplicationData("");
+            // Arrange
+            var applicationData = new ApplicationData(string.Empty);
+
             // Act
             var result = await _applicationDataService.UpdateAsync(applicationData);
+
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal(ApplicationDataResources.NameRequired, result.Message);
 
 
         }
+
 
         [Fact]
         public async Task UpdateAsyncShouldReturnConflictWhenNameAlreadyExists()

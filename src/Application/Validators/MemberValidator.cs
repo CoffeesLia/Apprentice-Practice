@@ -26,34 +26,34 @@ namespace Stellantis.ProjectName.Application.Validators
             RuleFor(x => x.Name)
                .NotNull()
                .NotEmpty()
-               .WithMessage(localizer[nameof(ServiceResources.MemberNameIsRequired)]);
+               .WithMessage(localizer[nameof(MemberResource.MemberNameIsRequired)]);
             RuleFor(x => x.Name)
                 .MinimumLength(NameMinimumLength)
-                .WithMessage(localizer[nameof(ServiceResources.MemberNameValidateLength), NameMinimumLength, NameMaximumLength])
+                .WithMessage(localizer[nameof(MemberResource.MemberNameValidateLength), NameMinimumLength, NameMaximumLength])
                 .MaximumLength(NameMaximumLength)
-                .WithMessage(localizer[nameof(ServiceResources.MemberNameValidateLength), NameMinimumLength, NameMaximumLength]);
+                .WithMessage(localizer[nameof(MemberResource.MemberNameValidateLength), NameMinimumLength, NameMaximumLength]);
 
             RuleFor(x => x.Role)
                 .NotNull()
                 .NotEmpty()
-                .WithMessage(localizer[nameof(ServiceResources.MemberRoleIsRequired)])
+                .WithMessage(localizer[nameof(MemberResource.MemberRoleIsRequired)])
                 .MinimumLength(RoleMinimumLength)
-                .WithMessage(localizer[nameof(ServiceResources.MemberRoleValidateLength), RoleMinimumLength, RoleMaximumLength])
+                .WithMessage(localizer[nameof(MemberResource.MemberRoleValidateLength), RoleMinimumLength, RoleMaximumLength])
                 .MaximumLength(RoleMaximumLength)
-                .WithMessage(localizer[nameof(ServiceResources.MemberRoleValidateLength), RoleMinimumLength, RoleMaximumLength]);
-
+                .WithMessage(localizer[nameof(MemberResource.MemberRoleValidateLength), RoleMinimumLength, RoleMaximumLength]);
+             
             RuleFor(x => x.Cost)
                 .GreaterThan(0)
-                .WithMessage(localizer[nameof(ServiceResources.MemberCostMustBeGreaterThanZero)]);
+                .WithMessage(localizer[nameof(MemberResource.MemberCostMustBeGreaterThanZero)]);
 
             RuleFor(x => x.Email)
                 .NotNull()
                 .NotEmpty()
-                .WithMessage(localizer[nameof(ServiceResources.MemberEmailIsRequired)])
+                .WithMessage(localizer[nameof(MemberResource.MemberEmailIsRequired)])
                 .EmailAddress()
-                .WithMessage(localizer[nameof(ServiceResources.MemberEmailInvalid)])
+                .WithMessage(localizer[nameof(MemberResource.MemberEmailInvalid)])
                 .MaximumLength(EmailMaximumLength)
-                .WithMessage(localizer[nameof(ServiceResources.MemberEmailValidateLength), EmailMaximumLength]);
+                .WithMessage(localizer[nameof(MemberResource.MemberEmailValidateLength), EmailMaximumLength]);
         }
     }
 }
