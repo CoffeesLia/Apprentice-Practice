@@ -14,13 +14,6 @@ namespace Stellantis.ProjectName.Tests.Services
 {
     public class SquadServiceTests
     {
-<<<<<<< Updated upstream
-        private readonly Mock<IStringLocalizer<SquadResources>> _localizerMock;
-
-        public SquadServiceTests()
-        {
-            _localizerMock = new Mock<IStringLocalizer<SquadResources>>();
-=======
         private readonly Mock<IStringLocalizer<SquadResources>> _localizerMock; 
         private readonly Mock<ISquadRepository> _squadRepositoryMock;
         private readonly SquadService _squadService;
@@ -28,18 +21,13 @@ namespace Stellantis.ProjectName.Tests.Services
         public SquadServiceTests()
         {
             _localizerMock = new Mock<IStringLocalizer<SquadResources>>(); 
->>>>>>> Stashed changes
             _localizerMock.Setup(x => x["SquadNameRequired"]).Returns(new LocalizedString("SquadNameRequired", "O nome do squad é obrigatório."));
             _localizerMock.Setup(x => x["SquadDescriptionRequired"]).Returns(new LocalizedString("SquadDescriptionRequired", "A descrição do squad é obrigatória."));
             _localizerMock.Setup(x => x["SquadNameAlreadyExists"]).Returns(new LocalizedString("SquadNameAlreadyExists", "Um squad com esse nome já existe."));
             _localizerMock.Setup(x => x["SquadNotFound"]).Returns(new LocalizedString("SquadNotFound", "Squad não encontrado."));
-<<<<<<< Updated upstream
             _localizerMock.Setup(x => x["SquadDeletedSuccessfully"]).Returns(new LocalizedString("SquadDeletedSuccessfully", "Squad excluído com sucesso."));
-=======
-
             _squadRepositoryMock = new Mock<ISquadRepository>();
             _squadService = new SquadService(_squadRepositoryMock.Object, _localizerMock.Object);
->>>>>>> Stashed changes
         }
 
         [Fact]
