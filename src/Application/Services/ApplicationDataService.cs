@@ -77,7 +77,6 @@ namespace Stellantis.ProjectName.Application.Services
         public override async Task<OperationResult> UpdateAsync(ApplicationData item)
         {
             ArgumentNullException.ThrowIfNull(item);
-
             if (string.IsNullOrEmpty(item.Name))
             {
                 return OperationResult.Conflict(Localizer[nameof(ApplicationDataResources.NameRequired)]);

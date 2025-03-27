@@ -12,6 +12,7 @@ namespace Stellantis.ProjectName.Application.Validators
 {
     public class ApplicationDataValidator : AbstractValidator<ApplicationData>
     {
+        
         public const int MinimumLength = 3;
         public const int MaximumLength = 255;
         public ApplicationDataValidator(IStringLocalizerFactory localizerFactory)

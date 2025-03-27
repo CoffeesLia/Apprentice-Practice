@@ -12,6 +12,8 @@ using Xunit;
 namespace Infrastructure.Tests.Data.Repositories
 {
     public class ApplicationDataRepositoryTest
+
+
     {
         private readonly Context _context;
         private readonly ApplicationDataRepository _repository;
