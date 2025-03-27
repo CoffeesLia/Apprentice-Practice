@@ -13,11 +13,11 @@
     <Nullable>enable</Nullable>
     <PackageId>$(AssemblyName)</PackageId>
     <PackageTags>AMS</PackageTags>
-    <Product>$(SolutionName)</Product>
+    <Product>ProjectName</Product>
     <RepositoryType>GitLab</RepositoryType>
     <RepositoryUrl>https://gitlab.fcalatam.com/fca/architecture/application/dotnetcore/base-project.git</RepositoryUrl>
     <TargetFramework>net8.0</TargetFramework>
-    <Title>$(SolutionName)</Title>
+    <Title>ProjectName</Title>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
