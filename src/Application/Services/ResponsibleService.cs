@@ -50,11 +50,7 @@ namespace Stellantis.ProjectName.Application.Services
             return await UnitOfWork.ResponsibleRepository.GetListAsync(responsibleFilter).ConfigureAwait(false);
         }
 
-<<<<<<< HEAD
-        public new async Task<Responsible?> GetItemAsync(int id)
-=======
         public new async Task<OperationResult> GetItemAsync(int id)
->>>>>>> develop
         {
             return await Repository.GetByIdAsync(id).ConfigureAwait(false) is Responsible responsible
                 ? OperationResult.Complete()
