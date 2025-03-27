@@ -12,7 +12,7 @@ namespace Stellantis.ProjectName.Domain.Entities
         public int AreaId { get; set; }
         public Area Area { get; set; } = null!;
 
-        public ICollection<Integration> Integration { get; } = new List<Integration>();
+        public ICollection<Integration> Integration { get; } = [];
 
         
 

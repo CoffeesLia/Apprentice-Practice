@@ -10,12 +10,8 @@ using System.Linq.Expressions;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
-    public class ApplicationDataRepository : RepositoryBase<ApplicationData, Context>, IApplicationDataRepository
+    public class ApplicationDataRepository(Context context) : RepositoryBase<ApplicationData, Context>(context), IApplicationDataRepository
     {
-        public ApplicationDataRepository(Context context) : base(context)
-        {
-        }
-
         public async Task DeleteAsync(int id, bool saveChanges = true)
         {
             var entity = await GetByIdAsync(id).ConfigureAwait(false);

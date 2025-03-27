@@ -3,6 +3,6 @@
     public class ApplicationDataDto
     {
         public string? Name { get; set; }
-        public AreaDto Area { get; set; }
+        public required AreaDto Area { get; set; }
     }
 }

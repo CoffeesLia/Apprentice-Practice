@@ -3,6 +3,6 @@
     public class ApplicationDataFilterDto : FilterDto
     {
         public string? Name { get; set; }
-        public AreaFilterDto Area { get; set; }
+        public required AreaFilterDto Area { get; set; }
     }
 }

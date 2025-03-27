@@ -96,7 +96,7 @@ namespace WebApi.Tests.Controllers
             };
             var pagedVmResult = new PagedResult<ApplicationVm>
             {
-                Result = new List<ApplicationVm> { new ApplicationVm { Id = 1, Name = "Valid Name" } },
+                Result = [new ApplicationVm { Id = 1, Name = "Valid Name" }],
                 Page = 1,
                 PageSize = 10,
                 Total = 1
