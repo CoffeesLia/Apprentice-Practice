@@ -55,6 +55,17 @@ namespace Application.Tests
                 
             }
         }
+
+        [Fact]
+        public void ApplicationDataResources_AllCultures()
+        {
+            var resource = new ApplicationDataResources();
+            Assert.NotNull(resource);
+            ServiceResources.Culture = CultureInfo.InvariantCulture;
+            Assert.Equal(CultureInfo.InvariantCulture, ServiceResources.Culture);
+            VerifyAllResources<ServiceResources>(ServiceResources.ResourceManager);
+        }
+
     }
 
     public class DataServiceResourcesTests

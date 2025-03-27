@@ -11,8 +11,10 @@ using Xunit;
 
 namespace Infrastructure.Tests.Data.Repositories
 {
-    public class ApplicationDataRepositoryTest
+    public class ApplicationDataRepositoryTest : IDisposable
     {
+        private bool _disposed;
+
         private readonly Context _context;
         private readonly ApplicationDataRepository _repository;
         private readonly Fixture _fixture = new();
@@ -149,6 +151,28 @@ namespace Infrastructure.Tests.Data.Repositories
             // Assert
             Assert.NotNull(result);
             Assert.Equal(entity.Id, result.Id);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed && disposing && _context != null)
+            {
+                _context.Database.EnsureDeleted();
+                _context.Dispose();
+            }
+            _disposed = true;
+        }
+
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        ~ApplicationDataRepositoryTest()
+        {
+            Dispose(false);
         }
     }
 }

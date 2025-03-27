@@ -3,7 +3,7 @@
   <PropertyGroup>
     <AnalysisLevel>latest-all</AnalysisLevel>
     <AssemblyInformationalVersion>1.0.0</AssemblyInformationalVersion>
-    <AssemblyName>Stellantis.$(SolutionName).$(MSBuildProjectName)</AssemblyName>
+    <AssemblyName>Stellantis.ProjectName.$(MSBuildProjectName)</AssemblyName>
     <Authors>Stellantis</Authors>
     <Copyright>© Stellantis. All rights reserved.</Copyright>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
@@ -14,11 +14,11 @@
     <Nullable>enable</Nullable>
     <PackageId>$(AssemblyName)</PackageId>
     <PackageTags>AMS</PackageTags>
-    <Product>$(SolutionName)</Product>
+    <Product>ProjectName</Product>
     <RepositoryUrl>https://gitlab.fcalatam.com/fca/architecture/application/dotnetcore/base-project.git</RepositoryUrl>
-    <RootNamespace>Stellantis.$(SolutionName).$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <RootNamespace>Stellantis.ProjectName.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
     <TargetFramework>net8.0</TargetFramework>
-    <Title>$(SolutionName)</Title>
+    <Title>ProjectName</Title>
   </PropertyGroup>
 
   <ItemGroup>

@@ -2,7 +2,7 @@
 {
     public class ApplicationVm : EntityVmBase
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
+        public new required int Id { get; set; }
+        public required string Name { get; set; }
     }
 }
