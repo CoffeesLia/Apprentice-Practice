@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Application.Resources;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
@@ -62,10 +63,21 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 PageSize = pageSize
             };
         }
-
-        public Task<bool> VerifyAplicationsExistsAsync(int id)
+        public async Task<bool> VerifyAplicationsExistsAsync(int id)
         {
-            throw new NotImplementedException();
+            var area = await Context.Set<Area>()
+                .Include(a => a.Applications)
+                .FirstOrDefaultAsync(a => a.Id == id)
+                .ConfigureAwait(false);
+
+            if (area == null)
+            {
+                throw new ArgumentException(AreaResources.Undeleted);
+            }
+
+            return area.Applications.Any();
         }
+
+  
     }
 }

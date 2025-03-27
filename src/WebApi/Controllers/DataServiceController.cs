@@ -5,16 +5,17 @@ using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Dto;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.WebApi.Resources;
+using Stellantis.ProjectName.Application.Resources;
 
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    internal class DataServiceController(IDataService serviceService, IEntityServiceBase<Area> entityService, IMapper mapper, IStringLocalizerFactory localizerFactory)
-        : EntityControllerBase<Area, AreaDto>(entityService, mapper, localizerFactory)
+    internal class DataServiceController(IDataService serviceService, IEntityServiceBase<EDataService> entityService, IMapper mapper, IStringLocalizerFactory localizerFactory)
+        : EntityControllerBase<EDataService, DataServiceDto>(entityService, mapper, localizerFactory)
     {
-        private readonly IDataService _serviceService = serviceService;
-        private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(ControllerResources));
+        private readonly IDataService _serviceService = serviceService ?? throw new ArgumentNullException(nameof(serviceService));
+        private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(DataServiceResources));
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetServiceById(int id)
@@ -22,19 +23,18 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             var service = await _serviceService.GetServiceByIdAsync(id).ConfigureAwait(false);
             if (service == null)
             {
-                var localizedMessage = _localizer[nameof(GetServiceById) + "_ServiceNotFound"];
+                var localizedMessage = _localizer[nameof(GetServiceById) + "_ServiceNotFound"].Value;
                 return NotFound(new { Message = localizedMessage });
             }
             return Ok(service);
         }
 
-        [HttpGet]
         public async Task<IActionResult> GetAllServices()
         {
             var services = await _serviceService.GetAllServicesAsync().ConfigureAwait(false);
             if (!services.Any())
             {
-                var localizedMessage = _localizer[nameof(GetAllServices) + "_NoServicesFound"];
+                var localizedMessage = _localizer[nameof(GetAllServices) + "_NoServicesFound"].Value;
                 return NotFound(new { Message = localizedMessage });
             }
             return Ok(services);
@@ -43,6 +43,11 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         [HttpPost]
         public async Task<IActionResult> AddService([FromBody] EDataService service)
         {
+            if (service == null)
+            {
+                return BadRequest(new { Message = _localizer[nameof(DataServiceResources.ServiceCannotBeNull)].Value });
+            }
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -51,7 +56,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             var existingService = await _serviceService.GetServiceByIdAsync(service.Id).ConfigureAwait(false);
             if (existingService != null)
             {
-                var localizedMessage = _localizer[nameof(AddService) + "_ServiceAlreadyExists"];
+                var localizedMessage = _localizer[nameof(DataServiceResources.ServiceNameAlreadyExists)].Value;
                 return Conflict(new { Message = localizedMessage });
             }
 
@@ -62,18 +67,22 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateService(int id, [FromBody] EDataService service)
         {
-            if (id != service.Id || !ModelState.IsValid)
+            if (service == null)
+            {
+                return BadRequest(new { Message = _localizer[nameof(DataServiceResources.ServiceCannotBeNull)].Value });
+            }
+
+            if (id != service.Id)
             {
                 return BadRequest();
             }
-            await _serviceService.UpdateServiceAsync(service).ConfigureAwait(false);
-            return NoContent();
-        }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteService(int id)
-        {
-            await _serviceService.DeleteServiceAsync(id).ConfigureAwait(false);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _serviceService.UpdateServiceAsync(service).ConfigureAwait(false);
             return NoContent();
         }
     }

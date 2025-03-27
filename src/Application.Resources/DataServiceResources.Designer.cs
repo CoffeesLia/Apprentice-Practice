@@ -22,7 +22,7 @@ namespace Stellantis.ProjectName.Application.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class DataServiceResources {
+    public class DataServiceResources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -72,7 +72,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a No services found..
         /// </summary>
-        internal static string GetAllServices_NoServicesFound {
+        public static string GetAllServices_NoServicesFound {
             get {
                 return ResourceManager.GetString("GetAllServices_NoServicesFound", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Service not found..
         /// </summary>
-        internal static string GetServiceById_ServiceNotFound {
+        public static string GetServiceById_ServiceNotFound {
             get {
                 return ResourceManager.GetString("GetServiceById_ServiceNotFound", resourceCulture);
             }
@@ -108,9 +108,33 @@ namespace Stellantis.ProjectName.Application.Resources {
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Service Name Already Exists..
         /// </summary>
-        internal static string ServiceNameAlreadyExists {
+        public static string ServiceNameAlreadyExists {
             get {
                 return ResourceManager.GetString("ServiceNameAlreadyExists", resourceCulture);
+            }
+        }
+
+        public static string NameValidateLength
+        {
+            get
+            {
+                return ResourceManager.GetString("NameValidateLength", resourceCulture);
+            }
+        }
+
+        public static string ServiceCannotBeNull
+        {
+            get
+            {
+                return ResourceManager.GetString("ServiceCannotBeNull", resourceCulture);
+            }
+        }
+
+        public static string NameRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("NameRequired", resourceCulture);
             }
         }
     }

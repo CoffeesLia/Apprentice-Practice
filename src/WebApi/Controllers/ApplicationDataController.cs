@@ -15,27 +15,25 @@ namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [Route("api/applications")]
 
-    public sealed class ApplicationDataControllerBase : 
-        EntityControllerBase<ApplicationData, ApplicationDataDto > 
+    internal sealed class ApplicationDataControllerBase(IApplicationDataService service,
+        IMapper mapper, IStringLocalizerFactory localizerFactory) :
+        EntityControllerBase<ApplicationData, ApplicationDataDto>(service, mapper, localizerFactory)
     {
-        private readonly IStringLocalizer localizer;
-
-        public ApplicationDataControllerBase(IApplicationDataService service, 
-            IMapper mapper, IStringLocalizerFactory localizerFactory)
-            : base(service, mapper, localizerFactory)
-        {
-            localizer = localizerFactory.Create(typeof(ApplicationDataResources));
-        }
-
         protected override IApplicationDataService Service => (IApplicationDataService)base.Service;
 
         [HttpPost]
-        public async Task <IActionResult> CreateAsync([FromBody]  ApplicationDataDto itemDto)
+        public async Task<IActionResult> CreateAsync([FromBody] ApplicationDataDto itemDto)
         {
-            
-            return await CreateBaseAsync<ApplicationVm>(itemDto);
-
+            return await CreateBaseAsync<ApplicationVm>(itemDto).ConfigureAwait(false);
         }
+
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ApplicationVm>> GetAsync(int id)
+        {
+            return await GetAsync<ApplicationVm>(id).ConfigureAwait(false);
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> GetListAsync([FromQuery] ApplicationDataFilterDto filterDto)
@@ -44,6 +42,20 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             var result = await Service.GetListAsync(filter).ConfigureAwait(false);
             return Ok(Mapper.Map<PagedResult<ApplicationVm>>(result));
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateAsync(int id, [FromBody] ApplicationDataDto itemDto)
+        {
+            return await UpdateBaseAsync<ApplicationVm>(id, itemDto).ConfigureAwait(false);
+        }
+
+        [HttpDelete("{id}")]
+        public override async Task<IActionResult> DeleteAsync(int id)
+        {
+            var result = await base.DeleteAsync(id).ConfigureAwait(false);
+            return result;
+        }
+
     }
 
 }

@@ -120,6 +120,18 @@
   <data name="AlreadyExists" xml:space="preserve">
     <value>The name already exits.</value>
   </data>
+  <data name="NotFound" xml:space="preserve">
+    <value>Area not found.</value>
+  </data>
+  <data name="MemberAddedSuccessfully" xml:space="preserve">
+    <value>Member added successfully.</value>
+  </data>
+  <data name="MemberEmailAlreadyExists" xml:space="preserve">
+    <value>This e-mail already exists.</value>
+  </data>
+  <data name="MemberRequiredFieldsMissing" xml:space="preserve">
+    <value>All mandatory fields must be completed.</value>
+  </data>
   <data name="NameIsRequired" xml:space="preserve">
     <value>The name is required.</value>
   </data>

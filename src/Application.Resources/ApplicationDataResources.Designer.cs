@@ -70,7 +70,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Application not found.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Application cannot be found.
         /// </summary>
         public static string ApplicationNotFound {
             get {

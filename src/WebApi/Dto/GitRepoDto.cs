@@ -1,9 +1,10 @@
-﻿namespace Stellantis.ProjectName.Application.Models
+﻿namespace Stellantis.ProjectName.WebApi.Dto
 {
-    public class GitLabFilter
+    public class GitRepoDto
     {
         public string Name { get; set; }
         public string Description { get; set; }
         public string Url { get; set; }
+        public int ApplicationId { get; set; }
     }
 }

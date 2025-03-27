@@ -5,14 +5,17 @@ using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models.Filters;
+using LinqKit;
+using System.Linq.Expressions;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
-    internal class ApplicationDataRepository : RepositoryEntityBase<ApplicationData, Context>, IApplicationDataRepository
+    public class ApplicationDataRepository : RepositoryBase<ApplicationData, Context>, IApplicationDataRepository
     {
         public ApplicationDataRepository(Context context) : base(context)
         {
         }
+
         public async Task DeleteAsync(int id, bool saveChanges = true)
         {
             var entity = await GetByIdAsync(id).ConfigureAwait(false);
@@ -33,38 +36,31 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         public async Task<PagedResult<ApplicationData>> GetListAsync(ApplicationFilter applicationFilter)
         {
-            IQueryable<ApplicationData> query = Context.Set<ApplicationData>();
+            ArgumentNullException.ThrowIfNull(applicationFilter);
 
-            if (!string.IsNullOrEmpty(applicationFilter.Name))
-            {
-                query = query.Where(a => a.Name.Contains(applicationFilter.Name));
-            }
+            var filters = PredicateBuilder.New<ApplicationData>(true);
 
+            if (!string.IsNullOrWhiteSpace(applicationFilter.Name))
+                filters = filters.And(x => x.Name != null && x.Name.Contains(applicationFilter.Name));
             if (applicationFilter.AreaId > 0)
-            {
-                query = query.Where(a => a.AreaId == applicationFilter.AreaId);
-            }
+                filters = filters.And(x => x.AreaId == applicationFilter.AreaId);
 
-            return await GetPagedResultAsync(query, applicationFilter.Page, applicationFilter.PageSize).ConfigureAwait(false);
+            return await GetListAsync(filter: filters, page: applicationFilter.Page, sort: applicationFilter.Sort, sortDir: applicationFilter.SortDir).ConfigureAwait(false);
         }
 
-        public async Task<bool> IsAreaNameUniqueAsync(string name, int? id = null)
+
+        public async Task<bool> IsApplicationNameUniqueAsync(string name, int? id = null)
         {
-            return await Context.Set<ApplicationData>().AnyAsync(a => a.Name == name && a.Id != id).ConfigureAwait(false);
+            return await Context.Set<Area>().AnyAsync(a => a.Name == name).ConfigureAwait(false);
         }
 
-        private static async Task<PagedResult<ApplicationData>> GetPagedResultAsync(IQueryable<ApplicationData> query, int page, int pageSize)
+        public async Task<ApplicationData?> GetFullByIdAsync(int id)
         {
-            var total = await query.CountAsync().ConfigureAwait(false);
-            var result = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync().ConfigureAwait(false);
+            return await Context.Set<ApplicationData>()
+                       .Include(x => x.Area)
+                       .FirstOrDefaultAsync(x => x.Id == id)
+                       .ConfigureAwait(false);
 
-            return new PagedResult<ApplicationData>
-            {
-                Total = total,
-                Result = result,
-                Page = page,
-                PageSize = pageSize
-            };
         }
     }
-}
+    }

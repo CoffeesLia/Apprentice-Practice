@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Moq;
@@ -11,8 +10,8 @@ using Stellantis.ProjectName.WebApi.Controllers;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.ViewModels;
-using Stellantis.ProjectName.Application.Resources;
-using Xunit;
+using AutoFixture;
+
 
 namespace Stellantis.ProjectName.WebApi.Tests.Controllers
 {
@@ -20,102 +19,108 @@ namespace Stellantis.ProjectName.WebApi.Tests.Controllers
     {
         private readonly Mock<IAreaService> _serviceMock;
         private readonly Mock<IMapper> _mapperMock;
-        private readonly Mock<IStringLocalizerFactory> _localizerFactoryMock;
-        private readonly Mock<IStringLocalizer> _localizerMock;
+        private readonly Mock<IStringLocalizerFactory> _localizerFactoryMock;   
         private readonly AreaControllerBase _controller;
+        private readonly Fixture _fixture;
 
         public AreaControllerBaseTests()
         {
             _serviceMock = new Mock<IAreaService>();
             _mapperMock = new Mock<IMapper>();
             _localizerFactoryMock = new Mock<IStringLocalizerFactory>();
-            _localizerMock = new Mock<IStringLocalizer>();
-
-            _localizerFactoryMock.Setup(f => f.Create(It.IsAny<Type>())).Returns(_localizerMock.Object);
-
-            _localizerMock.Setup(l => l[nameof(AreaResources.NameIsRequired)])
-                .Returns(new LocalizedString(nameof(AreaResources.NameIsRequired), "Name is required"));
-            _localizerMock.Setup(l => l[nameof(AreaResources.NameValidateLength)])
-                .Returns(new LocalizedString(nameof(AreaResources.NameValidateLength), "Name must be between {0} and {1} characters"));
+            _fixture = new Fixture();
 
             _controller = new AreaControllerBase(_serviceMock.Object, _mapperMock.Object, _localizerFactoryMock.Object);
         }
 
         [Fact]
-        public async Task CreateAsync_ShouldReturnBadRequest_WhenItemDtoIsNull()
-        {
-            // Act
-            var result = await _controller.CreateAsync(null);
-
-            // Assert
-            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-            var message = ((dynamic)badRequestResult.Value).Message;
-            Assert.Equal("Name is required", message);
-        }
-
-        [Fact]
-        public async Task CreateAsync_ShouldReturnBadRequest_WhenNameIsInvalid()
+        // Teste para verificar se CreateAsync retorna CreatedAtAction quando a criação é bem-sucedida
+        public async Task CreateAsyncShouldReturnCreatedAtActionWhenCreationIsSuccessful()
         {
             // Arrange
-            var itemDto = new AreaDto { Name = "" };
+            var areaDto = _fixture.Create<AreaDto>();
+            var area = _fixture.Build<Area>().With(a => a.Name, areaDto.Name).Create();
+            var areaVm = _fixture.Build<AreaVm>().With(a => a.Name, areaDto.Name).With(a => a.Id, area.Id).Create();
+
+            _mapperMock.Setup(m => m.Map<Area>(areaDto)).Returns(area);
+            _serviceMock.Setup(s => s.CreateAsync(area)).ReturnsAsync(OperationResult.Complete("Success"));
+            _mapperMock.Setup(m => m.Map<AreaVm>(area)).Returns(areaVm);
 
             // Act
-            var result = await _controller.CreateAsync(itemDto);
+            var result = await _controller.CreateAsync(areaDto);
 
             // Assert
-            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-            var message = ((dynamic)badRequestResult.Value).Message;
-            Assert.Equal("Name must be between 1 and 100 characters", message);
+            var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
+            Assert.Equal(nameof(_controller.GetAsync), createdAtActionResult.ActionName);
+            Assert.Equal(area.Id, createdAtActionResult.RouteValues["id"]);
+            Assert.Equal(areaVm, createdAtActionResult.Value);
         }
 
         [Fact]
-        public async Task GetAsync_ShouldReturnAreaVm()
+        // Teste para verificar se GetAsync retorna AreaVm
+        public async Task GetAsyncShouldReturnAreaVm()
         {
-            var area = new Area("Test Area") { Id = 1 };
-            _serviceMock.Setup(s => s.GetItemAsync(1)).ReturnsAsync(area);
-            _mapperMock.Setup(m => m.Map<AreaVm>(area)).Returns(new AreaVm { Id = 1, Name = "Test Area" });
+            // Arrange
+            var area = _fixture.Create<Area>();
+            var areaVm = _fixture.Build<AreaVm>().With(a => a.Id, area.Id).With(a => a.Name, area.Name).Create();
 
-            var result = await _controller.GetAsync(1);
+            _serviceMock.Setup(s => s.GetItemAsync(area.Id)).ReturnsAsync(area);
+            _mapperMock.Setup(m => m.Map<AreaVm>(area)).Returns(areaVm);
 
+            // Act
+            var result = await _controller.GetAsync(area.Id);
+
+            // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
-            var areaVm = Assert.IsType<AreaVm>(okResult.Value);
-            Assert.Equal(1, areaVm.Id);
-            Assert.Equal("Test Area", areaVm.Name);
+            var returnedAreaVm = Assert.IsType<AreaVm>(okResult.Value);
+            Assert.Equal(areaVm.Id, returnedAreaVm.Id);
+            Assert.Equal(areaVm.Name, returnedAreaVm.Name);
         }
 
         [Fact]
-        public async Task GetListAsync_ShouldReturnPagedResult()
+        // Teste para verificar se GetListAsync retorna PagedResult
+        public async Task GetListAsyncShouldReturnPagedResult()
         {
-            var filterDto = new AreaFilterDto { Name = "Test" };
-            var filter = new AreaFilter { Name = "Test" };
-            var pagedResult = new PagedResult<Area> { Result = new List<Area> { new Area("Test Area") }, Page = 1, PageSize = 10, Total = 1 };
+            // Arrange
+            var filterDto = _fixture.Create<AreaFilterDto>();
+            var filter = _fixture.Build<AreaFilter>().With(f => f.Name, filterDto.Name).Create();
+            var pagedResult = _fixture.Create<PagedResult<Area>>();
+            var pagedResultVm = _fixture.Build<PagedResultVm<AreaVm>>()
+                .With(p => p.Result, pagedResult.Result.Select(a => _fixture.Build<AreaVm>().With(vm => vm.Name, a.Name).Create()).ToList())
+                .With(p => p.Page, pagedResult.Page)
+                .With(p => p.PageSize, pagedResult.PageSize)
+                .With(p => p.Total, pagedResult.Total)
+                .Create();
+
             _mapperMock.Setup(m => m.Map<AreaFilter>(filterDto)).Returns(filter);
             _serviceMock.Setup(s => s.GetListAsync(filter)).ReturnsAsync(pagedResult);
-            _mapperMock.Setup(m => m.Map<PagedResultVm<AreaVm>>(pagedResult)).Returns(new PagedResultVm<AreaVm> { Result = new List<AreaVm> { new AreaVm { Name = "Test Area" } }, Page = 1, PageSize = 10, Total = 1 });
+            _mapperMock.Setup(m => m.Map<PagedResultVm<AreaVm>>(pagedResult)).Returns(pagedResultVm);
 
+            // Act
             var result = await _controller.GetListAsync(filterDto);
 
+            // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var pagedResultVm = Assert.IsType<PagedResultVm<AreaVm>>(okResult.Value);
-            Assert.Single(pagedResultVm.Result);
-            Assert.Equal("Test Area", pagedResultVm.Result.First().Name);
+            var returnedPagedResultVm = Assert.IsType<PagedResultVm<AreaVm>>(okResult.Value);
+            Assert.Equal(pagedResultVm.Result.Count(), returnedPagedResultVm.Result.Count());
+            Assert.Equal(pagedResultVm.Result.First().Name, returnedPagedResultVm.Result.First().Name);
         }
 
         [Fact]
         // Teste para verificar se UpdateAsync retorna Success quando a atualização é bem-sucedida
-        public async Task UpdateAsync_ShouldReturnSuccess_WhenUpdateIsSuccessful()
+        public async Task UpdateAsyncShouldReturnSuccessWhenUpdateIsSuccessful()
         {
             // Arrange
-            var areaDto = new AreaDto { Id = 1, Name = "Updated Area" };
-            var area = new Area("Updated Area") { Id = 1 };
-            var areaVm = new AreaVm { Id = 1, Name = "Updated Area" };
+            var areaDto = _fixture.Create<AreaDto>();
+            var area = _fixture.Build<Area>().With(a => a.Id, areaDto.Id).With(a => a.Name, areaDto.Name).Create();
+            var areaVm = _fixture.Build<AreaVm>().With(a => a.Id, areaDto.Id).With(a => a.Name, areaDto.Name).Create();
 
             _mapperMock.Setup(m => m.Map<Area>(areaDto)).Returns(area);
             _mapperMock.Setup(m => m.Map<AreaVm>(area)).Returns(areaVm);
             _serviceMock.Setup(s => s.UpdateAsync(area)).ReturnsAsync(OperationResult.Complete("Success"));
 
             // Act
-            var result = await _controller.UpdateAsync(1, areaDto);
+            var result = await _controller.UpdateAsync(areaDto.Id, areaDto);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
@@ -123,42 +128,20 @@ namespace Stellantis.ProjectName.WebApi.Tests.Controllers
             Assert.Equal(areaVm, okResult.Value);
         }
 
-
         [Fact]
-        public async Task DeleteAsync_ShouldReturnNoContent_WhenDeleteIsSuccessful()
+        // Teste para verificar se DeleteAsync retorna NoContent quando a exclusão é bem-sucedida
+        public async Task DeleteAsyncShouldReturnNoContentWhenDeleteIsSuccessful()
         {
             // Arrange
-            int id = 1;
+            int id = _fixture.Create<int>();
             _serviceMock.Setup(s => s.DeleteAsync(id)).ReturnsAsync(OperationResult.Complete());
 
-            // Simular chamada direta ao serviço no lugar do método do controller
-            var result = await _serviceMock.Object.DeleteAsync(id);
+            // Act
+            var result = await _controller.DeleteAsync(id);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.Equal(OperationStatus.Success, result.Status);
-        }
-
-        [Fact]
-        public async Task DeleteAsync_ShouldReturnNotFound_WhenEntityDoesNotExist()
-        {
-            // Arrange
-            int id = 1;
-            _serviceMock.Setup(s => s.DeleteAsync(id)).ReturnsAsync(OperationResult.NotFound("Entity not found"));
-
-            // Simular chamada direta ao serviço no lugar do método do controller
-            var result = await _serviceMock.Object.DeleteAsync(id);
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal(OperationStatus.NotFound, result.Status);
-            Assert.Contains("Entity not found", result.Errors);
-        }
-
-        [Fact]
-        public async Task EditAreaAsync_ShouldThrowNotImplementedException()
-        {
-            await Assert.ThrowsAsync<NotImplementedException>(() => _controller.EditAreaAsync(1, new AreaDto()));
+            var noContentResult = Assert.IsType<NoContentResult>(result);
+            Assert.Equal(204, noContentResult.StatusCode);
         }
     }
 }

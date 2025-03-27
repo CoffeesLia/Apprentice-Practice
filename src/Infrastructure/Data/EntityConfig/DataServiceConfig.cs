@@ -14,20 +14,17 @@ using Stellantis.ProjectName.Infrastructure.Data.Repositories;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
 {
-    public class DataServiceConfig : IEntityTypeConfiguration<ApplicationData>
+    public class DataServiceConfig : IEntityTypeConfiguration<EDataService>
     {
-        public void Configure(EntityTypeBuilder<ApplicationData> builder)
+        public void Configure(EntityTypeBuilder<EDataService> builder)
         {
             ArgumentNullException.ThrowIfNull(builder);
 
-            builder.ToTable("ApplicationData");
+            builder.ToTable("DataService");
             builder.HasKey(p => p.Id);
             builder.Property(p => p.Name)
                 .IsRequired()
                 .HasMaxLength(255);
-            builder.HasOne(p => p.Area)
-                .WithMany(a => a.Applications)
-                .HasForeignKey(p => p.AreaId);
         }
     }
 }

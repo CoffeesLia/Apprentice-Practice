@@ -13,14 +13,14 @@ namespace Stellantis.ProjectName.Application.Validators
             var localizer = localizerFactory.Create(typeof(AreaResources));
 
             RuleFor(r => r.Email)
-                .NotEmpty().WithMessage(localizer["EmailRequired"])
-                .EmailAddress().WithMessage(localizer["EmailInvalid"]);
+                .NotEmpty().WithMessage(localizer[nameof(ResponsibleResource.EmailRequired)])
+                .EmailAddress().WithMessage(localizer[nameof(ResponsibleResource.EmailInvalid)]);
 
-            RuleFor(r => r.Nome)
-                .NotEmpty().WithMessage(localizer["NameRequired"]);
+            RuleFor(r => r.Name)
+                .NotEmpty().WithMessage(localizer[nameof(ResponsibleResource.NameRequired)]);
 
             RuleFor(r => r.Area)
-                .NotEmpty().WithMessage(localizer["AreaRequired"]);
+                .NotEmpty().WithMessage(localizer[nameof(ResponsibleResource.AreaRequired)]);
         }
     }
 }
