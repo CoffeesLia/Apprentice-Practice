@@ -22,7 +22,7 @@ namespace WebApi.Tests.Controllers
             _controller = new SquadController(_squadServiceMock.Object, _mapperMock.Object, _localizerMock.Object);
         }
 
-        [Fact]
+        [Fact] // passsou
         public void CreateSquadShouldReturnOkWhenSquadIsCreated()
         {
             // Arrange
@@ -57,6 +57,7 @@ namespace WebApi.Tests.Controllers
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.NotNull(okResult.Value); // Adiciona uma verificação para garantir que o valor não seja nulo
             Assert.Equal(squadDto, okResult.Value);
         }
 
