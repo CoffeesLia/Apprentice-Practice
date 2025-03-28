@@ -10,7 +10,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         public ResponsibleRepository(Context context) : base(context)
         {
         }
-
         public async Task<PagedResult<Responsible>> GetListAsync(ResponsibleFilter filter)
         {
             ArgumentNullException.ThrowIfNull(filter);

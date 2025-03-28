@@ -1,15 +1,12 @@
 ﻿using AutoFixture;
 using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Models.Filters;
-using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
-using Xunit;
 
 namespace Stellantis.ProjectName.Tests.Data.Repositories
 {
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1001:Tipos que têm campos descartáveis devem ser descartáveis", Justification = "<Pendente>")]
     public class ResponsibleRepositoryTests
     {
         private readonly Context _context;
@@ -134,8 +131,6 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
 
             // Assert
             Assert.Null(result);
-        }
-
-       
+        }  
     }
 }
