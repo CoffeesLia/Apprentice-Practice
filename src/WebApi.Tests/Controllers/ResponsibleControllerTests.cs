@@ -79,7 +79,7 @@ namespace Stellantis.ProjectName.WebApi.Tests.Controllers
         }
 
         [Fact]
-        public async Task GetListAsync_Success()
+        public async Task GetListAsyncSuccess()
         {
             // Arrange
             var pagedResult = _fixture.Create<PagedResult<Responsible>>();
@@ -118,7 +118,7 @@ namespace Stellantis.ProjectName.WebApi.Tests.Controllers
         }
 
         [Fact]
-        public async Task UpdateAsyncShouldReturnSuccessWhenUpdateIsSuccessful()
+        public async Task UpdateAsyncSuccessful()
         {
             // Arrange
             var responsibleDto = _fixture.Create<ResponsibleDto>();
@@ -141,7 +141,7 @@ namespace Stellantis.ProjectName.WebApi.Tests.Controllers
 
         [Fact]
         // Teste para verificar se DeleteAsync retorna NoContent quando a exclusão é bem-sucedida
-        public async Task DeleteAsyncShouldReturnNoContentWhenDeleteIsSuccessful()
+        public async Task DeleteAsyncSuccessful()
         {
             // Arrange
             int id = _fixture.Create<int>();
