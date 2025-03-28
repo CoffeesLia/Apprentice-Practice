@@ -58,6 +58,7 @@ namespace WebApi.Tests.Controllers
             Assert.IsType<CreatedAtActionResult>(result);
         }
 
+
         [Fact]
         public async Task GetAsyncShouldReturnApplicationVmWhenApplicationDataExists()
         {
@@ -84,9 +85,10 @@ namespace WebApi.Tests.Controllers
             var filterDto = new ApplicationDataFilterDto
             {
                 Name = "Valid Name",
-                Area = new AreaFilterDto() 
+                AreaId = 1, // Adicionando AreaId
+                Area = new AreaFilterDto()
             };
-            var filter = new ApplicationFilter { Name = "Valid Name" };
+            var filter = new ApplicationFilter { Name = "Valid Name", AreaId = 1 }; // Adicionando AreaId
             var pagedResult = new PagedResult<ApplicationData>
             {
                 Result = [new ApplicationData("Valid Name")],

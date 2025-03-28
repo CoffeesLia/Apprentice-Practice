@@ -14,6 +14,7 @@ using System.Globalization;
 using Stellantis.ProjectName.Application.Models.Filters;
 using AutoFixture;
 using FluentValidation.Results;
+using Stellantis.ProjectName.Application.Interfaces.Services;
 
 namespace Application.Tests.Services
 {
@@ -36,6 +37,21 @@ namespace Application.Tests.Services
             _areaService = new AreaService(_unitOfWorkMock.Object, localizer, areaValidator);
         }
 
+
+        [Fact]
+        public async Task CreateAsyncShouldReturnConflictWhenNameIsNullOrEmptyOrWhitespace()
+        {
+            // Arrange
+            var area = new Area("");
+            // Act
+            var result = await _areaService.CreateAsync(area);
+            // Assert
+            Assert.Equal(OperationStatus.InvalidData, result.Status);
+            Assert.Equal(string.Format(CultureInfo.InvariantCulture, AreaResources.NameIsRequired), result.Errors.First());
+
+        }
+
+
         [Fact]
         public async Task CreateAsyncShouldReturnInvalidDataWhenValidationFails()
         {
@@ -48,6 +64,8 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
+            Assert.Equal(string.Format(CultureInfo.InvariantCulture, AreaResources.NameValidateLength, AreaValidator.MinimumLength, AreaValidator.MaximumLength), result.Errors.First());
+
         }
 
         [Fact]
@@ -71,6 +89,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal(AreaResources.AlreadyExists, result.Message);
         }
 
 
@@ -184,7 +203,7 @@ namespace Application.Tests.Services
             // Arrange
             var fixture = new Fixture();
             var areaId = fixture.Create<int>();
-            _areaRepositoryMock.Setup(r => r.GetByIdAsync(areaId)).ReturnsAsync((Area)null);
+            _areaRepositoryMock.Setup(r => r.GetByIdAsync(areaId)).ReturnsAsync((Area?)null);
 
             // Act
             var result = await _areaService.GetItemAsync(areaId);
@@ -214,7 +233,7 @@ namespace Application.Tests.Services
         {
             // Arrange
             var area = new Area("Non-Existent Area") { Id = 1 };
-            _areaRepositoryMock.Setup(r => r.GetByIdAsync(area.Id)).ReturnsAsync((Area)null);
+            _areaRepositoryMock.Setup(r => r.GetByIdAsync(area.Id)).ReturnsAsync((Area?)null);
        
 
             // Act
@@ -222,6 +241,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(OperationStatus.NotFound, result.Status);
+            Assert.Equal(AreaResources.NotFound, result.Message);
         }
 
 

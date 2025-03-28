@@ -6,3 +6,5 @@
 using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("Performance", "CA1863:Use 'CompositeFormat'", Justification = "<Pendente>", Scope = "member", Target = "~M:Application.Tests.Services.ApplicationDataServiceTest.CreateAsyncShouldReturnInvalidDataWhenValidationFails~System.Threading.Tasks.Task")]
+[assembly: SuppressMessage("Performance", "CA1863:Use 'CompositeFormat'", Justification = "<Pendente>", Scope = "member", Target = "~M:Application.Tests.Services.AreaServicesTests.CreateAsyncShouldReturnConflictWhenNameIsNullOrEmptyOrWhitespace~System.Threading.Tasks.Task")]
+[assembly: SuppressMessage("Performance", "CA1863:Use 'CompositeFormat'", Justification = "<Pendente>", Scope = "member", Target = "~M:Application.Tests.Services.AreaServicesTests.CreateAsyncShouldReturnInvalidDataWhenValidationFails~System.Threading.Tasks.Task")]
