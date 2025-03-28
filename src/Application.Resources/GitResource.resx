@@ -150,4 +150,7 @@
   <data name="ApplicationIdIsRequired" xml:space="preserve">
     <value>Application Id is required.</value>
   </data>
+  <data name="Error" xml:space="preserve">
+    <value>Error.</value>
+  </data>
 </root>
