@@ -52,7 +52,7 @@ namespace Application.Tests
                     var value = cultureResourceSet.GetString(key!);
                     Assert.False(string.IsNullOrEmpty(value), $"Missing resource for key '{key}' in culture '{culture}'");
                 }
-                
+
             }
         }
 
@@ -66,6 +66,15 @@ namespace Application.Tests
             VerifyAllResources<ServiceResources>(ServiceResources.ResourceManager);
         }
 
+        [Fact]
+        public void ResponsibleResourceAllCultures()
+        {
+            var resource = new ResponsibleResource();
+            Assert.NotNull(resource);
+            ServiceResources.Culture = CultureInfo.InvariantCulture;
+            Assert.Equal(CultureInfo.InvariantCulture, ServiceResources.Culture);
+            VerifyAllResources<ServiceResources>(ServiceResources.ResourceManager);
+        }
     }
 
     public class DataServiceResourcesTests

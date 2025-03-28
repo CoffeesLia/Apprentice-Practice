@@ -23,7 +23,6 @@ namespace Stellantis.ProjectName.Application.Services
             _localizer = localizerFactory.Create(typeof(ResponsibleResource));
         }
 
-
         public override async Task<OperationResult> CreateAsync(Responsible item)
         {
             ArgumentNullException.ThrowIfNull(item);

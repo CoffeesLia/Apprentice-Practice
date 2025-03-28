@@ -6,15 +6,13 @@ using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Dto;
+using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.ViewModels;
-
-#pragma warning disable CA2007 // Considere chamar ConfigureAwait na tarefa esperada
 
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [Route("api/responsible")]
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Maintainability", "CA1515:Considere tornar internos os tipos públicos", Justification = "<Pendente>")]
     public sealed class ResponsibleController(IResponsibleService service, IMapper mapper, IStringLocalizerFactory localizerFactory)
         : EntityControllerBase<Responsible, ResponsibleDto>(service, mapper, localizerFactory)
     {
@@ -31,12 +29,12 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetListAsync([FromQuery] ResponsibleFilter filterDto)
+        public async Task<IActionResult> GetListAsync([FromQuery] ResponsibleFilterDto filterDto)
         {
             var filter = Mapper.Map<ResponsibleFilter>(filterDto);
-            var result = await ((IResponsibleService)Service).GetListAsync(filter).ConfigureAwait(false);
-            var resultVm = Mapper.Map<PagedResult<ResponsibleVm>>(result);
-            return Ok(resultVm);
+            var pagedResult = await ((IResponsibleService)Service).GetListAsync(filter!);
+            var result = Mapper.Map<PagedResultVm<ResponsibleVm>>(pagedResult);
+            return Ok(result);
         }
 
         [HttpPut("{id}")]
@@ -52,4 +50,3 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         }
     }
 }
-#pragma warning restore CA2007 // Considere chamar ConfigureAwait na tarefa esperada
