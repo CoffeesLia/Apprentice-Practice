@@ -1,65 +1,88 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
-using LinqKit;
+using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Application.Resources;
+using System.Security;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
-    internal class DataServiceRepository(Context context) : RepositoryEntityBase<EDataService, Context>(context), IDataServiceRepository
+    public class DataServiceRepository(Context context) : RepositoryEntityBase<DataService, Context>(context), IDataServiceRepository
     {
-        public async Task<EDataService?> GetServiceByIdAsync(int id)
+        public new async Task CreateAsync(DataService entity, bool saveChanges = true)
         {
-            return await Context.Set<EDataService>().FindAsync(id).ConfigureAwait(false);
-        }
-
-        public async Task<IEnumerable<EDataService>> GetAllServicesAsync()
-        {
-            return await Context.Set<EDataService>().ToListAsync().ConfigureAwait(false);
-        }
-
-        public async Task AddServiceAsync(EDataService service)
-        {
-            ArgumentNullException.ThrowIfNull(service, nameof(service));
-
-            var existingService = await Context.Set<EDataService>()
-                .FirstOrDefaultAsync(s => s.Name == service.Name).ConfigureAwait(false);
-
-            if (existingService != null)
+            await Context.Set<DataService>().AddAsync(entity).ConfigureAwait(false);
+            if (saveChanges)
             {
-                return;
+                await SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
+        public new async Task<DataService?> GetByIdAsync(int id)
+        {
+            return await Context.Set<DataService>().FindAsync(id).ConfigureAwait(false);
+        }
+
+        public async Task<PagedResult<DataService>> GetListAsync(DataServiceFilter serviceFilter)
+        {
+            ArgumentNullException.ThrowIfNull(serviceFilter, nameof(serviceFilter));
+
+            IQueryable<DataService> query = Context.Set<DataService>();
+
+            if (!string.IsNullOrEmpty(serviceFilter.Name))
+            {
+                query = query.Where(a => a.Name != null && a.Name.Contains(serviceFilter.Name));
             }
 
-            await Context.Set<EDataService>().AddAsync(service).ConfigureAwait(false);
-            await SaveChangesAsync().ConfigureAwait(false);
+            return await GetPagedResultAsync(query, serviceFilter.Page, serviceFilter.PageSize)
+                .ConfigureAwait(false);
         }
 
-        public async Task DeleteServiceAsync(int id)
+        private static async Task<PagedResult<DataService>> GetPagedResultAsync(IQueryable<DataService> query, int page, int pageSize)
         {
-            var service = await GetServiceByIdAsync(id).ConfigureAwait(false);
-            if (service == null)
-            {
-                return;
-            }
+            var total = await query.CountAsync().ConfigureAwait(false);
+            var result = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync().ConfigureAwait(false);
 
-            Context.Set<EDataService>().Remove(service);
-            await SaveChangesAsync().ConfigureAwait(false);
+            return new PagedResult<DataService>
+            {
+                Total = total,
+                Result = result,
+                Page = page,
+                PageSize = pageSize
+            };
         }
 
-        public async Task UpdateServiceAsync(EDataService service)
+        public new async Task DeleteAsync(int id, bool saveChanges = true)
         {
-            ArgumentNullException.ThrowIfNull(service, nameof(service));
+            var entity = await GetByIdAsync(id).ConfigureAwait(false);
+                if (entity != null)
+                {
+                    Context.Set<DataService>().Remove(entity);
+                    if (saveChanges)
+                    {
+                        await SaveChangesAsync().ConfigureAwait(false);
+                    }
+                }
+        }
 
-            var existingEntity = await Context.Set<EDataService>().FindAsync(service.Id).ConfigureAwait(false);
-            if (existingEntity == null)
-            {
-                return;
-            }
+        public async Task<bool> VerifyServiceExistsAsync(int id)
+        {
+            var service = await Context.Set<DataService>()
+                .FirstOrDefaultAsync(a => a.Id == id)
+                .ConfigureAwait(false);
 
-            Context.Entry(existingEntity).CurrentValues.SetValues(service);
-            await SaveChangesAsync().ConfigureAwait(false);
+            return service != null && service.ServiceId > 0;
+        }
+
+        public async Task<bool> VerifyNameAlreadyExistsAsync(string name)
+        {
+            return await Context.Set<DataService>()
+                .AnyAsync(a => a.Name == name)
+                .ConfigureAwait(false);
         }
     }
 }

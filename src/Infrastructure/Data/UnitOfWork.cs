@@ -22,7 +22,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data
         {
             get
             {
-                return _dataServiceRepository ??= (IDataServiceRepository)new DataServiceRepository(context);
+                return _dataServiceRepository ??= new DataServiceRepository(context);
             }
         }
 

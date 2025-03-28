@@ -21,9 +21,8 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(x => x.Applications, x => x.Ignore());
             CreateMap<AreaFilterDto, AreaFilter>();
 
-            CreateMap<DataServiceDto, DataService>();
+            CreateMap<DataServiceDto, ApplicationService>();
 
-            // Correção do mapeamento de Squad
             CreateMap<SquadDto, EntitySquad>()
                 .ForMember(x => x.Id, x => x.Ignore());
             CreateMap<EntitySquad, SquadDto>();
