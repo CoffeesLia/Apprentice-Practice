@@ -40,9 +40,6 @@ namespace Application.Tests.Services
             _applicationDataService = new ApplicationDataService(_unitOfWorkMock.Object, localizer, applicationDataValidator);
         }
 
-
-
-
       
         [Fact]
         public async Task CreateAsyncShouldReturnSuccessWhenApplicationDataIsValid()
@@ -102,8 +99,8 @@ namespace Application.Tests.Services
             // Act
             var result = await _applicationDataService.CreateAsync(applicationData);
             // Assert
-            Assert.Equal(OperationStatus.Conflict, result.Status);
-            Assert.Equal(ApplicationDataResources.NameRequired, result.Message);
+            Assert.Equal(OperationStatus.InvalidData, result.Status);
+            Assert.Equal(string.Format(CultureInfo.InvariantCulture, ApplicationDataResources.NameRequired), result.Errors.First());
 
 
         }
@@ -174,11 +171,10 @@ namespace Application.Tests.Services
             var result = await _applicationDataService.UpdateAsync(applicationData);
 
             // Assert
-            Assert.Equal(OperationStatus.Conflict, result.Status);
-            Assert.Equal(ApplicationDataResources.NameRequired, result.Message);
-
-
+            Assert.Equal(OperationStatus.InvalidData, result.Status);
+            Assert.Equal(string.Format(CultureInfo.InvariantCulture, ApplicationDataResources.NameRequired), result.Errors.First());
         }
+
 
 
         [Fact]
@@ -276,6 +272,23 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.NotFound, result.Status);
 
         }
+
+        [Fact]
+        public async Task IsApplicationNameUniqueAsyncShouldReturnFalseWhenNameIsNullOrWhiteSpace()
+        {
+            // Arrange
+            var invalidNames = new List<string?> { null, string.Empty, "   " };
+
+            foreach (var name in invalidNames)
+            {
+                // Act
+                var result = await _applicationDataService.IsApplicationNameUniqueAsync(name ?? string.Empty);
+
+                // Assert
+                Assert.False(result);
+            }
+        }
+
 
     }
 }
