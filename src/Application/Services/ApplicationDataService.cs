@@ -31,11 +31,7 @@ namespace Stellantis.ProjectName.Application.Services
         public override async Task<OperationResult> CreateAsync(ApplicationData item)
         {
             ArgumentNullException.ThrowIfNull(item);
-
-            if (string.IsNullOrEmpty(item.Name))
-            {
-                return OperationResult.Conflict(_localizer[nameof(ApplicationDataResources.NameRequired)]);
-            }
+            ArgumentNullException.ThrowIfNull(item.Name); 
 
             var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
             if (!validationResult.IsValid)
@@ -68,26 +64,35 @@ namespace Stellantis.ProjectName.Application.Services
 
         public async Task<bool> IsApplicationNameUniqueAsync(string name, int? id = null)
         {
-            var filter = new ApplicationFilter { Name = name };
-            var applicationData = await GetListAsync(filter).ConfigureAwait(false);
-            return !applicationData.Result.Any(a => a.Id != id); 
-        }
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return false;
+            }
 
+            var existingItems = await Repository.GetListAsync(new ApplicationFilter { Name = name }).ConfigureAwait(false);
+            return !existingItems.Result.Any(e => e.Id != id);
+        }
 
         public override async Task<OperationResult> UpdateAsync(ApplicationData item)
         {
             ArgumentNullException.ThrowIfNull(item);
-            if (string.IsNullOrEmpty(item.Name))
+            ArgumentNullException.ThrowIfNull(item.Name);
+
+            var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
+            if (!validationResult.IsValid)
             {
-                return OperationResult.Conflict(_localizer[nameof(ApplicationDataResources.NameRequired)]);
+                return OperationResult.InvalidData(validationResult);
             }
 
-            if (!await IsApplicationNameUniqueAsync(item.Name).ConfigureAwait(false))
+            if (!await IsApplicationNameUniqueAsync(item.Name, item.Id).ConfigureAwait(false))
             {
-                return OperationResult.Conflict(_localizer[nameof(ApplicationDataResources.AlreadyExists)]);
+                return OperationResult.Conflict(ApplicationDataResources.AlreadyExists);
             }
+
             return await base.UpdateAsync(item).ConfigureAwait(false);
         }
+
+
 
         public async Task<PagedResult<ApplicationData>> GetListAsync(ApplicationFilter applicationFilter)
         {
