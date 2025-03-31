@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Localization;
 using Moq;
+using FluentValidation;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Application.Resources;
@@ -8,180 +9,356 @@ using Stellantis.ProjectName.Domain.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
+using Stellantis.ProjectName.Application.Models;
+using Stellantis.ProjectName.Application.Interfaces;
+using Stellantis.ProjectName.Application.Validators;
+using System.ComponentModel.DataAnnotations;
+using FluentValidation.TestHelper;
 
 namespace Application.Tests.Services
 {
     public class DataServiceTests
     {
         private readonly Mock<IDataServiceRepository> _serviceRepositoryMock;
-        private readonly Mock<IStringLocalizer<DataService>> _localizerMock;
-        private readonly DataService _dataService;
+        private readonly Mock<IStringLocalizer<DataServiceResources>> _localizerMock;
+        private readonly Mock<IValidator<DataService>> _validatorMock;
+        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
+        private readonly ApplicationService _dataService;
 
         public DataServiceTests()
         {
             _serviceRepositoryMock = new Mock<IDataServiceRepository>();
-            _localizerMock = new Mock<IStringLocalizer<DataService>>();
-            _dataService = new DataService(_serviceRepositoryMock.Object, _localizerMock.Object);
+            _localizerMock = new Mock<IStringLocalizer<DataServiceResources>>();
+            _validatorMock = new Mock<IValidator<DataService>>();
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
+            _dataService = new ApplicationService(_serviceRepositoryMock.Object, _localizerMock.Object, _validatorMock.Object);
         }
 
         [Fact]
-        public async Task GetAllServicesAsyncShouldReturnAllServices()
+        public async Task CreateAsyncShouldThrowArgumentNullExceptionWhenEntityIsNull()
         {
             // Arrange
-            var expectedServices = new List<EDataService>
-            {
-                new() { Id = 1, Name = "Service 1", ApplicationId = 1 },
-                new() { Id = 2, Name = "Service 2", ApplicationId = 2 }
-            };
-            _serviceRepositoryMock.Setup(repo => repo.GetAllServicesAsync())
-                .ReturnsAsync(expectedServices);
+            DataService? dataService = null;
+            _localizerMock.Setup(l => l[nameof(DataServiceResources.ServiceCannotBeNull)])
+                .Returns(new LocalizedString(nameof(DataServiceResources.ServiceCannotBeNull), "Service cannot be null."));
 
-            // Act
-            var result = await _dataService.GetAllServicesAsync();
-
-            // Assert
-            Assert.Equal(expectedServices, result);
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => _dataService.CreateAsync(dataService!));
+            Assert.Equal("service", exception.ParamName);
+            Assert.Contains("Service cannot be null.", exception.Message, StringComparison.Ordinal);
         }
 
         [Fact]
-        public async Task GetServiceByIdAsyncShouldReturnServiceData()
+        public async Task CreateAsyncShouldThrowArgumentExceptionWhenNameLengthIsInvalid()
+        {
+            // Arrange
+            var dataService = new DataService { Name = "ab" }; // Name too short
+            _localizerMock.Setup(l => l[nameof(DataServiceResources.ServiceNameLength)])
+                .Returns(new LocalizedString(nameof(DataServiceResources.ServiceNameLength), "Name must be between 3 and 50 characters."));
+
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _dataService.CreateAsync(dataService));
+            Assert.Contains("Name must be between 3 and 50 characters.", exception.Message, StringComparison.Ordinal);
+        }
+
+        [Fact]
+        public async Task ShouldHaveErrorWhenNameIsTooShort()
+        {
+            // Arrange
+            var dataService = new DataService { Name = "ab" };
+            _localizerMock.Setup(l => l[nameof(DataServiceResources.ServiceNameLength), 3, 50])
+                .Returns(new LocalizedString(nameof(DataServiceResources.ServiceNameLength), "Name must be between 3 and 50 characters."));
+
+            var localizerFactoryMock = new Mock<IStringLocalizerFactory>();
+            localizerFactoryMock.Setup(factory => factory.Create(typeof(DataServiceResources)))
+                .Returns(_localizerMock.Object);
+
+            var validator = new DataServiceValidator(localizerFactoryMock.Object);
+
+            // Act
+            var result = await validator.TestValidateAsync(dataService);
+
+            // Assert
+            result.ShouldHaveValidationErrorFor(ds => ds.Name)
+                .WithErrorMessage("Name must be between 3 and 50 characters.");
+        }
+
+        [Fact]
+        public async Task VerifyNameAlreadyExistsAsyncShouldThrowExceptionIfNameIsNull()
+        {
+            // Arrange
+            string? name = null;
+            _localizerMock.Setup(l => l[nameof(DataServiceResources.ServiceCannotBeNull)])
+                .Returns(new LocalizedString(nameof(DataServiceResources.ServiceCannotBeNull), "Service cannot be null."));
+
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _dataService.VerifyNameAlreadyExistsAsync(name!));
+            Assert.Contains("Service cannot be null.", exception.Message, StringComparison.Ordinal);
+        }
+
+        [Fact]
+        public async Task VerifyServiceExistsAsyncShouldReturnFalseWhenServiceDoesNotExist()
         {
             // Arrange
             var serviceId = 1;
-            var expectedService = new EDataService
-            {
-                Id = serviceId,
-                Name = "Test Service",
-                ApplicationId = 1
-            };
-            _serviceRepositoryMock.Setup(repo => repo.GetServiceByIdAsync(serviceId))
-                .ReturnsAsync(expectedService);
+            _serviceRepositoryMock.Setup(repo => repo.VerifyServiceExistsAsync(serviceId)).ReturnsAsync(false);
 
             // Act
-            var result = await _dataService.GetServiceByIdAsync(serviceId);
+            var result = await _dataService.VerifyServiceExistsAsync(serviceId);
 
             // Assert
-            Assert.Equal(expectedService, result);
+            Assert.False(result);
         }
 
         [Fact]
-        public async Task AddServiceAsyncShouldReturnConflictWhenNameIsEmpty()
+        public async Task VerifyNameAlreadyExistsAsyncShouldReturnFalseWhenNameDoesNotExist()
         {
             // Arrange
-            var newService = new EDataService
-            {
-                Id = 3,
-                Name = string.Empty,
-                ApplicationId = 3
-            };
+            var name = "Nonexistent Service";
+            _serviceRepositoryMock.Setup(repo => repo.VerifyNameAlreadyExistsAsync(name)).ReturnsAsync(false);
 
-            var localizedString = new LocalizedString(nameof(DataServiceResources.NameRequired), "Service Name is required.");
-            _localizerMock.Setup(localizer => localizer[nameof(DataServiceResources.NameRequired)])
-                .Returns(localizedString);
+            // Act
+            var result = await _dataService.VerifyNameAlreadyExistsAsync(name);
+
+            // Assert
+            Assert.False(result);
+        }
+
+        [Fact]
+        public async Task VerifyNameAlreadyExistsAsyncShouldThrowExceptionWhenNameExists()
+        {
+            // Arrange
+            var name = "Existing Service";
+            _serviceRepositoryMock.Setup(repo => repo.VerifyNameAlreadyExistsAsync(name)).ReturnsAsync(true);
+            _localizerMock.Setup(l => l[nameof(DataServiceResources.ServiceAlreadyExists)])
+                .Returns(new LocalizedString(nameof(DataServiceResources.ServiceAlreadyExists), "Service already exists."));
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => _dataService.AddServiceAsync(newService));
-            Assert.Equal(localizedString.Value, exception.Message);
-            _serviceRepositoryMock.Verify(repo => repo.AddServiceAsync(It.IsAny<EDataService>()), Times.Never);
+            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _dataService.VerifyNameAlreadyExistsAsync(name));
+            Assert.Contains("Service already exists.", exception.Message, StringComparison.Ordinal);
         }
 
         [Fact]
-        public async Task AddServiceAsyncShouldCallRepositoryAdd()
+        public async Task VerifyServiceExistsAsyncShouldThrowWhenServiceExists()
         {
             // Arrange
-            var newService = new EDataService
+            var serviceId = 1;
+            var dataServices = new List<DataService>
             {
-                Id = 3,
-                Name = "New Service",
-                ApplicationId = 3
+                new() { ServiceId = serviceId, Name = "Test Service" }
             };
 
-            // Act
-            await _dataService.AddServiceAsync(newService);
-
-            // Assert
-            _serviceRepositoryMock.Verify(repo => repo.AddServiceAsync(newService), Times.Once);
-        }
-
-        [Fact]
-        public async Task AddServiceAsyncShouldSetDescription()
-        {
-            // Arrange
-            var newService = new EDataService
-            {
-                Id = 3,
-                Name = "New Service",
-                Description = "This is a test description.",
-                ApplicationId = 3
-            };
-
-            // Act
-            await _dataService.AddServiceAsync(newService);
-
-            // Assert
-            _serviceRepositoryMock.Verify(repo => repo.AddServiceAsync(It.Is<EDataService>(s => s.Description == "This is a test description.")), Times.Once);
-        }
-
-        [Fact]
-        public async Task AddServiceAsyncShouldReturnConflictWhenServiceNameAlreadyExists()
-        {
-            // Arrange
-            var newService = new EDataService
-            {
-                Id = 3,
-                Name = "Existing Service",
-                ApplicationId = 3
-            };
-
-            var existingService = new EDataService
-            {
-                Id = 1,
-                Name = "Existing Service",
-                ApplicationId = 1
-            };
-
-            _serviceRepositoryMock.Setup(repo => repo.GetAllServicesAsync())
-                .ReturnsAsync([existingService]);
-
-            var localizedString = new LocalizedString(nameof(DataServiceResources.ServiceNameAlreadyExists), "Service name already exists.");
-            _localizerMock.Setup(localizer => localizer[nameof(DataServiceResources.ServiceNameAlreadyExists), newService.Name])
-                .Returns(localizedString);
+            _serviceRepositoryMock.Setup(repo => repo.VerifyServiceExistsAsync(serviceId)).ReturnsAsync(true);
+            _localizerMock.Setup(l => l[nameof(DataServiceResources.ServiceAlreadyExists)])
+                .Returns(new LocalizedString(nameof(DataServiceResources.ServiceAlreadyExists), "Service already exists."));
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => _dataService.AddServiceAsync(newService));
-            Assert.Equal(localizedString.Value, exception.Message);
-            _serviceRepositoryMock.Verify(repo => repo.AddServiceAsync(It.IsAny<EDataService>()), Times.Never);
+            var exception = await Assert.ThrowsAsync<ArgumentException>(() =>
+                _dataService.VerifyServiceExistsAsync(serviceId));
+            Assert.Equal("Service already exists.", exception.Message);
         }
 
         [Fact]
-        public async Task UpdateServiceAsyncShouldCallRepositoryUpdate()
+        public async Task GetItemAsyncShouldReturnItemWhenItemExists()
         {
             // Arrange
-            var updatedService = new EDataService
-            {
-                Id = 1,
-                Name = "Updated Service",
-                ApplicationId = 1
-            };
+            var itemId = 1;
+            var expectedItem = new DataService { ServiceId = itemId, Name = "Test Service" };
+            _serviceRepositoryMock.Setup(repo => repo.GetByIdAsync(itemId)).ReturnsAsync(expectedItem);
 
             // Act
-            await _dataService.UpdateServiceAsync(updatedService);
+            var result = await _dataService.GetItemAsync(itemId);
 
             // Assert
-            _serviceRepositoryMock.Verify(repo => repo.UpdateServiceAsync(updatedService), Times.Once);
+            Assert.NotNull(result);
+            Assert.Equal(expectedItem.ServiceId, result.ServiceId);
         }
 
         [Fact]
-        public async Task DeleteServiceAsyncShouldCallRepositoryDelete()
+        public async Task GetListAsyncShouldReturnPagedResult()
+        {
+            // Arrange
+            var filter = new DataServiceFilter { Name = "Test Service" };
+            var expectedResult = new PagedResult<DataService>
+            {
+                Result = [new DataService { Name = "Test Service" }],
+                Page = 1,
+                PageSize = 10,
+                Total = 1
+            };
+            _serviceRepositoryMock.Setup(repo => repo.GetListAsync(filter)).ReturnsAsync(expectedResult);
+
+            // Act
+            var result = await _dataService.GetListAsync(filter);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(expectedResult.Total, result.Total);
+            Assert.Equal(expectedResult.Page, result.Page);
+            Assert.Equal(expectedResult.PageSize, result.PageSize);
+            Assert.Equal(expectedResult.Result, result.Result);
+        }
+
+        [Fact]
+        public async Task GetListAsyncShouldThrowKeyNotFoundExceptionWhenNoServicesFound()
+        {
+            // Arrange
+            var filter = new DataServiceFilter { Name = "Nonexistent Service" };
+
+            _serviceRepositoryMock.Setup(repo => repo.GetListAsync(It.IsAny<DataServiceFilter>()))
+                .ReturnsAsync(() => null!);
+
+            _localizerMock.Setup(l => l[nameof(DataServiceResources.ServicesNoFound)])
+                .Returns(new LocalizedString(nameof(DataServiceResources.ServicesNoFound), "Services not found"));
+
+            // Act
+            Task act() => _dataService.GetListAsync(filter);
+
+            // Assert
+            var exception = await Assert.ThrowsAsync<KeyNotFoundException>(act);
+            Assert.Contains("Services not found", exception.Message, StringComparison.Ordinal);
+        }
+
+        [Fact]
+        public async Task CreateAsyncShouldReturnConflictWhenServiceAlreadyExists()
+        {
+            // Arrange
+            var dataService = new DataService { Name = "Existing Service" };
+
+            _serviceRepositoryMock.Setup(repo => repo.VerifyNameAlreadyExistsAsync(dataService.Name))
+                .ReturnsAsync(true);
+            _localizerMock.Setup(l => l[nameof(DataServiceResources.ServiceAlreadyExists)])
+                .Returns(new LocalizedString(nameof(DataServiceResources.ServiceAlreadyExists), "Service already exists."));
+
+            var validationResult = new FluentValidation.Results.ValidationResult();
+            _validatorMock.Setup(v => v.ValidateAsync(dataService, default))
+                .ReturnsAsync(validationResult);
+
+            // Act
+            var result = await _dataService.CreateAsync(dataService);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal(_localizerMock.Object[nameof(DataServiceResources.ServiceAlreadyExists)], result.Message);
+        }
+
+        [Fact]
+        public async Task CreateAsyncShouldReturnCompleteOperationResult()
+        {
+            // Arrange
+            var dataService = new DataService { Name = "Test Service" };
+            _validatorMock.Setup(v => v.ValidateAsync(dataService, default))
+                .ReturnsAsync(new FluentValidation.Results.ValidationResult());
+            _serviceRepositoryMock.Setup(repo => repo.CreateAsync(It.IsAny<DataService>(), It.IsAny<bool>()))
+                .Returns(Task.CompletedTask);
+
+            // Act
+            var result = await _dataService.CreateAsync(dataService);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(OperationStatus.Success, result.Status);
+        }
+
+        [Fact]
+        public async Task CreateAsyncShouldReturnInvalidDataWhenValidationFails()
+        {
+            // Arrange
+            var dataService = new DataService { Name = "Invalid Service" };
+            var validationResult = new FluentValidation.Results.ValidationResult(new List<FluentValidation.Results.ValidationFailure>
+            {
+                new("Name", "Invalid name")
+            });
+            _validatorMock.Setup(v => v.ValidateAsync(dataService, default))
+                .ReturnsAsync(validationResult);
+
+            // Act
+            var result = await _dataService.CreateAsync(dataService);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(OperationStatus.InvalidData, result.Status);
+        }
+
+        [Fact]
+        public async Task UpdateAsyncShouldReturnCompleteOperationResult()
+        {
+            // Arrange
+            var dataService = new DataService { ServiceId = 1, Name = "Updated Service" };
+
+            _validatorMock.Setup(v => v.ValidateAsync(dataService, default))
+                .ReturnsAsync(new FluentValidation.Results.ValidationResult());
+
+            _serviceRepositoryMock.Setup(repo => repo.UpdateAsync(It.IsAny<DataService>(), It.IsAny<bool>()))
+                .Returns(Task.CompletedTask);
+
+            // Act
+            var result = await _dataService.UpdateAsync(dataService);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(OperationStatus.Success, result.Status);
+        }
+
+        [Fact]
+        public async Task DeleteAsyncShouldReturnNotFoundWhenServiceDoesNotExist()
         {
             // Arrange
             var serviceId = 1;
 
+            _serviceRepositoryMock.Setup(repo => repo.VerifyServiceExistsAsync(serviceId))
+                .ReturnsAsync(false);
+
+            _localizerMock.Setup(l => l[nameof(DataServiceResources.ServiceNotFound)])
+                .Returns(new LocalizedString(nameof(DataServiceResources.ServiceNotFound), "Service not found"));
+
             // Act
-            await _dataService.DeleteServiceAsync(serviceId);
+            var result = await _dataService.DeleteAsync(serviceId);
 
             // Assert
-            _serviceRepositoryMock.Verify(repo => repo.DeleteServiceAsync(serviceId), Times.Once);
+            Assert.NotNull(result);
+            Assert.Equal(OperationStatus.NotFound, result.Status);
+            Assert.Equal(_localizerMock.Object[nameof(DataServiceResources.ServiceNotFound)], result.Message);
+        }
+
+        [Fact]
+        public async Task DeleteAsyncShouldReturnCompleteOperationResult()
+        {
+            // Arrange
+            var serviceId = 1;
+            var mockService = new DataService { ServiceId = serviceId, Name = "Serviço para deletar" };
+
+            _serviceRepositoryMock.Setup(repo => repo.VerifyServiceExistsAsync(serviceId))
+                .ReturnsAsync(true);
+
+            _serviceRepositoryMock.Setup(repo => repo.DeleteAsync(serviceId, It.IsAny<bool>()))
+                .Returns(Task.CompletedTask);
+
+            _unitOfWorkMock.Setup(uow => uow.CommitAsync())
+                .Returns(Task.CompletedTask);
+
+            // Act
+            var result = await _dataService.DeleteAsync(serviceId);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(OperationStatus.Success, result.Status);
+        }
+
+        [Fact]
+        public void DataServiceShouldSetAndGetDescription()
+        {
+            // Arrange
+            var description = "Test Description";
+            var dataService = new DataService
+            {
+                // Act
+                Description = description
+            };
+
+            // Assert
+            Assert.Equal(description, dataService.Description);
         }
 
         [Fact]
@@ -189,27 +366,93 @@ namespace Application.Tests.Services
         {
             // Arrange
             var name = "Test Service";
-            var page = 1;
-            var pageSize = 10;
-            var sort = "Name";
-            var sortDir = "asc";
+            var serviceId = 1;
 
             // Act
             var filter = new DataServiceFilter
             {
                 Name = name,
-                Page = page,
-                PageSize = pageSize,
-                Sort = sort,
-                SortDir = sortDir
+                ServiceId = serviceId
             };
 
             // Assert
             Assert.Equal(name, filter.Name);
-            Assert.Equal(page, filter.Page);
-            Assert.Equal(pageSize, filter.PageSize);
-            Assert.Equal(sort, filter.Sort);
-            Assert.Equal(sortDir, filter.SortDir);
+            Assert.Equal(serviceId, filter.ServiceId);
+        }
+
+        [Fact]
+        public void GetServiceNotFoundShouldReturnCorrectValue()
+        {
+            // Arrange
+            var expectedValue = "Serviço não encontrado.";
+            _localizerMock.Setup(l => l[nameof(DataServiceResources.ServiceNotFound)])
+                .Returns(new LocalizedString(nameof(DataServiceResources.ServiceNotFound), expectedValue));
+
+            // Act
+            var result = DataServiceResources.ServiceNotFound;
+
+            // Assert
+            Assert.Equal(expectedValue, result);
+        }
+
+        [Fact]
+        public void GetServicesNoFoundShouldReturnCorrectValue()
+        {
+            // Arrange
+            var expectedValue = "Nenhum serviço encontrado.";
+            _localizerMock.Setup(l => l[nameof(DataServiceResources.ServicesNoFound)])
+                .Returns(new LocalizedString(nameof(DataServiceResources.ServicesNoFound), expectedValue));
+
+            // Act
+            var result = DataServiceResources.ServicesNoFound;
+
+            // Assert
+            Assert.Equal(expectedValue, result);
+        }
+
+        [Fact]
+        public void GetServiceAlreadyExistsShouldReturnCorrectValue()
+        {
+            // Arrange
+            var expectedValue = "Esse serviço já existe.";
+            _localizerMock.Setup(l => l[nameof(DataServiceResources.ServiceAlreadyExists)])
+                .Returns(new LocalizedString(nameof(DataServiceResources.ServiceAlreadyExists), expectedValue));
+
+            // Act
+            var result = DataServiceResources.ServiceAlreadyExists;
+
+            // Assert
+            Assert.Equal(expectedValue, result);
+        }
+
+        [Fact]
+        public void GetServiceNameLengthShouldReturnCorrectValue()
+        {
+            // Arrange
+            var expectedValue = "O nome do serviço deve ter entre 3 e 50 caracteres.";
+            _localizerMock.Setup(l => l[nameof(DataServiceResources.ServiceNameLength)])
+                .Returns(new LocalizedString(nameof(DataServiceResources.ServiceNameLength), expectedValue));
+
+            // Act
+            var result = DataServiceResources.ServiceNameLength;
+
+            // Assert
+            Assert.Equal(expectedValue, result);
+        }
+
+        [Fact]
+        public void GetServiceCannotBeNullShouldReturnCorrectValue()
+        {
+            // Arrange
+            var expectedValue = "Serviço não pode ser nulo.";
+            _localizerMock.Setup(l => l[nameof(DataServiceResources.ServiceCannotBeNull)])
+                .Returns(new LocalizedString(nameof(DataServiceResources.ServiceCannotBeNull), expectedValue));
+
+            // Act
+            var result = DataServiceResources.ServiceCannotBeNull;
+
+            // Assert
+            Assert.Equal(expectedValue, result);
         }
     }
 }

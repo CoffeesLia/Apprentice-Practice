@@ -10,25 +10,27 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         public ResponsibleRepository(Context context) : base(context)
         {
         }
+
         public async Task<PagedResult<Responsible>> GetListAsync(ResponsibleFilter filter)
         {
             ArgumentNullException.ThrowIfNull(filter);
 
             IQueryable<Responsible> query = Context.Set<Responsible>();
 
+
             if (!string.IsNullOrEmpty(filter.Email))
             {
-                query = query.Where(r => r.Email.Contains(filter.Email)); // Filtro exato por Email
+                query = query.Where(r => r.Email.Contains(filter.Email));
             }
 
             if (!string.IsNullOrEmpty(filter.Name))
             {
-                query = query.Where(r => r.Name.Contains(filter.Name)); // Filtro exato por Nome
+                query = query.Where(r => r.Name.Contains(filter.Name));
             }
 
-            if (filter.AreaId != 0)
+            if (!string.IsNullOrEmpty(filter.Area))
             {
-                query = query.Where(r => r.AreaId == filter.AreaId); // Filtra pelo AreaId diretamente
+                query = query.Where(r => r.Area.Contains(filter.Area));
             }
 
             return await GetPagedResultAsync(query, filter.Page, filter.PageSize).ConfigureAwait(false);

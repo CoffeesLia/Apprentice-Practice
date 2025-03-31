@@ -44,7 +44,6 @@ namespace Stellantis.ProjectName.Application.Tests.Services
             Assert.Throws<InvalidOperationException>(() => _memberService.AddEntityMember(entityMember));
         }
 
-        /*
         [Fact]
         public void AddEntityMember_ShouldThrowException_WhenRequiredFieldsAreNotFilled()
         {
@@ -59,8 +58,8 @@ namespace Stellantis.ProjectName.Application.Tests.Services
 
             //actEassert
             Assert.Throws<ArgumentException>(() => _memberService.AddEntityMember(entityMember));
+
         }
-        */
 
         [Fact]
         public void AddEntityMember_ShouldAddMember_WhenAllFieldsAreValid()

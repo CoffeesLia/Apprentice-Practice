@@ -1,12 +1,15 @@
 ﻿using AutoFixture;
 using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
+using Xunit;
 
 namespace Stellantis.ProjectName.Tests.Data.Repositories
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1001:Tipos que têm campos descartáveis devem ser descartáveis", Justification = "<Pendente>")]
     public class ResponsibleRepositoryTests
     {
         private readonly Context _context;
@@ -59,33 +62,32 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
             {
                 Page = 1,
                 PageSize = 10,
-                Name = _fixture.Create<string>(),
                 Email = _fixture.Create<string>(),
-                AreaId = _fixture.Create<int>()
+                Name = _fixture.Create<string>(),
+                Area = _fixture.Create<string>()
             };
             const int Count = 10;
             var responsibles = _fixture
                 .Build<Responsible>()
-                .With(x => x.Name, filter.Name)
                 .With(x => x.Email, filter.Email)
-                .Without(x => x.Area)
-                .With(x => x.AreaId, filter.AreaId)
+                .With(x => x.Name, filter.Name)
+                .With(x => x.Area, filter.Area)
                 .CreateMany<Responsible>(Count);
 
             await _context.Set<Responsible>().AddRangeAsync(responsibles);
             await _context.SaveChangesAsync();
 
-            // Verifique se os dados foram salvos corretamente
-            var savedResponsibles = await _context.Set<Responsible>().ToListAsync();
-            Assert.Equal(Count, savedResponsibles.Count);
-
             // Act
             var result = await _repository.GetListAsync(filter);
 
             // Assert
-            Assert.Equal(Count, result.Total); // Verifica o total de itens
-            Assert.Equal(filter.Page, result.Page); // Verifica a página solicitada
-            Assert.Equal(filter.PageSize, result.PageSize); // Verifica o tamanho da página retornada
+            Assert.Equal(Count, result.Total);
+            Assert.Equal(filter.Page, result.Page);
+            Assert.Equal(filter.PageSize, result.PageSize);
+            Assert.All(result.Result, r => Assert.Contains(filter.Email, r.Email, StringComparison.OrdinalIgnoreCase));
+            Assert.All(result.Result, r => Assert.Contains(filter.Name, r.Name, StringComparison.OrdinalIgnoreCase));
+            Assert.All(result.Result, r => Assert.Contains(filter.Area, r.Area, StringComparison.OrdinalIgnoreCase));
+
         }
 
         [Fact]
@@ -131,6 +133,8 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
 
             // Assert
             Assert.Null(result);
-        }  
+        }
+
+       
     }
 }

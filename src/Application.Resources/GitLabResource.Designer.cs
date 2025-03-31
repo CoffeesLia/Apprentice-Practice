@@ -22,14 +22,14 @@ namespace Stellantis.ProjectName.Application.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class ResponsibleResource {
+    public class GitLabResource {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal ResponsibleResource() {
+        internal GitLabResource() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Stellantis.ProjectName.Application.Resources.ResponsibleResource", typeof(ResponsibleResource).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Stellantis.ProjectName.Application.Resources.GitLabResource", typeof(GitLabResource).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,25 +61,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a The Area is mandatory.
-        /// </summary>
-        public static string AreaRequired {
-            get {
-                return ResourceManager.GetString(" AreaRequired  ", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a The email already exists..
-        /// </summary>
-        public static string EmailExists {
-            get {
-                return ResourceManager.GetString("EmailExists", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Successfully deleted.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Repository deleted successfully.
         /// </summary>
         public static string DeletedSuccessfully {
             get {
@@ -88,29 +70,74 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a The email must be valid.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Description is required..
         /// </summary>
-        public static string EmailInvalid {
+        public static string Description {
             get {
-                return ResourceManager.GetString("EmailInvalid", resourceCulture);
+                return ResourceManager.GetString("Description", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Email is mandatory .
+        ///   Consulta uma cadeia de caracteres localizada semelhante a A repository with the same URL already exists..
         /// </summary>
-        public static string EmailRequired {
+        public static string ExistentRepositoryUrl {
             get {
-                return ResourceManager.GetString("EmailRequired ", resourceCulture);
+                return ResourceManager.GetString("ExistentRepositoryUrl", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Name must be required.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Name is required.
         /// </summary>
-        public static string NameRequired {
+        public static string Name {
             get {
-                return ResourceManager.GetString("NameRequired", resourceCulture);
+                return ResourceManager.GetString("Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Repository created successfully..
+        /// </summary>
+        public static string RegisteredSuccessfully {
+            get {
+                return ResourceManager.GetString("RegisteredSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Repository not found..
+        /// </summary>
+        public static string RepositoryNotFound {
+            get {
+                return ResourceManager.GetString("RepositoryNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Repository updated successfully..
+        /// </summary>
+        public static string UpdatedSuccessfully {
+            get {
+                return ResourceManager.GetString("UpdatedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Url is required..
+        /// </summary>
+        public static string Url {
+            get {
+                return ResourceManager.GetString("Url", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Name, Description, and URL are required fields..
+        /// </summary>
+        public static string ValidationErrorMessage {
+            get {
+                return ResourceManager.GetString("ValidationErrorMessage", resourceCulture);
             }
         }
     }

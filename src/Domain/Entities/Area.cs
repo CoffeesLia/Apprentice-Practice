@@ -12,8 +12,6 @@ namespace Stellantis.ProjectName.Domain.Entities
     {
         public string Name { get; set; } = name;
         public Collection<ApplicationData> Applications { get; } = new();
-        public ICollection<Responsible> Responsibles { get; } = new List<Responsible>();
-
 
     }
 }

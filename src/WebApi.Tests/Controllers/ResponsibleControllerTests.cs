@@ -12,7 +12,6 @@ using Stellantis.ProjectName.WebApi.ViewModels;
 using Stellantis.ProjectName.Application.Resources;
 using AutoFixture;
 using Xunit;
-using Stellantis.ProjectName.WebApi.Dto.Filters;
 
 namespace Stellantis.ProjectName.WebApi.Tests.Controllers
 {
@@ -29,21 +28,19 @@ namespace Stellantis.ProjectName.WebApi.Tests.Controllers
             _serviceMock = new Mock<IResponsibleService>();
             _mapperMock = new Mock<IMapper>();
             _localizerFactoryMock = new Mock<IStringLocalizerFactory>();
-          
             _fixture = new Fixture();
 
             _controller = new ResponsibleController(_serviceMock.Object, _mapperMock.Object, _localizerFactoryMock.Object);
         }
 
         [Fact]
+        // Teste para verificar se CreateAsync retorna CreatedAtAction quando a criação é bem-sucedida
         public async Task CreateAsyncWhenCreationIsSuccessful()
         {
             // Arrange
             var responsibleDto = _fixture.Create<ResponsibleDto>();
             var responsible = _fixture.Create<Responsible>();
             var responsibleVm = _fixture.Create<ResponsibleVm>();
-
-            responsibleVm.Id = responsible.Id; // Certifique-se de que os Ids correspondam
 
             _mapperMock.Setup(m => m.Map<Responsible>(responsibleDto)).Returns(responsible);
             _serviceMock.Setup(s => s.CreateAsync(responsible)).ReturnsAsync(OperationResult.Complete("Success"));
@@ -79,46 +76,28 @@ namespace Stellantis.ProjectName.WebApi.Tests.Controllers
         }
 
         [Fact]
-        public async Task GetListAsyncSuccess()
+        // Teste para verificar se GetListAsync retorna PagedResult
+        public async Task GetListAsyncShouldReturnPagedResult()
         {
-            // Arrange
+            var filterDto = _fixture.Create<ResponsibleFilter>();
+            var filter = _fixture.Create<ResponsibleFilter>();
             var pagedResult = _fixture.Create<PagedResult<Responsible>>();
-            var expect = _fixture.Create<PagedResultVm<ResponsibleVm>>();
-            var filterDto = _fixture.Create<ResponsibleFilterDto>();
+            var pagedResultVm = _fixture.Create<PagedResult<ResponsibleVm>>();
 
-            // Configuração do mock do AutoMapper
-            _mapperMock
-                .Setup(m => m.Map<ResponsibleFilter>(filterDto))
-                .Returns(new ResponsibleFilter
-                {
-                    Name = filterDto.Name,
-                    Email = filterDto.Email,
-                    AreaId = filterDto.AreaId,
-                    Page = filterDto.Page,
-                    PageSize = filterDto.PageSize,
-                    Sort = filterDto.Sort,
-                    SortDir = filterDto.SortDir
-                });
+            _mapperMock.Setup(m => m.Map<ResponsibleFilter>(filterDto)).Returns(filter);
+            _serviceMock.Setup(s => s.GetListAsync(filter)).ReturnsAsync(pagedResult);
+            _mapperMock.Setup(m => m.Map<PagedResult<ResponsibleVm>>(pagedResult)).Returns(pagedResultVm);
 
-            _mapperMock
-                .Setup(m => m.Map<PagedResultVm<ResponsibleVm>>(pagedResult))
-                .Returns(expect);
-
-            _serviceMock
-                .Setup(s => s.GetListAsync(It.IsAny<ResponsibleFilter>()))
-                .ReturnsAsync(pagedResult);
-
-            // Act
             var result = await _controller.GetListAsync(filterDto);
 
-            // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedValue = Assert.IsType<PagedResultVm<ResponsibleVm>>(okResult.Value);
-            Assert.Equal(expect, returnedValue);
+            var returnedPagedResultVm = Assert.IsType<PagedResult<ResponsibleVm>>(okResult.Value);
+            Assert.Equal(pagedResultVm.Result.Count(), returnedPagedResultVm.Result.Count());
+            Assert.Equal(pagedResultVm.Result.First().Name, returnedPagedResultVm.Result.First().Name);
         }
 
         [Fact]
-        public async Task UpdateAsyncSuccessful()
+        public async Task UpdateAsyncShouldReturnSuccessWhenUpdateIsSuccessful()
         {
             // Arrange
             var responsibleDto = _fixture.Create<ResponsibleDto>();
@@ -126,7 +105,6 @@ namespace Stellantis.ProjectName.WebApi.Tests.Controllers
             var responsibleVm = _fixture.Create<ResponsibleVm>();
 
             _serviceMock.Setup(s => s.GetItemAsync(responsible.Id)).ReturnsAsync(responsible);
-            _mapperMock.Setup(m => m.Map<Responsible>(responsibleDto)).Returns(responsible);
             _mapperMock.Setup(m => m.Map<ResponsibleVm>(responsible)).Returns(responsibleVm);
             _serviceMock.Setup(s => s.UpdateAsync(responsible)).ReturnsAsync(OperationResult.Complete("Success"));
 
@@ -141,7 +119,7 @@ namespace Stellantis.ProjectName.WebApi.Tests.Controllers
 
         [Fact]
         // Teste para verificar se DeleteAsync retorna NoContent quando a exclusão é bem-sucedida
-        public async Task DeleteAsyncSuccessful()
+        public async Task DeleteAsyncShouldReturnNoContentWhenDeleteIsSuccessful()
         {
             // Arrange
             int id = _fixture.Create<int>();

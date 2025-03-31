@@ -117,22 +117,31 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name=" AreaRequired  " xml:space="preserve">
-    <value>A área é obrigatória</value>
+  <data name="ExistentRepositoryUrl" xml:space="preserve">
+    <value>Um repositório com este mesmo Url já existe</value>
   </data>
-  <data name="EmailExists" xml:space="preserve">
-    <value>O e-mail já existe</value>
+  <data name="Name" xml:space="preserve">
+    <value>O Nome é obrigatório</value>
+  </data>
+  <data name="RegisteredSuccessfully" xml:space="preserve">
+    <value>Repositório criado com sucesso</value>
+  </data>
+  <data name="RepositoryNotFound" xml:space="preserve">
+    <value>Repositório não encontrado</value>
   </data>
   <data name="DeletedSuccessfully" xml:space="preserve">
-    <value>Deletado com sucesso</value>
+    <value>Repositório deletado com sucesso</value>
   </data>
-  <data name="EmailInvalid" xml:space="preserve">
-    <value>O e-mail deve ser válido</value>
+  <data name="UpdatedSuccessfully" xml:space="preserve">
+    <value>Repositório editado com sucesso</value>
   </data>
-  <data name="EmailRequired " xml:space="preserve">
-    <value>O email é obrigatório </value>
+  <data name="Url" xml:space="preserve">
+    <value>O Url é obrigatório</value>
   </data>
-  <data name="NameRequired" xml:space="preserve">
-    <value>O nome deve ser obrigatório</value>
+  <data name="Description" xml:space="preserve">
+    <value>A Descrição é obrigatória</value>
+  </data>
+  <data name="ValidationErrorMessage" xml:space="preserve">
+    <value>Nome, Descrição e Url são obrigatórias.</value>
   </data>
 </root>

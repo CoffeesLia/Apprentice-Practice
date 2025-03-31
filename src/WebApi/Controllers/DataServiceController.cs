@@ -1,89 +1,53 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces.Services;
+using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Dto;
-using Microsoft.Extensions.Localization;
-using Stellantis.ProjectName.WebApi.Resources;
-using Stellantis.ProjectName.Application.Resources;
+using Stellantis.ProjectName.WebApi.Dto.Filters;
+using Stellantis.ProjectName.WebApi.ViewModels;
 
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    internal class DataServiceController(IDataService serviceService, IEntityServiceBase<EDataService> entityService, IMapper mapper, IStringLocalizerFactory localizerFactory)
-        : EntityControllerBase<EDataService, DataServiceDto>(entityService, mapper, localizerFactory)
+    internal class DataServiceController(IDataService dataService, IMapper mapper, IStringLocalizerFactory localizerFactory)
+        : EntityControllerBase<DataService, DataServiceDto>(dataService, mapper, localizerFactory)
     {
-        private readonly IDataService _serviceService = serviceService ?? throw new ArgumentNullException(nameof(serviceService));
-        private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(DataServiceResources));
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetServiceById(int id)
-        {
-            var service = await _serviceService.GetServiceByIdAsync(id).ConfigureAwait(false);
-            if (service == null)
-            {
-                var localizedMessage = _localizer[nameof(GetServiceById) + "_ServiceNotFound"].Value;
-                return NotFound(new { Message = localizedMessage });
-            }
-            return Ok(service);
-        }
-
-        public async Task<IActionResult> GetAllServices()
-        {
-            var services = await _serviceService.GetAllServicesAsync().ConfigureAwait(false);
-            if (!services.Any())
-            {
-                var localizedMessage = _localizer[nameof(GetAllServices) + "_NoServicesFound"].Value;
-                return NotFound(new { Message = localizedMessage });
-            }
-            return Ok(services);
-        }
+        private readonly IDataService _dataService = dataService;
 
         [HttpPost]
-        public async Task<IActionResult> AddService([FromBody] EDataService service)
+        public async Task<IActionResult> CreateAsync([FromBody] DataServiceDto itemDto)
         {
-            if (service == null)
-            {
-                return BadRequest(new { Message = _localizer[nameof(DataServiceResources.ServiceCannotBeNull)].Value });
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var existingService = await _serviceService.GetServiceByIdAsync(service.Id).ConfigureAwait(false);
-            if (existingService != null)
-            {
-                var localizedMessage = _localizer[nameof(DataServiceResources.ServiceNameAlreadyExists)].Value;
-                return Conflict(new { Message = localizedMessage });
-            }
-
-            await _serviceService.AddServiceAsync(service).ConfigureAwait(false);
-            return CreatedAtAction(nameof(GetServiceById), new { id = service.Id }, service);
+            return await CreateBaseAsync<DataServiceVm>(itemDto).ConfigureAwait(false);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateService(int id, [FromBody] EDataService service)
+        public async Task<IActionResult> UpdateAsync(int id, [FromBody] DataServiceDto itemDto)
         {
-            if (service == null)
-            {
-                return BadRequest(new { Message = _localizer[nameof(DataServiceResources.ServiceCannotBeNull)].Value });
-            }
+            return await UpdateBaseAsync<DataServiceVm>(id, itemDto).ConfigureAwait(false);
+        }
 
-            if (id != service.Id)
-            {
-                return BadRequest();
-            }
+        [HttpGet("{id}")]
+        public async Task<ActionResult<DataServiceVm>> GetAsync(int id)
+        {
+            return await GetAsync<DataServiceVm>(id).ConfigureAwait(false);
+        }
 
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        [HttpGet]
+        public async Task<IActionResult> GetListAsync([FromQuery] DataServiceFilterDto filterDto)
+        {
+            var filter = Mapper.Map<DataServiceFilter>(filterDto);
+            var pagedResult = await _dataService.GetListAsync(filter!).ConfigureAwait(false);
+            var result = Mapper.Map<PagedResultVm<DataServiceVm>>(pagedResult);
+            return Ok(result);
+        }
 
-            await _serviceService.UpdateServiceAsync(service).ConfigureAwait(false);
-            return NoContent();
+        [HttpDelete("{id}")]
+        public override async Task<IActionResult> DeleteAsync(int id)
+        {
+            return await base.DeleteAsync(id).ConfigureAwait(false);
         }
     }
 }

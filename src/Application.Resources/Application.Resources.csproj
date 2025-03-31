@@ -3,7 +3,7 @@
   <PropertyGroup>
     <AnalysisLevel>latest-all</AnalysisLevel>
     <AssemblyInformationalVersion>1.0.0</AssemblyInformationalVersion>
-    <AssemblyName>Stellantis.ProjectName.$(MSBuildProjectName)</AssemblyName>
+    <AssemblyName>Stellantis.$(SolutionName).$(MSBuildProjectName)</AssemblyName>
     <Authors>Stellantis</Authors>
     <Copyright>© Stellantis. All rights reserved.</Copyright>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
@@ -14,11 +14,11 @@
     <Nullable>enable</Nullable>
     <PackageId>$(AssemblyName)</PackageId>
     <PackageTags>AMS</PackageTags>
-    <Product>ProjectName</Product>
+    <Product>$(SolutionName)</Product>
     <RepositoryUrl>https://gitlab.fcalatam.com/fca/architecture/application/dotnetcore/base-project.git</RepositoryUrl>
-    <RootNamespace>Stellantis.ProjectName.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <RootNamespace>Stellantis.$(SolutionName).$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
     <TargetFramework>net8.0</TargetFramework>
-    <Title>ProjectName</Title>
+    <Title>$(SolutionName)</Title>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -88,27 +88,16 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>FilterResources.resx</DependentUpon>
     </Compile>
-    <Compile Update="GitResource.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>GitResource.resx</DependentUpon>
-    </Compile>
-    <Compile Update="IntegrationResources.Designer.cs">
-      <DependentUpon>IntegrationResources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
 
     <Compile Update="ResponsibleResource.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>ResponsibleResource.resx</DependentUpon>
     </Compile>
-
-    <Compile Update="GitLabResource.Designer.cs">
+    <Compile Update="GitLabResource.pt-BR.Designer.cs">
+      <DependentUpon>GitLabResource.pt-BR.resx</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>GitLabResource.resx</DependentUpon>
     </Compile>
     <Compile Update="ServiceResources.Designer.cs">
       <DependentUpon>ServiceResources.resx</DependentUpon>
@@ -160,24 +149,9 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>GitLabResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Update="GitResource.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>GitResource.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="IntegrationResources.resx">
-      <LastGenOutput>IntegrationResources.Designer.cs</LastGenOutput>
-      <Generator>PublicResXFileCodeGenerator</Generator>
-    </EmbeddedResource>
     <EmbeddedResource Update="Messages - Copy %282%29.pt-br.resx">
       <SubType>Designer</SubType>
       <DependentUpon>Messages.resx</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="ResponsibleResource.pt-br.resx">
-      <Generator></Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="ResponsibleResource.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>ResponsibleResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="ServiceResources.zh-CN.resx">
       <DependentUpon>ServiceResources.resx</DependentUpon>
@@ -240,7 +214,8 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="SquadResources.pt-BR.resx">
-      <Generator></Generator>
+      <LastGenOutput>SquadResources.pt-BR.Designer.cs</LastGenOutput>
+      <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="SquadResources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

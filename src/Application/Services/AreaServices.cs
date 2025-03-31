@@ -13,10 +13,9 @@ namespace Stellantis.ProjectName.Application.Services
     public class AreaService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<Area> validator)
         : EntityServiceBase<Area>(unitOfWork, localizerFactory, validator), IAreaService
     {
-        private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(AreaResources));
+        private IStringLocalizer localizer => localizerFactory.Create(typeof(AreaResources));
         protected override IAreaRepository Repository => UnitOfWork.AreaRepository;
 
-        
         public override async Task<OperationResult> CreateAsync(Area item)
         {
             ArgumentNullException.ThrowIfNull(item);
@@ -28,7 +27,7 @@ namespace Stellantis.ProjectName.Application.Services
             }
             if (!await IsAreaNameUniqueAsync(item.Name).ConfigureAwait(false))
             {
-                return OperationResult.Conflict(_localizer[nameof(AreaResources.AlreadyExists)]);
+                return OperationResult.Conflict(localizer[nameof(AreaResources.AlreadyExists)]);
             }
             return await base.CreateAsync(item).ConfigureAwait(false);
         }
@@ -43,7 +42,7 @@ namespace Stellantis.ProjectName.Application.Services
         {
             if (await Repository.VerifyAplicationsExistsAsync(id).ConfigureAwait(false))
             {
-                return OperationResult.Conflict(_localizer[nameof(AreaResources.Undeleted)]);
+                return OperationResult.Conflict(localizer[nameof(AreaResources.Undeleted)]);
             }
             return await base.DeleteAsync(id).ConfigureAwait(false);
         }
@@ -53,7 +52,7 @@ namespace Stellantis.ProjectName.Application.Services
             var area = await Repository.GetByIdAsync(id).ConfigureAwait(false);
             return area != null
                 ? OperationResult.Complete()
-                : OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
+                : OperationResult.NotFound(localizer[nameof(ServiceResources.NotFound)]);
         }
 
 
@@ -83,12 +82,12 @@ namespace Stellantis.ProjectName.Application.Services
             var existingArea = await Repository.GetByIdAsync(area.Id).ConfigureAwait(false);
             if (existingArea == null)
             {
-                return OperationResult.NotFound(_localizer[nameof(AreaResources.NotFound)]);
+                return OperationResult.NotFound(localizer[nameof(AreaResources.NotFound)]);
             }
 
             if (await Repository.VerifyNameAlreadyExistsAsync(area.Name).ConfigureAwait(false))
             {
-                return OperationResult.Conflict(_localizer[nameof(AreaResources.AlreadyExists)]);
+                return OperationResult.Conflict(localizer[nameof(AreaResources.AlreadyExists)]);
             }
             return await base.UpdateAsync(area).ConfigureAwait(false);
         }
