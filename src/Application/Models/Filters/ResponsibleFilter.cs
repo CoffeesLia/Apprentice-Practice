@@ -10,6 +10,6 @@ namespace Stellantis.ProjectName.Application.Models.Filters
     {
         public string? Email { get; set; }
         public string? Name { get; set; }
-        public int AreaId { get; set; }
+        public string? Area { get; set; }
     }
 }

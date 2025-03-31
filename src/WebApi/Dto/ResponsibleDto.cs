@@ -5,7 +5,6 @@
     {
         public required string Email { get; set; }
         public required string Name { get; set; }
-        public required string AreaId { get; set; }
-        public AreaDto Area { get; set; }
+        public required string Area { get; set; }
     }
 }

@@ -34,14 +34,13 @@ namespace Stellantis.ProjectName.WebApi.Tests.Controllers
         }
 
         [Fact]
+        // Teste para verificar se CreateAsync retorna CreatedAtAction quando a criação é bem-sucedida
         public async Task CreateAsyncWhenCreationIsSuccessful()
         {
             // Arrange
             var responsibleDto = _fixture.Create<ResponsibleDto>();
             var responsible = _fixture.Create<Responsible>();
             var responsibleVm = _fixture.Create<ResponsibleVm>();
-
-            responsibleVm.Id = responsible.Id; // Certifique-se de que os Ids correspondam
 
             _mapperMock.Setup(m => m.Map<Responsible>(responsibleDto)).Returns(responsible);
             _serviceMock.Setup(s => s.CreateAsync(responsible)).ReturnsAsync(OperationResult.Complete("Success"));
@@ -106,7 +105,6 @@ namespace Stellantis.ProjectName.WebApi.Tests.Controllers
             var responsibleVm = _fixture.Create<ResponsibleVm>();
 
             _serviceMock.Setup(s => s.GetItemAsync(responsible.Id)).ReturnsAsync(responsible);
-            _mapperMock.Setup(m => m.Map<Responsible>(responsibleDto)).Returns(responsible);
             _mapperMock.Setup(m => m.Map<ResponsibleVm>(responsible)).Returns(responsibleVm);
             _serviceMock.Setup(s => s.UpdateAsync(responsible)).ReturnsAsync(OperationResult.Complete("Success"));
 

@@ -40,7 +40,7 @@ namespace Stellantis.ProjectName.Application.Services.Tests
             // Arrange
             var responsible = _fixture.Build<Responsible>()
                                       .With(r => r.Name, string.Empty)
-                                      .With(r => r.Area, (Area)null)
+                                      .With(r => r.Area, string.Empty)
                                       .Create();
 
             var validationResult = new ValidationResult(new List<ValidationFailure>
@@ -140,14 +140,14 @@ namespace Stellantis.ProjectName.Application.Services.Tests
             // Arrange
             var responsible = _fixture.Build<Responsible>()
                                       .With(r => r.Name, string.Empty)
-                                      .With(r => r.AreaId, 0)
+                                      .With(r => r.Area, string.Empty)
                                       .Create();
 
             var validationResult = new ValidationResult(new List<ValidationFailure>
-    {
-        new ValidationFailure(nameof(responsible.Name), ResponsibleResource.NameRequired),
-        new ValidationFailure(nameof(responsible.AreaId), ResponsibleResource.AreaRequired)
-    });
+            {
+                new ValidationFailure(nameof(responsible.Name), ResponsibleResource.NameRequired),
+                new ValidationFailure(nameof(responsible.Area), ResponsibleResource.AreaRequired)
+            });
 
             _validatorMock.Setup(v => v.ValidateAsync(responsible, default)).ReturnsAsync(validationResult);
 

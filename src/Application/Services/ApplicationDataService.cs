@@ -77,6 +77,7 @@ namespace Stellantis.ProjectName.Application.Services
         public override async Task<OperationResult> UpdateAsync(ApplicationData item)
         {
             ArgumentNullException.ThrowIfNull(item);
+
             if (string.IsNullOrEmpty(item.Name))
             {
                 return OperationResult.Conflict(Localizer[nameof(ApplicationDataResources.NameRequired)]);
@@ -100,7 +101,7 @@ namespace Stellantis.ProjectName.Application.Services
         {
             var item = await Repository.GetFullByIdAsync(id).ConfigureAwait(false);
             if (item == null)
-                return OperationResult.NotFound(base.Localizer[nameof(ApplicationDataResources.ApplicationNotFound)]);
+                return OperationResult.NotFound(base.Localizer[nameof(ApplicationDataResources.NotFound)]);
             return await base.DeleteAsync(item).ConfigureAwait(false);
 
 

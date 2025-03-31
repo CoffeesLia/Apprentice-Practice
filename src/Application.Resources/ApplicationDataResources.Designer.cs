@@ -70,7 +70,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Application cannot be found.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Application not found.
         /// </summary>
         public static string ApplicationNotFound {
             get {
@@ -93,6 +93,15 @@ namespace Stellantis.ProjectName.Application.Resources {
         public static string NameValidateLength {
             get {
                 return ResourceManager.GetString("NameValidateLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Application cannot be found.
+        /// </summary>
+        public static string NotFound {
+            get {
+                return ResourceManager.GetString("NotFound", resourceCulture);
             }
         }
     }

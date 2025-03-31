@@ -117,31 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="BadRequest" xml:space="preserve">
-    <value>Solicitação Falhou.</value>
+  <data name="ServiceNameLength" xml:space="preserve">
+    <value>O nome do serviço deve ter entre 3 e 50 caracteres.</value>
   </data>
-  <data name="GetAllServices_NoServicesFound" xml:space="preserve">
-    <value>Nenhum serviço encontrado.</value>
-  </data>
-  <data name="GetServiceById_ServiceNotFound" xml:space="preserve">
+  <data name="ServiceNotFound" xml:space="preserve">
     <value>Serviço não encontrado.</value>
-  </data>
-  <data name="NameIsRequired" xml:space="preserve">
-    <value>Nome é obrigatório.</value>
-  </data>
-  <data name="NameRequired" xml:space="preserve">
-    <value>O Serviço precisa ter um nome.</value>
-  </data>
-  <data name="NameValidateLength" xml:space="preserve">
-    <value>O nome deve ter entre 3 e 50 caracteres.</value>
-  </data>
-  <data name="NotFound" xml:space="preserve">
-    <value>Não encontrado.</value>
   </data>
   <data name="ServiceCannotBeNull" xml:space="preserve">
     <value>Serviço não pode ser nulo.</value>
   </data>
-  <data name="ServiceNameAlreadyExists" xml:space="preserve">
-    <value>Esse nome de serviço já existe.</value>
+  <data name="ServiceAlreadyExists" xml:space="preserve">
+    <value>Esse serviço já existe.</value>
+  </data>
+  <data name="ServicesNoFound" xml:space="preserve">
+    <value>Nenhum serviço encontrado.</value>
   </data>
 </root>

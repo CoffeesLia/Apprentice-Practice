@@ -1,7 +1,5 @@
 ﻿using FluentValidation.Results;
-using Microsoft.Extensions.Localization;
-using Stellantis.ProjectName.Application.Models.Filters;
-using Stellantis.ProjectName.Domain.Entities;
+
 using System.Text.Json.Serialization;
 
 namespace Stellantis.ProjectName.Application.Models
@@ -116,10 +114,6 @@ namespace Stellantis.ProjectName.Application.Models
             return new OperationResult(OperationStatus.NotFound, message, [message]);
         }
 
-        internal static PagedResult<Integration> InvalidData(LocalizedString localizedString)
-        {
-            throw new NotImplementedException();
-        }
     }
 
 }
