@@ -4,7 +4,7 @@ using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Domain.Entities;
 using System;
 using System.Collections.Generic;
-using Stellantis.ProjectName.WebApi.Dto;
+using Stellantis.ProjectName.WebApi.Dto;  // Using para o SquadDto externo
 
 namespace Stellantis.ProjectName.WebAPI.Controllers
 {
@@ -47,7 +47,11 @@ namespace Stellantis.ProjectName.WebAPI.Controllers
             try
             {
                 var squad = _squadService.GetSquadById(id);
+                Console.WriteLine($"DEBUG: Squad from service - Id: {squad?.Id}"); 
+
                 var squadDto = _mapper.Map<SquadDto>(squad);
+                Console.WriteLine($"DEBUG: Mapped DTO - Id: {squadDto?.Id}"); 
+
                 return Ok(squadDto);
             }
             catch (KeyNotFoundException ex)
@@ -84,11 +88,12 @@ namespace Stellantis.ProjectName.WebAPI.Controllers
         public IActionResult GetAllSquads([FromQuery] string name = null)
         {
             var squads = _squadService.GetAllSquads(name);
-            var squadDtos = _mapper.Map<IEnumerable<SquadDto>>(squads);
+            var squadDtos = _mapper.Map<IEnumerable<SquadDto>>(squads);  // Usando o SquadDto do namespace WebApi.Dto
             return Ok(squadDtos);
         }
     }
 
+    
     public class CreateSquadRequest
     {
         public string Name { get; set; }
@@ -100,12 +105,4 @@ namespace Stellantis.ProjectName.WebAPI.Controllers
         public string Name { get; set; }
         public string Description { get; set; }
     }
-
-    public class SquadDto
-    {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-    }
 }
- 

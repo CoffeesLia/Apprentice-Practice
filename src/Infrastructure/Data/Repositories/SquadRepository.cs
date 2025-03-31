@@ -18,32 +18,32 @@ namespace Stellantis.ProjectName.Infrastructure.Repositories
             _context = context;
         }
 
-        public void Add(EntitySquad squad)
+        public void Add(Squad squad)
         {
             _context.Squads.Add(squad);
         }
 
-        public EntitySquad GetByName(string name)
+        public Squad GetByName(string name)
         {
             return _context.Squads.FirstOrDefault(s => s.Name == name);
         }
 
-        public IEnumerable<EntitySquad> GetAll()
+        public IEnumerable<Squad> GetAll()
         {
             return _context.Squads.ToList();
         }
 
-        public EntitySquad GetById(Guid id)
+        public Squad GetById(Guid id)
         {
             return _context.Squads.Find(id);
         }
 
-        public void Update(EntitySquad squad)
+        public void Update(Squad squad)
         {
             _context.Squads.Update(squad);
         }
 
-        public void Delete(EntitySquad squad)
+        public void Delete(Squad squad)
         {
             _context.Squads.Remove(squad);
         }

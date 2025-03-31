@@ -5,9 +5,9 @@ using Stellantis.ProjectName.Domain.Entity;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
 {
-    public class SquadConfig : IEntityTypeConfiguration<EntitySquad>
+    public class SquadConfig : IEntityTypeConfiguration<Squad>
     {
-        public void Configure(EntityTypeBuilder<EntitySquad> builder)
+        public void Configure(EntityTypeBuilder<Squad> builder)
         {
             builder.HasKey(s => s.Id);
 

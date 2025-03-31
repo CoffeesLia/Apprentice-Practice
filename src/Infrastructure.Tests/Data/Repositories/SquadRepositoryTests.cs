@@ -27,7 +27,7 @@ namespace Infrastructure.Tests.Data.Repositories
             using (var context = new Context(_dbContextOptions))
             {
                 var repository = new SquadRepository(context);
-                var squad = new EntitySquad { Id = Guid.NewGuid(), Name = "TestSquad", Description = "TestDescription" };
+                var squad = new Squad { Id = Guid.NewGuid(), Name = "TestSquad", Description = "TestDescription" };
 
                 repository.Add(squad);
                 context.SaveChanges();
@@ -44,7 +44,7 @@ namespace Infrastructure.Tests.Data.Repositories
             using (var context = new Context(_dbContextOptions))
             {
                 var squadId = Guid.NewGuid();
-                var squad = new EntitySquad { Id = squadId, Name = "TestSquad", Description = "TestDescription" };
+                var squad = new Squad { Id = squadId, Name = "TestSquad", Description = "TestDescription" };
                 context.Squads.Add(squad);
                 context.SaveChanges();
 
@@ -73,7 +73,7 @@ namespace Infrastructure.Tests.Data.Repositories
         {
             using (var context = new Context(_dbContextOptions))
             {
-                var squad = new EntitySquad { Id = Guid.NewGuid(), Name = "TestSquad", Description = "TestDescription" };
+                var squad = new Squad { Id = Guid.NewGuid(), Name = "TestSquad", Description = "TestDescription" };
                 context.Squads.Add(squad);
                 context.SaveChanges();
 
@@ -100,13 +100,19 @@ namespace Infrastructure.Tests.Data.Repositories
         [Fact]
         public void GetAll_ShouldReturnAllSquads()
         {
-            using (var context = new Context(_dbContextOptions))
+            // Recria o banco de dados em memória para garantir um estado limpo
+            var options = new DbContextOptionsBuilder<Context>()
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .Options;
+
+            using (var context = new Context(options))
             {
+                // Arrange
                 var squads = new List<EntitySquad>
-                {
-                    new EntitySquad { Id = Guid.NewGuid(), Name = "Squad1", Description = "Description1" },
-                    new EntitySquad { Id = Guid.NewGuid(), Name = "Squad2", Description = "Description2" }
-                };
+        {
+            new EntitySquad { Id = Guid.NewGuid(), Name = "Squad1", Description = "Description1" },
+            new EntitySquad { Id = Guid.NewGuid(), Name = "Squad2", Description = "Description2" }
+        };
                 context.Squads.AddRange(squads);
                 context.SaveChanges();
 
@@ -122,7 +128,7 @@ namespace Infrastructure.Tests.Data.Repositories
         {
             using (var context = new Context(_dbContextOptions))
             {
-                var squad = new EntitySquad { Id = Guid.NewGuid(), Name = "TestSquad", Description = "TestDescription" };
+                var squad = new Squad { Id = Guid.NewGuid(), Name = "TestSquad", Description = "TestDescription" };
                 context.Squads.Add(squad);
                 context.SaveChanges();
 
@@ -142,7 +148,7 @@ namespace Infrastructure.Tests.Data.Repositories
         {
             using (var context = new Context(_dbContextOptions))
             {
-                var squad = new EntitySquad { Id = Guid.NewGuid(), Name = "TestSquad", Description = "TestDescription" };
+                var squad = new Squad { Id = Guid.NewGuid(), Name = "TestSquad", Description = "TestDescription" };
                 context.Squads.Add(squad);
                 context.SaveChanges();
 

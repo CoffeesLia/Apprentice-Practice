@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Stellantis.ProjectName.Domain.Entity
 {
-    public class EntitySquad
+    public class Squad
      {
         public Guid Id { get; set; }
         public string Name { get; set; }

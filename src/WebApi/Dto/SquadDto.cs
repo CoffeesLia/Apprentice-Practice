@@ -5,5 +5,10 @@
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+
+        internal void Returns(SquadDto expectedDto)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

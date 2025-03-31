@@ -72,6 +72,24 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Squad already exists..
+        /// </summary>
+        public static string SquadAlreadyExists {
+            get {
+                return ResourceManager.GetString("SquadAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Squad bannot be null..
+        /// </summary>
+        public static string SquadCannotBeNull {
+            get {
+                return ResourceManager.GetString("SquadCannotBeNull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Successfully created squad..
         /// </summary>
         public static string SquadCreatedSuccessfully {

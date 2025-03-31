@@ -117,11 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-<<<<<<< Updated upstream
-=======
-  <data name="NameValidateLength" xml:space="preserve">
-    <value>O nome deve ter entre {0} e {1} caracteres.</value>
-  </data>
   <data name="SquadCreatedSuccessfully" xml:space="preserve">
     <value>Squad criado com sucesso.</value>
   </data>

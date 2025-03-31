@@ -23,9 +23,9 @@ namespace Stellantis.ProjectName.WebApi.Mapper
 
             CreateMap<DataServiceDto, ApplicationService>();
 
-            CreateMap<SquadDto, EntitySquad>()
+            CreateMap<SquadDto, Squad>()
                 .ForMember(x => x.Id, x => x.Ignore());
-            CreateMap<EntitySquad, SquadDto>();
+            CreateMap<Squad, SquadDto>();
         }
     }
 }

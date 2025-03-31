@@ -10,7 +10,7 @@ using Stellantis.ProjectName.Domain.Entity;
 
 namespace Stellantis.ProjectName.Application.Validators
 {
-    internal class SquadValidator : AbstractValidator<EntitySquad>      
+    internal class SquadValidator : AbstractValidator<Squad>      
     {
         internal const int MinimumLength = 3;
         internal const int MaximumLength = 255;

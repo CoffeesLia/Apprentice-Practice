@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Interfaces.Services;
+using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Domain.Entity;
@@ -21,32 +22,34 @@ namespace Stellantis.ProjectName.Application.Services
             _localizer = localizer;
         }
 
-        public void CreateSquad(string name, string description)
+        public async Task CreateSquadAsync(string name, string description)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                throw new ArgumentException(_localizer[nameof(SquadResources.SquadNameRequired)]);
+                throw new ArgumentException(_localizer[nameof(SquadResources.SquadCannotBeNull)]);
             }
             if (string.IsNullOrWhiteSpace(description))
             {
                 throw new ArgumentException(_localizer[nameof(SquadResources.SquadDescriptionRequired)]);
             }
 
-            var existingSquad = _squadRepository.GetByName(name);
-            if (existingSquad != null)
+            if (await _squadRepository.VerifyNameAlreadyExistsAsync(name).ConfigureAwait(false))
             {
                 throw new InvalidOperationException(_localizer[nameof(SquadResources.SquadNameAlreadyExists)]);
             }
-            var squad = new EntitySquad
+
+            var squad = new Squad
             {
                 Id = Guid.NewGuid(),
                 Name = name,
                 Description = description
             };
+
             _squadRepository.Add(squad);
         }
 
-        public EntitySquad GetSquadById(Guid id)
+
+        public Squad GetSquadById(Guid id)
         {
             var squad = _squadRepository.GetById(id);
             if (squad == null)
@@ -84,13 +87,23 @@ namespace Stellantis.ProjectName.Application.Services
             _squadRepository.Update(squad);
         }
 
-        public IEnumerable<EntitySquad> GetAllSquads(string name = null)
+        public IEnumerable<Squad> GetAllSquads(string name = null)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
                 return _squadRepository.GetAll();
             }
             return _squadRepository.GetAll().Where(s => s.Name.Contains(name, StringComparison.OrdinalIgnoreCase));
+        }
+
+        public void DeleteSquad(Guid id)
+        {
+            var squad = _squadRepository.GetById(id);
+            if (squad == null)
+            {
+                throw new KeyNotFoundException(_localizer[nameof(SquadResources.SquadNotFound)]);
+            }
+            _squadRepository.Delete(squad);
         }
     }
 }

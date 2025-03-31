@@ -64,7 +64,7 @@ namespace Stellantis.ProjectName.Tests.Services
         public void CreateSquadShouldThrowExceptionWhenSquadNameAlreadyExists()
         {
             // Arrange
-            _squadRepositoryMock.Setup(repo => repo.GetByName(It.IsAny<string>())).Returns(new EntitySquad());
+            _squadRepositoryMock.Setup(repo => repo.GetByName(It.IsAny<string>())).Returns(new Squad());
 
             // Act & Assert
             var exception = Assert.Throws<InvalidOperationException>(() => _squadService.CreateSquad("ExistingSquad", "Description"));
@@ -76,7 +76,7 @@ namespace Stellantis.ProjectName.Tests.Services
         {
             // Arrange
             var squadId = Guid.NewGuid();
-            var squad = new EntitySquad { Id = squadId, Name = "TestSquad", Description = "TestDescription" };
+            var squad = new Squad { Id = squadId, Name = "TestSquad", Description = "TestDescription" };
 
             _squadRepositoryMock.Setup(repo => repo.GetById(squadId)).Returns(squad);
 
@@ -94,7 +94,7 @@ namespace Stellantis.ProjectName.Tests.Services
             // Arrange
             var squadId = Guid.NewGuid();
 
-            _squadRepositoryMock.Setup(repo => repo.GetById(squadId)).Returns((EntitySquad?)null);
+            _squadRepositoryMock.Setup(repo => repo.GetById(squadId)).Returns((Squad?)null);
 
             // Act & Assert
             var exception = Assert.Throws<KeyNotFoundException>(() => _squadService.GetSquadById(squadId));
@@ -124,8 +124,8 @@ namespace Stellantis.ProjectName.Tests.Services
         {
             // Arrange
             var squadId = Guid.NewGuid();
-            var existingSquad = new EntitySquad { Id = squadId, Name = "ExistingSquad", Description = "Description" };
-            var anotherSquad = new EntitySquad { Id = Guid.NewGuid(), Name = "AnotherSquad", Description = "Description" };
+            var existingSquad = new Squad { Id = squadId, Name = "ExistingSquad", Description = "Description" };
+            var anotherSquad = new Squad { Id = Guid.NewGuid(), Name = "AnotherSquad", Description = "Description" };
 
             _squadRepositoryMock.Setup(repo => repo.GetById(squadId)).Returns(existingSquad);
             _squadRepositoryMock.Setup(repo => repo.GetByName("AnotherSquad")).Returns(anotherSquad);
@@ -140,16 +140,16 @@ namespace Stellantis.ProjectName.Tests.Services
         {
             // Arrange
             var squadId = Guid.NewGuid();
-            var existingSquad = new EntitySquad { Id = squadId, Name = "ExistingSquad", Description = "Description" };
+            var existingSquad = new Squad { Id = squadId, Name = "ExistingSquad", Description = "Description" };
 
             _squadRepositoryMock.Setup(repo => repo.GetById(squadId)).Returns(existingSquad);
-            _squadRepositoryMock.Setup(repo => repo.GetByName("NewSquad")).Returns((EntitySquad?)null);
+            _squadRepositoryMock.Setup(repo => repo.GetByName("NewSquad")).Returns((Squad?)null);
 
             // Act
             _squadService.UpdateSquad(squadId, "NewSquad", "NewDescription");
 
             // Assert
-            _squadRepositoryMock.Verify(repo => repo.Update(It.Is<EntitySquad>(s => s.Id == squadId && s.Name == "NewSquad" && s.Description == "NewDescription")), Times.Once);
+            _squadRepositoryMock.Verify(repo => repo.Update(It.Is<Squad>(s => s.Id == squadId && s.Name == "NewSquad" && s.Description == "NewDescription")), Times.Once);
         }
 
         [Fact]
@@ -157,7 +157,7 @@ namespace Stellantis.ProjectName.Tests.Services
         {
             // Arrange
             var squadId = Guid.NewGuid();
-            var squad = new EntitySquad { Id = squadId, Name = "TestSquad", Description = "TestDescription" };
+            var squad = new Squad { Id = squadId, Name = "TestSquad", Description = "TestDescription" };
 
             _squadRepositoryMock.Setup(repo => repo.GetById(squadId)).Returns(squad);
 
@@ -165,7 +165,7 @@ namespace Stellantis.ProjectName.Tests.Services
             _squadService.DeleteSquad(squadId);
 
             // Assert
-            _squadRepositoryMock.Verify(repo => repo.Delete(It.Is<EntitySquad>(s => s.Id == squadId)), Times.Once);
+            _squadRepositoryMock.Verify(repo => repo.Delete(It.Is<Squad>(s => s.Id == squadId)), Times.Once);
         }
 
         [Fact]
@@ -174,7 +174,7 @@ namespace Stellantis.ProjectName.Tests.Services
             // Arrange
             var squadId = Guid.NewGuid();
 
-            _squadRepositoryMock.Setup(repo => repo.GetById(squadId)).Returns((EntitySquad?)null);
+            _squadRepositoryMock.Setup(repo => repo.GetById(squadId)).Returns((Squad?)null);
 
             // Act & Assert
             var exception = Assert.Throws<KeyNotFoundException>(() => _squadService.DeleteSquad(squadId));
@@ -185,10 +185,10 @@ namespace Stellantis.ProjectName.Tests.Services
         public void GetAllSquads_ShouldReturnAllSquads()
         {
             // Arrange
-            var squads = new List<EntitySquad>
+            var squads = new List<Squad>
             {
-                new EntitySquad { Id = Guid.NewGuid(), Name = "Squad1", Description = "Description1" },
-                new EntitySquad { Id = Guid.NewGuid(), Name = "Squad2", Description = "Description2" }
+                new Squad { Id = Guid.NewGuid(), Name = "Squad1", Description = "Description1" },
+                new Squad { Id = Guid.NewGuid(), Name = "Squad2", Description = "Description2" }
             };
 
             var squadRepositoryMock = new Mock<ISquadRepository>();
@@ -207,10 +207,10 @@ namespace Stellantis.ProjectName.Tests.Services
         public void GetAllSquads_ShouldReturnFilteredSquads_WhenNameIsProvided()
         {
             // Arrange
-            var squads = new List<EntitySquad>
+            var squads = new List<Squad>
             {
-                new EntitySquad { Id = Guid.NewGuid(), Name = "Squad1", Description = "Description1" },
-                new EntitySquad { Id = Guid.NewGuid(), Name = "Squad2", Description = "Description2" }
+                new Squad { Id = Guid.NewGuid(), Name = "Squad1", Description = "Description1" },
+                new Squad { Id = Guid.NewGuid(), Name = "Squad2", Description = "Description2" }
             };
 
             var squadRepositoryMock = new Mock<ISquadRepository>();
@@ -233,7 +233,7 @@ namespace Stellantis.ProjectName.Tests.Services
             var squadId = Guid.NewGuid();
 
             var squadRepositoryMock = new Mock<ISquadRepository>();
-            squadRepositoryMock.Setup(repo => repo.GetById(squadId)).Returns((EntitySquad)null);
+            squadRepositoryMock.Setup(repo => repo.GetById(squadId)).Returns((Squad)null);
 
             var squadService = new SquadService(squadRepositoryMock.Object, _localizerMock.Object);
 
@@ -247,7 +247,7 @@ namespace Stellantis.ProjectName.Tests.Services
         {
             // Arrange
             var squadId = Guid.NewGuid();
-            var squad = new EntitySquad { Id = squadId, Name = "TestSquad", Description = "TestDescription" };
+            var squad = new Squad { Id = squadId, Name = "TestSquad", Description = "TestDescription" };
 
             var squadRepositoryMock = new Mock<ISquadRepository>();
             squadRepositoryMock.Setup(repo => repo.GetById(squadId)).Returns(squad);
@@ -258,7 +258,7 @@ namespace Stellantis.ProjectName.Tests.Services
             squadService.DeleteSquad(squadId);
 
             // Assert
-            squadRepositoryMock.Verify(repo => repo.Delete(It.Is<EntitySquad>(s => s.Id == squadId)), Times.Once);
+            squadRepositoryMock.Verify(repo => repo.Delete(It.Is<Squad>(s => s.Id == squadId)), Times.Once);
         }
     }
 }
