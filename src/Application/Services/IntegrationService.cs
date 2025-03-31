@@ -30,7 +30,6 @@ namespace Stellantis.ProjectName.Application.Services
 
         public async Task<PagedResult<Integration>> GetListAsync(IntegrationFilter filter)
         {
-            filter ??= new IntegrationFilter();
             return await Repository.GetListAsync(filter).ConfigureAwait(false);
         }
 

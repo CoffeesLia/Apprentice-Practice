@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Tests.Data.Repositories
 {
-    public class IntegrationRepositoryTests 
+    public class IntegrationRepositoryTests
     {
         private readonly Context _context;
         private readonly IntegrationRepository _repository;
@@ -51,6 +51,7 @@ namespace Infrastructure.Tests.Data.Repositories
             // Assert
             Assert.Null(result);
         }
+      
 
         [Fact]
         public async Task DeleteAsyncWhenCalled()
