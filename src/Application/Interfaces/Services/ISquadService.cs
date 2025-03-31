@@ -1,5 +1,4 @@
 ﻿using System;
-using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Domain.Entity;
 
 namespace Stellantis.ProjectName.Application.Interfaces.Services

@@ -121,7 +121,7 @@
     <value>A repository with the same URL already exists.</value>
   </data>
   <data name="NameIsRequired" xml:space="preserve">
-    <value>Name is required</value>
+    <value>Name is required.</value>
   </data>
   <data name="RepositoryNotFound" xml:space="preserve">
     <value>Repository not found.</value>
@@ -139,9 +139,18 @@
     <value>Application not found.</value>
   </data>
   <data name="RepositoryCantBeNull" xml:space="preserve">
-    <value>Repository can't be null</value>
+    <value>Repository can't be null.</value>
   </data>
   <data name="AlreadyExists" xml:space="preserve">
-    <value>Already Exists</value>
+    <value>Already Exists.</value>
+  </data>
+  <data name="UrlIsInvalid" xml:space="preserve">
+    <value>Url is Invalid.</value>
+  </data>
+  <data name="ApplicationIdIsRequired" xml:space="preserve">
+    <value>Application Id is required.</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Error.</value>
   </data>
 </root>

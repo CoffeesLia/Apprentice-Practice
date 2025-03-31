@@ -88,22 +88,16 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>FilterResources.resx</DependentUpon>
     </Compile>
-    <Compile Update="IntegrationResources.Designer.cs">
-      <DependentUpon>IntegrationResources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
 
     <Compile Update="ResponsibleResource.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>ResponsibleResource.resx</DependentUpon>
     </Compile>
-
-    <Compile Update="GitLabResource.Designer.cs">
+    <Compile Update="GitLabResource.pt-BR.Designer.cs">
+      <DependentUpon>GitLabResource.pt-BR.resx</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>GitLabResource.resx</DependentUpon>
     </Compile>
     <Compile Update="ServiceResources.Designer.cs">
       <DependentUpon>ServiceResources.resx</DependentUpon>
@@ -155,20 +149,9 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>GitLabResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Update="IntegrationResources.resx">
-      <LastGenOutput>IntegrationResources.Designer.cs</LastGenOutput>
-      <Generator>PublicResXFileCodeGenerator</Generator>
-    </EmbeddedResource>
     <EmbeddedResource Update="Messages - Copy %282%29.pt-br.resx">
       <SubType>Designer</SubType>
       <DependentUpon>Messages.resx</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="ResponsibleResource.pt-br.resx">
-      <Generator></Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="ResponsibleResource.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>ResponsibleResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="ServiceResources.zh-CN.resx">
       <DependentUpon>ServiceResources.resx</DependentUpon>
@@ -231,7 +214,8 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="SquadResources.pt-BR.resx">
-      <Generator></Generator>
+      <LastGenOutput>SquadResources.pt-BR.Designer.cs</LastGenOutput>
+      <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="SquadResources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
