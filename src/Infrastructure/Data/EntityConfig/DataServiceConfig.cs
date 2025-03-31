@@ -14,17 +14,17 @@ using Stellantis.ProjectName.Infrastructure.Data.Repositories;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
 {
-    public class DataServiceConfig : IEntityTypeConfiguration<EDataService>
+    public class DataServiceConfig : IEntityTypeConfiguration<DataService>
     {
-        public void Configure(EntityTypeBuilder<EDataService> builder)
+        public void Configure(EntityTypeBuilder<DataService> builder)
         {
             ArgumentNullException.ThrowIfNull(builder);
 
-            builder.ToTable("DataService");
+            builder.ToTable("Service");
             builder.HasKey(p => p.Id);
             builder.Property(p => p.Name)
                 .IsRequired()
-                .HasMaxLength(255);
+                .HasMaxLength(50);
         }
     }
 }

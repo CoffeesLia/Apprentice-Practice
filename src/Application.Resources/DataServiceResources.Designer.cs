@@ -61,80 +61,55 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Bad Request..
-        /// </summary>
-        internal static string BadRequest {
-            get {
-                return ResourceManager.GetString("BadRequest", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a No services found..
-        /// </summary>
-        public static string GetAllServices_NoServicesFound {
-            get {
-                return ResourceManager.GetString("GetAllServices_NoServicesFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Service not found..
-        /// </summary>
-        public static string GetServiceById_ServiceNotFound {
-            get {
-                return ResourceManager.GetString("GetServiceById_ServiceNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Name is required..
-        /// </summary>
-        internal static string NameIsRequired {
-            get {
-                return ResourceManager.GetString("NameIsRequired", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Not Found..
         /// </summary>
-        internal static string NotFound {
+        public static string ServiceNotFound
+        {
             get {
-                return ResourceManager.GetString("NotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Service Name Already Exists..
-        /// </summary>
-        public static string ServiceNameAlreadyExists {
-            get {
-                return ResourceManager.GetString("ServiceNameAlreadyExists", resourceCulture);
+                return ResourceManager.GetString("ServiceNotFound", resourceCulture);
             }
         }
 
-        public static string NameValidateLength
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Services Not Found..
+        /// </summary>
+        public static string ServicesNoFound
         {
             get
             {
-                return ResourceManager.GetString("NameValidateLength", resourceCulture);
+                return ResourceManager.GetString("ServicesNoFound", resourceCulture);
             }
         }
 
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Service Already Exists..
+        /// </summary>
+        public static string ServiceAlreadyExists
+        {
+            get {
+                return ResourceManager.GetString("ServiceAlreadyExists", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Service Name Length..
+        /// </summary>
+        public static string ServiceNameLength
+        {
+            get
+            {
+                return ResourceManager.GetString("ServiceNameLength", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Service Cannot Be Null..
+        /// </summary>
         public static string ServiceCannotBeNull
         {
             get
             {
                 return ResourceManager.GetString("ServiceCannotBeNull", resourceCulture);
-            }
-        }
-
-        public static string NameRequired
-        {
-            get
-            {
-                return ResourceManager.GetString("NameRequired", resourceCulture);
             }
         }
     }

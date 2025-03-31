@@ -1,10 +1,10 @@
-﻿using Stellantis.ProjectName.Application.Interfaces.Repositories;
-using Stellantis.ProjectName.Application.Models.Filters;
-using Stellantis.ProjectName.Application.Models;
-using Stellantis.ProjectName.Domain.Entities;
+﻿using System.Data.Entity;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using System.Data.Entity;
+using Stellantis.ProjectName.Application.Interfaces.Repositories;
+using Stellantis.ProjectName.Application.Models;
+using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
@@ -15,7 +15,19 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         {
         }
 
-        public async Task DeleteAsync(int id, bool saveChanges = true)
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var entity = await GetByIdAsync(id).ConfigureAwait(false);
+            if (entity != null)
+            {
+                Context.Set<GitRepo>().Remove(entity);
+                await SaveChangesAsync().ConfigureAwait(false);
+                return true;
+            }
+            return false;
+        }
+
+        public async Task DeleteAsync(int id, bool saveChanges)
         {
             var entity = await GetByIdAsync(id).ConfigureAwait(false);
             if (entity != null)
@@ -85,10 +97,14 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             await DeleteAsync(id, saveChanges).ConfigureAwait(false);
         }
 
-        public Task<bool> DeleteAsync(int id)
+        public void GetListAysnc()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> VerifyNameAlreadyExistsAsync(string name)
         {
             throw new NotImplementedException();
         }
     }
 }
-

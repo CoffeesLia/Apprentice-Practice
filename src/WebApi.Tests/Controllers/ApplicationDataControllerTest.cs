@@ -39,11 +39,7 @@ namespace WebApi.Tests.Controllers
         public async Task CreateAsyncShouldReturnCreatedAtActionResultWhenApplicationDataIsValid()
         {
             // Arrange
-            var applicationDataDto = new ApplicationDataDto
-            {
-                Name = "Valid Name",
-                Area = new AreaDto() // Add this line to initialize the required 'Area' property
-            };
+            var applicationDataDto = new ApplicationDataDto { Name = "Valid Name" };
             var applicationVm = new ApplicationVm { Id = 1, Name = "Valid Name" };
 
             _mapperMock.Setup(m => m.Map<ApplicationData>(It.IsAny<ApplicationDataDto>())).Returns(new ApplicationData("Valid Name"));
@@ -56,13 +52,14 @@ namespace WebApi.Tests.Controllers
 
             // Assert
             Assert.IsType<CreatedAtActionResult>(result);
+
         }
 
         [Fact]
         public async Task GetAsyncShouldReturnApplicationVmWhenApplicationDataExists()
         {
             // Arrange
-            var applicationVm = new ApplicationVm { Id = 1, Name = "Valid Name" };
+            var applicationVm = new ApplicationVm { Name = "Valid Name" };
             var applicationData = new ApplicationData("Valid Name") { Id = 1 };
 
             _serviceMock.Setup(s => s.GetItemAsync(applicationData.Id)).ReturnsAsync(applicationData);
@@ -89,14 +86,14 @@ namespace WebApi.Tests.Controllers
             var filter = new ApplicationFilter { Name = "Valid Name" };
             var pagedResult = new PagedResult<ApplicationData>
             {
-                Result = [new ApplicationData("Valid Name")],
+                Result = new List<ApplicationData> { new ApplicationData("Valid Name") },
                 Page = 1,
                 PageSize = 10,
                 Total = 1
             };
             var pagedVmResult = new PagedResult<ApplicationVm>
             {
-                Result = new List<ApplicationVm> { new ApplicationVm { Id = 1, Name = "Valid Name" } },
+                Result = new List<ApplicationVm> { new ApplicationVm { Name = "Valid Name" } },
                 Page = 1,
                 PageSize = 10,
                 Total = 1
@@ -119,12 +116,8 @@ namespace WebApi.Tests.Controllers
         public async Task UpdateAsyncShouldReturnOkResultWhenApplicationDataIsValid()
         {
             // Arrange
-            var applicationDataDto = new ApplicationDataDto
-            {
-                Name = "Valid Name",
-                Area = new AreaDto() // Add this line to initialize the required 'Area' property
-            };
-            var applicationVm = new ApplicationVm { Id = 1, Name = "Valid Name" };
+            var applicationDataDto = new ApplicationDataDto { Name = "Valid Name" };
+            var applicationVm = new ApplicationVm { Name = "Valid Name" };
 
             _mapperMock.Setup(m => m.Map<ApplicationData>(It.IsAny<ApplicationDataDto>())).Returns(new ApplicationData("Valid Name"));
             _mapperMock.Setup(m => m.Map<ApplicationVm>(It.IsAny<ApplicationData>())).Returns(applicationVm);

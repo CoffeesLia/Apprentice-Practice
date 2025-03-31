@@ -1,8 +1,4 @@
-﻿using Stellantis.ProjectName.Domain.Entities;
-using System.Xml.Linq;
-using System;
-
-namespace Stellantis.ProjectName.Domain.Entities
+﻿namespace Stellantis.ProjectName.Domain.Entities
 {
     public class GitRepo : EntityBase
     {

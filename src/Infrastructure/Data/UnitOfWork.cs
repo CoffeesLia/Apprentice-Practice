@@ -1,4 +1,5 @@
-using Microsoft.EntityFrameworkCore.Storage;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
@@ -6,47 +7,55 @@ using Stellantis.ProjectName.Infrastructure.Repositories;
 
 namespace Stellantis.ProjectName.Infrastructure.Data
 {
-    public class UnitOfWork : IUnitOfWork
+    public class UnitOfWork(Context context) : IUnitOfWork
     {
         private IDbContextTransaction? _transaction;
-        private readonly Context _context;
+        private IDataServiceRepository? _dataServiceRepository;
+        private ISquadRepository? _squadRepository;
+        public IAreaRepository AreaRepository => throw new NotImplementedException();
 
-        public IAreaRepository AreaRepository { get; }
-        public IIntegrationRepository IntegrationRepository { get; }
-        public IResponsibleRepository ResponsibleRepository { get; }
-        public IApplicationDataRepository ApplicationDataRepository { get; }
-        public ISquadRepository SquadRepository { get; }
-        public IDataServiceRepository DataServiceRepository { get; }
-        public IGitRepoRepository GitRepoRepository { get; }
-        
-        public UnitOfWork(Context context)
+        public IResponsibleRepository ResponsibleRepository => throw new NotImplementedException();
+
+        public IApplicationDataRepository ApplicationDataRepository => throw new NotImplementedException();
+
+        public IDataServiceRepository DataServiceRepository
         {
-            _context = context;
-            AreaRepository = new AreaRepository(context);
-            IntegrationRepository = new IntegrationRepository(context);
-            ResponsibleRepository = new ResponsibleRepository(context);
-            ApplicationDataRepository = new ApplicationDataRepository(context);
-            SquadRepository = new SquadRepository(context);
+            get
+            {
+                return _dataServiceRepository ??= new DataServiceRepository(context);
+            }
+        }
+
+        public ISquadRepository SquadRepository
+        {
+            get
+            {
+                return _squadRepository ??= new SquadRepository(context);
+            }
         }
 
         public void BeginTransaction()
         {
-            _transaction = _context.Database.BeginTransaction();
+            _transaction = context.Database.BeginTransaction();
         }
 
-        public async Task CommitAsync()
+        public Task CommitAsync()
         {
             try
             {
-                if (_transaction != null)
-                    await _transaction.CommitAsync().ConfigureAwait(false);
+                _transaction?.CommitAsync();
             }
             catch
             {
-                if (_transaction != null)
-                    await _transaction.RollbackAsync().ConfigureAwait(false);
+                _transaction!.RollbackAsync();
                 throw;
             }
+            return Task.CompletedTask;
+        }
+
+        public void DisposeIt()
+        {
+            _transaction?.Dispose();
         }
     }
 }
