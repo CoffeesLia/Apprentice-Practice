@@ -142,6 +142,15 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a The description is required..
+        /// </summary>
+        public static string Thedescriptionisrequired {
+            get {
+                return ResourceManager.GetString("Thedescriptionisrequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Update integration Not Found..
         /// </summary>
         public static string UpdatedSuccessfully {

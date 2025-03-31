@@ -10,7 +10,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data
         {
         }
 
-        public DbSet<Squad> Squads { get; set; }
+        public DbSet<EntitySquad> Squads { get; set; }
 
         public DbSet<DataService> Services { get; set; }
 

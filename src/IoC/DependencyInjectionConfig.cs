@@ -26,13 +26,15 @@ namespace Stellantis.ProjectName.IoC
             services.AddScoped<IValidator<Area>, AreaValidator>();
             services.AddScoped<IValidator<Responsible>, ResponsibleValidator>();
             services.AddScoped<IValidator<DataService>, DataServiceValidator>();
+            services.AddScoped<IValidator<Integration>, IntegrationValidator>();
         }
 
         private static void Services(IServiceCollection services)
         {
-            services.AddScoped<IAreaService, AreaService>();
+            services.AddScoped<IIntegrationService, IntegrationService>();
             services.AddScoped<IResponsibleService, ResponsibleService>();
             services.AddScoped<IDataService, ApplicationService>();
+            services.AddScoped<IValidator<Integration>, IntegrationValidator>();
         }
 
         private static void Repositories(IServiceCollection services)
@@ -41,6 +43,7 @@ namespace Stellantis.ProjectName.IoC
             services.AddScoped<IResponsibleRepository, ResponsibleRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IDataServiceRepository, DataServiceRepository>();
+            services.AddScoped<IIntegrationRepository, IntegrationRepository>();
         }
     }
 }
