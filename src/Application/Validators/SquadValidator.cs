@@ -5,16 +5,17 @@ using System.Text;
 using System.Threading.Tasks;
 using FluentValidation;
 using Microsoft.Extensions.Localization;
+using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Validators
 {
-    internal class SquadValidator : AbstractValidator<EDataService>
+    internal class SquadValidator : AbstractValidator<DataService>
     {
         internal const int MinimumLength = 3;
         internal const int MaximumLength = 255;
-        public SquadValidator (IStringLocalizerFactory localizerFactory)
+        public SquadValidator(IStringLocalizerFactory localizerFactory)
         {
             ArgumentNullException.ThrowIfNull(localizerFactory);
             var localizer = localizerFactory.Create(typeof(SquadResources));

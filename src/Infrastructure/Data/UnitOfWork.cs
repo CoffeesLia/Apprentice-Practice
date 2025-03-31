@@ -27,6 +27,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data
             ResponsibleRepository = new ResponsibleRepository(context);
             ApplicationDataRepository = new ApplicationDataRepository(context);
             SquadRepository = new SquadRepository(context);
+            GitRepoRepository = new GitRepoRepository(context);
         }
 
         public void BeginTransaction()

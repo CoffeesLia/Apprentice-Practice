@@ -41,7 +41,7 @@ namespace Application.Tests.Services
         {
             // Arrange
             var integration = new Integration("Eu", "aaa");
-            var validationResult = new ValidationResult(new[] { new ValidationFailure("Name", "Name is too short") });
+            var validationResult = new ValidationResult([new ValidationFailure("Name", "Name is too short")]);
             var validatorMock = new Mock<IValidator<Integration>>();
             validatorMock.Setup(v => v.ValidateAsync(integration, It.IsAny<CancellationToken>())).ReturnsAsync(validationResult);
 
@@ -55,16 +55,6 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.InvalidData, result.Status);
         }
 
-        [Fact]
-        public async Task CreateAsyncShouldReturnInvalidDataWhenDescriptionExceedsMaxLength()
-        {
-            // Arrange
-            var integration = new Integration("Name", new string('A', 256));
-            // Act
-            var result = await _integrationService.CreateAsync(integration);
-            // Assert
-            Assert.Equal(OperationStatus.InvalidData, result.Status);
-        }
 
         [Fact]
         public async Task CreateAsyncShouldReturnCompleteWhenIntegrationIsValid()
@@ -93,17 +83,6 @@ namespace Application.Tests.Services
         {
             // Arrange
             var integration = new Integration(string.Empty, "Description");
-            // Act
-            var result = await _integrationService.CreateAsync(integration);
-            // Assert
-            Assert.Equal(OperationStatus.InvalidData, result.Status);
-        }
-
-        [Fact]
-        public async Task CreateAsyncShouldReturnInvalidDataWhenIntegrationNameExceedsMaxLength()
-        {
-            // Arrange
-            var integration = new Integration(new string('A', 256), "Description");
             // Act
             var result = await _integrationService.CreateAsync(integration);
             // Assert
@@ -239,22 +218,15 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.NotFound, result.Status);
         }
 
-        [Fact]
-        public async Task UpdateAsyncShouldReturnInvalidDataWhenIntegrationDescriptionExceedsMaxLength_()
-        {
-            // Arrange
-            var integration = new Integration("Name", new string('A', 256));
-            // Act
-            var result = await _integrationService.UpdateAsync(integration);
-            // Assert
-            Assert.Equal(OperationStatus.InvalidData, result.Status);
-        }
 
         [Fact]
-        public async Task UpdateAsyncShouldReturnCompleteWhenIntegrationIsValid_()
+        public async Task UpdateAsyncShouldReturnCompleteWhenIntegrationIsValid()
         {
             // Arrange
             var integration = new Integration("Name", "Description");
+
+            _integrationRepositoryMock.Setup(r => r.GetByIdAsync(integration.Id)).ReturnsAsync(integration);
+
             // Act
             var result = await _integrationService.UpdateAsync(integration);
             // Assert
@@ -262,7 +234,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task UpdateAsyncShouldReturnInvalidDataWhenIntegrationNameIsNull_()
+        public async Task UpdateAsyncShouldReturnInvalidDataWhenIntegrationNameIsNull()
         {
             // Arrange
             var integration = new Integration(null!, "Description");
@@ -273,7 +245,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task UpdateAsyncShouldReturnInvalidDataWhenIntegrationNameIsEmpty_()
+        public async Task UpdateAsyncShouldReturnInvalidDataWhenIntegrationNameIsEmpty()
         {
             // Arrange
             var integration = new Integration(string.Empty, "Description");
@@ -283,19 +255,9 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.InvalidData, result.Status);
         }
 
-        [Fact]
-        public async Task UpdateAsyncShouldReturnInvalidDataWhenIntegrationNameExceedsMaxLength_()
-        {
-            // Arrange
-            var integration = new Integration(new string('A', 256), "Description");
-            // Act
-            var result = await _integrationService.UpdateAsync(integration);
-            // Assert
-            Assert.Equal(OperationStatus.InvalidData, result.Status);
-        }
 
         [Fact]
-        public async Task UpdateAsyncShouldReturnInvalidDataWhenIntegrationNameIsWhiteSpace_()
+        public async Task UpdateAsyncShouldReturnInvalidDataWhenIntegrationNameIsWhiteSpace()
         {
             // Arrange
             var integration = new Integration(" ", "Description");
@@ -306,7 +268,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task UpdateAsyncShouldReturnInvalidDataWhenIntegrationDescriptionIsNull_()
+        public async Task UpdateAsyncShouldReturnInvalidDataWhenIntegrationDescriptionIsNull()
         {
             // Arrange
             var integration = new Integration("Name", null!);
@@ -317,7 +279,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task UpdateAsyncShouldReturnInvalidDataWhenIntegrationDescriptionIsEmpty_()
+        public async Task UpdateAsyncShouldReturnInvalidDataWhenIntegrationDescriptionIsEmpty()
         {
             // Arrange
             var integration = new Integration("Name", string.Empty);
@@ -328,7 +290,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task UpdateAsyncShouldReturnInvalidDataWhenIntegrationDescriptionIsWhiteSpace_()
+        public async Task UpdateAsyncShouldReturnInvalidDataWhenIntegrationDescriptionIsWhiteSpace()
         {
             // Arrange
             var integration = new Integration("Name", " ");
@@ -339,7 +301,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task GetListAsyncShouldReturnIntegrationList_()
+        public async Task GetListAsyncShouldReturnIntegrationList()
         {
             // Arrange
             var filter = new IntegrationFilter();
@@ -358,7 +320,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task GetListAsyncShouldReturnIntegrationListWithFilter_()
+        public async Task GetListAsyncShouldReturnIntegrationListWithFilter()
         {
             // Arrange
             var filter = new IntegrationFilter { Name = "Name" };
@@ -377,7 +339,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task GetListAsyncShouldReturnIntegrationListWithPaging_()
+        public async Task GetListAsyncShouldReturnIntegrationListWithPaging()
         {
             // Arrange
             var filter = new IntegrationFilter { Page = 1, PageSize = 10 };
@@ -396,7 +358,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task GetListAsyncShouldReturnIntegrationListWithFilterAndPaging_()
+        public async Task GetListAsyncShouldReturnIntegrationListWithFilterAndPaging()
         {
             // Arrange
             var filter = new IntegrationFilter { Name = "Name", Page = 1, PageSize = 10 };

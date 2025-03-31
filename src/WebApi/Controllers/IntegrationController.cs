@@ -24,19 +24,19 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] IntegrationDto integrationDto)
         {
-            return await CreateBaseAsync<IntegrationVM>(integrationDto).ConfigureAwait(false);
+            return await CreateBaseAsync<IntegrationVm>(integrationDto).ConfigureAwait(false);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] IntegrationDto integrationDto)
         {
-            return await UpdateBaseAsync<IntegrationVM>(id, integrationDto).ConfigureAwait(false);
+            return await UpdateBaseAsync<IntegrationVm>(id, integrationDto).ConfigureAwait(false);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<IntegrationVM>> GetAsync(int id)
+        public async Task<ActionResult<IntegrationVm>> GetAsync(int id)
         {
-            return await GetAsync<IntegrationVM>(id).ConfigureAwait(false);
+            return await GetAsync<IntegrationVm>(id).ConfigureAwait(false);
         }
 
         [HttpGet]
@@ -44,7 +44,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         {
             var filter = Mapper.Map<IntegrationFilter>(filterDto);
             var pagedResult = await Service.GetListAsync(filter!).ConfigureAwait(false);
-            var result = Mapper.Map<PagedResultVm<IntegrationVM>>(pagedResult);
+            var result = Mapper.Map<PagedResultVm<IntegrationVm>>(pagedResult);
             return Ok(result);
         }
 

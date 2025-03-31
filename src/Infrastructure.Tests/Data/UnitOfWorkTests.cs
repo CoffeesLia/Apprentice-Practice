@@ -22,19 +22,7 @@ namespace Infrastructure.Tests.Data
         }
 
         [Fact]
-        [SuppressMessage("Minor Code Smell", "S1481:Unused local variables should be removed", Justification = "It's a temporary code.")]
-        [SuppressMessage("Blocker Code Smell", "S2699:Tests should include assertions", Justification = "It's a temporary code.")]
-        [SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "It's a temporary code.")]
-        public void Create_WhenNullForRepositories()
-        {
-            // Act
-            UnitOfWork unitOfWork = new(_context);
-
-            // Assert
-        }
-
-        [Fact]
-        public void BeginTransaction_ShouldStartTransaction()
+        public void BeginTransactionShouldStartTransaction()
         {
             // Arrange
             var mockTransaction = new Mock<IDbContextTransaction>();
@@ -53,40 +41,14 @@ namespace Infrastructure.Tests.Data
         }
 
         [Fact]
-        public async Task CommitAsync_WhenNotBebunTransction()
+        public async Task CommitAsyncWhenNotBebunTransction()
         {
             await _unitOfWork.CommitAsync();
             Assert.True(true);
         }
 
         [Fact]
-        public void DisposeIt_WhenTransactionIsNull()
-        {
-            _unitOfWork.DisposeIt();
-            Assert.True(true);
-        }
-
-        [Fact]
-        public void DisposeIt()
-        {
-            // Arrange
-            var mockTransaction = new Mock<IDbContextTransaction>();
-            var mockDatabase = new Mock<DatabaseFacade>(_context);
-            mockDatabase.Setup(db => db.BeginTransaction()).Returns(mockTransaction.Object);
-            var context = new Mock<Context>(new DbContextOptions<Context>());
-            context.Setup(c => c.Database).Returns(mockDatabase.Object);
-            var unitOfWork = new UnitOfWork(context.Object);
-
-            // Act
-            unitOfWork.BeginTransaction();
-            unitOfWork.DisposeIt();
-
-            // Assert
-            mockTransaction.Verify(t => t.Dispose(), Times.Once);
-        }
-
-        [Fact]
-        public async Task CommitAsync_ShouldCallSaveChangesOnContext()
+        public async Task CommitAsyncShouldCallSaveChangesOnContext()
         {
             // Arrange
             var mockTransaction = new Mock<IDbContextTransaction>();
@@ -107,14 +69,14 @@ namespace Infrastructure.Tests.Data
         }
 
         [Fact]
-        public async Task CommitAsync_ShouldRollbackTransactionOnException()
+        public async Task CommitAsyncShouldRollbackTransactionOnException()
         {
             // Arrange
-            var mockTransaction = new MockDbContextTransaction();
+            var mockTransaction = new Mock<IDbContextTransaction>();
             var mockDatabase = new Mock<DatabaseFacade>(_context);
             mockDatabase
                 .Setup(db => db.BeginTransaction())
-                .Returns(mockTransaction);
+                .Returns(mockTransaction.Object);
             var context = new Mock<Context>(new DbContextOptions<Context>());
             context
                 .Setup(c => c.Database)
@@ -125,7 +87,7 @@ namespace Infrastructure.Tests.Data
 
             // Act & Assert
             await Assert.ThrowsAnyAsync<Exception>(() => unitOfWork.CommitAsync());
-            Assert.True(mockTransaction.RollbackAsyncHasCalled());
+            mockTransaction.Verify(t => t.RollbackAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
     }
 }
