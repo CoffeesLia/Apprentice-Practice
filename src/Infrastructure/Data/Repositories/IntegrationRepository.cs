@@ -53,11 +53,5 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 PageSize = pageSize
             };
         }
-
-        public async Task<bool> VerifyNameExistsAsync(int id)
-        {
-            var integration = await GetByIdAsync(id).ConfigureAwait(false);
-            return integration != null;
-        }
     }
 }
