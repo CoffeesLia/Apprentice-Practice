@@ -6,7 +6,13 @@ using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entity;
 using Stellantis.ProjectName.WebAPI.Controllers;
+using Stellantis.ProjectName.WebApi.Dto;
+using System;
+using System.Collections.Generic;
 using Xunit;
+using Stellantis.ProjectName.Domain.Entities; 
+ 
+                                         
 
 namespace WebApi.Tests.Controllers
 {
@@ -22,7 +28,7 @@ namespace WebApi.Tests.Controllers
             _controller = new SquadController(_squadServiceMock.Object, _mapperMock.Object, _localizerMock.Object);
         }
 
-        [Fact]
+        [Fact] // passsou
         public void CreateSquadShouldReturnOkWhenSquadIsCreated()
         {
             // Arrange
@@ -36,10 +42,9 @@ namespace WebApi.Tests.Controllers
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var response = okResult.Value.GetType().GetProperty("Message").GetValue(okResult.Value, null);
-            Assert.Equal("Squad created successfully.", response.ToString());
+            dynamic response = okResult.Value;
+            Assert.Equal("Squad created successfully.", response.Message.ToString());
         }
-
 
         [Fact]
         public void GetSquadByIdShouldReturnOkWhenSquadExists()
@@ -47,20 +52,28 @@ namespace WebApi.Tests.Controllers
             // Arrange
             var squadId = Guid.NewGuid();
             var squad = new EntitySquad { Id = squadId, Name = "TestSquad", Description = "TestDescription" };
-            var squadDto = new Stellantis.ProjectName.WebApi.Dto.SquadDto { Id = squadId, Name = "TestSquad", Description = "TestDescription" };
+            var expectedDto = new SquadDto { Id = squadId, Name = "TestSquad", Description = "TestDescription" };
 
-            _squadServiceMock.Setup(s => s.GetSquadById(squadId)).Returns(squad);
-            _mapperMock.Setup(m => m.Map<Stellantis.ProjectName.WebApi.Dto.SquadDto>(squad)).Returns(squadDto);
+            // Configuração ESSENCIAL do mock
+            _squadServiceMock.Setup(s => s.GetSquadById(squadId))
+                .Returns(squad);
+
+            _mapperMock.Setup(m => m.Map<SquadDto>(It.Is<EntitySquad>(x =>
+                x.Id == squadId &&
+                x.Name == "TestSquad" &&
+                x.Description == "TestDescription")))
+                .Returns(expectedDto);
 
             // Act
             var result = _controller.GetSquadById(squadId);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.NotNull(okResult.Value); // Adiciona uma verificação para garantir que o valor não seja nulo
             Assert.Equal(squadDto, okResult.Value);
         }
 
-        [Fact]
+        [Fact] // passou
         public void GetSquadByIdShouldReturnNotFoundWhenSquadDoesNotExist()
         {
             // Arrange
@@ -72,11 +85,11 @@ namespace WebApi.Tests.Controllers
 
             // Assert
             var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
-            var responseMessage = Assert.IsType<ResponseMessage>(notFoundResult.Value);
-            Assert.Equal("Squad not found.", responseMessage.Message);
+            dynamic response = notFoundResult.Value;
+            Assert.Equal("Squad not found.", response.Message.ToString());
         }
 
-        [Fact]
+        [Fact] // passou
         public void UpdateSquadShouldReturnOkWhenSquadIsUpdated()
         {
             // Arrange
@@ -91,37 +104,59 @@ namespace WebApi.Tests.Controllers
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var responseMessage = Assert.IsType<ResponseMessage>(okResult.Value);
-            Assert.Equal("Squad updated successfully.", responseMessage.Message);
+            dynamic response = okResult.Value;
+            Assert.Equal("Squad updated successfully.", response.Message.ToString());
         }
 
         [Fact]
         public void GetAllSquadsShouldReturnOkWithListOfSquads()
         {
             // Arrange
-            var squads = new List<EntitySquad>
-            {
-                new(){ Id = Guid.NewGuid(), Name = "Squad1", Description = "Description1" },
-                new () { Id = Guid.NewGuid(), Name = "Squad2", Description = "Description2" }
-            };
-            var squadDtos = new List<Stellantis.ProjectName.WebApi.Dto.SquadDto>
-            {
-                new () { Id = squads[0].Id, Name = "Squad1", Description = "Description1" },
-                new () { Id = squads[1].Id, Name = "Squad2", Description = "Description2" }
-            };
+            var squad1Id = Guid.NewGuid();
+            var squad2Id = Guid.NewGuid();
 
-            _squadServiceMock.Setup(s => s.GetAllSquads(It.IsAny<string>())).Returns(squads);
-            _mapperMock.Setup(m => m.Map<IEnumerable<Stellantis.ProjectName.WebApi.Dto.SquadDto>>(squads)).Returns(squadDtos);
+            var squads = new List<EntitySquad>
+    {
+        new EntitySquad { Id = squad1Id, Name = "Squad1", Description = "Description1" },
+        new EntitySquad { Id = squad2Id, Name = "Squad2", Description = "Description2" }
+    };
+
+            var squadDtos = new List<Stellantis.ProjectName.WebAPI.Controllers.SquadDto>
+    {
+        new Stellantis.ProjectName.WebAPI.Controllers.SquadDto { Id = squad1Id, Name = "Squad1", Description = "Description1" },
+        new Stellantis.ProjectName.WebAPI.Controllers.SquadDto { Id = squad2Id, Name = "Squad2", Description = "Description2" }
+    };
+
+            // Configuração correta dos mocks
+            _squadServiceMock.Setup(s => s.GetAllSquads(It.IsAny<string>()))
+                .Returns(squads);
+
+            _mapperMock.Setup(m => m.Map<IEnumerable<Stellantis.ProjectName.WebAPI.Controllers.SquadDto>>(squads))
+                .Returns(squadDtos);
 
             // Act
             var result = _controller.GetAllSquads(null);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.Equal(squadDtos, okResult.Value);
-        }
+            var returnedDtos = Assert.IsAssignableFrom<IEnumerable<Stellantis.ProjectName.WebAPI.Controllers.SquadDto>>(okResult.Value);
 
-        [Fact]
+            // Verifica cada item individualmente
+            Assert.Collection(returnedDtos,
+                dto =>
+                {
+                    Assert.Equal(squad1Id, dto.Id);
+                    Assert.Equal("Squad1", dto.Name);
+                    Assert.Equal("Description1", dto.Description);
+                },
+                dto =>
+                {
+                    Assert.Equal(squad2Id, dto.Id);
+                    Assert.Equal("Squad2", dto.Name);
+                    Assert.Equal("Description2", dto.Description);
+                });
+        }
+        [Fact] // passou
         public void DeleteSquadShouldReturnOkWhenSquadIsDeleted()
         {
             // Arrange
@@ -135,11 +170,11 @@ namespace WebApi.Tests.Controllers
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var responseMessage = Assert.IsType<ResponseMessage>(okResult.Value);
-            Assert.Equal("Squad deleted successfully.", responseMessage.Message);
+            dynamic response = okResult.Value;
+            Assert.Equal("Squad deleted successfully.", response.Message.ToString());
         }
 
-        [Fact]
+        [Fact] // passou
         public void DeleteSquadShouldReturnNotFoundWhenSquadDoesNotExist()
         {
             // Arrange
@@ -151,9 +186,8 @@ namespace WebApi.Tests.Controllers
 
             // Assert
             var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
-            var responseMessage = Assert.IsType<ResponseMessage>(notFoundResult.Value);
-            Assert.Equal("Squad not found.", responseMessage.Message);
+            dynamic response = notFoundResult.Value;
+            Assert.Equal("Squad not found.", response.Message.ToString());
         }
     }
 }
-

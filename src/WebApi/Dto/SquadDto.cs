@@ -1,10 +1,9 @@
-﻿
-namespace Stellantis.ProjectName.WebApi.Dto
+﻿namespace Stellantis.ProjectName.WebApi.Dto
 {
-    internal class SquadDto 
+    public class SquadDto
     {
-        public required string Name { get; set; }
-        public string? Description { get; set; }
-        public Guid Id { get; internal set; }
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
     }
 }
