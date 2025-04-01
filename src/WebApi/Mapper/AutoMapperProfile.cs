@@ -16,7 +16,9 @@ namespace Stellantis.ProjectName.WebApi.Mapper
             CreateMap(typeof(PagedResult<>), typeof(PagedResultVm<>));
             CreateMap<AreaDto, Area>()
                 .ForMember(x => x.Id, x => x.Ignore())
-                .ForMember(x => x.Applications, x => x.Ignore());
+                .ForMember(x => x.Applications, x => x.Ignore())
+                .ForMember(x => x.Responsibles, x => x.Ignore());
+
             CreateMap<Area, AreaVm>()
                 .ForMember(x => x.Applications, x => x.Ignore());
             CreateMap<AreaFilterDto, AreaFilter>();
@@ -42,14 +44,20 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(x => x.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(x => x.ProductOwner, opt => opt.MapFrom(src => src.ProductOwner))
                 .ForMember(x => x.ConfigurationItem, opt => opt.MapFrom(src => src.ConfigurationItem))
-                .ForMember(x => x.External, opt => opt.MapFrom(src => src.External));
+                .ForMember(x => x.External, opt => opt.MapFrom(src => src.External))
+                .ForMember(x => x.ResponsibleId, opt => opt.MapFrom(src => src.ResponsibleId))
+                .ForMember(x => x.Responsibles, opt => opt.MapFrom(src => src.Responsibles));
             CreateMap<ApplicationData, ApplicationVm>()
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(dest => dest.ProductOwner, opt => opt.MapFrom(src => src.ProductOwner))
                 .ForMember(dest => dest.ConfigurationItem, opt => opt.MapFrom(src => src.ConfigurationItem))
                 .ForMember(dest => dest.External, opt => opt.MapFrom(src => src.External));
             CreateMap<ApplicationDataFilterDto, ApplicationFilter>()
-                .ForMember(x => x.AreaId, opt => opt.MapFrom(src => src.AreaId));
+                .ForMember(x => x.AreaId, opt => opt.MapFrom(src => src.AreaId))
+                .ForMember(x => x.External, opt => opt.MapFrom(src => src.External))
+                .ForMember(x => x.ProductOwner, opt => opt.MapFrom(src => src.ProductOwner))
+                .ForMember(x => x.ConfigurationItem, opt => opt.MapFrom(src => src.ConfigurationItem));
+
 
             CreateMap<Integration, IntegrationVM>()
                 .ForMember(dest => dest.ApplicationData,

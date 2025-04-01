@@ -11,8 +11,8 @@ namespace Stellantis.ProjectName.Application.Models.Filters
         public string? Name { get; set; }
         public int AreaId { get; set; }
         public bool? External { get; set; }
-        public string ProductOwner { get; set; }
-        public string ConfigurationItem { get; set; }
+        public string? ProductOwner { get; set; }
+        public string? ConfigurationItem { get; set; }
 
 
     }

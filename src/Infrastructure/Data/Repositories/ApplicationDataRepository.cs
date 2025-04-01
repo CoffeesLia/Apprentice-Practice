@@ -64,9 +64,9 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         }
 
-        public Task<bool> IsResponsibleFromArea(int areaId, int responsibleId)
+        public async Task<bool> IsResponsibleFromArea(int areaId, int responsibleId)
         {
-            throw new NotImplementedException();
+            return await Context.Set<Responsible>().AnyAsync(r => r.Id == responsibleId && r.AreaId == areaId).ConfigureAwait(false);
         }
     }
     }

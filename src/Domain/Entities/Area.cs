@@ -11,8 +11,8 @@ namespace Stellantis.ProjectName.Domain.Entities
     public class Area(string name) : EntityBase
     {
         public string Name { get; set; } = name;
-        public Collection<ApplicationData> Applications { get; } = new();
-        public ICollection<Responsible> Responsibles { get; } = new List<Responsible>();
+        public Collection<ApplicationData> Applications { get; } = [];
+        public ICollection<Responsible> Responsibles { get; } = [];
 
 
     }

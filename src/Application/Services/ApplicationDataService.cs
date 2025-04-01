@@ -45,7 +45,7 @@ namespace Stellantis.ProjectName.Application.Services
 
             if (!await IsResponsibleFromArea(item.AreaId, item.ResponsibleId).ConfigureAwait(false))
             {
-                return OperationResult.NotFound(_localizer[nameof(ApplicationDataResources.NotFound)]);
+                return OperationResult.Conflict(_localizer[nameof(ApplicationDataResources.NotFound)]);
             }
 
             return await base.CreateAsync(item).ConfigureAwait(false);
@@ -100,7 +100,7 @@ namespace Stellantis.ProjectName.Application.Services
 
             if (!await IsResponsibleFromArea(item.AreaId, item.ResponsibleId).ConfigureAwait(false))
             {
-                return OperationResult.NotFound(_localizer[nameof(ApplicationDataResources.NotFound)]);
+                return OperationResult.Conflict(_localizer[nameof(ApplicationDataResources.NotFound)]);
             }
 
             return await base.UpdateAsync(item).ConfigureAwait(false);
@@ -122,14 +122,15 @@ namespace Stellantis.ProjectName.Application.Services
 
         public async Task<bool> IsResponsibleFromArea(int areaId, int responsibleId)
         {
-            var applicationData = await Repository.GetListAsync(new ApplicationFilter { AreaId = areaId }).ConfigureAwait(false);
+            var responsible = await UnitOfWork.ResponsibleRepository.GetByIdAsync(responsibleId).ConfigureAwait(false);
 
-            if (applicationData == null || applicationData.Result == null)
+            if (responsible == null)
             {
                 return false;
             }
 
-            return applicationData.Result.Any(ad => ad.Responsibles.Any(r => r.Id == responsibleId));
+            return responsible.AreaId == areaId;
         }
+
     }
 }
