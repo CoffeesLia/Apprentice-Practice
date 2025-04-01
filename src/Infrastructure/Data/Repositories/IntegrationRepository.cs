@@ -29,6 +29,8 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         public async Task<PagedResult<Integration>> GetListAsync(IntegrationFilter filter)
         {
+            ArgumentNullException.ThrowIfNull(filter);
+
             IQueryable<Integration> query = Context.Set<Integration>();
 
             if (!string.IsNullOrEmpty(filter.Name))
@@ -38,7 +40,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             return await GetPagedResultAsync(query, filter.Page, filter.PageSize).ConfigureAwait(false);
         }
-
         private static async Task<PagedResult<Integration>> GetPagedResultAsync(IQueryable<Integration> query, int page, int pageSize)
         {
             var total = await query.CountAsync().ConfigureAwait(false);
@@ -51,6 +52,12 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 Page = page,
                 PageSize = pageSize
             };
+        }
+
+        public async Task<bool> VerifyNameExistsAsync(int id)
+        {
+            var integration = await GetByIdAsync(id).ConfigureAwait(false);
+            return integration != null;
         }
     }
 }

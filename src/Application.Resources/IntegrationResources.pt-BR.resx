@@ -144,6 +144,9 @@
   <data name="NoIntegrations" xml:space="preserve">
     <value>Sem integrações.</value>
   </data>
+  <data name="Thedescriptionisrequired" xml:space="preserve">
+    <value>A descrição é obrigatória.</value>
+  </data>
   <data name="UpdatedSuccessfully" xml:space="preserve">
     <value>Integração atualizada com sucesso.</value>
   </data>

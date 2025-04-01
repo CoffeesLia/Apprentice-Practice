@@ -97,5 +97,15 @@ namespace Stellantis.ProjectName.Application.Services
             }
             return false;
         }
+
+        public void DeleteSquad(Guid id)
+        {
+            var squad = _squadRepository.GetById(id);
+            if (squad == null)
+            {
+                throw new KeyNotFoundException(_localizer[nameof(SquadResources.SquadNotFound)]);
+            }
+            _squadRepository.Delete(squad);
+        }
     }
 }

@@ -32,7 +32,7 @@ namespace Stellantis.ProjectName.IoC
 
         private static void Services(IServiceCollection services)
         {
-            services.AddScoped<IAreaService, AreaService>();
+            services.AddScoped<IIntegrationService, IntegrationService>();
             services.AddScoped<IResponsibleService, ResponsibleService>();
             services.AddScoped<IDataService, ApplicationService>();
             services.AddScoped<ISquadService, SquadService>();
