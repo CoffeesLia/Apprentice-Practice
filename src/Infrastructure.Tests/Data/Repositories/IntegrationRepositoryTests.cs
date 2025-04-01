@@ -1,4 +1,4 @@
-﻿using AutoFixture;
+using AutoFixture;
 using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
@@ -51,8 +51,7 @@ namespace Infrastructure.Tests.Data.Repositories
             // Assert
             Assert.Null(result);
         }
-       
-       
+
         [Fact]
         public async Task DeleteAsyncWhenCalled()
         {

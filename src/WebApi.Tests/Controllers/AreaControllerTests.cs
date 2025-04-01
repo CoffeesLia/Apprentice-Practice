@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using AutoFixture;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Moq;
@@ -10,7 +11,6 @@ using Stellantis.ProjectName.WebApi.Controllers;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.ViewModels;
-using AutoFixture;
 
 
 namespace Stellantis.ProjectName.WebApi.Tests.Controllers
@@ -50,8 +50,8 @@ namespace Stellantis.ProjectName.WebApi.Tests.Controllers
 
             // Assert
             var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
-            Assert.Equal(nameof(_controller.GetAsync), createdAtActionResult.ActionName);
-            Assert.Equal(area.Id, createdAtActionResult.RouteValues["id"]);
+            Assert.Equal("GET", createdAtActionResult.ActionName);
+            Assert.Equal(area.Id, createdAtActionResult.RouteValues!["id"]);
             Assert.Equal(areaVm, createdAtActionResult.Value);
         }
 
