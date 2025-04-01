@@ -12,6 +12,6 @@ namespace Stellantis.ProjectName.Application.Interfaces.Services
     {
         Task<PagedResult<ApplicationData>> GetListAsync(ApplicationFilter applicationFilter);
         Task<bool> IsApplicationNameUniqueAsync(string name, int? id = null);
-
+        Task<bool> IsResponsibleFromArea(int areaId, int responsibleId);
     }
 }

@@ -41,7 +41,9 @@ namespace Infrastructure.Tests.Data.Repositories
             const int Count = 10;
             var applicationDataList = Enumerable.Range(1, Count).Select(i => new ApplicationData($"Name {i}")
             {
-                AreaId = filter.AreaId
+                AreaId = filter.AreaId,
+                ProductOwner = "DefaultOwner", // Adiciona a propriedade obrigatória
+                ConfigurationItem = "DefaultConfigItem" // Adiciona a propriedade obrigatória
             }).ToList();
 
             await _context.Set<ApplicationData>().AddRangeAsync(applicationDataList);

@@ -2,7 +2,11 @@
 {
     public class ApplicationVm : EntityVmBase
     {
-        public new required int Id { get; set; }
         public required string Name { get; set; }
+        public int AreaId { get; set; }
+        public string Description { get; set; }
+        public string ProductOwner { get; set; }
+        public string ConfigurationItem { get; set; }
+        public bool External { get; set; }
     }
 }

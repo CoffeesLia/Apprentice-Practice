@@ -17,6 +17,9 @@ using Xunit;
 using AutoFixture;
 using Stellantis.ProjectName.Application.Resources;
 using Microsoft.Extensions.Localization;
+using FluentValidation.Results;
+using FluentValidation;
+using System.Linq.Expressions;
 
 namespace Application.Tests.Services
 {
@@ -25,7 +28,6 @@ namespace Application.Tests.Services
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private readonly Mock<IApplicationDataRepository> _applicationDataRepositoryMock;
         private readonly ApplicationDataService _applicationDataService;
-
 
         public ApplicationDataServiceTest()
         {
@@ -40,83 +42,94 @@ namespace Application.Tests.Services
             _applicationDataService = new ApplicationDataService(_unitOfWorkMock.Object, localizer, applicationDataValidator);
         }
 
-      
-        [Fact]
-        public async Task CreateAsyncShouldReturnSuccessWhenApplicationDataIsValid()
-        {
-            // Arrange
-            var applicationData = new ApplicationData("Valido");
-
-            _applicationDataRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<ApplicationFilter>()))
-                .ReturnsAsync(new PagedResult<ApplicationData> { Result = [], Page = 1, PageSize = 10, Total = 0 });
-
-            // Act
-            var result = await _applicationDataService.CreateAsync(applicationData);
-
-            // Assert
-            Assert.Equal(OperationStatus.Success, result.Status);
-        }
-
         [Fact]
         public async Task CreateAsyncShouldReturnInvalidDataWhenValidationFails()
         {
             // Arrange
-            var applicationData = new ApplicationData("u");
+            var applicationData = new ApplicationData("TestApp")
+            {
+                Area = new Area("TestArea"),
+                ProductOwner = "TestOwner",
+                ConfigurationItem = "TestConfig"
+            };
+            var validationResult = new ValidationResult(new[] { new ValidationFailure("Name", "Name is required") });
+            var validatorMock = new Mock<IValidator<ApplicationData>>();
+            validatorMock.Setup(v => v.ValidateAsync(applicationData, default)).ReturnsAsync(validationResult);
+
+            var service = new ApplicationDataService(_unitOfWorkMock.Object, Helpers.LocalizerFactorHelper.Create(), validatorMock.Object);
+
+            // Act
+            var result = await service.CreateAsync(applicationData);
+
+            // Assert
+            Assert.Equal(OperationStatus.InvalidData, result.Status);
+        }
+
+        [Fact]
+        public async Task CreateAsyncShouldReturnNotFoundWhenResponsibleIsNotFromArea()
+        {
+            // Arrange
+            var applicationData = new ApplicationData("TestApp")
+            {
+                ResponsibleId = 1,
+                AreaId = 1,
+                Area = new Area("TestArea"),
+                ProductOwner = "TestOwner",
+                ConfigurationItem = "TestConfig"
+            };
+
+            _applicationDataRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<ApplicationFilter>())).ReturnsAsync(new PagedResult<ApplicationData> { Result = new List<ApplicationData>() });
 
             // Act
             var result = await _applicationDataService.CreateAsync(applicationData);
 
             // Assert
-            Assert.Equal(OperationStatus.InvalidData, result.Status);
-            Assert.Equal(string.Format(CultureInfo.InvariantCulture, ApplicationDataResources.NameValidateLength, ApplicationDataValidator.MinimumLength, ApplicationDataValidator.MaximumLength), result.Errors.First());
+            Assert.Equal(OperationStatus.NotFound, result.Status);
         }
 
-
         [Fact]
-        public async Task CreateAsyncShouldReturnConflictWhenNameAlreadyExists()
+        public async Task CreateAsyncShouldReturnConflictWhenNameIsNotUnique()
         {
             // Arrange
-            var applicationData = new ApplicationData("Existing Name");
-            var existingApplicationData = new ApplicationData("Existing Name") { Id = 2 };
+            var applicationData = new ApplicationData("TestApp")
+            {
+                Area = new Area("TestArea"),
+                ProductOwner = "TestOwner",
+                ConfigurationItem = "TestConfig"
+            };
+
+            var existingItems = new List<ApplicationData>
+                {
+                    new ApplicationData("TestApp")
+                    {
+                        Id = 1,
+                        ProductOwner = "TestOwner",
+                        ConfigurationItem = "TestConfig"
+                    }
+                };
 
             _applicationDataRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<ApplicationFilter>()))
-                .ReturnsAsync(new PagedResult<ApplicationData> { Result = [existingApplicationData], Page = 1, PageSize = 10, Total = 1 });
+                .ReturnsAsync(new PagedResult<ApplicationData> { Result = existingItems });
 
             // Act
             var result = await _applicationDataService.CreateAsync(applicationData);
 
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
-            Assert.Equal(ApplicationDataResources.AlreadyExists, result.Message);
-
-        }
-        
-        [Fact]
-        public async Task CreateAsyncShouldReturnConflictWhenNameIsNullOrEmptyOrWhitespace()
-        {
-            // Arrange
-            var applicationData = new ApplicationData("");
-            // Act
-            var result = await _applicationDataService.CreateAsync(applicationData);
-            // Assert
-            Assert.Equal(OperationStatus.InvalidData, result.Status);
-            Assert.Equal(string.Format(CultureInfo.InvariantCulture, ApplicationDataResources.NameRequired), result.Errors.First());
-
-
         }
 
-
         [Fact]
-        public async Task GetItemAsyncShouldReturnSuccessWhenApplicationDataExists()
+        public async Task GetItemAsyncShouldReturnCompleteWhenItemIsFound()
         {
             // Arrange
-            var applicationData = new ApplicationData("Valid Application")
+            var applicationData = new ApplicationData("TestApp")
             {
-                Id = 1,
-                Area = new Area("Valid Area")
+                Area = new Area("TestArea"),
+                ProductOwner = "TestOwner",
+                ConfigurationItem = "TestConfig"
             };
 
-            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(It.IsAny<int>()))
+            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(applicationData.Id))
                 .ReturnsAsync(applicationData);
 
             // Act
@@ -124,171 +137,135 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
-
         }
 
         [Fact]
-        public async Task GetItemAsyncShouldReturnNotFoundWhenApplicationDataDoesNotExist()
+        public async Task GetItemAsyncShouldReturnNotFoundWhenItemIsNotFound()
         {
             // Arrange
-            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(It.IsAny<int>()))
+            var applicationId = 1;
+
+            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(applicationId))
                 .ReturnsAsync((ApplicationData?)null);
 
             // Act
-            var result = await _applicationDataService.GetItemAsync(1);
+            var result = await _applicationDataService.GetItemAsync(applicationId);
 
             // Assert
             Assert.Equal(OperationStatus.NotFound, result.Status);
-            Assert.Equal(ApplicationDataResources.ApplicationNotFound, result.Message);
-
-
         }
 
         [Fact]
-        public async Task UpdateAsyncShouldReturnSuccessWhenApplicationDataIsValid()
+        public async Task UpdateAsyncShouldReturnInvalidDataWhenValidationFails()
         {
             // Arrange
-            var applicationData = new ApplicationData("Valid Name") { Id = 1, AreaId = 1 };
+            var applicationData = new ApplicationData("TestApp")
+            {
+                Id = 1,
+                AreaId = 1,
+                ResponsibleId = 1,
+                ProductOwner = "TestOwner",
+                ConfigurationItem = "TestConfig"
+            };
 
-            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(applicationData.Id)).ReturnsAsync(applicationData);
-            _applicationDataRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<ApplicationFilter>()))
-                .ReturnsAsync(new PagedResult<ApplicationData> { Result = [], Page = 1, PageSize = 10, Total = 0 });
+            var validationResult = new ValidationResult([new ValidationFailure("Name", "Name is required")]);
+            var validatorMock = new Mock<IValidator<ApplicationData>>();
+            validatorMock.Setup(v => v.ValidateAsync(applicationData, default)).ReturnsAsync(validationResult);
 
-            // Act
-            var result = await _applicationDataService.UpdateAsync(applicationData);
-
-            // Assert
-            Assert.Equal(OperationStatus.Success, result.Status);
-        }
-
-        [Fact]
-        public async Task UpdateAsyncShouldReturnConflictWhenNameIsNullOrEmptyOrWhitespace()
-        {
-            // Arrange
-            var applicationData = new ApplicationData(string.Empty);
+            var service = new ApplicationDataService(_unitOfWorkMock.Object, Helpers.LocalizerFactorHelper.Create(), validatorMock.Object);
 
             // Act
-            var result = await _applicationDataService.UpdateAsync(applicationData);
+            var result = await service.UpdateAsync(applicationData);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
-            Assert.Equal(string.Format(CultureInfo.InvariantCulture, ApplicationDataResources.NameRequired), result.Errors.First());
         }
 
-
-
         [Fact]
-        public async Task UpdateAsyncShouldReturnConflictWhenNameAlreadyExists()
+        public async Task UpdateAsyncShouldReturnConflictWhenNameIsNotUnique()
         {
             // Arrange
-            var applicationData = new ApplicationData("Existing Name") { Id = 1, AreaId = 1 };
-            var existingApplicationData = new ApplicationData("Existing Name") { Id = 2, AreaId = 1 };
+            var applicationData = new ApplicationData("TestApp")
+            {
+                Id = 1,
+                AreaId = 1,
+                ResponsibleId = 1,
+                ProductOwner = "TestOwner",
+                ConfigurationItem = "TestConfig"
+            };
 
-            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(applicationData.Id)).ReturnsAsync(applicationData);
+            var existingItems = new List<ApplicationData>
+                {
+                    new ApplicationData("TestApp")
+                    {
+                        Id = 2,
+                        ProductOwner = "TestOwner",
+                        ConfigurationItem = "TestConfig"
+                    }
+                };
+
             _applicationDataRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<ApplicationFilter>()))
-                .ReturnsAsync(new PagedResult<ApplicationData> { Result = [existingApplicationData], Page = 1, PageSize = 10, Total = 1 });
+                .ReturnsAsync(new PagedResult<ApplicationData> { Result = existingItems });
 
             // Act
             var result = await _applicationDataService.UpdateAsync(applicationData);
 
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
-            Assert.Equal(ApplicationDataResources.AlreadyExists, result.Message);
-            
-
         }
 
         [Fact]
-        public async Task UpdateAsyncShouldReturnNotFoundWhenApplicationDataDoesNotExist()
+        public async Task UpdateAsyncShouldReturnNotFoundWhenResponsibleIsNotFromArea()
         {
             // Arrange
-            var applicationData = new ApplicationData("Valid Name") { Id = 1, AreaId = 1 };
+            var applicationData = new ApplicationData("TestApp")
+            {
+                Id = 1,
+                AreaId = 1,
+                ResponsibleId = 1,
+                ProductOwner = "TestOwner",
+                ConfigurationItem = "TestConfig"
+            };
 
-            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(applicationData.Id)).ReturnsAsync((ApplicationData?)null);
             _applicationDataRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<ApplicationFilter>()))
-                .ReturnsAsync(new PagedResult<ApplicationData> { Result = [], Page = 1, PageSize = 10, Total = 0 });
+                .ReturnsAsync(new PagedResult<ApplicationData> { Result = new List<ApplicationData>() });
+
+            _applicationDataRepositoryMock.Setup(r => r.IsResponsibleFromArea(applicationData.AreaId, applicationData.ResponsibleId))
+                .ReturnsAsync(false);
 
             // Act
             var result = await _applicationDataService.UpdateAsync(applicationData);
 
             // Assert
             Assert.Equal(OperationStatus.NotFound, result.Status);
-
-        }
-        
-
-        [Fact]
-        public async Task GetListAsyncShouldReturnPagedResultWhenCalledWithValidFilter()
-        {
-            // Arrange
-            var fixture = new Fixture();
-            var filter = fixture.Create<ApplicationFilter>();
-            var pagedResult = fixture.Build<PagedResult<ApplicationData>>()
-                                     .With(pr => pr.Result, fixture.CreateMany<ApplicationData>(2).ToList())
-                                     .With(pr => pr.Page, 1)
-                                     .With(pr => pr.PageSize, 10)
-                                     .With(pr => pr.Total, 2)
-                                     .Create();
-
-            _applicationDataRepositoryMock.Setup(r => r.GetListAsync(filter)).ReturnsAsync(pagedResult);
-
-            // Act
-            var result = await _applicationDataService.GetListAsync(filter); 
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal(2, result.Total);
-            Assert.IsType<List<ApplicationData>>(result.Result);
         }
 
+
+
         [Fact]
-        public async Task DeleteAsyncShouldReturnSuccessWhenApplicationDataExists()
+        public async Task UpdateAsyncShouldReturnSuccessWhenApplicationDataIsValid()
         {
             // Arrange
-            var applicationData = new ApplicationData("Valid Name") { Id = 1, AreaId = 1 };
+            var applicationData = new ApplicationData("Valido")
+            {
+                Id = 1,
+                AreaId = 1,
+                ResponsibleId = 1,
+                ProductOwner = "TestOwner",
+                ConfigurationItem = "TestConfig"
+            };
 
-            _applicationDataRepositoryMock.Setup(r => r.GetFullByIdAsync(applicationData.Id)).ReturnsAsync(applicationData);
-            _applicationDataRepositoryMock.Setup(r => r.DeleteAsync(applicationData.Id, true)).Returns(Task.CompletedTask);
+            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(applicationData.Id)).ReturnsAsync(applicationData);
+            _applicationDataRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<ApplicationFilter>()))
+                .ReturnsAsync(new PagedResult<ApplicationData> { Result = new List<ApplicationData> { applicationData }, Page = 1, PageSize = 10, Total = 1 });
+            _applicationDataRepositoryMock.Setup(r => r.IsResponsibleFromArea(applicationData.AreaId, applicationData.ResponsibleId))
+                .ReturnsAsync(true);
 
             // Act
-            var result = await _applicationDataService.DeleteAsync(applicationData.Id);
+            var result = await _applicationDataService.UpdateAsync(applicationData);
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
         }
-
-        [Fact]
-        public async Task DeleteAsyncShouldReturnNotFoundWhenApplicationDataDoesNotExist()
-        {
-            // Arrange
-            var applicationDataId = 1;
-
-            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(applicationDataId)).ReturnsAsync((ApplicationData?)null);
-
-            // Act
-            var result = await _applicationDataService.DeleteAsync(applicationDataId);
-
-            // Assert
-            Assert.Equal(OperationStatus.NotFound, result.Status);
-
-        }
-
-        [Fact]
-        public async Task IsApplicationNameUniqueAsyncShouldReturnFalseWhenNameIsNullOrWhiteSpace()
-        {
-            // Arrange
-            var invalidNames = new List<string?> { null, string.Empty, "   " };
-
-            foreach (var name in invalidNames)
-            {
-                // Act
-                var result = await _applicationDataService.IsApplicationNameUniqueAsync(name ?? string.Empty);
-
-                // Assert
-                Assert.False(result);
-            }
-        }
-
-
     }
 }

@@ -79,6 +79,24 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Configuration itemi s required..
+        /// </summary>
+        public static string ConfigurationItemRequired {
+            get {
+                return ResourceManager.GetString("ConfigurationItemRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a The description has a limit of {0} characters..
+        /// </summary>
+        public static string DescriptionValidateLength {
+            get {
+                return ResourceManager.GetString("DescriptionValidateLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a The name is required..
         /// </summary>
         public static string NameRequired {
@@ -93,6 +111,24 @@ namespace Stellantis.ProjectName.Application.Resources {
         public static string NameValidateLength {
             get {
                 return ResourceManager.GetString("NameValidateLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Not Found..
+        /// </summary>
+        public static string NotFound {
+            get {
+                return ResourceManager.GetString("NotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Product Owner is required..
+        /// </summary>
+        public static string ProductOwnerRequired {
+            get {
+                return ResourceManager.GetString("ProductOwnerRequired", resourceCulture);
             }
         }
     }

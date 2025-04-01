@@ -42,11 +42,18 @@ namespace WebApi.Tests.Controllers
             var applicationDataDto = new ApplicationDataDto
             {
                 Name = "Valid Name",
-                Area = new AreaDto() // Add this line to initialize the required 'Area' property
+                Area = new AreaDto(), // Add this line to initialize the required 'Area' property
+                ProductOwner = "Owner", // Add this line to initialize the required 'ProductOwner' property
+                ConfigurationItem = "ConfigItem" // Add this line to initialize the required 'ConfigurationItem' property
             };
             var applicationVm = new ApplicationVm { Id = 1, Name = "Valid Name" };
 
-            _mapperMock.Setup(m => m.Map<ApplicationData>(It.IsAny<ApplicationDataDto>())).Returns(new ApplicationData("Valid Name"));
+            _mapperMock.Setup(m => m.Map<ApplicationData>(It.IsAny<ApplicationDataDto>())).Returns(new ApplicationData("Valid Name")
+            {
+                ProductOwner = "Owner",
+                ConfigurationItem = "ConfigItem"
+            });
+
             _mapperMock.Setup(m => m.Map<ApplicationVm>(It.IsAny<ApplicationData>())).Returns(applicationVm);
 
             _serviceMock.Setup(s => s.CreateAsync(It.IsAny<ApplicationData>())).ReturnsAsync(OperationResult.Complete("Success"));
@@ -64,7 +71,12 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             var applicationVm = new ApplicationVm { Id = 1, Name = "Valid Name" };
-            var applicationData = new ApplicationData("Valid Name") { Id = 1 };
+            var applicationData = new ApplicationData("Valid Name")
+            {
+                Id = 1,
+                ProductOwner = "Owner", // Add this line to initialize the required 'ProductOwner' property
+                ConfigurationItem = "ConfigItem" // Add this line to initialize the required 'ConfigurationItem' property
+            };
 
             _serviceMock.Setup(s => s.GetItemAsync(applicationData.Id)).ReturnsAsync(applicationData);
             _mapperMock.Setup(m => m.Map<ApplicationVm>(applicationData)).Returns(applicationVm);
@@ -91,7 +103,14 @@ namespace WebApi.Tests.Controllers
             var filter = new ApplicationFilter { Name = "Valid Name", AreaId = 1 }; // Adicionando AreaId
             var pagedResult = new PagedResult<ApplicationData>
             {
-                Result = [new ApplicationData("Valid Name")],
+                Result = new List<ApplicationData>
+                {
+                    new ApplicationData("Valid Name")
+                    {
+                        ProductOwner = "Owner",
+                        ConfigurationItem = "ConfigItem"
+                    }
+                },
                 Page = 1,
                 PageSize = 10,
                 Total = 1
@@ -124,11 +143,17 @@ namespace WebApi.Tests.Controllers
             var applicationDataDto = new ApplicationDataDto
             {
                 Name = "Valid Name",
-                Area = new AreaDto() // Add this line to initialize the required 'Area' property
+                Area = new AreaDto(), // Add this line to initialize the required 'Area' property
+                ProductOwner = "Owner", // Add this line to initialize the required 'ProductOwner' property
+                ConfigurationItem = "ConfigItem" // Add this line to initialize the required 'ConfigurationItem' property
             };
             var applicationVm = new ApplicationVm { Id = 1, Name = "Valid Name" };
 
-            _mapperMock.Setup(m => m.Map<ApplicationData>(It.IsAny<ApplicationDataDto>())).Returns(new ApplicationData("Valid Name"));
+            _mapperMock.Setup(m => m.Map<ApplicationData>(It.IsAny<ApplicationDataDto>())).Returns(new ApplicationData("Valid Name")
+            {
+                ProductOwner = "Owner",
+                ConfigurationItem = "ConfigItem"
+            });
             _mapperMock.Setup(m => m.Map<ApplicationVm>(It.IsAny<ApplicationData>())).Returns(applicationVm);
 
             _serviceMock.Setup(s => s.UpdateAsync(It.IsAny<ApplicationData>())).ReturnsAsync(OperationResult.Complete("Success"));
