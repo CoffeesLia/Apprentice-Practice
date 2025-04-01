@@ -1,4 +1,4 @@
-﻿using AutoFixture;
+using AutoFixture;
 using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
@@ -51,7 +51,6 @@ namespace Infrastructure.Tests.Data.Repositories
             // Assert
             Assert.Null(result);
         }
-      
 
         [Fact]
         public async Task DeleteAsyncWhenCalled()
@@ -96,6 +95,7 @@ namespace Infrastructure.Tests.Data.Repositories
             Assert.Equal("Updated Name", result.Name);
         }
 
+
         [Fact]
         public async Task CreateAsyncWithNullEntityThrowsException()
         {
@@ -113,11 +113,19 @@ namespace Infrastructure.Tests.Data.Repositories
             });
         }
 
+
         [Fact]
         public async Task DeleteAsyncWithNullEntityThrowsException()
         {
             // Act & Assert
             await Assert.ThrowsAsync<ArgumentNullException>(() => _repository.DeleteAsync((Integration)null!));
+        }
+
+        [Fact]
+        public async Task GetListAsyncWithNullFilterThrowsException()
+        {
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentNullException>(() => _repository.GetListAsync(null!));
         }
     }
 }

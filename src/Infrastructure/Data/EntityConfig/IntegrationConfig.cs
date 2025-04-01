@@ -18,11 +18,11 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
             builder.HasKey(p => p.Id);
             builder.Property(p => p.Name);
             builder.Property(p => p.Description)
-                .IsRequired()
-                .HasMaxLength(255);
+                .IsRequired();
+
             builder.HasOne(p => p.ApplicationData)
                 .WithMany(a => a.Integration)
-                .HasForeignKey(p => p.Id);
+                .HasForeignKey("ApplicationDataId"); 
         }
     }
 }

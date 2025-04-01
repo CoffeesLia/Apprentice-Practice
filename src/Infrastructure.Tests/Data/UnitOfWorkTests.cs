@@ -73,16 +73,21 @@ namespace Infrastructure.Tests.Data
         {
             // Arrange
             var mockTransaction = new Mock<IDbContextTransaction>();
+            mockTransaction
+                .Setup(t => t.CommitAsync(It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new Exception("Simulated exception"));
+
             var mockDatabase = new Mock<DatabaseFacade>(_context);
             mockDatabase
                 .Setup(db => db.BeginTransaction())
                 .Returns(mockTransaction.Object);
+
             var context = new Mock<Context>(new DbContextOptions<Context>());
             context
                 .Setup(c => c.Database)
                 .Returns(mockDatabase.Object);
-            var unitOfWork = new UnitOfWork(context.Object);
 
+            var unitOfWork = new UnitOfWork(context.Object);
             unitOfWork.BeginTransaction();
 
             // Act & Assert
