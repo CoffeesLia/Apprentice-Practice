@@ -122,7 +122,7 @@ namespace WebApi.Tests.Controllers
         public async Task GetAsyncShouldReturnNotFoundWhenIntegrationDoesNotExist()
         {
             // Arrange
-            _serviceMock.Setup(s => s.GetItemAsync(It.IsAny<int>())).ReturnsAsync((Integration)null);
+            _serviceMock.Setup(s => s.GetItemAsync(It.IsAny<int>())).ReturnsAsync((Integration)null!);
             // Act
             var result = await _controller.GetAsync(1);
             // Assert
@@ -171,8 +171,8 @@ namespace WebApi.Tests.Controllers
             var filterDto = new IntegrationFilterDto();
             var pagedResult = new PagedResult<Integration> { Result = new List<Integration>() };
             var pagedResultVm = new PagedResultVm<IntegrationVm> { Result = new List<IntegrationVm>(), Page = 1, PageSize = 10, Total = 0 };
-            _mapperMock.Setup(m => m.Map<IntegrationFilter>(filterDto)).Returns((IntegrationFilter)null);
-            _serviceMock.Setup(s => s.GetListAsync(null)).ReturnsAsync(pagedResult);
+            _mapperMock.Setup(m => m.Map<IntegrationFilter>(filterDto)).Returns((IntegrationFilter)null!);
+            _serviceMock.Setup(s => s.GetListAsync(null!)).ReturnsAsync(pagedResult);
             _mapperMock.Setup(m => m.Map<PagedResultVm<IntegrationVm>>(pagedResult)).Returns(pagedResultVm);
             // Act
             var result = await _controller.GetListAsync(filterDto);
