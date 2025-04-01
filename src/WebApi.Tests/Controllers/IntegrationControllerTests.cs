@@ -1,4 +1,3 @@
-using AutoFixture;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
@@ -11,7 +10,7 @@ using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.ViewModels;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.Application.Models.Filters;
-using AutoFixture;
+
 
 namespace WebApi.Tests.Controllers
 {
@@ -20,14 +19,14 @@ namespace WebApi.Tests.Controllers
         private readonly Mock<IIntegrationService> _serviceMock;
         private readonly Mock<IMapper> _mapperMock;
         private readonly Mock<IStringLocalizerFactory> _localizerFactoryMock;
-        private readonly IntegrationController _controller;
-    
-    public IntegrationControllerTests()
+        private readonly IntegrationControllerBase _controller;
+
+        public IntegrationControllerTests()
         {
             _serviceMock = new Mock<IIntegrationService>();
             _mapperMock = new Mock<IMapper>();
             _localizerFactoryMock = new Mock<IStringLocalizerFactory>();
-            _controller = new IntegrationController(_serviceMock.Object, _mapperMock.Object, _localizerFactoryMock.Object);
+            _controller = new IntegrationControllerBase(_serviceMock.Object, _mapperMock.Object, _localizerFactoryMock.Object);
         }
 
         [Fact]
@@ -181,7 +180,6 @@ namespace WebApi.Tests.Controllers
             var okResult = Assert.IsType<OkObjectResult>(result);
             var model = Assert.IsType<PagedResultVm<IntegrationVm>>(okResult.Value);
             Assert.Equal(pagedResultVm, model);
-            _controller = new IntegrationControllerBase(_serviceMock.Object, _mapperMock.Object, _localizerFactoryMock.Object);
         }
     }
 }
