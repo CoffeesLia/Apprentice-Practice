@@ -15,7 +15,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [Route("api/Integration")]
     [ApiController]
-    internal sealed class IntegrationController(IIntegrationService service, IMapper mapper, IStringLocalizerFactory localizerFactory)
+    internal sealed class IntegrationControllerBase(IIntegrationService service, IMapper mapper, IStringLocalizerFactory localizerFactory)
         : EntityControllerBase<Integration, IntegrationDto>(service, mapper, localizerFactory)
     {
 
