@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Tests.Data.Repositories
 {
-    public class IntegrationRepositoryTests 
+    public class IntegrationRepositoryTests
     {
         private readonly Context _context;
         private readonly IntegrationRepository _repository;
@@ -51,7 +51,8 @@ namespace Infrastructure.Tests.Data.Repositories
             // Assert
             Assert.Null(result);
         }
-
+       
+       
         [Fact]
         public async Task DeleteAsyncWhenCalled()
         {
@@ -95,6 +96,7 @@ namespace Infrastructure.Tests.Data.Repositories
             Assert.Equal("Updated Name", result.Name);
         }
 
+
         [Fact]
         public async Task CreateAsyncWithNullEntityThrowsException()
         {
@@ -112,11 +114,19 @@ namespace Infrastructure.Tests.Data.Repositories
             });
         }
 
+
         [Fact]
         public async Task DeleteAsyncWithNullEntityThrowsException()
         {
             // Act & Assert
             await Assert.ThrowsAsync<ArgumentNullException>(() => _repository.DeleteAsync((Integration)null!));
+        }
+
+        [Fact]
+        public async Task GetListAsyncWithNullFilterThrowsException()
+        {
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentNullException>(() => _repository.GetListAsync(null!));
         }
     }
 }

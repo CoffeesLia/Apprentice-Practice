@@ -62,7 +62,7 @@ namespace Stellantis.ProjectName.Application.Tests.Services
         }
 
         [Fact]
-        public void AddEntityMember_ShouldAddMember_WhenAllFieldsAreValid()
+        public void AddEntityMemberShouldAddMemberWhenAllFieldsAreValid()
         {
             //arrange
             var entityMember = new EntityMember

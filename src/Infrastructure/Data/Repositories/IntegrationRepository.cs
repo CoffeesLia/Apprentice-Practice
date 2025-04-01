@@ -40,6 +40,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             return await GetPagedResultAsync(query, filter.Page, filter.PageSize).ConfigureAwait(false);
         }
+
         private static async Task<PagedResult<Integration>> GetPagedResultAsync(IQueryable<Integration> query, int page, int pageSize)
         {
             var total = await query.CountAsync().ConfigureAwait(false);
