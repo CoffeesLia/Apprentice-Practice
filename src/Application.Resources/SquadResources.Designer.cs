@@ -61,11 +61,20 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a The name must be between {0} and {1} characters long..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a The name must be between {3} and {50} characters long..
         /// </summary>
         public static string NameValidateLength {
             get {
                 return ResourceManager.GetString("NameValidateLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a  Squad Cannot be null..
+        /// </summary>
+        public static string SquadCannotBeNull {
+            get {
+                return ResourceManager.GetString("SquadCannotBeNull", resourceCulture);
             }
         }
         
@@ -111,6 +120,15 @@ namespace Stellantis.ProjectName.Application.Resources {
         public static string SquadNotFound {
             get {
                 return ResourceManager.GetString("SquadNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Squads not found..
+        /// </summary>
+        public static string SquadsNotFound {
+            get {
+                return ResourceManager.GetString("SquadsNotFound", resourceCulture);
             }
         }
         

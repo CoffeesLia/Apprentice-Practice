@@ -2,7 +2,6 @@
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Domain.Entities;
-using Stellantis.ProjectName.Domain.Entity;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.ViewModels;
@@ -23,9 +22,7 @@ namespace Stellantis.ProjectName.WebApi.Mapper
 
             CreateMap<DataServiceDto, ApplicationService>();
 
-            CreateMap<SquadDto, EntitySquad>()
-                .ForMember(x => x.Id, x => x.Ignore());
-            CreateMap<EntitySquad, SquadDto>();
+            CreateMap<SquadDto, Squad>();
         }
     }
 }
