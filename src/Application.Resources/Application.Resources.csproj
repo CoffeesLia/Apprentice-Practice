@@ -142,13 +142,6 @@
       <DependentUpon>GeneralResources.resx</DependentUpon>
       <Generator></Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="GitLabResource.pt-BR.resx">
-      <Generator></Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="GitLabResource.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>GitLabResource.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <EmbeddedResource Update="Messages - Copy %282%29.pt-br.resx">
       <SubType>Designer</SubType>
       <DependentUpon>Messages.resx</DependentUpon>
