@@ -3,7 +3,6 @@ using AutoMapper;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Domain.Entities;
-using Stellantis.ProjectName.Domain.Entity;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.ViewModels;
@@ -27,7 +26,12 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(x => x.ServiceId, x => x.Ignore());
             CreateMap<DataService, DataServiceVm>();
 
-            CreateMap<SquadDto, EntitySquad>()
+            CreateMap<IntegrationDto, Integration>()
+                .ForMember(x => x.Id, x => x.Ignore());
+            CreateMap<Integration, IntegrationVm>()
+                .ForMember(x => x.Id, x => x.Ignore());
+
+            CreateMap<SquadDto, Squad>()
                 .ForMember(x => x.Id, x => x.Ignore());
             CreateMap<Squad, SquadDto>();
         }
