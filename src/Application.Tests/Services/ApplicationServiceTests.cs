@@ -17,7 +17,7 @@ using FluentValidation.TestHelper;
 
 namespace Application.Tests.Services
 {
-    public class DataServiceTests
+    public class ApplicationServiceTests
     {
         private readonly Mock<IDataServiceRepository> _serviceRepositoryMock;
         private readonly Mock<IStringLocalizer<DataServiceResources>> _localizerMock;
@@ -25,7 +25,7 @@ namespace Application.Tests.Services
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private readonly ApplicationService _dataService;
 
-        public DataServiceTests()
+        public ApplicationServiceTests()
         {
             _serviceRepositoryMock = new Mock<IDataServiceRepository>();
             _localizerMock = new Mock<IStringLocalizer<DataServiceResources>>();
