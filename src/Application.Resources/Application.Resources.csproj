@@ -94,11 +94,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>ResponsibleResource.resx</DependentUpon>
     </Compile>
-    <Compile Update="GitLabResource.pt-BR.Designer.cs">
-      <DependentUpon>GitLabResource.pt-BR.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
     <Compile Update="ServiceResources.Designer.cs">
       <DependentUpon>ServiceResources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
