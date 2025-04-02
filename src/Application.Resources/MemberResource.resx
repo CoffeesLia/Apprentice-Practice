@@ -117,46 +117,34 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="MemberAddedSuccessfully" xml:space="preserve">
-    <value>Member added successfully.</value>
-  </data>
-  <data name="MemberCostMustBeGreaterThanZero" xml:space="preserve">
-    <value>Member cost must be greater than zero.</value>
-  </data>
-  <data name="MemberDeletedSuccessfully" xml:space="preserve">
-    <value>Member deleted successfully.</value>
+  <data name="CostMemberLargestEqualZero" xml:space="preserve">
+    <value>Member cost must be greater than or equal to zero.</value>
   </data>
   <data name="MemberEmailAlreadyExists" xml:space="preserve">
     <value>This e-mail already exists.</value>
-  </data>
-  <data name="MemberEmailInvalid" xml:space="preserve">
-    <value>Member email invalid.</value>
   </data>
   <data name="MemberEmailIsRequired" xml:space="preserve">
     <value>Member email is required.</value>
   </data>
   <data name="MemberEmailValidateLength" xml:space="preserve">
-    <value>Member email validate length.</value>
+    <value>The email must be between {0} and {1} characters long.</value>
   </data>
-  <data name="MemberIdNotFound" xml:space="preserve">
-    <value>Member ID not foound.</value>
+  <data name="MemberNotFound" xml:space="preserve">
+    <value>Member not found.</value>
   </data>
   <data name="MemberNameIsRequired" xml:space="preserve">
     <value>Member name is required.</value>
   </data>
   <data name="MemberNameValidateLength" xml:space="preserve">
-    <value>Member name validate length.</value>
-  </data>
-  <data name="MemberRequiredFieldsMissing" xml:space="preserve">
-    <value>All required fields must be completed.</value>
+    <value>The name must be between {0} and {1} characters long.</value>
   </data>
   <data name="MemberRoleIsRequired" xml:space="preserve">
     <value>Member role is required.</value>
   </data>
   <data name="MemberRoleValidateLength" xml:space="preserve">
-    <value>Member role validate length.</value>
+    <value>The member must be between {0} and {1} characters long.</value>
   </data>
-  <data name="MemberUpdatedSuccessfully" xml:space="preserve">
-    <value>Member updated successfully.</value>
+  <data name="MemberCostRequired" xml:space="preserve">
+    <value>Member cost is required.</value>
   </data>
 </root>

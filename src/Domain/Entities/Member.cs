@@ -1,22 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace Stellantis.ProjectName.Domain.Entities
 {
-    internal class Member
+    public class Member : EntityBase
     {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-        public string Role { get; set; }
+        public required string Name { get; set; }
+        public required string Role { get; set; }
         public decimal Cost { get; set; }
-        public string Email { get; set; }
-
-        public Member()
-        {
-            Id = Guid.NewGuid();
-        }
+        public required string Email { get; set; }
+        
     }
 }

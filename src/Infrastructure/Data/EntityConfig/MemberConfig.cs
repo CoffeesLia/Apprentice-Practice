@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
 {
-    public class MemberConfig : IEntityTypeConfiguration<EntityMember>
+    public class MemberConfig : IEntityTypeConfiguration<Member>
     {
-        public void Configure(EntityTypeBuilder<EntityMember> builder)
+        public void Configure(EntityTypeBuilder<Member> builder)
         {
             ArgumentNullException.ThrowIfNull(builder);
             builder.ToTable("Members");

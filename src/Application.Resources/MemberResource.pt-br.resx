@@ -117,46 +117,34 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="MemberAddedSuccessfully" xml:space="preserve">
-    <value>Membro adicionado com sucesso.</value>
-  </data>
-  <data name="MemberCostMustBeGreaterThanZero" xml:space="preserve">
-    <value>O custo do membro deve ser maior que zero.</value>
-  </data>
-  <data name="MemberDeletedSuccessfully" xml:space="preserve">
-    <value>Membro deletado com sucesso.</value>
+  <data name="CostMemberLargestEqualZero" xml:space="preserve">
+    <value>O custo do membro deve ser maior ou igual a zero.</value>
   </data>
   <data name="MemberEmailAlreadyExists" xml:space="preserve">
     <value>Esse e-mail já existe.</value>
-  </data>
-  <data name="MemberEmailInvalid" xml:space="preserve">
-    <value>Email do membro é inválido.</value>
   </data>
   <data name="MemberEmailIsRequired" xml:space="preserve">
     <value>Email do membro é obrigatório.</value>
   </data>
   <data name="MemberEmailValidateLength" xml:space="preserve">
-    <value>checar o número de caracteres do email do membro.</value>
+    <value>O email deve ter entre {0} e {1} caracteres.</value>
   </data>
-  <data name="MemberIdNotFound" xml:space="preserve">
-    <value>ID do membro não foi encontrada.</value>
+  <data name="MemberNotFound" xml:space="preserve">
+    <value>Membro não encontrado.</value>
   </data>
   <data name="MemberNameIsRequired" xml:space="preserve">
     <value>O nome do membro é obrigatório.</value>
   </data>
   <data name="MemberNameValidateLength" xml:space="preserve">
-    <value>Checagem de tamanho do nome do membro.</value>
-  </data>
-  <data name="MemberRequiredFieldsMissing" xml:space="preserve">
-    <value>Todos os campos obrigatórios devem ser preenchidos.</value>
+    <value>O nome deve ter entre {0} e {1} caracteres.</value>
   </data>
   <data name="MemberRoleIsRequired" xml:space="preserve">
     <value>Função do membro é obrigatória.</value>
   </data>
   <data name="MemberRoleValidateLength" xml:space="preserve">
-    <value>Checar o número de caracteres no papel do membro.</value>
+    <value>A função deve ter entre {0} e {1} caracteres.</value>
   </data>
-  <data name="MemberUpdatedSuccessfully" xml:space="preserve">
-    <value>Membro atualizado com sucesso. </value>
+  <data name="MemberCostRequired" xml:space="preserve">
+    <value>Custo do membro é obrigátorio.</value>
   </data>
 </root>

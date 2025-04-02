@@ -61,29 +61,20 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Member added successfully..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Member cost must be greater than or equal to zero..
         /// </summary>
-        public static string MemberAddedSuccessfully {
+        public static string CostMemberLargestEqualZero {
             get {
-                return ResourceManager.GetString("MemberAddedSuccessfully", resourceCulture);
+                return ResourceManager.GetString("CostMemberLargestEqualZero", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Member cost must be greater than zero..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Member cost is required..
         /// </summary>
-        public static string MemberCostMustBeGreaterThanZero {
+        public static string MemberCostRequired {
             get {
-                return ResourceManager.GetString("MemberCostMustBeGreaterThanZero", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Member deleted successfully..
-        /// </summary>
-        public static string MemberDeletedSuccessfully {
-            get {
-                return ResourceManager.GetString("MemberDeletedSuccessfully", resourceCulture);
+                return ResourceManager.GetString("MemberCostRequired", resourceCulture);
             }
         }
         
@@ -97,15 +88,6 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Member email invalid..
-        /// </summary>
-        public static string MemberEmailInvalid {
-            get {
-                return ResourceManager.GetString("MemberEmailInvalid", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Member email is required..
         /// </summary>
         public static string MemberEmailIsRequired {
@@ -115,20 +97,11 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Member email validate length..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a The email must be between {0} and {1} characters long..
         /// </summary>
         public static string MemberEmailValidateLength {
             get {
                 return ResourceManager.GetString("MemberEmailValidateLength", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Member ID not foound..
-        /// </summary>
-        public static string MemberIdNotFound {
-            get {
-                return ResourceManager.GetString("MemberIdNotFound", resourceCulture);
             }
         }
         
@@ -142,7 +115,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Member name validate length..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a The name must be between {0} and {1} characters long..
         /// </summary>
         public static string MemberNameValidateLength {
             get {
@@ -151,11 +124,11 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a All required fields must be completed..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Member not found..
         /// </summary>
-        public static string MemberRequiredFieldsMissing {
+        public static string MemberNotFound {
             get {
-                return ResourceManager.GetString("MemberRequiredFieldsMissing", resourceCulture);
+                return ResourceManager.GetString("MemberNotFound", resourceCulture);
             }
         }
         
@@ -169,20 +142,11 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Member role validate length..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a The member must be between {0} and {1} characters long..
         /// </summary>
         public static string MemberRoleValidateLength {
             get {
                 return ResourceManager.GetString("MemberRoleValidateLength", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Member updated successfully..
-        /// </summary>
-        public static string MemberUpdatedSuccessfully {
-            get {
-                return ResourceManager.GetString("MemberUpdatedSuccessfully", resourceCulture);
             }
         }
     }
