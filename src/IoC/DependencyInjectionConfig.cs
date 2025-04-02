@@ -8,7 +8,6 @@ using Stellantis.ProjectName.Application.Validators;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
-using Stellantis.ProjectName.Infrastructure.Repositories;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Stellantis.ProjectName.IoC
