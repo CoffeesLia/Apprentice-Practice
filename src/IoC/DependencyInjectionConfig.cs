@@ -27,9 +27,10 @@ namespace Stellantis.ProjectName.IoC
             services.AddScoped<IValidator<Area>, AreaValidator>();
             services.AddScoped<IValidator<Responsible>, ResponsibleValidator>();
             services.AddScoped<IValidator<DataService>, DataServiceValidator>();
-            services.AddScoped<IValidator<SquadService>, SquadValidator>();
+            services.AddScoped<IValidator<Squad>, SquadValidator>();
             services.AddScoped<IValidator<Integration>, IntegrationValidator>();
         }
+
 
         private static void Services(IServiceCollection services)
         {

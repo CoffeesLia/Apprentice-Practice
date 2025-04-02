@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Linq.Expressions;
-using FluentValidation;
+﻿using FluentValidation;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Interfaces.Services;
@@ -98,14 +96,14 @@ namespace Stellantis.ProjectName.Application.Services
             return false;
         }
 
-        public void DeleteSquad(Guid id)
+        public async Task DeleteSquad(int id)
         {
-            var squad = _squadRepository.GetById(id);
+            var squad = await _squadRepository.GetByIdAsync(id).ConfigureAwait(false);
             if (squad == null)
             {
                 throw new KeyNotFoundException(_localizer[nameof(SquadResources.SquadNotFound)]);
             }
-            _squadRepository.Delete(squad);
+            await _squadRepository.DeleteAsync(squad.SquadId).ConfigureAwait(false);
         }
     }
 }

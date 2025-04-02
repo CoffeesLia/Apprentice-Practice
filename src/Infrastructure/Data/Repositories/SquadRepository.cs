@@ -5,7 +5,7 @@ using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
 
-namespace Stellantis.ProjectName.Infrastructure.Repositories
+namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
     public class SquadRepository(Context context) : RepositoryEntityBase<Squad, Context>(context), ISquadRepository
     {

@@ -1,12 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Moq;
+using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
-using Stellantis.ProjectName.Domain.Entity;
 using Stellantis.ProjectName.Infrastructure.Data;
-using Stellantis.ProjectName.Infrastructure.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Xunit;
+using Stellantis.ProjectName.Infrastructure.Data.Repositories;
 
 namespace Infrastructure.Tests.Data.Repositories
 {
@@ -17,154 +15,117 @@ namespace Infrastructure.Tests.Data.Repositories
         public SquadRepositoryTests()
         {
             _dbContextOptions = new DbContextOptionsBuilder<Context>()
-                .UseInMemoryDatabase(databaseName: "SquadDatabase")
+                .UseInMemoryDatabase(databaseName: "TestDatabase")
                 .Options;
         }
 
         [Fact]
-        public void AddShouldAddSquad()
+        public async Task CreateAsyncShouldAddSquad()
         {
-            using (var context = new Context(_dbContextOptions))
-            {
-                var repository = new SquadRepository(context);
-                var squad = new Squad { Id = Guid.NewGuid(), Name = "TestSquad", Description = "TestDescription" };
+            using var context = new Context(_dbContextOptions);
+            var repository = new SquadRepository(context);
 
-                repository.Add(squad);
-                context.SaveChanges();
+            var squad = new Squad { Name = "Test Squad" };
+            await repository.CreateAsync(squad);
 
-                var addedSquad = context.Squads.Find(squad.Id);
-                Assert.NotNull(addedSquad);
-                Assert.Equal("TestSquad", addedSquad.Name);
-            }
+            var createdSquad = await context.Squads.FirstOrDefaultAsync(s => s.Name == "Test Squad");
+            Assert.NotNull(createdSquad);
         }
 
         [Fact]
-        public void GetByIdShouldReturnSquadWhenSquadExists()
+        public async Task GetByIdAsyncShouldReturnSquad()
         {
-            using (var context = new Context(_dbContextOptions))
-            {
-                var squadId = Guid.NewGuid();
-                var squad = new Squad { Id = squadId, Name = "TestSquad", Description = "TestDescription" };
-                context.Squads.Add(squad);
-                context.SaveChanges();
+            using var context = new Context(_dbContextOptions);
+            var repository = new SquadRepository(context);
 
-                var repository = new SquadRepository(context);
-                var retrievedSquad = repository.GetById(squadId);
+            var squad = new Squad { Name = "Test Squad" };
+            context.Squads.Add(squad);
+            await context.SaveChangesAsync();
 
-                Assert.NotNull(retrievedSquad);
-                Assert.Equal("TestSquad", retrievedSquad.Name);
-            }
+            var retrievedSquad = await repository.GetByIdAsync(squad.Id);
+            Assert.NotNull(retrievedSquad);
+            Assert.Equal(squad.Name, retrievedSquad?.Name);
         }
 
         [Fact]
-        public void GetByIdShouldReturnNullWhenSquadDoesNotExist()
+        public async Task UpdateAsyncShouldUpdateSquad()
         {
-            using (var context = new Context(_dbContextOptions))
-            {
-                var repository = new SquadRepository(context);
-                var retrievedSquad = repository.GetById(Guid.NewGuid());
+            using var context = new Context(_dbContextOptions);
+            var repository = new SquadRepository(context);
 
-                Assert.Null(retrievedSquad);
-            }
+            var squad = new Squad { Name = "Test Squad" };
+            context.Squads.Add(squad);
+            await context.SaveChangesAsync();
+
+            squad.Name = "Updated Squad";
+            await repository.UpdateAsync(squad);
+
+            var updatedSquad = await context.Squads.FirstOrDefaultAsync(s => s.Id == squad.Id);
+            Assert.NotNull(updatedSquad);
+            Assert.Equal("Updated Squad", updatedSquad?.Name);
         }
 
         [Fact]
-        public void GetByNameShouldReturnSquadWhenSquadExists()
+        public async Task DeleteAsyncShouldRemoveSquad()
         {
-            using (var context = new Context(_dbContextOptions))
-            {
-                var squad = new Squad { Id = Guid.NewGuid(), Name = "TestSquad", Description = "TestDescription" };
-                context.Squads.Add(squad);
-                context.SaveChanges();
+            using var context = new Context(_dbContextOptions);
+            var repository = new SquadRepository(context);
 
-                var repository = new SquadRepository(context);
-                var retrievedSquad = repository.GetByName("TestSquad");
+            var squad = new Squad { Name = "Test Squad" };
+            context.Squads.Add(squad);
+            await context.SaveChangesAsync();
 
-                Assert.NotNull(retrievedSquad);
-                Assert.Equal("TestSquad", retrievedSquad.Name);
-            }
+            await repository.DeleteAsync(squad.Id);
+
+            var deletedSquad = await context.Squads.FirstOrDefaultAsync(s => s.Id == squad.Id);
+            Assert.Null(deletedSquad);
         }
 
         [Fact]
-        public void GetByNameShouldReturnNullWhenSquadDoesNotExist()
+        public async Task VerifyNameAlreadyExistsAsyncShouldReturnTrueIfNameExists()
         {
-            using (var context = new Context(_dbContextOptions))
-            {
-                var repository = new SquadRepository(context);
-                var retrievedSquad = repository.GetByName("NonExistentSquad");
+            using var context = new Context(_dbContextOptions);
+            var repository = new SquadRepository(context);
 
-                Assert.Null(retrievedSquad);
-            }
-        }
-        [Fact]
-        public void GetAllShouldReturnAllSquads()
-        {
-            // Recria o banco de dados em memória para garantir um estado limpo
-            var options = new DbContextOptionsBuilder<Context>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-                .Options;
+            var squad = new Squad { Name = "Test Squad" };
+            context.Squads.Add(squad);
+            await context.SaveChangesAsync();
 
-            using (var context = new Context(options))
-            {
-                // Arrange
-                var squads = new List<Squad>
-        {
-            new Squad { Id = Guid.NewGuid(), Name = "Squad1", Description = "Description1" },
-            new Squad { Id = Guid.NewGuid(), Name = "Squad2", Description = "Description2" }
-        };
-                context.Squads.AddRange(squads);
-                context.SaveChanges();
-
-                var repository = new SquadRepository(context);
-
-                // Act
-                var retrievedSquads = repository.GetAll();
-
-                // Assert
-                Assert.NotNull(retrievedSquads);
-                Assert.Equal(2, retrievedSquads.Count());
-                Assert.Contains(retrievedSquads, s => s.Name == "Squad1");
-                Assert.Contains(retrievedSquads, s => s.Name == "Squad2");
-            }
-        }
-
-
-        [Fact]
-        public void UpdateShouldUpdateSquad()
-        {
-            using (var context = new Context(_dbContextOptions))
-            {
-                var squad = new Squad { Id = Guid.NewGuid(), Name = "TestSquad", Description = "TestDescription" };
-                context.Squads.Add(squad);
-                context.SaveChanges();
-
-                var repository = new SquadRepository(context);
-                squad.Name = "UpdatedSquad";
-                repository.Update(squad);
-                context.SaveChanges();
-
-                var updatedSquad = context.Squads.Find(squad.Id);
-                Assert.NotNull(updatedSquad);
-                Assert.Equal("UpdatedSquad", updatedSquad.Name);
-            }
+            var exists = await repository.VerifyNameAlreadyExistsAsync("Test Squad");
+            Assert.True(exists);
         }
 
         [Fact]
-        public void DeleteShouldRemoveSquad()
+        public async Task GetListAsyncShouldReturnFilteredSquads()
         {
-            using (var context = new Context(_dbContextOptions))
-            {
-                var squad = new Squad { Id = Guid.NewGuid(), Name = "TestSquad", Description = "TestDescription" };
-                context.Squads.Add(squad);
-                context.SaveChanges();
+            using var context = new Context(_dbContextOptions);
+            var repository = new SquadRepository(context);
 
-                var repository = new SquadRepository(context);
-                repository.Delete(squad);
-                context.SaveChanges();
+            context.Squads.AddRange(
+                new Squad { Name = "Squad A" },
+                new Squad { Name = "Squad B" }
+            );
+            await context.SaveChangesAsync();
 
-                var deletedSquad = context.Squads.Find(squad.Id);
-                Assert.Null(deletedSquad);
-            }
+            var filter = new SquadFilter { Name = "Squad A" };
+            var result = await repository.GetListAsync(filter);
+
+            Assert.Single(result.Result);
+            Assert.Equal("Squad A", result.Result.First().Name);
+        }
+
+        [Fact]
+        public async Task VerifySquadExistsAsyncShouldReturnTrueIfSquadExists()
+        {
+            using var context = new Context(_dbContextOptions);
+            var repository = new SquadRepository(context);
+
+            var squad = new Squad { Name = "Test Squad" };
+            context.Squads.Add(squad);
+            await context.SaveChangesAsync();
+
+            var exists = await repository.VerifySquadExistsAsync(squad.Id);
+            Assert.True(exists);
         }
     }
 }

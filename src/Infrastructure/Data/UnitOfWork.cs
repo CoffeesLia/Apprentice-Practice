@@ -2,7 +2,6 @@
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
-using Stellantis.ProjectName.Infrastructure.Repositories;
 
 namespace Stellantis.ProjectName.Infrastructure.Data
 {

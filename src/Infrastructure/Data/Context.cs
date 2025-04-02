@@ -1,15 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Domain.Entities;
-using Stellantis.ProjectName.Domain.Entity;
 
 namespace Stellantis.ProjectName.Infrastructure.Data
 {
-    public class Context : DbContext
+    public class Context(DbContextOptions<Context> options) : DbContext(options)
     {
-        public Context(DbContextOptions<Context> options) : base(options)
-        {
-        }
-
         public DbSet<Squad> Squads { get; set; }
 
         public DbSet<DataService> Services { get; set; }
@@ -30,4 +25,3 @@ namespace Stellantis.ProjectName.Infrastructure.Data
         }
     }
 }
-
