@@ -1,5 +1,4 @@
 ﻿using Stellantis.ProjectName.Domain.Entities;
-using Xunit;
 
 namespace Domain.Tests
 {
