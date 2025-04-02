@@ -5,8 +5,13 @@ namespace Stellantis.ProjectName.Infrastructure.Data
 {
     public class Context(DbContextOptions<Context> options) : DbContext(options)
     {
-        public DbSet<Squad> Squads { get; set; }
+        public Context(DbContextOptions<Context> options) : base(options)
+        {
+        }
 
+        public DbSet<Squad> Squads { get; set; }
+        public DbSet<Integration> Integration { get; set; }
+            
         public DbSet<DataService> Services { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
