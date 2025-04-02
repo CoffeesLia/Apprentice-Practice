@@ -123,6 +123,12 @@
   <data name="SquadCannotBeNull" xml:space="preserve">
     <value> Squad Cannot be null.</value>
   </data>
+  <data name="SquadAlreadyExists" xml:space="preserve">
+    <value>Squad already exists.</value>
+  </data>
+  <data name="SquadCannotBeNull" xml:space="preserve">
+    <value>Squad bannot be null.</value>
+  </data>
   <data name="SquadCreatedSuccessfully" xml:space="preserve">
     <value>Successfully created squad.</value>
   </data>

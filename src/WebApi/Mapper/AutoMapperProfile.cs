@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.ComponentModel.DataAnnotations;
+using AutoMapper;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Domain.Entities;
@@ -20,7 +21,10 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(x => x.Applications, x => x.Ignore());
             CreateMap<AreaFilterDto, AreaFilter>();
 
-            CreateMap<DataServiceDto, ApplicationService>();
+            CreateMap<DataServiceDto, DataService>()
+                .ForMember(x => x.Id, x => x.Ignore())
+                .ForMember(x => x.ServiceId, x => x.Ignore());
+            CreateMap<DataService, DataServiceVm>();
 
             CreateMap<SquadDto, Squad>();
         }
