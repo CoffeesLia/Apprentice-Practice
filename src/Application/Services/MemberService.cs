@@ -1,81 +1,80 @@
-﻿/*using Microsoft.Extensions.Localization;
+﻿using Microsoft.Extensions.Localization;
+using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Interfaces.Services;
+using Stellantis.ProjectName.Application.Models;
+using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
+using FluentValidation;
+
+
 
 namespace Stellantis.ProjectName.Application.Services
 {
-    public class MemberService : IMemberService
+    public class MemberService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<Member> validator)
+        : EntityServiceBase<Member>(unitOfWork, localizerFactory, validator), IMemberService
     {
-        private readonly IMemberRepository _memberRepository;
-        private readonly IStringLocalizer<ServiceResources> _localizer;
+        private new IStringLocalizer Localizer => localizerFactory.Create(typeof(MemberResource));
 
+        protected override IMemberRepository Repository =>
+            UnitOfWork.MemberRepository;
 
-        public MemberService(IMemberRepository memberRepository, IStringLocalizer<ServiceResources> localizer)
+        public override async Task<OperationResult> CreateAsync(Member item)
         {
-            _memberRepository = memberRepository;
-            _localizer = localizer;
-        }
+            ArgumentNullException.ThrowIfNull(item);
 
-        public async Task AddEntityMemberAsync(EntityMember entityMember)
-        {
-            ArgumentNullException.ThrowIfNull(entityMember, nameof(entityMember));
-
-            if (!await Task.Run(() => _memberRepository.IsEmailUnique(entityMember.Email)).ConfigureAwait(false))
+            var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
+            if (!validationResult.IsValid)
             {
-                throw new InvalidOperationException(_localizer["MemberEmailAlreadyExists"]);
+                return OperationResult.InvalidData(validationResult);
             }
 
-            if (string.IsNullOrEmpty(entityMember.Name) || string.IsNullOrEmpty(entityMember.Role) || entityMember.Cost <= 0)
+            if (!await Repository.IsEmailUnique(item.Email).ConfigureAwait(false))
             {
-                throw new ArgumentException(_localizer["MemberRequiredFieldsMissing"]);
+                return OperationResult.Conflict(Localizer[nameof(MemberResource.MemberEmailAlreadyExists)]);
             }
 
-            await _memberRepository.AddEntityMemberAsync(entityMember).ConfigureAwait(false);
+            return await base.CreateAsync(item).ConfigureAwait(false);
         }
 
-        public async Task<EntityMember> GetMemberByIdAsync(Guid id)
+        public new async Task<OperationResult> GetItemAsync(int id)
         {
-            return await _memberRepository.GetMemberByIdAsync(id).ConfigureAwait(false);
+            return await Repository.GetByIdAsync(id).ConfigureAwait(false) is Member member
+                ? OperationResult.Complete()
+                : OperationResult.NotFound(Localizer[nameof(ServiceResources.NotFound)]);
         }
 
-        public async Task UpdateEntityMemberAsync(EntityMember entityMember)
+        public override async Task<OperationResult> UpdateAsync(Member item)
         {
-            ArgumentNullException.ThrowIfNull(entityMember, nameof(entityMember));
+            ArgumentNullException.ThrowIfNull(item);
 
-            if (!await Task.Run(() => _memberRepository.IsEmailUnique(entityMember.Email, entityMember.Id)).ConfigureAwait(false))
+            var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
+            if (!validationResult.IsValid)
             {
-                throw new InvalidOperationException(_localizer["MemberEmailAlreadyExists"]);
+                return OperationResult.InvalidData(validationResult);
             }
 
-            if (string.IsNullOrEmpty(entityMember.Name) || string.IsNullOrEmpty(entityMember.Role) || entityMember.Cost <= 0)
+            if (!await Repository.IsEmailUnique(item.Email).ConfigureAwait(false))
             {
-                throw new ArgumentException(_localizer["MemberRequiredFieldsMissing"]);
+                return OperationResult.Conflict(Localizer[nameof(MemberResource.MemberEmailAlreadyExists)]);
             }
 
-            await _memberRepository.UpdateEntityMemberAsync(entityMember).ConfigureAwait(false);
+            return await base.UpdateAsync(item).ConfigureAwait(false);
         }
 
-        public async Task<IEnumerable<EntityMember>> GetMembersAsync(string? name, string? email, string? role)
+        public async Task<PagedResult<Member>> GetListAsync(MemberFilter memberFilter)
         {
-            return await _memberRepository.GetMembersAsync(name, email, role).ConfigureAwait(false);
+            memberFilter ??= new MemberFilter();
+            return await UnitOfWork.MemberRepository.GetListAsync(memberFilter).ConfigureAwait(false);
         }
 
-        public async Task DeleteMemberAsync(Guid id)
+        public override async Task<OperationResult> DeleteAsync(int id)
         {
-            await _memberRepository.DeleteMemberAsync(id).ConfigureAwait(false);
-        }
-
-        public Task DeleteMemberByIdAsync(Guid id)
-        {
-            throw new NotImplementedException();
-        }
-
-        void IMemberService.DeleteMemberAsync(Guid memberid)
-        {
-            throw new NotImplementedException();
+            var item = await Repository.GetByIdAsync(id).ConfigureAwait(false);
+            if (item == null)
+                return OperationResult.NotFound(base.Localizer[nameof(MemberResource.MemberNotFound)]);
+            return await base.DeleteAsync(item).ConfigureAwait(false);
         }
     }
 }
-*/
