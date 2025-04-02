@@ -1,15 +1,13 @@
 ﻿using System;
-using Stellantis.ProjectName.Domain.Entity;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Interfaces.Services
 {
-    public interface ISquadService
+    public interface ISquadService : IEntityServiceBase<Squad>
     {
-        void CreateSquad(string name, string description);
-        EntitySquad GetSquadById(Guid id);
-        void UpdateSquad(Guid id, string name, string description);
-        IEnumerable<EntitySquad> GetAllSquads(string name = null); // Novo método
+        Task<PagedResult<Squad>> GetListAsync(SquadFilter squadFilter);
     }
-
 }
-
