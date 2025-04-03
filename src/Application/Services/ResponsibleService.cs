@@ -82,7 +82,7 @@ namespace Stellantis.ProjectName.Application.Services
             var item = await Repository.GetByIdAsync(id).ConfigureAwait(false);
             if (item == null)
             {
-                return OperationResult.NotFound(_localizer[nameof(ResponsibleResource.ResponsibleNotFound)]);
+                return OperationResult.NotFound(_localizer[nameof(OperationResult.NotFound)]);
             }
             return await base.DeleteAsync(item).ConfigureAwait(false);
         }
