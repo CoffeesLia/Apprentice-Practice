@@ -11,7 +11,12 @@ using Stellantis.ProjectName.IoC;
 using Stellantis.ProjectName.WebApi;
 using Stellantis.ProjectName.WebApi.Extensions;
 using Stellantis.ProjectName.WebApi.Filters;
+using Stellantis.ProjectName.Application.Validators;
 using System.Globalization;
+using Stellantis.ProjectName.Infrastructure.Data.Repositories;
+using Stellantis.ProjectName.WebApi.Dto.Validators;
+using Stellantis.ProjectName.WebApi.Dto;
+using Stellantis.ProjectName.Domain.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,8 +64,12 @@ switch (databaseType)
 }
 
 builder.Services.AddScoped<IMemberService, MemberService>();
+builder.Services.AddScoped<IMemberRepository, MemberRepository>();
+builder.Services.AddScoped<ValidateMemberVmFilter>(); 
+builder.Services.AddTransient<IValidator<EntityMember>, MemberValidator>(); 
 
-builder.Services.AddLocalization();
+
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 var arrLanguage = new[] { "en-US", "pt-BR", "es-AR", "fr-FR", "it-IT", "nl-NL" };
 builder.Services.Configure<RequestLocalizationOptions>(options =>

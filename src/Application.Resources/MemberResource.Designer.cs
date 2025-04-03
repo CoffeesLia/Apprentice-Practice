@@ -22,14 +22,14 @@ namespace Stellantis.ProjectName.Application.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class ServiceResources {
+    public class MemberResource {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal ServiceResources() {
+        internal MemberResource() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Stellantis.ProjectName.Application.Resources.ServiceResources", typeof(ServiceResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Stellantis.ProjectName.Application.Resources.MemberResource", typeof(MemberResource).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,83 +61,92 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Deleted Successfully..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Member cost must be greater than or equal to zero..
         /// </summary>
-        public static string DeletedSuccessfully {
+        public static string CostMemberLargestEqualZero {
             get {
-                return ResourceManager.GetString("DeletedSuccessfully", resourceCulture);
+                return ResourceManager.GetString("CostMemberLargestEqualZero", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Member updated successfully..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Member cost is required..
         /// </summary>
-        public static string MemberUpdatedSuccessfully {
+        public static string MemberCostRequired {
             get {
-                return ResourceManager.GetString("MemberUpdatedSuccessfully", resourceCulture);
+                return ResourceManager.GetString("MemberCostRequired", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Not found..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a This e-mail already exists..
         /// </summary>
-        public static string NotFound {
+        public static string MemberEmailAlreadyExists {
             get {
-                return ResourceManager.GetString("NotFound", resourceCulture);
+                return ResourceManager.GetString("MemberEmailAlreadyExists", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Registered Successfully..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Member email is required..
         /// </summary>
-        public static string RegisteredSuccessfully {
+        public static string MemberEmailIsRequired {
             get {
-                return ResourceManager.GetString("RegisteredSuccessfully", resourceCulture);
+                return ResourceManager.GetString("MemberEmailIsRequired", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Squad description is required.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a The email must be between {0} and {1} characters long..
         /// </summary>
-        public static string SquadDescriptionRequired {
+        public static string MemberEmailValidateLength {
             get {
-                return ResourceManager.GetString("SquadDescriptionRequired", resourceCulture);
+                return ResourceManager.GetString("MemberEmailValidateLength", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a A squad with this name already exists..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Member name is required..
         /// </summary>
-        public static string SquadNameAlreadyExists {
+        public static string MemberNameIsRequired {
             get {
-                return ResourceManager.GetString("SquadNameAlreadyExists", resourceCulture);
+                return ResourceManager.GetString("MemberNameIsRequired", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Squad name is required.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a The name must be between {0} and {1} characters long..
         /// </summary>
-        public static string SquadNameRequired {
+        public static string MemberNameValidateLength {
             get {
-                return ResourceManager.GetString("SquadNameRequired", resourceCulture);
+                return ResourceManager.GetString("MemberNameValidateLength", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Squad not found .
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Member not found..
         /// </summary>
-        public static string SquadNotFound {
+        public static string MemberNotFound {
             get {
-                return ResourceManager.GetString("SquadNotFound", resourceCulture);
+                return ResourceManager.GetString("MemberNotFound", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Updated Successfully..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Member role is required..
         /// </summary>
-        public static string UpdatedSuccessfully {
+        public static string MemberRoleIsRequired {
             get {
-                return ResourceManager.GetString("UpdatedSuccessfully", resourceCulture);
+                return ResourceManager.GetString("MemberRoleIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a The member must be between {0} and {1} characters long..
+        /// </summary>
+        public static string MemberRoleValidateLength {
+            get {
+                return ResourceManager.GetString("MemberRoleValidateLength", resourceCulture);
             }
         }
     }

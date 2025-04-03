@@ -117,19 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NotFound" xml:space="preserve">
-    <value>No encontrado.</value>
+  <data name="AlreadyExists" xml:space="preserve">
+    <value>The name already exits.</value>
   </data>
-  <data name="DeletedSuccessfully" xml:space="preserve">
-    <value>Eliminado con éxito.</value>
+  <data name="NameIsRequired" xml:space="preserve">
+    <value>The name is required.</value>
   </data>
-  <data name="RegisteredSuccessfully" xml:space="preserve">
-    <value>Registrado con éxito.</value>
+  <data name="NameValidateLength" xml:space="preserve">
+    <value>The name must be between {0} and {1} characters long.</value>
   </data>
-  <data name="UpdatedSuccessfully" xml:space="preserve">
-    <value> Actualizado con éxito.</value>
-  </data>
-  <data name="MemberUpdatedSuccessfully" xml:space="preserve">
-    <value>Miembro actualizado con éxito.</value>
+  <data name="Undeleted" xml:space="preserve">
+    <value>You cannot delete an area that has associated applications.</value>
   </data>
 </root>

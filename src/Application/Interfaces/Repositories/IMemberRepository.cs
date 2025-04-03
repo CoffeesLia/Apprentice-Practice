@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Interfaces.Repositories
 {
-    public interface IMemberRepository
+    public interface IMemberRepository : IRepositoryEntityBase<Member>
     {
-        bool IsEmailUnique(string email);
-        void AddEntityMember(EntityMember entityMember);
+        Task<PagedResult<Member>> GetListAsync(MemberFilter filter);
+        Task<bool> IsEmailUnique(string email);
+
     }
 }
