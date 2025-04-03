@@ -71,6 +71,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             return await Context.Set<Responsible>().FindAsync(id).ConfigureAwait(false);
         }
 
-      
+
     }
 }

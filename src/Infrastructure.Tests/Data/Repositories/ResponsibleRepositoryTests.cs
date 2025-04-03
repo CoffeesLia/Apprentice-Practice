@@ -131,6 +131,6 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
 
             // Assert
             Assert.Null(result);
-        }  
+        }
     }
 }

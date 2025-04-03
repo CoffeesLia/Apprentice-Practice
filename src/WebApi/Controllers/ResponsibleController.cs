@@ -18,20 +18,20 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] ResponsibleDto itemDto)
         {
-            return await CreateBaseAsync<ResponsibleVm>(itemDto).ConfigureAwait(false); 
+            return await CreateBaseAsync<ResponsibleVm>(itemDto).ConfigureAwait(false);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<ResponsibleVm>> GetAsync(int id)
         {
-            return await GetAsync<ResponsibleVm>(id).ConfigureAwait(false); 
+            return await GetAsync<ResponsibleVm>(id).ConfigureAwait(false);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetListAsync([FromQuery] ResponsibleFilterDto filterDto)
         {
             var filter = Mapper.Map<ResponsibleFilter>(filterDto);
-            var pagedResult = await ((IResponsibleService)Service).GetListAsync(filter!).ConfigureAwait(false); 
+            var pagedResult = await ((IResponsibleService)Service).GetListAsync(filter!).ConfigureAwait(false);
             var result = Mapper.Map<PagedResultVm<ResponsibleVm>>(pagedResult);
             return Ok(result);
         }

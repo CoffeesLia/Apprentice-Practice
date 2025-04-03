@@ -9,9 +9,7 @@ using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Controllers;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.ViewModels;
-using Stellantis.ProjectName.Application.Resources;
 using AutoFixture;
-using Xunit;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
 
 namespace Stellantis.ProjectName.WebApi.Tests.Controllers
@@ -29,7 +27,7 @@ namespace Stellantis.ProjectName.WebApi.Tests.Controllers
             _serviceMock = new Mock<IResponsibleService>();
             _mapperMock = new Mock<IMapper>();
             _localizerFactoryMock = new Mock<IStringLocalizerFactory>();
-          
+
             _fixture = new Fixture();
 
             _controller = new ResponsibleController(_serviceMock.Object, _mapperMock.Object, _localizerFactoryMock.Object);
