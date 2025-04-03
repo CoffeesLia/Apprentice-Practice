@@ -10,10 +10,11 @@ namespace Stellantis.ProjectName.Application.Validators
         public ResponsibleValidator(IStringLocalizerFactory localizerFactory)
         {
             ArgumentNullException.ThrowIfNull(localizerFactory);
-            var localizer = localizerFactory.Create(typeof(ResponsibleResource));
+            var localizer = localizerFactory.Create(typeof(AreaResources));
 
             RuleFor(r => r.Email)
-                .NotEmpty().WithMessage(localizer[nameof(ResponsibleResource.EmailRequired)]);
+                .NotEmpty().WithMessage(localizer[nameof(ResponsibleResource.EmailRequired)])
+                .EmailAddress().WithMessage(localizer[nameof(ResponsibleResource.EmailInvalid)]);
 
             RuleFor(r => r.Name)
                 .NotEmpty().WithMessage(localizer[nameof(ResponsibleResource.NameRequired)]);
