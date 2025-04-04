@@ -18,7 +18,9 @@ namespace Stellantis.ProjectName.Infrastructure.Data
         public ISquadRepository SquadRepository { get; }
         public IDataServiceRepository DataServiceRepository { get; }
         public IGitRepoRepository GitRepoRepository { get; }
-        
+
+        public IMemberRepository MemberRepository => throw new NotImplementedException();
+
         public UnitOfWork(Context context)
         {
             _context = context;
@@ -27,6 +29,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data
             ResponsibleRepository = new ResponsibleRepository(context);
             ApplicationDataRepository = new ApplicationDataRepository(context);
             SquadRepository = new SquadRepository(context);
+            GitRepoRepository = new GitRepoRepository(context);
         }
 
         public void BeginTransaction()
