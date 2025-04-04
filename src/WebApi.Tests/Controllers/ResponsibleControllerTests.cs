@@ -9,7 +9,9 @@ using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Controllers;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.ViewModels;
+using Stellantis.ProjectName.Application.Resources;
 using AutoFixture;
+using Xunit;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
 
 namespace Stellantis.ProjectName.WebApi.Tests.Controllers

@@ -6,7 +6,5 @@ namespace Stellantis.ProjectName.Application.Interfaces.Services
     public interface IResponsibleService : IEntityServiceBase<Responsible>
     {
         Task<PagedResult<Responsible>> GetListAsync(ResponsibleFilter responsibleFilter);
-       
-
     }
 }
