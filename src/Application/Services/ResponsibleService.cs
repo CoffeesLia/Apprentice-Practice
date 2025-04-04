@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
@@ -22,7 +21,6 @@ namespace Stellantis.ProjectName.Application.Services
             ArgumentNullException.ThrowIfNull(localizerFactory);
             _localizer = localizerFactory.Create(typeof(ResponsibleResource));
         }
-
 
         public override async Task<OperationResult> CreateAsync(Responsible item)
         {
@@ -52,8 +50,9 @@ namespace Stellantis.ProjectName.Application.Services
 
         public new async Task<OperationResult> GetItemAsync(int id)
         {
-            return await Repository.GetByIdAsync(id).ConfigureAwait(false) is Responsible responsible
-                ? OperationResult.Complete()
+            var responsible = await Repository.GetByIdAsync(id).ConfigureAwait(false);
+            return responsible != null
+             ? OperationResult.Complete()
                 : OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
         }
 
@@ -82,7 +81,7 @@ namespace Stellantis.ProjectName.Application.Services
             var item = await Repository.GetByIdAsync(id).ConfigureAwait(false);
             if (item == null)
             {
-                return OperationResult.NotFound(_localizer[nameof(OperationResult.NotFound)]);
+                return OperationResult.NotFound(_localizer[nameof(ResponsibleResource.ResponsibleNotFound)]);
             }
             return await base.DeleteAsync(item).ConfigureAwait(false);
         }
