@@ -1,13 +1,12 @@
-﻿using Stellantis.ProjectName.Domain.Entities;
+﻿using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Interfaces.Repositories
 {
-    public interface IDataServiceRepository : IRepositoryEntityBase<EDataService>
+    public interface IDataServiceRepository : IRepositoryEntityBase<DataService>
     {
-        Task<EDataService?> GetServiceByIdAsync(int id);
-        Task<IEnumerable<EDataService>> GetAllServicesAsync();
-        Task AddServiceAsync(EDataService service);
-        Task UpdateServiceAsync(EDataService service);
-        Task DeleteServiceAsync(int id);
+        Task<PagedResult<DataService>> GetListAsync(DataServiceFilter serviceFilter);
+        Task<bool> VerifyServiceExistsAsync(int id);
+        Task<bool> VerifyNameAlreadyExistsAsync(string name);
     }
 }

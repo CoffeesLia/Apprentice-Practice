@@ -8,10 +8,11 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Stellantis.ProjectName.Application.Resources {
+namespace Stellantis.ProjectName.Application.Resources
+{
     using System;
-    
-    
+
+
     /// <summary>
     ///   Uma classe de recurso de tipo de alta segurança, para pesquisar cadeias de caracteres localizadas etc.
     /// </summary>
@@ -22,119 +23,104 @@ namespace Stellantis.ProjectName.Application.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class DataServiceResources {
-        
+    public class DataServiceResources
+    {
+
         private static global::System.Resources.ResourceManager resourceMan;
-        
+
         private static global::System.Globalization.CultureInfo resourceCulture;
-        
+
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal DataServiceResources() {
+        internal DataServiceResources()
+        {
         }
-        
+
         /// <summary>
         ///   Retorna a instância de ResourceManager armazenada em cache usada por essa classe.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
-            get {
-                if (object.ReferenceEquals(resourceMan, null)) {
+        internal static global::System.Resources.ResourceManager ResourceManager
+        {
+            get
+            {
+                if (object.ReferenceEquals(resourceMan, null))
+                {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Stellantis.ProjectName.Application.Resources.DataServiceResources", typeof(DataServiceResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
             }
         }
-        
+
         /// <summary>
         ///   Substitui a propriedade CurrentUICulture do thread atual para todas as
         ///   pesquisas de recursos que usam essa classe de recurso de tipo de alta segurança.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
-            get {
-                return resourceCulture;
-            }
-            set {
-                resourceCulture = value;
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Bad Request..
-        /// </summary>
-        internal static string BadRequest {
-            get {
-                return ResourceManager.GetString("BadRequest", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a No services found..
-        /// </summary>
-        public static string GetAllServices_NoServicesFound {
-            get {
-                return ResourceManager.GetString("GetAllServices_NoServicesFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Service not found..
-        /// </summary>
-        public static string GetServiceById_ServiceNotFound {
-            get {
-                return ResourceManager.GetString("GetServiceById_ServiceNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Name is required..
-        /// </summary>
-        internal static string NameIsRequired {
-            get {
-                return ResourceManager.GetString("NameIsRequired", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Not Found..
-        /// </summary>
-        internal static string NotFound {
-            get {
-                return ResourceManager.GetString("NotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Service Name Already Exists..
-        /// </summary>
-        public static string ServiceNameAlreadyExists {
-            get {
-                return ResourceManager.GetString("ServiceNameAlreadyExists", resourceCulture);
-            }
-        }
-
-        public static string NameValidateLength
+        internal static global::System.Globalization.CultureInfo Culture
         {
             get
             {
-                return ResourceManager.GetString("NameValidateLength", resourceCulture);
+                return resourceCulture;
+            }
+            set
+            {
+                resourceCulture = value;
             }
         }
 
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Not Found..
+        /// </summary>
+        public static string ServiceNotFound
+        {
+            get
+            {
+                return ResourceManager.GetString("ServiceNotFound", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Services Not Found..
+        /// </summary>
+        public static string ServicesNoFound
+        {
+            get
+            {
+                return ResourceManager.GetString("ServicesNoFound", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Service Already Exists..
+        /// </summary>
+        public static string ServiceAlreadyExists
+        {
+            get
+            {
+                return ResourceManager.GetString("ServiceAlreadyExists", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Service Name Length..
+        /// </summary>
+        public static string ServiceNameLength
+        {
+            get
+            {
+                return ResourceManager.GetString("ServiceNameLength", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Service Cannot Be Null..
+        /// </summary>
         public static string ServiceCannotBeNull
         {
             get
             {
                 return ResourceManager.GetString("ServiceCannotBeNull", resourceCulture);
-            }
-        }
-
-        public static string NameRequired
-        {
-            get
-            {
-                return ResourceManager.GetString("NameRequired", resourceCulture);
             }
         }
     }
