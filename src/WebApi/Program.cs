@@ -63,12 +63,6 @@ switch (databaseType)
         throw new NotSupportedException(databaseType);
 }
 
-builder.Services.AddScoped<IMemberService, MemberService>();
-builder.Services.AddScoped<IMemberRepository, MemberRepository>();
-builder.Services.AddScoped<ValidateMemberVmFilter>(); 
-builder.Services.AddTransient<IValidator<EntityMember>, MemberValidator>(); 
-
-
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 var arrLanguage = new[] { "en-US", "pt-BR", "es-AR", "fr-FR", "it-IT", "nl-NL" };

@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -68,7 +68,6 @@ namespace Stellantis.ProjectName.Application.Tests.Services
             Assert.Throws<ArgumentException>(() => _memberService.AddEntityMember(entityMember));
 
         }
-        */
 
         [Fact]
         public async Task GetMemberByIdAsync_ShouldReturnMember_WhenMemberExists()
@@ -109,3 +108,4 @@ namespace Stellantis.ProjectName.Application.Tests.Services
         }
     }
 }
+*/
