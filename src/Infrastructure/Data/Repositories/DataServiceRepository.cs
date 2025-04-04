@@ -1,33 +1,31 @@
-﻿using System.Xml.Linq;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models.Filters;
-using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
-    public class DataServiceRepository(Context context) : RepositoryEntityBase<Application.Services.DataService, Context>(context), IDataServiceRepository
+    public class DataServiceRepository(Context context) : RepositoryEntityBase<DataService, Context>(context), IDataServiceRepository
     {
-        public new async Task CreateAsync(Application.Services.DataService entity, bool saveChanges = true)
+        public new async Task CreateAsync(DataService entity, bool saveChanges = true)
         {
-            await Context.Set<Application.Services.DataService>().AddAsync(entity).ConfigureAwait(false);
+            await Context.Set<DataService>().AddAsync(entity).ConfigureAwait(false);
             if (saveChanges)
             {
                 await SaveChangesAsync().ConfigureAwait(false);
             }
         }
 
-        public new async Task<Application.Services.DataService?> GetByIdAsync(int id)
+        public new async Task<DataService?> GetByIdAsync(int id)
         {
-            return await Context.Set<Application.Services.DataService>().FindAsync(id).ConfigureAwait(false);
+            return await Context.Set<DataService>().FindAsync(id).ConfigureAwait(false);
         }
 
-        public async Task<PagedResult<Application.Services.DataService>> GetListAsync(DataServiceFilter serviceFilter)
+        public async Task<PagedResult<DataService>> GetListAsync(DataServiceFilter serviceFilter)
         {
             ArgumentNullException.ThrowIfNull(serviceFilter, nameof(serviceFilter));
 
-            IQueryable<Application.Services.DataService> query = Context.Set<Application.Services.DataService>();
+            IQueryable<DataService> query = Context.Set<DataService>();
 
             if (!string.IsNullOrEmpty(serviceFilter.Name))
             {
@@ -38,12 +36,12 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 .ConfigureAwait(false);
         }
 
-        private static async Task<PagedResult<Application.Services.DataService>> GetPagedResultAsync(IQueryable<Application.Services.DataService> query, int page, int pageSize)
+        private static async Task<PagedResult<DataService>> GetPagedResultAsync(IQueryable<DataService> query, int page, int pageSize)
         {
             var total = await query.CountAsync().ConfigureAwait(false);
             var result = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync().ConfigureAwait(false);
 
-            return new PagedResult<Application.Services.DataService>
+            return new PagedResult<DataService>
             {
                 Total = total,
                 Result = result,
@@ -57,7 +55,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             var entity = await GetByIdAsync(id).ConfigureAwait(false);
             if (entity != null)
             {
-                Context.Set<Application.Services.DataService>().Remove(entity);
+                Context.Set<DataService>().Remove(entity);
                 if (saveChanges)
                 {
                     await SaveChangesAsync().ConfigureAwait(false);
@@ -67,7 +65,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         public async Task<bool> VerifyServiceExistsAsync(int id)
         {
-            var service = await Context.Set<Application.Services.DataService>()
+            var service = await Context.Set<DataService>()
                 .FirstOrDefaultAsync(a => a.Id == id)
                 .ConfigureAwait(false);
 
@@ -76,7 +74,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         public async Task<bool> VerifyNameAlreadyExistsAsync(string name)
         {
-            return await Context.Set<Application.Services.DataService>()
+            return await Context.Set<DataService>()
                 .AnyAsync(a => a.Name == name)
                 .ConfigureAwait(false);
         }
