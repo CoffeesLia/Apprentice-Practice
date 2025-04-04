@@ -32,7 +32,7 @@ namespace Stellantis.ProjectName.Application.Validators
             RuleFor(repo => repo.Url)
                 .MustAsync(async (url, cancellation) =>
                 {
-                    if (!Uri.TryCreate(url, UriKind.Absolute, out var validUri))
+                    if (!Uri.TryCreate(url?.ToString(), UriKind.Absolute, out var validUri))
                     {
                         return false; // URL inválida, falha na validação
                     }

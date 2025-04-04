@@ -27,14 +27,18 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(x => x.ServiceId, x => x.Ignore());
             CreateMap<DataService, DataServiceVm>();
 
-            CreateMap<IntegrationDto, Integration>()
-                .ForMember(x => x.Id, x => x.Ignore());
-            CreateMap<Integration, IntegrationVm>()
-                .ForMember(x => x.Id, x => x.Ignore());
+            //CreateMap<IntegrationDto, Integration>()
+            //    .ForMember(x => x.Id, x => x.Ignore());
+            //CreateMap<Integration, IntegrationVm>()
+            //    .ForMember(x => x.Id, x => x.Ignore());
 
             CreateMap<SquadDto, EntitySquad>()
                 .ForMember(x => x.Id, x => x.Ignore());
             CreateMap<EntitySquad, SquadDto>();
+
+            CreateMap<GitRepoDto, GitRepo>()
+                .ForMember(x => x.Id, x => x.Ignore());
+            CreateMap<GitRepo, GitRepoVm>();
         }
     }
 }

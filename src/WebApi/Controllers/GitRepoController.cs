@@ -46,11 +46,5 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             var result = Mapper.Map<PagedResultVm<GitRepoVm>>(pagedResult);
             return Ok(result);
         }
-
-        [HttpDelete("{id}")]
-        public override async Task<IActionResult> DeleteAsync(int id)
-        {
-            return await base.DeleteAsync(id).ConfigureAwait(false);
-        }
     }
 }

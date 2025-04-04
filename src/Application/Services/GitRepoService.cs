@@ -25,10 +25,7 @@ namespace Stellantis.ProjectName.Application.Services
 
         public override async Task<OperationResult> CreateAsync(GitRepo item)
         {
-            if (item == null)
-            {
-                throw new ArgumentNullException(nameof(item));
-            }
+            ArgumentNullException.ThrowIfNull(item);
 
             var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
 
@@ -61,10 +58,7 @@ namespace Stellantis.ProjectName.Application.Services
         }
         public override async Task<OperationResult> UpdateAsync(GitRepo item)
         {
-            if (item == null)
-            {
-                throw new ArgumentNullException(nameof(item));
-            }
+            ArgumentNullException.ThrowIfNull(item);
 
             var existingRepo = await Repository.GetByIdAsync(item.Id).ConfigureAwait(false);
             if (existingRepo == null)
@@ -91,15 +85,15 @@ namespace Stellantis.ProjectName.Application.Services
             await Repository.UpdateAsync(existingRepo).ConfigureAwait(false);
             return OperationResult.Complete(Localizer[nameof(ServiceResources.UpdatedSuccessfully)]);
         }
-        public async Task<PagedResult<GitRepo>> GetListAsync(GitRepoFilter filter)
+        public async Task<PagedResult<GitRepo>> GetListAsync(GitRepoFilter gitRepoFilter)
         {
-            filter ??= new GitRepoFilter
+            gitRepoFilter ??= new GitRepoFilter
             {
                 Name = string.Empty,
                 Description = string.Empty,
                 Url = string.Empty
             };
-            return await UnitOfWork.GitRepoRepository.GetListAsync(filter).ConfigureAwait(false);
+            return await UnitOfWork.GitRepoRepository.GetListAsync(gitRepoFilter).ConfigureAwait(false);
         }
 
         public override async Task<OperationResult> DeleteAsync(int id)
