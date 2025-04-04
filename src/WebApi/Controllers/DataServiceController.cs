@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models.Filters;
-using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
@@ -14,7 +13,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
     [ApiController]
     [Route("api/[controller]")]
     internal class DataServiceController(IDataService dataService, IMapper mapper, IStringLocalizerFactory localizerFactory)
-        : EntityControllerBase<Application.Services.DataService, DataServiceDto>(dataService, mapper, localizerFactory)
+        : EntityControllerBase<DataService, DataServiceDto>(dataService, mapper, localizerFactory)
     {
         private readonly IDataService _dataService = dataService;
 
