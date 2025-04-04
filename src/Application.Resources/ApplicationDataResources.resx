@@ -123,10 +123,22 @@
   <data name="ApplicationNotFound" xml:space="preserve">
     <value>Application cannot be found</value>
   </data>
+  <data name="ConfigurationItemRequired" xml:space="preserve">
+    <value>Configuration itemi s required.</value>
+  </data>
+  <data name="DescriptionValidateLength" xml:space="preserve">
+    <value>The description has a limit of {0} characters.</value>
+  </data>
   <data name="NameRequired" xml:space="preserve">
     <value>The name is required.</value>
   </data>
   <data name="NameValidateLength" xml:space="preserve">
     <value>The name must be between {0} and {1} characters long.</value>
+  </data>
+  <data name="NotFound" xml:space="preserve">
+    <value>Not Found.</value>
+  </data>
+  <data name="ProductOwnerRequired" xml:space="preserve">
+    <value>Product Owner is required.</value>
   </data>
 </root>

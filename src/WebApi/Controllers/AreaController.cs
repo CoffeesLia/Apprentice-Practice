@@ -14,16 +14,8 @@ using Stellantis.ProjectName.Application.Resources;
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [Route("api/areas")]
-    public sealed class AreaControllerBase : EntityControllerBase<Area, AreaDto>
+    public sealed class AreaControllerBase(IAreaService service, IMapper mapper, IStringLocalizerFactory localizerFactory) : EntityControllerBase<Area, AreaDto>(service, mapper, localizerFactory)
     {
-        private readonly IStringLocalizer _localizer;
-
-        public AreaControllerBase(IAreaService service, IMapper mapper, IStringLocalizerFactory localizerFactory)
-            : base(service, mapper, localizerFactory)
-        {
-            _localizer = localizerFactory.Create(typeof(AreaResources));
-        }
-
         protected override IAreaService Service => (IAreaService)base.Service;
 
         [HttpPost]
@@ -35,13 +27,13 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] AreaDto itemDto)
         {
-            return await base.UpdateBaseAsync<AreaVm>(id, itemDto);
+            return await base.UpdateBaseAsync<AreaVm>(id, itemDto).ConfigureAwait(false);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<AreaVm>> GetAsync(int id)
         {
-            return await GetAsync<AreaVm>(id);
+            return await GetAsync<AreaVm>(id).ConfigureAwait(false);
         }
 
         [HttpGet]

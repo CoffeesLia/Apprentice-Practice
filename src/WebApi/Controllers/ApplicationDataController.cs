@@ -14,10 +14,7 @@ using Stellantis.ProjectName.Application.Resources;
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [Route("api/applications")]
-
-    internal sealed class ApplicationDataControllerBase(IApplicationDataService service,
-        IMapper mapper, IStringLocalizerFactory localizerFactory) :
-        EntityControllerBase<ApplicationData, ApplicationDataDto>(service, mapper, localizerFactory)
+    internal sealed class ApplicationDataControllerBase(IApplicationDataService service, IMapper mapper, IStringLocalizerFactory localizerFactory) : EntityControllerBase<ApplicationData, ApplicationDataDto>(service, mapper, localizerFactory)
     {
         protected override IApplicationDataService Service => (IApplicationDataService)base.Service;
 
@@ -27,13 +24,11 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             return await CreateBaseAsync<ApplicationVm>(itemDto).ConfigureAwait(false);
         }
 
-
         [HttpGet("{id}")]
         public async Task<ActionResult<ApplicationVm>> GetAsync(int id)
         {
             return await GetAsync<ApplicationVm>(id).ConfigureAwait(false);
         }
-
 
         [HttpGet]
         public async Task<IActionResult> GetListAsync([FromQuery] ApplicationDataFilterDto filterDto)
@@ -55,7 +50,6 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             var result = await base.DeleteAsync(id).ConfigureAwait(false);
             return result;
         }
-
     }
 
 }

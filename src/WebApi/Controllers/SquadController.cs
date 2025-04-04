@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces.Services;
-using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -15,13 +13,11 @@ namespace Stellantis.ProjectName.WebAPI.Controllers
     {
         private readonly ISquadService _squadService;
         private readonly IMapper _mapper;
-        private readonly IStringLocalizer<SquadResources> _localizer;
 
-        public SquadController(ISquadService squadService, IMapper mapper, IStringLocalizer<SquadResources> localizer)
+        public SquadController(ISquadService squadService, IMapper mapper)
         {
             _squadService = squadService;
             _mapper = mapper;
-            _localizer = localizer;
         }
 
         // AMS-53: Create a new squad
@@ -31,7 +27,7 @@ namespace Stellantis.ProjectName.WebAPI.Controllers
             try
             {
                 _squadService.CreateSquad(request.Name, request.Description);
-                return Ok(new { Message = _localizer[nameof(SquadResources.SquadCreatedSuccessfully)] });
+                return Ok(new { Message = "Squad created successfully." });
             }
             catch (ArgumentException ex)
             {
@@ -66,7 +62,7 @@ namespace Stellantis.ProjectName.WebAPI.Controllers
             try
             {
                 _squadService.UpdateSquad(id, request.Name, request.Description);
-                return Ok(new { Message = _localizer[nameof(SquadResources.SquadUpdatedSuccessfully)] });
+                return Ok(new { Message = "Squad updated successfully." });
             }
             catch (ArgumentException ex)
             {
@@ -90,21 +86,6 @@ namespace Stellantis.ProjectName.WebAPI.Controllers
             var squadDtos = _mapper.Map<IEnumerable<SquadDto>>(squads);
             return Ok(squadDtos);
         }
-
-        // AMS-57: Delete a squad
-        [HttpDelete("{id}")]
-        public IActionResult DeleteSquad(Guid id)
-        {
-            try
-            {
-                _squadService.DeleteSquad(id);
-                return Ok(new { Message = _localizer[nameof(SquadResources.SquadSuccessfullyDeleted)] });
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(new { Message = ex.Message });
-            }
-        }
     }
 
     public class CreateSquadRequest
@@ -126,4 +107,3 @@ namespace Stellantis.ProjectName.WebAPI.Controllers
         public string Description { get; set; }
     }
 }
- 

@@ -118,15 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="SquadDescriptionRequired" xml:space="preserve">
-    <value>Squad description is required.</value>
+    <value>La description du squad est requise.</value>
   </data>
   <data name="SquadNameAlreadyExists" xml:space="preserve">
-    <value>A squad with this name already exists.</value>
+    <value>Un squad avec ce nom existe déjà.</value>
   </data>
   <data name="SquadNameRequired" xml:space="preserve">
-    <value>Squad name is required.</value>
+    <value>Le nom du squad est requis.</value>
   </data>
   <data name="SquadNotFound" xml:space="preserve">
-    <value>Squad not found.</value>
+    <value>Le nom du squad est introuvable.</value>
   </data>
 </root>
