@@ -1,6 +1,6 @@
 ﻿namespace Stellantis.ProjectName.Domain.Entities
 {
-    public class EDataService : EntityBase
+    public class DataService : EntityBase
     {
         public string? Name { get; set; }
         public string? Description { get; set; }

@@ -27,7 +27,7 @@ namespace Stellantis.ProjectName.IoC
             services.AddScoped<IValidator<ApplicationData>, ApplicationDataValidator>();
             services.AddScoped<IValidator<Responsible>, ResponsibleValidator>();
             services.AddScoped<IValidator<Integration>, IntegrationValidator>();
-            services.AddScoped<IValidator<DataService>, DataServiceValidator>();
+            services.AddScoped<IValidator<Application.Services.DataService>, DataServiceValidator>();
         }
 
         private static void Services(IServiceCollection services)

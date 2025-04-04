@@ -18,7 +18,7 @@ namespace WebApi.Tests.Controllers
     public class DataServiceControllerTests
     {
         private readonly Mock<IDataService> _serviceMock = new();
-        private readonly Mock<IEntityServiceBase<EDataService>> _entityServiceMock = new();
+        private readonly Mock<IEntityServiceBase<DataService>> _entityServiceMock = new();
         private readonly Mock<IMapper> _mapperMock = new();
         private readonly Mock<IStringLocalizerFactory> _localizerMock = new();
         private readonly DataServiceController _controller;
@@ -56,7 +56,7 @@ namespace WebApi.Tests.Controllers
         public async Task GetAllServicesReturnsOkWithListOfServices()
         {
             // Arrange
-            var services = new List<EDataService>
+            var services = new List<DataService>
             {
                 new() { Id = 1, Name = "Service 1", ApplicationId = 1 },
                 new() { Id = 2, Name = "Service 2", ApplicationId = 2 }
@@ -68,7 +68,7 @@ namespace WebApi.Tests.Controllers
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedServices = Assert.IsType<List<EDataService>>(okResult.Value);
+            var returnedServices = Assert.IsType<List<DataService>>(okResult.Value);
             Assert.Equal(2, returnedServices.Count);
         }
 
@@ -76,7 +76,7 @@ namespace WebApi.Tests.Controllers
         public async Task AddServiceReturnsCreatedAtActionWhenValid()
         {
             // Arrange
-            var service = new EDataService { Id = 1, Name = "New Service", ApplicationId = 1 };
+            var service = new DataService { Id = 1, Name = "New Service", ApplicationId = 1 };
             _serviceMock.Setup(s => s.AddServiceAsync(service)).Returns(Task.CompletedTask);
             _controller.ModelState.Clear();
 
@@ -85,7 +85,7 @@ namespace WebApi.Tests.Controllers
 
             // Assert
             var createdResult = Assert.IsType<CreatedAtActionResult>(result);
-            var returnedService = Assert.IsType<EDataService>(createdResult.Value);
+            var returnedService = Assert.IsType<DataService>(createdResult.Value);
 
             Assert.Equal(nameof(_controller.GetServiceById), createdResult.ActionName);
             Assert.Equal(service.Id, returnedService.Id);
@@ -95,7 +95,7 @@ namespace WebApi.Tests.Controllers
         public async Task UpdateServiceReturnsNoContentWhenValid()
         {
             // Arrange
-            var service = new EDataService { Id = 1, Name = "Updated Service", ApplicationId = 1 };
+            var service = new DataService { Id = 1, Name = "Updated Service", ApplicationId = 1 };
             _serviceMock.Setup(s => s.UpdateServiceAsync(service)).Returns(Task.CompletedTask);
             _controller.ModelState.Clear();
 
@@ -110,7 +110,7 @@ namespace WebApi.Tests.Controllers
         public async Task UpdateServiceReturnsBadRequestWhenIdDoesNotMatch()
         {
             // Arrange
-            var service = new EDataService { Id = 1, Name = "Updated Service", ApplicationId = 1 };
+            var service = new DataService { Id = 1, Name = "Updated Service", ApplicationId = 1 };
 
             // Act
             var result = await _controller.UpdateService(2, service);
@@ -123,7 +123,7 @@ namespace WebApi.Tests.Controllers
         public async Task AddServiceReturnsConflictWhenServiceAlreadyExists()
         {
             // Arrange
-            var service = new EDataService { Id = 1, Name = "Existing Service", ApplicationId = 1 };
+            var service = new DataService { Id = 1, Name = "Existing Service", ApplicationId = 1 };
             _serviceMock.Setup(s => s.GetServiceByIdAsync(service.Id)).ReturnsAsync(service);
 
             // Act
@@ -140,7 +140,7 @@ namespace WebApi.Tests.Controllers
         public async Task GetServiceByIdReturnsOkWhenServiceExists()
         {
             // Arrange
-            var service = new EDataService { Id = 1, Name = "Test Service", ApplicationId = 1 };
+            var service = new DataService { Id = 1, Name = "Test Service", ApplicationId = 1 };
             _serviceMock.Setup(s => s.GetServiceByIdAsync(1)).ReturnsAsync(service);
 
             // Act
@@ -156,7 +156,7 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             int id = 1;
-            _serviceMock.Setup(s => s.GetServiceByIdAsync(id)).ReturnsAsync((EDataService?)null);
+            _serviceMock.Setup(s => s.GetServiceByIdAsync(id)).ReturnsAsync((DataService?)null);
 
             var localizer = new Mock<IStringLocalizer>();
             localizer.Setup(l => l[nameof(DataServiceController.GetServiceById) + "_ServiceNotFound"])
@@ -178,7 +178,7 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             _serviceMock.Setup(s => s.GetServiceByIdAsync(It.IsAny<int>()))
-                        .ReturnsAsync((EDataService?)null);
+                        .ReturnsAsync((DataService?)null);
 
             // Act
             var result = await _controller.GetServiceById(1);
@@ -230,7 +230,7 @@ namespace WebApi.Tests.Controllers
             _controller.ModelState.AddModelError("Name", "Required");
 
             // Act
-            var result = await _controller.AddService(new EDataService { Name = "Test", ApplicationId = 1 });
+            var result = await _controller.AddService(new DataService { Name = "Test", ApplicationId = 1 });
 
             // Assert
             Assert.IsType<BadRequestObjectResult>(result);
@@ -240,7 +240,7 @@ namespace WebApi.Tests.Controllers
         public async Task AddServiceReturnsBadRequestWhenServiceIsNull()
         {
             // Arrange
-            EDataService? service = null;
+            DataService? service = null;
 
             // Act
             var result = await _controller.AddService(service!);
@@ -256,7 +256,7 @@ namespace WebApi.Tests.Controllers
         public async Task UpdateServiceReturnsBadRequestWhenServiceIsNull()
         {
             // Arrange
-            EDataService? service = null;
+            DataService? service = null;
 
             // Act
             var result = await _controller.UpdateService(1, service!);
@@ -272,7 +272,7 @@ namespace WebApi.Tests.Controllers
         public async Task UpdateServiceReturnsBadRequestWhenServiceIsInvalid()
         {
             // Arrange
-            var service = new EDataService { Id = 1, Name = "Invalid Service" };
+            var service = new DataService { Id = 1, Name = "Invalid Service" };
             _controller.ModelState.AddModelError("Name", "Required");
 
             // Act
@@ -350,7 +350,7 @@ namespace WebApi.Tests.Controllers
         public void ShouldHaveErrorWhenNameIsTooShort()
         {
             // Arrange
-            var model = new EDataService { Name = "ab" };
+            var model = new DataService { Name = "ab" };
 
             // Act
             var result = _validator.TestValidate(model);
@@ -364,7 +364,7 @@ namespace WebApi.Tests.Controllers
         public void ShouldHaveErrorWhenNameIsTooLong()
         {
             // Arrange
-            var model = new EDataService { Name = new string('a', 256) };
+            var model = new DataService { Name = new string('a', 256) };
 
             // Act
             var result = _validator.TestValidate(model);
@@ -378,7 +378,7 @@ namespace WebApi.Tests.Controllers
         public void ShouldNotHaveErrorWhenNameIsValid()
         {
             // Arrange
-            var model = new EDataService { Name = "ValidName" };
+            var model = new DataService { Name = "ValidName" };
 
             // Act
             var result = _validator.TestValidate(model);

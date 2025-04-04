@@ -14,21 +14,21 @@ namespace Application.Tests.Services
     public class DataServiceTests
     {
         private readonly Mock<IDataServiceRepository> _serviceRepositoryMock;
-        private readonly Mock<IStringLocalizer<DataService>> _localizerMock;
-        private readonly DataService _dataService;
+        private readonly Mock<IStringLocalizer<Stellantis.ProjectName.Application.Services.DataService>> _localizerMock;
+        private readonly Stellantis.ProjectName.Application.Services.DataService _dataService;
 
         public DataServiceTests()
         {
             _serviceRepositoryMock = new Mock<IDataServiceRepository>();
-            _localizerMock = new Mock<IStringLocalizer<DataService>>();
-            _dataService = new DataService(_serviceRepositoryMock.Object, _localizerMock.Object);
+            _localizerMock = new Mock<IStringLocalizer<Stellantis.ProjectName.Application.Services.DataService>>();
+            _dataService = new Stellantis.ProjectName.Application.Services.DataService(_serviceRepositoryMock.Object, _localizerMock.Object);
         }
 
         [Fact]
         public async Task GetAllServicesAsyncShouldReturnAllServices()
         {
             // Arrange
-            var expectedServices = new List<EDataService>
+            var expectedServices = new List<Stellantis.ProjectName.Domain.Entities.DataService>
             {
                 new() { Id = 1, Name = "Service 1", ApplicationId = 1 },
                 new() { Id = 2, Name = "Service 2", ApplicationId = 2 }
@@ -48,7 +48,7 @@ namespace Application.Tests.Services
         {
             // Arrange
             var serviceId = 1;
-            var expectedService = new EDataService
+            var expectedService = new Stellantis.ProjectName.Domain.Entities.DataService
             {
                 Id = serviceId,
                 Name = "Test Service",
@@ -68,7 +68,7 @@ namespace Application.Tests.Services
         public async Task AddServiceAsyncShouldReturnConflictWhenNameIsEmpty()
         {
             // Arrange
-            var newService = new EDataService
+            var newService = new Stellantis.ProjectName.Domain.Entities.DataService
             {
                 Id = 3,
                 Name = string.Empty,
@@ -82,14 +82,14 @@ namespace Application.Tests.Services
             // Act & Assert
             var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => _dataService.AddServiceAsync(newService));
             Assert.Equal(localizedString.Value, exception.Message);
-            _serviceRepositoryMock.Verify(repo => repo.AddServiceAsync(It.IsAny<EDataService>()), Times.Never);
+            _serviceRepositoryMock.Verify(repo => repo.AddServiceAsync(It.IsAny<Stellantis.ProjectName.Domain.Entities.DataService>()), Times.Never);
         }
 
         [Fact]
         public async Task AddServiceAsyncShouldCallRepositoryAdd()
         {
             // Arrange
-            var newService = new EDataService
+            var newService = new Stellantis.ProjectName.Domain.Entities.DataService
             {
                 Id = 3,
                 Name = "New Service",
@@ -107,7 +107,7 @@ namespace Application.Tests.Services
         public async Task AddServiceAsyncShouldSetDescription()
         {
             // Arrange
-            var newService = new EDataService
+            var newService = new Stellantis.ProjectName.Domain.Entities.DataService
             {
                 Id = 3,
                 Name = "New Service",
@@ -119,21 +119,21 @@ namespace Application.Tests.Services
             await _dataService.AddServiceAsync(newService);
 
             // Assert
-            _serviceRepositoryMock.Verify(repo => repo.AddServiceAsync(It.Is<EDataService>(s => s.Description == "This is a test description.")), Times.Once);
+            _serviceRepositoryMock.Verify(repo => repo.AddServiceAsync(It.Is<Stellantis.ProjectName.Domain.Entities.DataService>(s => s.Description == "This is a test description.")), Times.Once);
         }
 
         [Fact]
         public async Task AddServiceAsyncShouldReturnConflictWhenServiceNameAlreadyExists()
         {
             // Arrange
-            var newService = new EDataService
+            var newService = new Stellantis.ProjectName.Domain.Entities.DataService
             {
                 Id = 3,
                 Name = "Existing Service",
                 ApplicationId = 3
             };
 
-            var existingService = new EDataService
+            var existingService = new Stellantis.ProjectName.Domain.Entities.DataService
             {
                 Id = 1,
                 Name = "Existing Service",
@@ -150,14 +150,14 @@ namespace Application.Tests.Services
             // Act & Assert
             var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => _dataService.AddServiceAsync(newService));
             Assert.Equal(localizedString.Value, exception.Message);
-            _serviceRepositoryMock.Verify(repo => repo.AddServiceAsync(It.IsAny<EDataService>()), Times.Never);
+            _serviceRepositoryMock.Verify(repo => repo.AddServiceAsync(It.IsAny<Stellantis.ProjectName.Domain.Entities.DataService>()), Times.Never);
         }
 
         [Fact]
         public async Task UpdateServiceAsyncShouldCallRepositoryUpdate()
         {
             // Arrange
-            var updatedService = new EDataService
+            var updatedService = new Stellantis.ProjectName.Domain.Entities.DataService
             {
                 Id = 1,
                 Name = "Updated Service",

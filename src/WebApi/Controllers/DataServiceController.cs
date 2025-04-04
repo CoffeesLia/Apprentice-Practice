@@ -14,7 +14,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
     [ApiController]
     [Route("api/[controller]")]
     internal class DataServiceController(IDataService dataService, IMapper mapper, IStringLocalizerFactory localizerFactory)
-        : EntityControllerBase<DataService, DataServiceDto>(dataService, mapper, localizerFactory)
+        : EntityControllerBase<Application.Services.DataService, DataServiceDto>(dataService, mapper, localizerFactory)
     {
         private readonly IDataService _dataService = dataService;
 

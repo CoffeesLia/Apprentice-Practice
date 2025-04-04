@@ -2,12 +2,12 @@
 
 namespace Stellantis.ProjectName.Application.Interfaces.Repositories
 {
-    public interface IDataServiceRepository : IRepositoryEntityBase<EDataService>
+    public interface IDataServiceRepository : IRepositoryEntityBase<DataService>
     {
-        Task<EDataService?> GetServiceByIdAsync(int id);
-        Task<IEnumerable<EDataService>> GetAllServicesAsync();
-        Task AddServiceAsync(EDataService service);
-        Task UpdateServiceAsync(EDataService service);
+        Task<DataService?> GetServiceByIdAsync(int id);
+        Task<IEnumerable<DataService>> GetAllServicesAsync();
+        Task AddServiceAsync(DataService service);
+        Task UpdateServiceAsync(DataService service);
         Task DeleteServiceAsync(int id);
     }
 }

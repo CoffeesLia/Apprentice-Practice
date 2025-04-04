@@ -12,18 +12,18 @@ namespace Stellantis.ProjectName.Application.Services
         private readonly IDataServiceRepository _serviceRepository = serviceRepository ?? throw new ArgumentNullException(nameof(serviceRepository));
         private readonly IStringLocalizer<DataService> _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
 
-        public async Task<EDataService> GetServiceByIdAsync(int id)
+        public async Task<Domain.Entities.DataService> GetServiceByIdAsync(int id)
         {
             var service = await _serviceRepository.GetServiceByIdAsync(id).ConfigureAwait(false);
             return service ?? throw new KeyNotFoundException(_localizer["ServiceNotFound", id]);
         }
 
-        public async Task<IEnumerable<EDataService>> GetAllServicesAsync()
+        public async Task<IEnumerable<Domain.Entities.DataService>> GetAllServicesAsync()
         {
             return await _serviceRepository.GetAllServicesAsync().ConfigureAwait(false);
         }
 
-        public async Task<OperationResult> AddServiceAsync(EDataService service)
+        public async Task<OperationResult> AddServiceAsync(Domain.Entities.DataService service)
         {
             ArgumentNullException.ThrowIfNull(service, nameof(service));
 
@@ -45,7 +45,7 @@ namespace Stellantis.ProjectName.Application.Services
             return OperationResult.Complete();
         }
 
-        public async Task UpdateServiceAsync(EDataService service)
+        public async Task UpdateServiceAsync(Domain.Entities.DataService service)
         {
             await _serviceRepository.UpdateServiceAsync(service).ConfigureAwait(false);
         }
