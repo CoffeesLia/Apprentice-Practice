@@ -1,74 +1,56 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Stellantis.ProjectName.Application.Interfaces.Repositories;
-using Stellantis.ProjectName.Application.Models;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
+using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
+using Stellantis.ProjectName.WebApi.Dto;
+using Stellantis.ProjectName.WebApi.Dto.Filters;
+using Stellantis.ProjectName.WebApi.ViewModels;
 
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    internal class GitRepoController : ControllerBase
+    [Route("api/GitRepos")]
+    internal sealed class GitRepoControllerBase : EntityControllerBase<GitRepo, GitRepoDto>
     {
-        private readonly IGitRepoRepository _gitRepoService;
-
-        public GitRepoController(IGitRepoRepository GitRepoService)
+        internal GitRepoControllerBase(IGitRepoService service, IMapper mapper, IStringLocalizerFactory localizerFactory)
+            : base(service, mapper, localizerFactory)
         {
-            _gitRepoService = GitRepoService;
         }
+
+        protected override IGitRepoService Service => (IGitRepoService)base.Service;
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] GitRepo newRepo)
+        public async Task<IActionResult> CreateAsync([FromBody] GitRepoDto itemDto)
         {
-            var result = await _gitRepoService.CreateAsync(newRepo).ConfigureAwait(false);
-            if (result.Status == OperationStatus.InvalidData)
-            {
-                return BadRequest(result);
-            }
-            if (result.Status == OperationStatus.Conflict)
-            {
-                return Conflict(result);
-            }
-            return Ok(result);
-        }
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
-        {
-            var repo = await _gitRepoService.GetRepositoryDetailsAsync(id).ConfigureAwait(false);
-            if (repo == null)
-            {
-                return NotFound();
-            }
-            return Ok(repo);
+            return await CreateBaseAsync<GitRepoVm>(itemDto).ConfigureAwait(false);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] GitRepo updatedRepo)
+        public async Task<IActionResult> UpdateAsync(int id, [FromBody] GitRepoDto itemDto)
         {
-            updatedRepo.Id = id;
-            await _gitRepoService.UpdateAsync(updatedRepo).ConfigureAwait(false);
-            return Ok();
+            return await base.UpdateBaseAsync<GitRepoVm>(id, itemDto).ConfigureAwait(false);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<GitRepoVm>> GetAsync(int id)
         {
-            await _gitRepoService.DeleteAsync(id).ConfigureAwait(false);
-            return Ok();
+            return await GetAsync<GitRepoVm>(id).ConfigureAwait(false);
         }
 
         [HttpGet]
-        public async Task<IActionResult> List([FromQuery] GitRepoFilter filter)
+        public async Task<IActionResult> GetListAsync([FromQuery] GitRepoFilterDto filterDto)
         {
-            var result = await _gitRepoService.GetListAsync(filter).ConfigureAwait(false);
+            var filter = Mapper.Map<GitRepoFilter>(filterDto);
+            var pagedResult = await Service.GetListAsync(filter!).ConfigureAwait(false);
+            var result = Mapper.Map<PagedResultVm<GitRepoVm>>(pagedResult);
             return Ok(result);
         }
 
-        [HttpGet("async")]
-        public IAsyncEnumerable<GitRepo> ListRepositories()
+        [HttpDelete("{id}")]
+        public override async Task<IActionResult> DeleteAsync(int id)
         {
-            return _gitRepoService.ListRepositories();
+            return await base.DeleteAsync(id).ConfigureAwait(false);
         }
     }
 }

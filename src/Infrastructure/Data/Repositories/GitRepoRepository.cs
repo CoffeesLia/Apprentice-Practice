@@ -9,12 +9,8 @@ using Stellantis.ProjectName.Domain.Entities;
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
 {
-    public class GitRepoRepository : RepositoryBase<GitRepo, Context>, IGitRepoRepository
+    public class GitRepoRepository(Context context) : RepositoryBase<GitRepo, Context>(context), IGitRepoRepository
     {
-        public GitRepoRepository(Context context) : base(context)
-        {
-        }
-
         public async Task<bool> DeleteAsync(int id)
         {
             var entity = await GetByIdAsync(id).ConfigureAwait(false);
@@ -82,7 +78,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             return await Context.Set<GitRepo>().AnyAsync(expression).ConfigureAwait(false);
         }
 
-        public async Task<bool> VerifyUrlAlreadyExistsAsync(string url)
+        public async Task<bool> VerifyUrlAlreadyExistsAsync(Uri url)
         {
             return await Context.Set<GitRepo>().AnyAsync(a => a.Url == url).ConfigureAwait(false);
         }

@@ -21,7 +21,7 @@ namespace Stellantis.ProjectName.Application.Validators
 
             RuleFor(repo => repo.Url)
                 .NotEmpty().WithMessage(localizer[nameof(GitResource.UrlIsRequired)])
-                .Must(BeAValidUrl).WithMessage(localizer[nameof(GitResource.UrlIsRequired)]);
+                .Must(url => BeAValidUrl(url.ToString())).WithMessage(localizer[nameof(GitResource.UrlIsRequired)]);
 
             RuleFor(repo => repo.ApplicationId)
                 .GreaterThan(0).WithMessage(localizer[nameof(GitResource.ApplicationNotFound)])

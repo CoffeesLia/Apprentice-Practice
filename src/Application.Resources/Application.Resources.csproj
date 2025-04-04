@@ -3,7 +3,7 @@
   <PropertyGroup>
     <AnalysisLevel>latest-all</AnalysisLevel>
     <AssemblyInformationalVersion>1.0.0</AssemblyInformationalVersion>
-    <AssemblyName>Stellantis.ProjectName.$(MSBuildProjectName)</AssemblyName>
+    <AssemblyName>Stellantis.$(SolutionName).$(MSBuildProjectName)</AssemblyName>
     <Authors>Stellantis</Authors>
     <Copyright>© Stellantis. All rights reserved.</Copyright>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
@@ -14,58 +14,58 @@
     <Nullable>enable</Nullable>
     <PackageId>$(AssemblyName)</PackageId>
     <PackageTags>AMS</PackageTags>
-    <Product>ProjectName</Product>
+    <Product>$(SolutionName)</Product>
     <RepositoryUrl>https://gitlab.fcalatam.com/fca/architecture/application/dotnetcore/base-project.git</RepositoryUrl>
-    <RootNamespace>Stellantis.ProjectName.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <RootNamespace>Stellantis.$(SolutionName).$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
     <TargetFramework>net8.0</TargetFramework>
-    <Title>ProjectName</Title>
+    <Title>$(SolutionName)</Title>
   </PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-		<WarningLevel>9999</WarningLevel>
-	</PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <WarningLevel>9999</WarningLevel>
+  </PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-		<WarningLevel>9999</WarningLevel>
-	</PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <WarningLevel>9999</WarningLevel>
+  </PropertyGroup>
 
-	<ItemGroup>
-		<Compile Remove="AreaResources.resx.Designer.cs" />
-		<Compile Remove="PartNumberResources.Designer.cs" />
-		<Compile Remove="SupplierResources.Designer.cs" />
-		<Compile Remove="VehicleResources.Designer.cs" />
-	</ItemGroup>
+  <ItemGroup>
+    <Compile Remove="AreaResources.resx.Designer.cs" />
+    <Compile Remove="PartNumberResources.Designer.cs" />
+    <Compile Remove="SupplierResources.Designer.cs" />
+    <Compile Remove="VehicleResources.Designer.cs" />
+  </ItemGroup>
 
-	<ItemGroup>
-		<EmbeddedResource Remove="PartNumberResources.es-AR.resx" />
-		<EmbeddedResource Remove="PartNumberResources.fr-FR.resx" />
-		<EmbeddedResource Remove="PartNumberResources.it-IT.resx" />
-		<EmbeddedResource Remove="PartNumberResources.ja-JP.resx" />
-		<EmbeddedResource Remove="PartNumberResources.pt-BR.resx" />
-		<EmbeddedResource Remove="PartNumberResources.resx" />
-		<EmbeddedResource Remove="PartNumberResources.zh-CN.resx" />
-		<EmbeddedResource Remove="SupplierResources.es-AR.resx" />
-		<EmbeddedResource Remove="SupplierResources.fr-FR.resx" />
-		<EmbeddedResource Remove="SupplierResources.it-IT.resx" />
-		<EmbeddedResource Remove="SupplierResources.ja-JP.resx" />
-		<EmbeddedResource Remove="SupplierResources.pt-BR.resx" />
-		<EmbeddedResource Remove="SupplierResources.resx" />
-		<EmbeddedResource Remove="SupplierResources.zh-CN.resx" />
-		<EmbeddedResource Remove="VehicleResources.es-AR.resx" />
-		<EmbeddedResource Remove="VehicleResources.fr-FR.resx" />
-		<EmbeddedResource Remove="VehicleResources.it-IT.resx" />
-		<EmbeddedResource Remove="VehicleResources.ja-JP.resx" />
-		<EmbeddedResource Remove="VehicleResources.pt-BR.resx" />
-		<EmbeddedResource Remove="VehicleResources.resx" />
-		<EmbeddedResource Remove="VehicleResources.zh-CN.resx" />
-	</ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="PartNumberResources.es-AR.resx" />
+    <EmbeddedResource Remove="PartNumberResources.fr-FR.resx" />
+    <EmbeddedResource Remove="PartNumberResources.it-IT.resx" />
+    <EmbeddedResource Remove="PartNumberResources.ja-JP.resx" />
+    <EmbeddedResource Remove="PartNumberResources.pt-BR.resx" />
+    <EmbeddedResource Remove="PartNumberResources.resx" />
+    <EmbeddedResource Remove="PartNumberResources.zh-CN.resx" />
+    <EmbeddedResource Remove="SupplierResources.es-AR.resx" />
+    <EmbeddedResource Remove="SupplierResources.fr-FR.resx" />
+    <EmbeddedResource Remove="SupplierResources.it-IT.resx" />
+    <EmbeddedResource Remove="SupplierResources.ja-JP.resx" />
+    <EmbeddedResource Remove="SupplierResources.pt-BR.resx" />
+    <EmbeddedResource Remove="SupplierResources.resx" />
+    <EmbeddedResource Remove="SupplierResources.zh-CN.resx" />
+    <EmbeddedResource Remove="VehicleResources.es-AR.resx" />
+    <EmbeddedResource Remove="VehicleResources.fr-FR.resx" />
+    <EmbeddedResource Remove="VehicleResources.it-IT.resx" />
+    <EmbeddedResource Remove="VehicleResources.ja-JP.resx" />
+    <EmbeddedResource Remove="VehicleResources.pt-BR.resx" />
+    <EmbeddedResource Remove="VehicleResources.resx" />
+    <EmbeddedResource Remove="VehicleResources.zh-CN.resx" />
+  </ItemGroup>
 
-	<ItemGroup>
-		<None Remove="AreaResources.pt-BR.resx.bak" />
-		<None Remove="AreaResources.resx.bak" />
-	</ItemGroup>
+  <ItemGroup>
+    <None Remove="AreaResources.pt-BR.resx.bak" />
+    <None Remove="AreaResources.resx.bak" />
+  </ItemGroup>
 
   <ItemGroup>
     <Compile Update="ApplicationDataResources.Designer.cs">
@@ -88,38 +88,22 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>FilterResources.resx</DependentUpon>
     </Compile>
-    <Compile Update="IntegrationResources.Designer.cs">
-      <DependentUpon>IntegrationResources.resx</DependentUpon>
+    <Compile Update="ResponsibleResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ResponsibleResource.resx</DependentUpon>
+    </Compile>
+    <Compile Update="ServiceResources.Designer.cs">
+      <DependentUpon>ServiceResources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
-    <Compile Update="MemberResource.Designer.cs">
+    <Compile Update="SquadResources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>MemberResource.resx</DependentUpon>
+      <DependentUpon>SquadResources.resx</DependentUpon>
     </Compile>
-
-		<Compile Update="ResponsibleResource.Designer.cs">
-			<DesignTime>True</DesignTime>
-			<AutoGen>True</AutoGen>
-			<DependentUpon>ResponsibleResource.resx</DependentUpon>
-		</Compile>
-		<Compile Update="GitLabResource.pt-BR.Designer.cs">
-			<DependentUpon>GitLabResource.pt-BR.resx</DependentUpon>
-			<DesignTime>True</DesignTime>
-			<AutoGen>True</AutoGen>
-		</Compile>
-		<Compile Update="ServiceResources.Designer.cs">
-		  <DesignTime>True</DesignTime>
-		  <AutoGen>True</AutoGen>
-		  <DependentUpon>ServiceResources.resx</DependentUpon>
-		</Compile>
-		<Compile Update="SquadResources.Designer.cs">
-			<DesignTime>True</DesignTime>
-			<AutoGen>True</AutoGen>
-			<DependentUpon>SquadResources.resx</DependentUpon>
-		</Compile>
-	</ItemGroup>
+  </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Update="ApplicationDataResources.resx">
@@ -152,76 +136,78 @@
       <DependentUpon>GeneralResources.resx</DependentUpon>
       <Generator></Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="GitLabResource.pt-BR.resx">
-      <Generator></Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="GitLabResource.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>GitLabResource.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="IntegrationResources.resx">
-      <LastGenOutput>IntegrationResources.Designer.cs</LastGenOutput>
-      <Generator>PublicResXFileCodeGenerator</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="MemberResource.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>MemberResource.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <EmbeddedResource Update="Messages - Copy %282%29.pt-br.resx">
       <SubType>Designer</SubType>
       <DependentUpon>Messages.resx</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="ResponsibleResource.pt-br.resx">
+    <EmbeddedResource Update="ServiceResources.zh-CN.resx">
+      <DependentUpon>ServiceResources.resx</DependentUpon>
       <Generator></Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="ResponsibleResource.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>ResponsibleResource.Designer.cs</LastGenOutput>
+    <EmbeddedResource Update="ServiceResources.ja-JP.resx">
+      <DependentUpon>ServiceResources.resx</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="ServiceResources.fr-FR.resx">
+      <DependentUpon>ServiceResources.resx</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Update="Messages - Copy.pt-BR.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Update="ServiceResources.es-AR.resx">
+      <DependentUpon>ServiceResources.resx</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="ServiceResources.it-IT.resx">
+      <DependentUpon>ServiceResources.resx</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="ServiceResources.pt-BR.resx">
+      <DependentUpon>ServiceResources.resx</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="ServiceResources.resx">
+      <LastGenOutput>ServiceResources.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
 
-		<EmbeddedResource Update="FilterResources.it-IT.resx">
-			<DependentUpon>FilterResources.resx</DependentUpon>
-			<Generator></Generator>
-		</EmbeddedResource>
-		<EmbeddedResource Update="FilterResources.zh-CN.resx">
-			<DependentUpon>FilterResources.resx</DependentUpon>
-			<Generator></Generator>
-		</EmbeddedResource>
-		<EmbeddedResource Update="FilterResources.ja-JP.resx">
-			<DependentUpon>FilterResources.resx</DependentUpon>
-			<Generator></Generator>
-		</EmbeddedResource>
-		<EmbeddedResource Update="FilterResources.fr-FR.resx">
-			<DependentUpon>FilterResources.resx</DependentUpon>
-			<Generator></Generator>
-		</EmbeddedResource>
-		<EmbeddedResource Update="FilterResources.es-AR.resx">
-			<DependentUpon>FilterResources.resx</DependentUpon>
-			<Generator></Generator>
-		</EmbeddedResource>
-		<EmbeddedResource Update="FilterResources.pt-BR.resx">
-			<DependentUpon>FilterResources.resx</DependentUpon>
-			<Generator></Generator>
-		</EmbeddedResource>
-		<EmbeddedResource Update="FilterResources.resx">
-			<LastGenOutput>FilterResources.Designer.cs</LastGenOutput>
-			<Generator>PublicResXFileCodeGenerator</Generator>
-		</EmbeddedResource>
-		<EmbeddedResource Update="ServiceResources.resx">
-		  <Generator>PublicResXFileCodeGenerator</Generator>
-		  <LastGenOutput>ServiceResources.Designer.cs</LastGenOutput>
-		</EmbeddedResource>
-		<EmbeddedResource Update="SquadResources.pt-BR.resx">
-			<Generator></Generator>
-		</EmbeddedResource>
-		<EmbeddedResource Update="SquadResources.resx">
-			<Generator>PublicResXFileCodeGenerator</Generator>
-			<LastGenOutput>SquadResources.Designer.cs</LastGenOutput>
-		</EmbeddedResource>
+     <EmbeddedResource Update="FilterResources.it-IT.resx">
+      <DependentUpon>FilterResources.resx</DependentUpon>
+      <Generator></Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="FilterResources.zh-CN.resx">
+      <DependentUpon>FilterResources.resx</DependentUpon>
+      <Generator></Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="FilterResources.ja-JP.resx">
+      <DependentUpon>FilterResources.resx</DependentUpon>
+      <Generator></Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="FilterResources.fr-FR.resx">
+      <DependentUpon>FilterResources.resx</DependentUpon>
+      <Generator></Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="FilterResources.es-AR.resx">
+      <DependentUpon>FilterResources.resx</DependentUpon>
+      <Generator></Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="FilterResources.pt-BR.resx">
+      <DependentUpon>FilterResources.resx</DependentUpon>
+      <Generator></Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="FilterResources.resx">
+      <LastGenOutput>FilterResources.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="SquadResources.pt-BR.resx">
+      <Generator></Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="SquadResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>SquadResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
 
-	</ItemGroup>
+  </ItemGroup>
 
 </Project>
