@@ -22,10 +22,10 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(x => x.Applications, x => x.Ignore());
             CreateMap<AreaFilterDto, AreaFilter>();
 
-            CreateMap<DataServiceDto, Application.Services.DataService>()
-                .ForMember(x => x.Id, (IMemberConfigurationExpression<DataServiceDto, Application.Services.DataService, object> x) => x.Ignore())
-                .ForMember(x => x.ServiceId, (IMemberConfigurationExpression<DataServiceDto, Application.Services.DataService, object> x) => x.Ignore());
-            CreateMap<Application.Services.DataService, DataServiceVm>();
+            CreateMap<DataServiceDto, DataService>()
+                .ForMember(x => x.Id, x => x.Ignore())
+                .ForMember(x => x.ServiceId, x => x.Ignore());
+            CreateMap<DataService, DataServiceVm>();
 
             CreateMap<IntegrationDto, Integration>()
                 .ForMember(x => x.Id, x => x.Ignore());
