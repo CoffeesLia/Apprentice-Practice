@@ -7,8 +7,10 @@ using Stellantis.ProjectName.Application.Models.Filters;
 
 namespace Infrastructure.Tests.Data.Repositories
 {
-    public class MemberRepositoryTests
+    public class MemberRepositoryTests : IDisposable
     {
+        private bool _disposed;
+
         private readonly Context _context;
         private readonly MemberRepository _repository;
         private readonly Fixture _fixture = new();
@@ -55,8 +57,9 @@ namespace Infrastructure.Tests.Data.Repositories
             Assert.Equal(100, result.Result.First().Cost);
         }
 
+       
         [Fact]
-        public async Task CreateAsyncShouldAddMember() // Remove underscores
+        public async Task CreateAsyncShouldAddMember()
         {
             // Arrange
             var member = _fixture.Create<Member>();
@@ -72,23 +75,7 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
-        public async Task CreateAsync_ShouldAddMember()
-        {
-            // Arrange
-            var member = _fixture.Create<Member>();
-
-            // Act
-            await _repository.CreateAsync(member);
-            await _context.SaveChangesAsync();
-
-            // Assert
-            var createdMember = await _context.Set<Member>().FindAsync(member.Id);
-            Assert.NotNull(createdMember);
-            Assert.Equal(member.Name, createdMember.Name);
-        }
-
-        [Fact]
-        public async Task GetByIdAsync_ShouldReturnMember()
+        public async Task GetByIdAsyncShouldReturnMember()
         {
             // Arrange
             var member = _fixture.Create<Member>();
@@ -104,7 +91,7 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
-        public async Task IsEmailUnique_ShouldReturnFalse_WhenEmailExists()
+        public async Task IsEmailUniqueWhenEmailExists()
         {
             // Arrange
             var member = _fixture.Create<Member>();
@@ -119,7 +106,7 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
-        public async Task IsEmailUnique_ShouldReturnTrue_WhenEmailDoesNotExist()
+        public async Task IsEmailUniqueWhenEmailDoesNotExist()
         {
             // Act
             var isUnique = await _repository.IsEmailUnique("nonexistentemail@example.com");
@@ -129,7 +116,7 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
-        public async Task DeleteAsync_ShouldRemoveMember()
+        public async Task DeleteAsyncShouldRemoveMember()
         {
             // Arrange
             var member = _fixture.Create<Member>();
@@ -143,6 +130,28 @@ namespace Infrastructure.Tests.Data.Repositories
             // Assert
             var deletedMember = await _context.Set<Member>().FindAsync(member.Id);
             Assert.Null(deletedMember);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed && disposing && _context != null)
+            {
+                _context.Database.EnsureDeleted();
+                _context.Dispose();
+            }
+            _disposed = true;
+        }
+
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        ~MemberRepositoryTests()
+        {
+            Dispose(false);
         }
     }
 }

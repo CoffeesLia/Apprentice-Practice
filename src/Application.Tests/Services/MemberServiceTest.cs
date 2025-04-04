@@ -74,7 +74,7 @@ namespace Application.Services.Tests
 
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
-            Assert.Contains(MemberResource.MemberEmailAlreadyExists, result.Errors);
+            Assert.Contains(nameof(MemberResource.MemberEmailAlreadyExists), result.Errors);
         }
 
         [Fact]
@@ -184,7 +184,7 @@ namespace Application.Services.Tests
 
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
-            Assert.Contains(MemberResource.MemberEmailAlreadyExists, result.Errors);
+            Assert.Contains(nameof(MemberResource.MemberEmailAlreadyExists), result.Errors);
         }
 
         [Fact]

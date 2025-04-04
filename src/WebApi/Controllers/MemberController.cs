@@ -4,9 +4,7 @@ using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.ViewModels;
 using Microsoft.Extensions.Localization;
-using Stellantis.ProjectName.Application.Resources;
 using AutoMapper;
-using Stellantis.ProjectName.WebApi.Filters;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.Application.Models.Filters;
@@ -15,7 +13,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [Route("api/members")]
   
-    public sealed class MemberControllerBase(IMemberService service, IMapper mapper, IStringLocalizerFactory localizerFactory)
+    internal sealed class MemberControllerBase(IMemberService service, IMapper mapper, IStringLocalizerFactory localizerFactory)
         : EntityControllerBase<Member, MemberDto>(service, mapper, localizerFactory)
     {
         [HttpPost]

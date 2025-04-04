@@ -13,7 +13,6 @@ namespace Stellantis.ProjectName.Application.Services
     public class MemberService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<Member> validator)
         : EntityServiceBase<Member>(unitOfWork, localizerFactory, validator), IMemberService
     {
-        private new IStringLocalizer Localizer => localizerFactory.Create(typeof(MemberResource));
 
         protected override IMemberRepository Repository =>
             UnitOfWork.MemberRepository;
@@ -37,11 +36,12 @@ namespace Stellantis.ProjectName.Application.Services
         }
 
         public new async Task<OperationResult> GetItemAsync(int id)
-        {
-            return await Repository.GetByIdAsync(id).ConfigureAwait(false) is Member member
-                ? OperationResult.Complete()
-                : OperationResult.NotFound(Localizer[nameof(ServiceResources.NotFound)]);
-        }
+{
+    var member = await Repository.GetByIdAsync(id).ConfigureAwait(false);
+    return member != null
+        ? OperationResult.Complete()
+        : OperationResult.NotFound(Localizer[nameof(ServiceResources.NotFound)]);
+}
 
         public override async Task<OperationResult> UpdateAsync(Member item)
         {
