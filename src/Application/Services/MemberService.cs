@@ -8,8 +8,6 @@ using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
 using FluentValidation;
 
-
-
 namespace Stellantis.ProjectName.Application.Services
 {
     public class MemberService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<Member> validator)
@@ -48,6 +46,12 @@ namespace Stellantis.ProjectName.Application.Services
         public override async Task<OperationResult> UpdateAsync(Member item)
         {
             ArgumentNullException.ThrowIfNull(item);
+
+            var existingMember = await Repository.GetByIdAsync(item.Id).ConfigureAwait(false);
+            if (existingMember == null)
+            {
+                return OperationResult.NotFound(Localizer[nameof(MemberResource.MemberNotFound)]);
+            }
 
             var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
             if (!validationResult.IsValid)
