@@ -117,19 +117,34 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NotFound" xml:space="preserve">
-    <value>No encontrado.</value>
+  <data name="CostMemberLargestEqualZero" xml:space="preserve">
+    <value>O custo do membro deve ser maior ou igual a zero.</value>
   </data>
-  <data name="DeletedSuccessfully" xml:space="preserve">
-    <value>Eliminado con éxito.</value>
+  <data name="MemberEmailAlreadyExists" xml:space="preserve">
+    <value>Esse e-mail já existe.</value>
   </data>
-  <data name="RegisteredSuccessfully" xml:space="preserve">
-    <value>Registrado con éxito.</value>
+  <data name="MemberEmailIsRequired" xml:space="preserve">
+    <value>Email do membro é obrigatório.</value>
   </data>
-  <data name="UpdatedSuccessfully" xml:space="preserve">
-    <value> Actualizado con éxito.</value>
+  <data name="MemberEmailValidateLength" xml:space="preserve">
+    <value>O email deve ter entre {0} e {1} caracteres.</value>
   </data>
-  <data name="MemberUpdatedSuccessfully" xml:space="preserve">
-    <value>Miembro actualizado con éxito.</value>
+  <data name="MemberNotFound" xml:space="preserve">
+    <value>Membro não encontrado.</value>
+  </data>
+  <data name="MemberNameIsRequired" xml:space="preserve">
+    <value>O nome do membro é obrigatório.</value>
+  </data>
+  <data name="MemberNameValidateLength" xml:space="preserve">
+    <value>O nome deve ter entre {0} e {1} caracteres.</value>
+  </data>
+  <data name="MemberRoleIsRequired" xml:space="preserve">
+    <value>Função do membro é obrigatória.</value>
+  </data>
+  <data name="MemberRoleValidateLength" xml:space="preserve">
+    <value>A função deve ter entre {0} e {1} caracteres.</value>
+  </data>
+  <data name="MemberCostRequired" xml:space="preserve">
+    <value>Custo do membro é obrigátorio.</value>
   </data>
 </root>

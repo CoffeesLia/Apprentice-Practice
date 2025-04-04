@@ -10,6 +10,8 @@ namespace Stellantis.ProjectName.Application.Interfaces
 
         public IResponsibleRepository ResponsibleRepository { get; }
 
+        public IMemberRepository MemberRepository { get; }
+
         public IDataServiceRepository DataServiceRepository { get; }
 
         public IApplicationDataRepository ApplicationDataRepository { get; }                
