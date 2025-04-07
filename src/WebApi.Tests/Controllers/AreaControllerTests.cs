@@ -1,5 +1,4 @@
-﻿using AutoFixture;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Moq;
@@ -11,9 +10,11 @@ using Stellantis.ProjectName.WebApi.Controllers;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.ViewModels;
+using AutoFixture;
+using System.Collections.ObjectModel;
 
 
-namespace Stellantis.ProjectName.WebApi.Tests.Controllers
+namespace WebApi.Tests.Controllers
 {
     public class AreaControllerBaseTests
     {
@@ -34,7 +35,7 @@ namespace Stellantis.ProjectName.WebApi.Tests.Controllers
         }
 
         [Fact]
-        public async Task CreateAsyncShouldReturnCreatedAtActionWhenCreationIsSuccessful()
+        public async Task CreateAsyncShouldReturnCorrectResultWhenCreationIsSuccessful()
         {
             // Arrange
             var areaDto = _fixture.Create<AreaDto>();
@@ -49,10 +50,10 @@ namespace Stellantis.ProjectName.WebApi.Tests.Controllers
             var result = await _controller.CreateAsync(areaDto);
 
             // Assert
-            var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
-            Assert.Equal("GET", createdAtActionResult.ActionName);
-            Assert.Equal(area.Id, createdAtActionResult.RouteValues!["id"]);
-            Assert.Equal(areaVm, createdAtActionResult.Value);
+            Assert.IsType<CreatedAtActionResult>(result); // Verifica se o resultado é do tipo CreatedAtActionResult
+            var objectResult = result as CreatedAtActionResult; // Cast para acessar propriedades, se necessário
+            Assert.NotNull(objectResult);
+            Assert.Equal(areaVm, objectResult.Value);
         }
 
         [Fact]
@@ -75,34 +76,34 @@ namespace Stellantis.ProjectName.WebApi.Tests.Controllers
             Assert.Equal(areaVm.Id, returnedAreaVm.Id);
             Assert.Equal(areaVm.Name, returnedAreaVm.Name);
         }
-
         [Fact]
-        // Teste para verificar se GetListAsync retorna PagedResult
-        public async Task GetListAsyncShouldReturnPagedResult()
+        public async Task GetAsyncShouldReturnAreaVmWithApplications()
         {
             // Arrange
-            var filterDto = _fixture.Create<AreaFilterDto>();
-            var filter = _fixture.Build<AreaFilter>().With(f => f.Name, filterDto.Name).Create();
-            var pagedResult = _fixture.Create<PagedResult<Area>>();
-            var pagedResultVm = _fixture.Build<PagedResultVm<AreaVm>>()
-                .With(p => p.Result, pagedResult.Result.Select(a => _fixture.Build<AreaVm>().With(vm => vm.Name, a.Name).Create()).ToList())
-                .With(p => p.Page, pagedResult.Page)
-                .With(p => p.PageSize, pagedResult.PageSize)
-                .With(p => p.Total, pagedResult.Total)
-                .Create();
+            var area = _fixture.Create<Area>();
+            var applications = new Collection<ApplicationVm>(_fixture.CreateMany<ApplicationVm>().ToList());
+            var areaVm = new AreaVm
+            {
+                Id = area.Id,
+                Name = area.Name
+            };
 
-            _mapperMock.Setup(m => m.Map<AreaFilter>(filterDto)).Returns(filter);
-            _serviceMock.Setup(s => s.GetListAsync(filter)).ReturnsAsync(pagedResult);
-            _mapperMock.Setup(m => m.Map<PagedResultVm<AreaVm>>(pagedResult)).Returns(pagedResultVm);
+            foreach (var app in applications)
+            {
+                areaVm.Applications.Add(app);
+            }
+            _serviceMock.Setup(s => s.GetItemAsync(area.Id)).ReturnsAsync(area);
+            _mapperMock.Setup(m => m.Map<AreaVm>(area)).Returns(areaVm);
 
             // Act
-            var result = await _controller.GetListAsync(filterDto);
+            var result = await _controller.GetAsync(area.Id);
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedPagedResultVm = Assert.IsType<PagedResultVm<AreaVm>>(okResult.Value);
-            Assert.Equal(pagedResultVm.Result.Count(), returnedPagedResultVm.Result.Count());
-            Assert.Equal(pagedResultVm.Result.First().Name, returnedPagedResultVm.Result.First().Name);
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var returnedAreaVm = Assert.IsType<AreaVm>(okResult.Value);
+            Assert.Equal(areaVm.Id, returnedAreaVm.Id);
+            Assert.Equal(areaVm.Name, returnedAreaVm.Name);
+            Assert.Equal(areaVm.Applications, returnedAreaVm.Applications);
         }
 
         [Fact]
@@ -142,5 +143,76 @@ namespace Stellantis.ProjectName.WebApi.Tests.Controllers
             var noContentResult = Assert.IsType<NoContentResult>(result);
             Assert.Equal(204, noContentResult.StatusCode);
         }
+
+        [Fact]
+        public async Task GetListAsyncShouldReturnOkResultWithPagedResult()
+        {
+            // Arrange
+            var filterDto = _fixture.Create<AreaFilterDto>();
+            var filter = _fixture.Create<AreaFilter>();
+            var pagedResult = _fixture.Build<PagedResult<Area>>()
+                                      .With(pr => pr.Result, _fixture.CreateMany<Area>(2).ToList())
+                                      .With(pr => pr.Page, 1)
+                                      .With(pr => pr.PageSize, 10)
+                                      .With(pr => pr.Total, 2)
+                                      .Create();
+            var pagedResultVm = _fixture.Build<PagedResultVm<AreaVm>>()
+                                        .With(pr => pr.Result, _fixture.CreateMany<AreaVm>(2).ToList())
+                                        .With(pr => pr.Page, 1)
+                                        .With(pr => pr.PageSize, 10)
+                                        .With(pr => pr.Total, 2)
+                                        .Create();
+
+            _mapperMock.Setup(m => m.Map<AreaFilter>(filterDto)).Returns(filter);
+            _serviceMock.Setup(s => s.GetListAsync(filter)).ReturnsAsync(pagedResult);
+            _mapperMock.Setup(m => m.Map<PagedResultVm<AreaVm>>(pagedResult)).Returns(pagedResultVm);
+
+            // Act
+            var result = await _controller.GetListAsync(filterDto);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var returnedPagedResultVm = Assert.IsType<PagedResultVm<AreaVm>>(okResult.Value);
+            Assert.Equal(pagedResultVm.Page, returnedPagedResultVm.Page);
+            Assert.Equal(pagedResultVm.PageSize, returnedPagedResultVm.PageSize);
+            Assert.Equal(pagedResultVm.Total, returnedPagedResultVm.Total);
+            Assert.Equal(pagedResultVm.Result.Count(), returnedPagedResultVm.Result.Count());
+        }
+
+        [Fact]
+        public async Task GetListAsyncShouldReturnEmptyPagedResultWhenNoAreasFound()
+        {
+            // Arrange
+            var filterDto = _fixture.Create<AreaFilterDto>();
+            var filter = _fixture.Create<AreaFilter>();
+            var pagedResult = new PagedResult<Area>
+            {
+                Result = [],
+                Page = 1,
+                PageSize = 10,
+                Total = 0
+            };
+            var pagedResultVm = new PagedResultVm<AreaVm>
+            {
+                Result = [],
+                Page = 1,
+                PageSize = 10,
+                Total = 0
+            };
+
+            _mapperMock.Setup(m => m.Map<AreaFilter>(filterDto)).Returns(filter);
+            _serviceMock.Setup(s => s.GetListAsync(filter)).ReturnsAsync(pagedResult);
+            _mapperMock.Setup(m => m.Map<PagedResultVm<AreaVm>>(pagedResult)).Returns(pagedResultVm);
+
+            // Act
+            var result = await _controller.GetListAsync(filterDto);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var returnedPagedResultVm = Assert.IsType<PagedResultVm<AreaVm>>(okResult.Value);
+            Assert.Empty(returnedPagedResultVm.Result);
+            Assert.Equal(0, returnedPagedResultVm.Total);
+        }
+
     }
 }

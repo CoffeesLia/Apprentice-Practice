@@ -1,4 +1,0 @@
-﻿[*.cs]
-
-# CA1001: Tipos que têm campos descartáveis devem ser descartáveis
-dotnet_diagnostic.CA1001.severity = none

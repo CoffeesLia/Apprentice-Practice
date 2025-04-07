@@ -10,12 +10,8 @@ using System.Linq.Expressions;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
-    public class ApplicationDataRepository : RepositoryBase<ApplicationData, Context>, IApplicationDataRepository
+    public class ApplicationDataRepository(Context context) : RepositoryBase<ApplicationData, Context>(context), IApplicationDataRepository
     {
-        public ApplicationDataRepository(Context context) : base(context)
-        {
-        }
-
         public async Task DeleteAsync(int id, bool saveChanges = true)
         {
             var entity = await GetByIdAsync(id).ConfigureAwait(false);
@@ -44,7 +40,12 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 filters = filters.And(x => x.Name != null && x.Name.Contains(applicationFilter.Name));
             if (applicationFilter.AreaId > 0)
                 filters = filters.And(x => x.AreaId == applicationFilter.AreaId);
-
+            if(!string.IsNullOrWhiteSpace(applicationFilter.ProductOwner))
+                filters = filters.And(x => x.ProductOwner != null && x.ProductOwner.Contains(applicationFilter.ProductOwner));
+            if(!string.IsNullOrWhiteSpace(applicationFilter.ConfigurationItem))
+                filters = filters.And(x => x.ConfigurationItem != null && x.ConfigurationItem.Contains(applicationFilter.ConfigurationItem));
+            if (applicationFilter.External.HasValue)
+                filters = filters.And(x => x.External == applicationFilter.External.Value);
             return await GetListAsync(filter: filters, page: applicationFilter.Page, sort: applicationFilter.Sort, sortDir: applicationFilter.SortDir).ConfigureAwait(false);
         }
 
@@ -61,6 +62,11 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                        .FirstOrDefaultAsync(x => x.Id == id)
                        .ConfigureAwait(false);
 
+        }
+
+        public async Task<bool> IsResponsibleFromArea(int areaId, int responsibleId)
+        {
+            return await Context.Set<Responsible>().AnyAsync(r => r.Id == responsibleId && r.AreaId == areaId).ConfigureAwait(false);
         }
     }
     }

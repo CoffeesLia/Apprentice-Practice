@@ -9,10 +9,12 @@ namespace Stellantis.ProjectName.Infrastructure.Data
         public Context(DbContextOptions<Context> options) : base(options)
         {
         }
-
+        public DbSet<Responsible> Responsibles { get; set; } 
+        public DbSet<Area> Areas { get; set; }
+        public DbSet<Member> Members { get; set; }
         public DbSet<EntitySquad> Squads { get; set; }
-        public DbSet<Integration> Integration { get; set; }
-            
+        public DbSet<Integration> Integrations { get; set; }
+
         public DbSet<DataService> Services { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

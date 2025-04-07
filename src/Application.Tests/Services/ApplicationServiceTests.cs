@@ -1,23 +1,20 @@
-﻿using Microsoft.Extensions.Localization;
-using Moq;
-using FluentValidation;
-using Stellantis.ProjectName.Application.Interfaces.Repositories;
-using Stellantis.ProjectName.Application.Services;
-using Stellantis.ProjectName.Application.Resources;
-using Stellantis.ProjectName.Application.Models.Filters;
-using Stellantis.ProjectName.Domain.Entities;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Xunit;
-using Stellantis.ProjectName.Application.Models;
-using Stellantis.ProjectName.Application.Interfaces;
-using Stellantis.ProjectName.Application.Validators;
-using System.ComponentModel.DataAnnotations;
+﻿using FluentValidation;
 using FluentValidation.TestHelper;
+using Microsoft.Extensions.Localization;
+using Moq;
+using Stellantis.ProjectName.Application.Interfaces;
+using Stellantis.ProjectName.Application.Interfaces.Repositories;
+using Stellantis.ProjectName.Application.Models;
+using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Application.Resources;
+using Stellantis.ProjectName.Application.Services;
+using Stellantis.ProjectName.Application.Validators;
+using Stellantis.ProjectName.Domain.Entities;
+using Xunit;
 
 namespace Application.Tests.Services
 {
-    public class DataServiceTests
+    public class ApplicationServiceTests
     {
         private readonly Mock<IDataServiceRepository> _serviceRepositoryMock;
         private readonly Mock<IStringLocalizer<DataServiceResources>> _localizerMock;
@@ -25,7 +22,7 @@ namespace Application.Tests.Services
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private readonly ApplicationService _dataService;
 
-        public DataServiceTests()
+        public ApplicationServiceTests()
         {
             _serviceRepositoryMock = new Mock<IDataServiceRepository>();
             _localizerMock = new Mock<IStringLocalizer<DataServiceResources>>();

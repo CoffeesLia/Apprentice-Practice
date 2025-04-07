@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Interfaces.Services
 {
-    public interface IMemberService
+    public interface IMemberService : IEntityServiceBase<Member>
     {
-        void AddEntityMember(EntityMember entityMember);
+        Task<PagedResult<Member>> GetListAsync(MemberFilter memberFilter);
     }
 }

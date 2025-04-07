@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,6 +13,13 @@ namespace Stellantis.ProjectName.Domain.Entities
         public int AreaId { get; set; }
         public Area Area { get; set; } = null!;
         public ICollection<Integration> Integration { get; } = [];
+        public ICollection<Responsible> Responsibles { get; } = [];
+        public int ResponsibleId { get; set; }
+        public string? Description { get; set; }
+        public required string ProductOwner { get; set; }
+        public required string ConfigurationItem { get; set; }
+        public bool External { get; set; }
+
     }
 
 }

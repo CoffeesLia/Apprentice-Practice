@@ -129,4 +129,8 @@
   <data name="UpdatedSuccessfully" xml:space="preserve">
     <value>正常に更新されました (Seijō ni kōshin saremashita).</value>
   </data>
+  <data name="MemberUpdatedSuccessfully" xml:space="preserve">
+    <value>メンバーが正常に更新されました。 (member ga seijou ni koushin sa re mashi ta .
+)</value>
+  </data>
 </root>

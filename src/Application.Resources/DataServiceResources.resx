@@ -117,17 +117,17 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ServiceAlreadyExists" xml:space="preserve">
+    <value>Service already exists.</value>
+  </data>
+  <data name="ServiceCannotBeNull" xml:space="preserve">
+    <value>Service cannot be null.</value>
+  </data>
   <data name="ServiceNameLength" xml:space="preserve">
     <value>Service name must be between 3 and 50 characters.</value>
   </data>
   <data name="ServiceNotFound" xml:space="preserve">
     <value>Service not found.</value>
-  </data>
-  <data name="ServiceCannotBeNull" xml:space="preserve">
-    <value>Service cannot be null.</value>
-  </data>
-  <data name="ServiceAlreadyExists" xml:space="preserve">
-    <value>Service already exists.</value>
   </data>
   <data name="ServicesNoFound" xml:space="preserve">
     <value>No services found.</value>

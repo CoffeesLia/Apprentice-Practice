@@ -9,6 +9,5 @@ namespace Stellantis.ProjectName.Application.Interfaces.Repositories
         Task<bool> VerifyNameAlreadyExistsAsync(string name);
         Task<bool> VerifyAplicationsExistsAsync(int id);
 
-        Task<bool> GetByIdWithApplicationsAsync(int id);
     }
 }

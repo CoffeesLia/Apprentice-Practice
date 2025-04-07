@@ -70,11 +70,29 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Application not found.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Application cannot be found.
         /// </summary>
         public static string ApplicationNotFound {
             get {
                 return ResourceManager.GetString("ApplicationNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Configuration itemi s required..
+        /// </summary>
+        public static string ConfigurationItemRequired {
+            get {
+                return ResourceManager.GetString("ConfigurationItemRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a The description has a limit of {0} characters..
+        /// </summary>
+        public static string DescriptionValidateLength {
+            get {
+                return ResourceManager.GetString("DescriptionValidateLength", resourceCulture);
             }
         }
         
@@ -97,11 +115,20 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Application cannot be found.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Not Found..
         /// </summary>
         public static string NotFound {
             get {
                 return ResourceManager.GetString("NotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Product Owner is required..
+        /// </summary>
+        public static string ProductOwnerRequired {
+            get {
+                return ResourceManager.GetString("ProductOwnerRequired", resourceCulture);
             }
         }
     }
