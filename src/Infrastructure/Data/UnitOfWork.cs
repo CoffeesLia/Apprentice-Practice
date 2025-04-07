@@ -14,6 +14,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data
         public IAreaRepository AreaRepository { get; }
         public IIntegrationRepository IntegrationRepository { get; }
         public IResponsibleRepository ResponsibleRepository { get; }
+        public IMemberRepository MemberRepository { get; }
         public IApplicationDataRepository ApplicationDataRepository { get; }
         public ISquadRepository SquadRepository { get; }
         public IDataServiceRepository DataServiceRepository { get; }
@@ -27,6 +28,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data
             AreaRepository = new AreaRepository(context);
             IntegrationRepository = new IntegrationRepository(context);
             ResponsibleRepository = new ResponsibleRepository(context);
+            MemberRepository = new MemberRepository(context);
             ApplicationDataRepository = new ApplicationDataRepository(context);
             SquadRepository = new SquadRepository(context);
             GitRepoRepository = new GitRepoRepository(context);

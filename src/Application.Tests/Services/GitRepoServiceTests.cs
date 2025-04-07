@@ -41,18 +41,25 @@ namespace Application.Tests.Services
         public async Task CreateAsyncShouldReturnInvalidDataWhenRepositoryIsInvalid()
         {
             // Arrange
-            var validationResult = new ValidationResult(new List<ValidationFailure>());
-            var gitRepo = new GitRepo("ExistingRepo")
+            var invalidData = new GitRepo("InvalidData")
             {
-                Name = "ExistingRepo",
-                Description = "Description",
-                Url = new Uri("https://existing-url.com")
+                Name = "",
+                Description = "",
+                Url = new Uri("http://invalid-url.com"),
             };
 
-            _validatorMock.Setup(v => v.ValidateAsync(gitRepo, default)).ReturnsAsync(validationResult);
+            var validationResult = new ValidationResult(new List<ValidationFailure>
+            {
+                new("Name", _localizerMock.Object[nameof(GitResource.NameIsRequired)]),
+                new("Description", _localizerMock.Object[nameof(GitResource.DescriptionIsRequired)]),
+                new("Url", _localizerMock.Object[nameof(GitResource.UrlIsRequired)])
+            });
+            
+            _gitRepoRepositoryMock.Setup(r => r.GetByIdAsync(invalidData.Id)).ReturnsAsync(invalidData);
+            _validatorMock.Setup(v => v.ValidateAsync(invalidData, default)).ReturnsAsync(validationResult);
 
             // Act
-            var result = await _gitRepoService.CreateAsync(gitRepo);
+            var result = await _gitRepoService.UpdateAsync(invalidData);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
@@ -152,21 +159,21 @@ namespace Application.Tests.Services
         public async Task UpdateAsyncShouldReturnInvalidDataWhenRepositoryIsInvalid()
         {
             // Arrange
-            var invalidRepo = new GitRepo("InvalidRepo") 
-            { 
-                Id = 1, 
-                Name = "", 
-                Description = "", 
-                Url = new Uri (""), 
-                ApplicationId = 1 
+            var invalidRepo = new GitRepo("InvalidRepo")
+            {
+                Id = 1,
+                Name = "",
+                Description = "",
+                Url = new Uri("http://invalid-url.com"), 
+                ApplicationId = 1
             };
 
             var validationResult = new ValidationResult(new List<ValidationFailure>
-    {
-        new("Name", _localizerMock.Object[nameof(GitResource.NameIsRequired)]),
-        new("Description", _localizerMock.Object[nameof(GitResource.DescriptionIsRequired)]),
-        new("Url", _localizerMock.Object[nameof(GitResource.UrlIsRequired)])
-    });
+            {
+                new("Name", _localizerMock.Object[nameof(GitResource.NameIsRequired)]),
+                new("Description", _localizerMock.Object[nameof(GitResource.DescriptionIsRequired)]),
+                new("Url", _localizerMock.Object[nameof(GitResource.UrlIsRequired)])
+            });
 
             _gitRepoRepositoryMock.Setup(r => r.GetByIdAsync(invalidRepo.Id)).ReturnsAsync(invalidRepo);
             _validatorMock.Setup(v => v.ValidateAsync(invalidRepo, default)).ReturnsAsync(validationResult);
@@ -242,7 +249,7 @@ namespace Application.Tests.Services
             {
                 Name = "",
                 Description = "",
-                Url = "",
+                Url = new Uri("http://invalid-url.com"),
                 ApplicationId = 0
             };
             var repos = new PagedResult<GitRepo>
@@ -293,7 +300,12 @@ namespace Application.Tests.Services
         public async Task GetListAysncShouldReturnEmptyWhenNoRepositoriesExist()
         {
             // Arrange
-            var filter = new GitRepoFilter { Name = "", Description = "", Url = "", ApplicationId = 0 };
+            var filter = new GitRepoFilter 
+            { 
+                Name = "", 
+                Description = "",
+                Url = new Uri("http://invalid-url.com"),  
+                ApplicationId = 0 };
             var repos = new PagedResult<GitRepo>
             {
                 Result = new List<GitRepo>(),

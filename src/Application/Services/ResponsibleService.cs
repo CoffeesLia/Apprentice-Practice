@@ -10,17 +10,12 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Services
 {
-    public class ResponsibleService : EntityServiceBase<Responsible>, IResponsibleService
+    public class ResponsibleService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<Responsible> validator)
+            : EntityServiceBase<Responsible>(unitOfWork, localizerFactory, validator), IResponsibleService
     {
-        private readonly IStringLocalizer _localizer;
+        private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(ResponsibleResource));
         protected override IResponsibleRepository Repository => UnitOfWork.ResponsibleRepository;
-
-        public ResponsibleService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<Responsible> validator)
-            : base(unitOfWork, localizerFactory, validator)
-        {
-            ArgumentNullException.ThrowIfNull(localizerFactory);
-            _localizer = localizerFactory.Create(typeof(ResponsibleResource));
-        }
+        
 
         public override async Task<OperationResult> CreateAsync(Responsible item)
         {
@@ -81,7 +76,7 @@ namespace Stellantis.ProjectName.Application.Services
             var item = await Repository.GetByIdAsync(id).ConfigureAwait(false);
             if (item == null)
             {
-                return OperationResult.NotFound(_localizer[nameof(ResponsibleResource.ResponsibleNotFound)]);
+                return OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
             }
             return await base.DeleteAsync(item).ConfigureAwait(false);
         }

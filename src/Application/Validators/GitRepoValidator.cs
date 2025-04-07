@@ -12,16 +12,15 @@ namespace Stellantis.ProjectName.Application.Validators
         {
             ArgumentNullException.ThrowIfNull(localizer);
             ArgumentNullException.ThrowIfNull(gitRepoRepository);
-
             RuleFor(repo => repo.Name)
-                .NotEmpty().WithMessage(localizer[nameof(GitResource.NameIsRequired)]);
+                       .NotEmpty().WithMessage(GitResource.NameIsRequired);
 
             RuleFor(repo => repo.Description)
-                .NotEmpty().WithMessage(localizer[nameof(GitResource.DescriptionIsRequired)]);
+                .NotEmpty().WithMessage(GitResource.DescriptionIsRequired);
 
             RuleFor(repo => repo.Url)
-                .NotEmpty().WithMessage(localizer[nameof(GitResource.UrlIsRequired)])
-                .Must(url => BeAValidUrl(url.ToString())).WithMessage(localizer[nameof(GitResource.UrlIsRequired)]);
+                .NotEmpty().WithMessage(GitResource.UrlIsRequired)
+                .Must(uri => Uri.IsWellFormedUriString(uri.ToString(), UriKind.Absolute)).WithMessage(GitResource.UrlIsInvalid);
 
             RuleFor(repo => repo.ApplicationId)
                 .GreaterThan(0).WithMessage(localizer[nameof(GitResource.ApplicationNotFound)])
@@ -40,11 +39,6 @@ namespace Stellantis.ProjectName.Application.Validators
                     return !await gitRepoRepository.VerifyUrlAlreadyExistsAsync(validUri).ConfigureAwait(false);
                 })
                 .WithMessage(localizer[nameof(GitResource.ExistentRepositoryUrl)]);
-        }
-
-        private static bool BeAValidUrl(string url)
-        {
-            return Uri.TryCreate(url, UriKind.Absolute, out _);
         }
     }
 }

@@ -1,172 +1,250 @@
-﻿//using System;
-//using System.Threading.Tasks;
-//using AutoMapper;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.Extensions.Localization;
-//using Moq;
-//using Stellantis.ProjectName.Application.Interfaces.Services;
-//using Stellantis.ProjectName.Application.Resources;
-//using Stellantis.ProjectName.Domain.Entities;
-//using Stellantis.ProjectName.WebApi.Controllers;
-//using Stellantis.ProjectName.WebApi.ViewModels;
-//using Xunit;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
+using Moq;
+using Stellantis.ProjectName.Application.Interfaces.Services;
+using Stellantis.ProjectName.Application.Models;
+using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Application.Resources;
+using Stellantis.ProjectName.Domain.Entities;
+using Stellantis.ProjectName.WebApi.Controllers;
+using Stellantis.ProjectName.WebApi.Dto;
+using Stellantis.ProjectName.WebApi.Dto.Filters;
+using Stellantis.ProjectName.WebApi.ViewModels;
 
-//namespace WebApi.Tests.Controllers
-//{
-//    public class MemberControllerTest
-//    {
-//        private readonly Mock<IMemberService> _memberServiceMock;
-//        private readonly Mock<IStringLocalizer<ServiceResources>> _localizerMock;
-//        private readonly Mock<IMapper> _mapperMock;
-//        private readonly MemberController _memberController;
+namespace WebApi.Tests.Controllers
+{
+    public class MemberControllerTest
+    {
+        private readonly Mock<IMemberService> _serviceMock;
+        private readonly Mock<IMapper> _mapperMock;
+        private readonly Mock<IStringLocalizerFactory> _localizerFactoryMock;
+        private readonly MemberControllerBase _controller;
 
-//        public MemberControllerTest()
-//        {
-//            _memberServiceMock = new Mock<IMemberService>();
-//            _localizerMock = new Mock<IStringLocalizer<ServiceResources>>();
-//            _mapperMock = new Mock<IMapper>();
-//            _memberController = new MemberController(_memberServiceMock.Object, _localizerMock.Object, _mapperMock.Object);
-//        }
+        public MemberControllerTest()
+        {
+            _serviceMock = new Mock<IMemberService>();
+            _mapperMock = new Mock<IMapper>();
+            _localizerFactoryMock = new Mock<IStringLocalizerFactory>();
+            var localizer = new Mock<IStringLocalizer>();
 
-//        [Fact]
-//        public async Task UpdateMemberShouldReturnOkWhenUpdateIsSuccessful()
-//        {
-//            //arrange
-//            var memberVm = new MemberVm
-//            {
-//                Id = Guid.NewGuid(),
-//                Name = "Ana",
-//                Role = "Developer",
-//                Cost = 1000,
-//                Email = "ana.souza7@exemplo.com"
-//            };
+            _localizerFactoryMock.Setup(f => f.Create(typeof(MemberResource))).Returns(localizer.Object);
 
-//            var entityMember = new EntityMember
-//            {
-//                Id = memberVm.Id,
-//                Name = memberVm.Name,
-//                Role = memberVm.Role,
-//                Cost = memberVm.Cost,
-//                Email = memberVm.Email
-//            };
+            _controller = new MemberControllerBase(_serviceMock.Object, _mapperMock.Object, _localizerFactoryMock.Object);
+        }
 
-//            _mapperMock.Setup(m => m.Map<EntityMember>(memberVm)).Returns(entityMember);
-//            _localizerMock.Setup(localizer => localizer["MemberUpdatedSuccessfully"]).Returns(new LocalizedString("MemberUpdatedSuccessfully", "Member updated successfully. "));
+        [Fact]
+        public async Task CreateAsyncShouldReturnCreatedAtActionResultWhenMemberIsValid()
+        {
+            // Arrange
+            var memberDto = new MemberDto
+            {
+                Name = "Valid Name",
+                Role = "Valid Role",
+                Email = "valid@example.com",
+                Cost = 100
+            };
+            var member = new Member
+            {
+                Name = "Valid Name",
+                Role = "Valid Role",
+                Email = "valid@example.com",
+                Cost = 100
 
-//            //act
-//            var result = await _memberController.UpdateMember(memberVm.Id, memberVm);
+            };
+            var memberVm = new MemberVm
+            {
+                Name = "Valid Name",
+                Role = "Valid Role",
+                Email = "valid@example.com",
+                Cost = 100
 
-//            //assert
-//            var okResult = Assert.IsType<OkObjectResult>(result);
-//            Assert.Equal("Member updated successfully. ", okResult.Value);
-//        }
+            };
 
-//        [Fact]
-//        public async Task UpdateMember_ShouldReturnBadRequest_WhenExceptionIsThrown()
-//        {
-//            //arrange
-//            var memberVm = new MemberVm
-//            {
-//                Id = Guid.NewGuid(),
-//                Name = "Ana",
-//                Role = "Developer",
-//                Cost = 1000,
-//                Email = "ana.souza7@exemplo.com"
-//            };
+            _mapperMock.Setup(m => m.Map<Member>(It.IsAny<MemberDto>())).Returns(member);
+            _mapperMock.Setup(m => m.Map<MemberVm>(It.IsAny<Member>())).Returns(memberVm);
+            _serviceMock.Setup(s => s.CreateAsync(It.IsAny<Member>())).ReturnsAsync(OperationResult.Complete("Success"));
 
-//            var entityMember = new EntityMember
-//            {
-//                Id = memberVm.Id,
-//                Name = memberVm.Name,
-//                Role = memberVm.Role,
-//                Cost = memberVm.Cost,
-//                Email = memberVm.Email
-//            };
+            // Act
+            var result = await _controller.CreateAsync(memberDto);
 
-//            _mapperMock.Setup(m => m.Map<EntityMember>(memberVm)).Returns(entityMember);
-//            _memberServiceMock.Setup(service => service.UpdateEntityMemberAsync(entityMember)).ThrowsAsync(new Exception("Update faled."));
+            // Assert
+            Assert.IsType<CreatedAtActionResult>(result);
+        }
 
-//            //act
-//            var result = await _memberController.UpdateMember(memberVm.Id, memberVm);
+        [Fact]
+        public async Task GetAsyncShouldReturnMemberVmWhenMemberExists()
+        {
+            // Arrange
+            var memberId = 1;
+            var member = new Member
+            {
+                Id = memberId,
+                Name = "Test Member",
+                Role = "Test Role",
+                Email = "test@example.com",
+                Cost = 100
+            };
+            var memberVm = new MemberVm
+            {
+                Id = memberId,
+                Name = "Test Member",
+                Role = "Test Role",
+                Email = "test@example.com",
+                Cost = 100
 
-//            //assert
-//            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-//            Assert.Equal("Update failed.", badRequestResult.Value);
-//        }
+            };
 
-//        [Fact]
-//        public async Task GetMembers_ShouldReturnOk_WhenMembersExist()
-//        {
-//            //arrange
-//            var members = new List<EntityMember>
-//            {
-//                new EntityMember {  Id = Guid.NewGuid(), Name = "Ana", Role = "Developer", Email = "ana.souza7@exemplo.com" },
-//                new EntityMember {  Id = Guid.NewGuid(), Name = "Raquel", Role = "Manager", Email = "raquel.souza77@exemplo.com" }
-//            };
+            _serviceMock.Setup(s => s.GetItemAsync(memberId)).ReturnsAsync(member);
+            _mapperMock.Setup(m => m.Map<MemberVm>(member)).Returns(memberVm);
 
-//            var memberVms = new List<MemberVm>
-//            {
-//                new MemberVm { Id = members[0].Id, Name = "Ana", Role = "Developer", Email = "ana.souza7@exemplo.com" },
-//                new MemberVm { Id = members[1].Id, Name = "Raquel", Role = "Manager", Email = "raquel.souza77@exemplo.com" }
-//            };
+            // Act
+            var result = await _controller.GetAsync(memberId);
 
-//            _memberServiceMock.Setup(service => service.GetMembersAsync(null, null, null)).ReturnsAsync(members);
-//            _mapperMock.Setup(mapper => mapper.Map<IEnumerable<MemberVm>>(members)).Returns(memberVms);
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            Assert.Equal(200, okResult.StatusCode);
+            Assert.Equal(memberVm, okResult.Value);
+        }
 
-//            //act
-//            var result = await _memberController.GetMembers(null, null, null);
+        [Fact]
+        public async Task GetAsyncShouldReturnNotFoundWhenMemberDoesNotExist()
+        {
+            // Arrange
+            var memberId = 1;
 
-//            //assert
-//            var okResult = Assert.IsType<OkObjectResult>(result);
-//            var returnedMembers = Assert.IsType<List<MemberVm>>(okResult.Value);
-//            Assert.Equal(2, returnedMembers.Count);
+            _serviceMock.Setup(s => s.GetItemAsync(memberId)).ReturnsAsync((Member?)null);
 
-//        }
+            // Act
+            var result = await _controller.GetAsync(memberId);
 
-//        [Fact]
-//        public async Task GetMembers_ShouldReturnEmptyList_WhenNoMembersExist()
-//        {
-//            //arrange
-//            _memberServiceMock.Setup(service => service.GetMembersAsync(null, null, null)).ReturnsAsync(new List<EntityMember>());
-//            _mapperMock.Setup(mapper => mapper.Map<IEnumerable<MemberVm>>(It.IsAny<List<EntityMember>>())).Returns(new List<MemberVm>());
+            // Assert
+            Assert.IsType<NotFoundResult>(result.Result);
+        }
 
-//            //act 
-//            var result = await _memberController.GetMembers(null, null, null);
+        [Fact]
+        public async Task GetListAsyncShouldReturnPagedResultWhenCalledWithValidFilter()
+        {
+            // Arrange
+            var filterDto = new MemberFilterDto
+            {
+                Name = "Test Name",
+                Role = "Test Role",
+                Email = "test@example.com",
+                Cost = 100
 
-//            //assert
-//            var okResult = Assert.IsType<OkObjectResult>(result);
-//            var returnedMembers = Assert.IsType<List<MemberVm>>(okResult.Value);
-//            Assert.Empty(returnedMembers);
-//        }
+            };
+            var filter = new MemberFilter
+            {
+                Name = "Test Name",
+                Role = "Test Role",
+                Email = "test@example.com",
+                Cost = 100
 
-//        [Fact]
-//        public async Task DeleteMember_ShouldReturnOk_WhenDeleteIsSuccessful()
-//        {
-//            // Arrange
-//            var memberId = Guid.NewGuid();
-//            _localizerMock.Setup(localizer => localizer["MemberDeletedSuccessfully"]).Returns(new LocalizedString("MemberDeletedSuccessfully", "Member deleted successfully."));
+            };
+            var pagedResult = new PagedResult<Member>
+            {
+                Result = new List<Member>
+                {
+                    new Member
+                    {
+                        Name = "Test Name",
+                        Role = "Test Role",
+                        Email = "test@example.com",
+                        Cost = 100
+                    }
+                },
+                Page = 1,
+                PageSize = 10,
+                Total = 1
+            };
+            var pagedVmResult = new PagedResultVm<MemberVm>
+            {
+                Result = new List<MemberVm>
+                {
+                    new MemberVm
+                    {
+                        Name = "Test Name",
+                        Role = "Test Role",
+                        Email = "test@example.com",
+                        Cost = 100
 
-//            // Act
-//            var result = await _memberController.DeleteMember(memberId);
+                    }
+                },
+                Page = 1,
+                PageSize = 10,
+                Total = 1
+            };
 
-//            // Assert
-//            var okResult = Assert.IsType<OkObjectResult>(result);
-//            Assert.Equal("Member deleted successfully.", okResult.Value);
-//        }
+            _mapperMock.Setup(m => m.Map<MemberFilter>(filterDto)).Returns(filter);
+            _serviceMock.Setup(s => s.GetListAsync(filter)).ReturnsAsync(pagedResult);
+            _mapperMock.Setup(m => m.Map<PagedResultVm<MemberVm>>(pagedResult)).Returns(pagedVmResult);
 
-//        [Fact]
-//        public async Task DeleteMember_ShouldReturnBadRequest_WhenExceptionIsThrown()
-//        {
-//            // Arrange
-//            var memberId = Guid.NewGuid();
-//            _memberServiceMock.Setup(service => service.DeleteMemberAsync(memberId)).Throws(new InvalidOperationException("Delete failed."));
+            // Act
+            var result = await _controller.GetListAsync(filterDto);
 
-//            // Act
-//            var result = await _memberController.DeleteMember(memberId);
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal(200, okResult.StatusCode);
+            Assert.Equal(pagedVmResult, okResult.Value);
+        }
 
-//            // Assert
-//            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-//            Assert.Equal("Delete failed.", badRequestResult.Value);
-//        }
-//    }
-//}
+        [Fact]
+        public async Task UpdateAsyncShouldReturnOkResultWhenMemberIsValid()
+        {
+            // Arrange
+            var memberDto = new MemberDto
+            {
+                Id = 1,
+                Name = "Valid Name",
+                Role = "Valid Role",
+                Email = "valid@example.com",
+                Cost = 100
+
+            };
+            var memberVm = new MemberVm
+            {
+                Id = 1,
+                Name = "Valid Name",
+                Role = "Valid Role",
+                Email = "valid@example.com",
+                Cost = 100
+
+            };
+
+            _mapperMock.Setup(m => m.Map<Member>(It.IsAny<MemberDto>())).Returns(new Member
+            {
+                Id = 1,
+                Name = "Valid Name",
+                Role = "Valid Role",
+                Email = "valid@example.com",
+                Cost = 100
+
+            });
+            _mapperMock.Setup(m => m.Map<MemberVm>(It.IsAny<Member>())).Returns(memberVm);
+
+            _serviceMock.Setup(s => s.UpdateAsync(It.IsAny<Member>())).ReturnsAsync(OperationResult.Complete("Success"));
+
+            // Act
+            var result = await _controller.UpdateAsync(1, memberDto);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal(200, okResult.StatusCode);
+        }
+
+        [Fact]
+        public async Task DeleteAsyncShouldReturnNoContentWhenDeletionIsSuccessful()
+        {
+            // Arrange
+            int memberId = 1;
+            _serviceMock.Setup(service => service.DeleteAsync(memberId)).ReturnsAsync(OperationResult.Complete());
+
+            // Act
+            var result = await _controller.DeleteAsync(memberId);
+
+            // Assert
+            Assert.IsType<NoContentResult>(result);
+        }
+    }
+}

@@ -91,7 +91,7 @@ namespace Stellantis.ProjectName.Application.Services
             {
                 Name = string.Empty,
                 Description = string.Empty,
-                Url = string.Empty
+                Url = new Uri($"http://example.com"),
             };
             return await UnitOfWork.GitRepoRepository.GetListAsync(gitRepoFilter).ConfigureAwait(false);
         }

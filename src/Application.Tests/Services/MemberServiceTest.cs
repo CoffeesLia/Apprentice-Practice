@@ -1,111 +1,245 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
-//using Stellantis.ProjectName.Application.Interfaces.Repositories;
-//using Stellantis.ProjectName.Application.Services;
-//using Stellantis.ProjectName.Domain.Entities;
-//using Moq;
-//using Xunit;
-//using Microsoft.Extensions.Localization;
-//using Stellantis.ProjectName.Application.Resources;
+﻿using AutoFixture;
+using FluentValidation;
+using FluentValidation.Results;
+using Moq;
+using Stellantis.ProjectName.Application.Interfaces;
+using Stellantis.ProjectName.Application.Interfaces.Repositories;
+using Stellantis.ProjectName.Application.Models;
+using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Application.Resources;
+using Stellantis.ProjectName.Application.Services;
+using Stellantis.ProjectName.Application.Validators;
+using Stellantis.ProjectName.Domain.Entities;
+using System.Globalization;
+using Xunit;
+using Application.Tests.Helpers;
 
-//namespace Stellantis.ProjectName.Application.Tests.Services
-//{
-//    public class MemberServiceTest
-//    {
-//        private readonly Mock<IMemberRepository> _memberRepositoryMock;
-//        private readonly Mock<IStringLocalizer<ServiceResources>> _localizerMock;
-//        private readonly MemberService _memberService;
+namespace Application.Services.Tests
+{
+    public class MemberServiceTests
+    {
+        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
+        private readonly Mock<IMemberRepository> _memberRepositoryMock;
+        private readonly MemberService _memberService;
+        private readonly Fixture _fixture;
 
-//        public MemberServiceTest()
-//        {
-//            _memberRepositoryMock = new Mock<IMemberRepository>();
-//            _localizerMock = new Mock<IStringLocalizer<ServiceResources>>();
-//            _memberService = new MemberService(_memberRepositoryMock.Object, _localizerMock.Object);
-//        }
+        public MemberServiceTests()
+        {
+            CultureInfo.CurrentCulture = new CultureInfo("en-US");
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
+            _memberRepositoryMock = new Mock<IMemberRepository>();
+            var localizer = LocalizerFactorHelper.Create();
+            var memberValidator = new MemberValidator(localizer);
 
-//        [Fact]
-//        public async Task AddEntityMember_ShouldThrowException_WhenEmailIsNotUnique()
-//        {
-//            //arrange
-//            var entityMember = new EntityMember
-//            {
-//                Id = Guid.NewGuid(),
-//                Name = "Ana",
-//                Role = "Developer",
-//                Cost = 1000,
-//                Email = "ana.souza7@exemplo.com"
-//            };
+            _unitOfWorkMock.Setup(u => u.MemberRepository).Returns(_memberRepositoryMock.Object);
 
-//            _memberRepositoryMock.Setup(repo => repo.IsEmailUnique(entityMember.Email, entityMember.Id));
-//            _localizerMock.Setup(localizer => localizer["MemberEmailAlreadyExists"]).Returns(new LocalizedString("MemberEmailAlreadyExists", "This e-mail already exists"));
+            _memberService = new MemberService(_unitOfWorkMock.Object, localizer, memberValidator);
+            _fixture = new Fixture();
+        }
 
-//            //actEassert
-//            var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => _memberService.UpdateEntityMemberAsync(entityMember));
-//            _localizerMock.Verify(localizer => localizer["MemberEmailAlreadyExists"], Times.Once);
-//            Assert.Equal("This e-mail already exists", exception.Message);
-//        }
+        [Fact]
+        public async Task CreateAsyncWhenValidationFails()
+        {
+            // Arrange
+            var member = _fixture.Build<Member>()
+                                 .With(m => m.Name, string.Empty)
+                                 .With(m => m.Email, string.Empty)
+                                 .Create();
 
-//        /*
-//        [Fact]
-//        public async Task UpdateEntityMember_ShouldThrowException_WhenRequiredFieldsAreNotFilled()
-//        {
-//            //arrange
-//            var entityMember = new EntityMember
-//            {
-//                Id = Guid.NewGuid(),
-//                Name = "",
-//                Role = "",
-//                Cost = 0,
-//                Email = "ana.souza7@exemplo.com"
-//            };
+            // Act
+            var result = await _memberService.CreateAsync(member);
 
-//            _localizerMock.Setup(localizer => localizer["MemberRequiredFieldsMissing"]).Returns(new LocalizedString("MemberRequiredFieldsMissing", "All required fields must be completed. "));
+            // Assert
+            Assert.Equal(OperationStatus.InvalidData, result.Status);
+            Assert.Contains(nameof(MemberResource.MemberNameIsRequired), result.Errors);
+            Assert.Contains(nameof(MemberResource.MemberEmailIsRequired), result.Errors);
 
-//            //actEassert
-//            Assert.Throws<ArgumentException>(() => _memberService.AddEntityMember(entityMember));
+        }
 
-//        }
-//        */
+        [Fact]
+        public async Task CreateAsyncWhenEmailAlreadyExists()
+        {
+            // Arrange
+            var member = _fixture.Build<Member>()
+                                 .With(m => m.Name, "Valid Name")
+                                 .With(m => m.Email, "valid.email@example.com")
+                                 .Create();
+            var validatorMock = new Mock<IValidator<Member>>();
+            var validationResult = new ValidationResult();
+            validatorMock.Setup(v => v.ValidateAsync(member, default)).ReturnsAsync(validationResult);
+            _memberRepositoryMock.Setup(r => r.IsEmailUnique(member.Email)).ReturnsAsync(false);
 
-//        [Fact]
-//        public async Task GetMemberByIdAsync_ShouldReturnMember_WhenMemberExists()
-//        {
-//            //arrange
-//            var id = Guid.NewGuid();
-//            var entityMember = new EntityMember
-//            {
-//                Id = id,
-//                Name = "Ana",
-//                Role = "Developer",
-//                Cost = 1000,
-//                Email = "ana.souza7@exemplo.com"
-//            };
+            // Act
+            var result = await _memberService.CreateAsync(member);
 
-//            _memberRepositoryMock.Setup(repo => repo.GetMemberByIdAsync(id)).ReturnsAsync(entityMember);
+            // Assert
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Contains(nameof(MemberResource.MemberEmailAlreadyExists), result.Errors);
+        }
 
-//            //act
-//            var result = await _memberService.GetMemberByIdAsync(id);
+        [Fact]
+        public async Task CreateAsyncWhenSuccessful()
+        {
+            // Arrange
+            var member = _fixture.Build<Member>()
+                                 .With(m => m.Name, "Valid Name")
+                                 .With(m => m.Email, "valid.email@example.com")
+                                 .Create();
+            var validatorMock = new Mock<IValidator<Member>>();
+            var validationResult = new ValidationResult();
+            validatorMock.Setup(v => v.ValidateAsync(member, default)).ReturnsAsync(validationResult);
+            _memberRepositoryMock.Setup(r => r.IsEmailUnique(member.Email)).ReturnsAsync(true);
 
-//            //assert
-//            Assert.Equal(entityMember, result);
-//        }
+            // Act
+            var result = await _memberService.CreateAsync(member);
 
-//        [Fact]
-//        public async Task GetMemberByIdAsync_ShouldReturnNull_WhenMemberDoesNotExist()
-//        {
-//            //arrange
-//            var id = Guid.NewGuid();
+            // Inspecione o resultado da validação
+            foreach (var error in validationResult.Errors)
+            {
+                Console.WriteLine(error.ErrorMessage);
+            }
 
-//            _memberRepositoryMock.Setup(repo => repo.GetMemberByIdAsync(id)).ReturnsAsync((EntityMember)null);
+            // Assert
+            Assert.Equal(OperationStatus.Success, result.Status);
+        }
 
-//            //act
-//            var result = await _memberService.GetMemberByIdAsync(id);
+        [Fact]
+        public async Task GetListAsyncShouldReturnPagedResult()
+        {
+            // Arrange
+            var filter = _fixture.Create<MemberFilter>();
+            var pagedResult = _fixture.Create<PagedResult<Member>>();
+            _memberRepositoryMock.Setup(r => r.GetListAsync(filter)).ReturnsAsync(pagedResult);
 
-//            //assert
-//            Assert.Null(result);
-//        }
-//    }
-//}
+            // Act
+            var result = await _memberService.GetListAsync(filter);
+
+            // Assert
+            Assert.Equal(pagedResult, result);
+        }
+
+        [Fact]
+        public async Task GetItemAsyncWhenItemDoesNotExist()
+        {
+            // Arrange
+            var id = _fixture.Create<int>();
+            _memberRepositoryMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync((Member?)null);
+
+            // Act
+            var result = await _memberService.GetItemAsync(id);
+
+            // Assert
+            Assert.Equal(OperationStatus.NotFound, result.Status);
+        }
+
+        [Fact]
+        public async Task GetItemAsyncWhenItemExists()
+        {
+            // Arrange
+            var member = _fixture.Create<Member>();
+            _memberRepositoryMock.Setup(r => r.GetByIdAsync(member.Id)).ReturnsAsync(member);
+
+            // Act
+            var result = await _memberService.GetItemAsync(member.Id);
+
+            // Assert
+            Assert.Equal(OperationStatus.Success, result.Status);
+        }
+
+        [Fact]
+        public async Task UpdateAsyncWhenValidationFails()
+        {
+            // Arrange
+            var member = _fixture.Build<Member>()
+                                 .With(m => m.Name, string.Empty)
+                                 .With(m => m.Email, string.Empty)
+                                 .Create();
+            _memberRepositoryMock.Setup(r => r.GetByIdAsync(member.Id)).ReturnsAsync(member);
+
+            // Act
+            var result = await _memberService.UpdateAsync(member);
+
+            // Assert
+            Assert.Equal(OperationStatus.InvalidData, result.Status);
+            Assert.Contains(nameof(MemberResource.MemberNameIsRequired), result.Errors);
+            Assert.Contains(nameof(MemberResource.MemberEmailIsRequired), result.Errors);
+        }
+
+        [Fact]
+        public async Task UpdateAsyncWhenEmailAlreadyExists()
+        {
+            // Arrange
+            var member = _fixture.Build<Member>()
+                                 .With(m => m.Name, "Valid Name")
+                                 .With(m => m.Email, "valid.email@example.com")
+                                 .Create();
+            var validatorMock = new Mock<IValidator<Member>>();
+            var validationResult = new ValidationResult(); // Certifique-se de que o resultado da validação seja válido
+            validatorMock.Setup(v => v.ValidateAsync(member, default)).ReturnsAsync(validationResult);
+            _memberRepositoryMock.Setup(r => r.IsEmailUnique(member.Email)).ReturnsAsync(false);
+            _memberRepositoryMock.Setup(r => r.GetByIdAsync(member.Id)).ReturnsAsync(member);
+
+            // Act
+            var result = await _memberService.UpdateAsync(member);
+
+            // Assert
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Contains(nameof(MemberResource.MemberEmailAlreadyExists), result.Errors);
+        }
+
+        [Fact]
+        public async Task UpdateAsyncWhenSuccessful()
+        {
+            // Arrange
+            var member = _fixture.Build<Member>()
+                                 .With(m => m.Name, "Valid Name")
+                                 .With(m => m.Email, "valid.email@example.com")
+                                 .Create();
+            var validatorMock = new Mock<IValidator<Member>>();
+            var validationResult = new ValidationResult();
+            validatorMock.Setup(v => v.ValidateAsync(member, default)).ReturnsAsync(validationResult);
+            _memberRepositoryMock.Setup(r => r.IsEmailUnique(member.Email)).ReturnsAsync(true);
+            _memberRepositoryMock.Setup(r => r.GetByIdAsync(member.Id)).ReturnsAsync(member);
+
+            // Act
+            var result = await _memberService.UpdateAsync(member);
+
+            // Inspecione o resultado da validação
+            foreach (var error in validationResult.Errors)
+            {
+                Console.WriteLine(error.ErrorMessage);
+            }
+
+            // Assert
+            Assert.Equal(OperationStatus.Success, result.Status);
+        }
+
+        [Fact]
+        public async Task DeleteAsyncWhenItemDoesNotExist()
+        {
+            // Arrange
+            var id = _fixture.Create<int>();
+            _memberRepositoryMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync((Member?)null);
+
+            // Act
+            var result = await _memberService.DeleteAsync(id);
+
+            // Assert
+            Assert.Equal(OperationStatus.NotFound, result.Status);
+        }
+
+        [Fact]
+        public async Task DeleteAsyncWhenSuccessful()
+        {
+            // Arrange
+            var member = _fixture.Create<Member>();
+            _memberRepositoryMock.Setup(r => r.GetByIdAsync(member.Id)).ReturnsAsync(member);
+
+            // Act
+            var result = await _memberService.DeleteAsync(member.Id);
+
+            // Assert
+            Assert.Equal(OperationStatus.Success, result.Status);
+        }
+    }
+}

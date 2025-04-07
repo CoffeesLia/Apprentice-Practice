@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Data.Entity;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
@@ -67,7 +68,15 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 await SaveChangesAsync().ConfigureAwait(false);
                 return OperationResult.Complete();
             }
-            catch (Exception ex)
+            catch (DbUpdateException ex)
+            {
+                return OperationResult.Conflict(ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return OperationResult.Conflict(ex.Message); // Usando Conflict em vez de InvalidData
+            }
+            catch (Exception ex) when (ex is InvalidOperationException || ex is NotSupportedException)
             {
                 return OperationResult.NotFound(ex.Message);
             }
