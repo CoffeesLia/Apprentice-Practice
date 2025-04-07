@@ -4,7 +4,6 @@ using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
     public class MemberRepository(Context context)
@@ -51,9 +50,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 }
             }
         }
-
-
-    
     
     }
 }
