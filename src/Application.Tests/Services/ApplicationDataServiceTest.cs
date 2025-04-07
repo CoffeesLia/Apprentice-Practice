@@ -232,7 +232,8 @@ namespace Application.Tests.Services
                 AreaId = 1,
                 Area = new Area("TestArea"),
                 ProductOwner = "TestOwner",
-                ConfigurationItem = "TestConfig"
+                ConfigurationItem = "TestConfig",
+                External = true
             };
 
             var responsible = new Responsible
