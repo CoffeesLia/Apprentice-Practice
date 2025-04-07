@@ -14,7 +14,7 @@ using AutoFixture;
 using Xunit;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
 
-namespace Stellantis.ProjectName.WebApi.Tests.Controllers
+namespace WebApi.Tests.Controllers
 {
     public class ResponsibleControllerTests
     {

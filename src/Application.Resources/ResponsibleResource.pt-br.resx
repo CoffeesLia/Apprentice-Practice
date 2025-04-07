@@ -126,13 +126,7 @@
   <data name="AreaRequired" xml:space="preserve">
     <value>A área é obrigatória</value>
   </data>
-  <data name="ResponsibleNotFound" xml:space="preserve">
-    <value>Responsável não encontrado</value>
-  </data>
   <data name="EmailRequired" xml:space="preserve">
     <value>O email é obrigatório </value>
-  </data>
-  <data name="EmailInvalid" xml:space="preserve">
-    <value>O email é inválido.</value>
   </data>
 </root>
