@@ -126,23 +126,14 @@
   <data name="MemberEmailIsRequired" xml:space="preserve">
     <value>Email do membro é obrigatório.</value>
   </data>
-  <data name="MemberEmailValidateLength" xml:space="preserve">
-    <value>O email deve ter entre {0} e {1} caracteres.</value>
-  </data>
   <data name="MemberNotFound" xml:space="preserve">
     <value>Membro não encontrado.</value>
   </data>
   <data name="MemberNameIsRequired" xml:space="preserve">
     <value>O nome do membro é obrigatório.</value>
   </data>
-  <data name="MemberNameValidateLength" xml:space="preserve">
-    <value>O nome deve ter entre {0} e {1} caracteres.</value>
-  </data>
   <data name="MemberRoleIsRequired" xml:space="preserve">
     <value>Função do membro é obrigatória.</value>
-  </data>
-  <data name="MemberRoleValidateLength" xml:space="preserve">
-    <value>A função deve ter entre {0} e {1} caracteres.</value>
   </data>
   <data name="MemberCostRequired" xml:space="preserve">
     <value>Custo do membro é obrigátorio.</value>

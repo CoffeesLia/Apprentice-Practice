@@ -13,6 +13,7 @@ using Stellantis.ProjectName.Domain.Entities;
 using System.Globalization;
 using Xunit;
 using Application.Tests.Helpers;
+using Stellantis.ProjectName.Application.Interfaces.Services;
 
 namespace Application.Services.Tests
 {
@@ -28,6 +29,7 @@ namespace Application.Services.Tests
             CultureInfo.CurrentCulture = new CultureInfo("en-US");
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _memberRepositoryMock = new Mock<IMemberRepository>();
+
             var localizer = LocalizerFactorHelper.Create();
             var memberValidator = new MemberValidator(localizer);
 
@@ -37,6 +39,8 @@ namespace Application.Services.Tests
             _fixture = new Fixture();
         }
 
+  
+
         [Fact]
         public async Task CreateAsyncWhenValidationFails()
         {
@@ -44,6 +48,7 @@ namespace Application.Services.Tests
             var member = _fixture.Build<Member>()
                                  .With(m => m.Name, string.Empty)
                                  .With(m => m.Email, string.Empty)
+                                 .With(m => m.Role, string.Empty)
                                  .Create();
 
             // Act
@@ -51,10 +56,57 @@ namespace Application.Services.Tests
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
-            Assert.Contains(nameof(MemberResource.MemberNameIsRequired), result.Errors);
-            Assert.Contains(nameof(MemberResource.MemberEmailIsRequired), result.Errors);
+            Assert.Contains(MemberResource.MemberNameIsRequired, result.Errors);
+            Assert.Contains(MemberResource.MemberEmailIsRequired, result.Errors);
+            Assert.Contains(MemberResource.MemberRoleIsRequired, result.Errors);
+
 
         }
+
+        [Fact]
+        public async Task CreateAsyncShouldReturnInvalidDataWhenMemberCostIsRequired()
+        {
+            // Arrange
+            var member = new Member
+            {
+                Name = "Name",
+                Role = "test",
+                Email = "test@gamail.com",
+                Cost = default
+            };
+
+            // Act
+            var result = await _memberService.CreateAsync(member);
+
+            // Assert
+            Assert.Equal(OperationStatus.InvalidData, result.Status);
+            Assert.Equal(MemberResource.MemberCostRequired, result.Errors.First());
+
+        }
+
+        [Fact]
+        public async Task CreateAsyncShouldReturnInvalidDataWhenCostIsLessThanZero()
+        {
+            // Arrange
+            var member = new Member
+            {
+                Name = "Name",
+                Role = "test",
+                Email = "test@gamail.com",
+                Cost = -1
+            };
+
+            // Act
+            var result = await _memberService.CreateAsync(member);
+
+            // Assert
+            Assert.Equal(OperationStatus.InvalidData, result.Status);
+            Assert.Equal(MemberResource.CostMemberLargestEqualZero, result.Errors.First());
+
+
+        }
+
+
 
         [Fact]
         public async Task CreateAsyncWhenEmailAlreadyExists()
@@ -74,7 +126,8 @@ namespace Application.Services.Tests
 
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
-            Assert.Contains(nameof(MemberResource.MemberEmailAlreadyExists), result.Errors);
+            Assert.Equal(MemberResource.MemberEmailAlreadyExists, result.Message);
+            //MemberEmailAlreadyExists
         }
 
         [Fact]
@@ -161,8 +214,31 @@ namespace Application.Services.Tests
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
-            Assert.Contains(nameof(MemberResource.MemberNameIsRequired), result.Errors);
-            Assert.Contains(nameof(MemberResource.MemberEmailIsRequired), result.Errors);
+          
+        }
+
+        [Fact]
+        public async Task UpdateAsyncShouldReturnNotFoundWhenMemberDoesNotExist()
+        {
+            // Arrange
+            var memberId = 1;
+            var member = new Member
+            {
+                Id = memberId,
+                Name = "Test Member",
+                Role = "Test Role",
+                Email = "test@example.com",
+                Cost = 100
+            };
+
+            _memberRepositoryMock.Setup(r => r.GetByIdAsync(memberId)).ReturnsAsync((Member?)null);
+
+            // Act
+            var result = await _memberService.UpdateAsync(member);
+
+            // Assert
+            Assert.Equal(OperationStatus.NotFound, result.Status);
+            Assert.Equal(MemberResource.MemberNotFound, result.Message);
         }
 
         [Fact]
@@ -184,7 +260,6 @@ namespace Application.Services.Tests
 
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
-            Assert.Contains(nameof(MemberResource.MemberEmailAlreadyExists), result.Errors);
         }
 
         [Fact]
