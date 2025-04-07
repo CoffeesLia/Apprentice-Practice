@@ -20,7 +20,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data
         public IDataServiceRepository DataServiceRepository { get; }
         public IGitRepoRepository GitRepoRepository { get; }
 
-        public IMemberRepository MemberRepository => throw new NotImplementedException();
 
         public UnitOfWork(Context context)
         {
