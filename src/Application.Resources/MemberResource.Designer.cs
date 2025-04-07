@@ -97,29 +97,11 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a The email must be between {0} and {1} characters long..
-        /// </summary>
-        public static string MemberEmailValidateLength {
-            get {
-                return ResourceManager.GetString("MemberEmailValidateLength", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Member name is required..
         /// </summary>
         public static string MemberNameIsRequired {
             get {
                 return ResourceManager.GetString("MemberNameIsRequired", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a The name must be between {0} and {1} characters long..
-        /// </summary>
-        public static string MemberNameValidateLength {
-            get {
-                return ResourceManager.GetString("MemberNameValidateLength", resourceCulture);
             }
         }
         
@@ -138,15 +120,6 @@ namespace Stellantis.ProjectName.Application.Resources {
         public static string MemberRoleIsRequired {
             get {
                 return ResourceManager.GetString("MemberRoleIsRequired", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a The member must be between {0} and {1} characters long..
-        /// </summary>
-        public static string MemberRoleValidateLength {
-            get {
-                return ResourceManager.GetString("MemberRoleValidateLength", resourceCulture);
             }
         }
     }
