@@ -80,6 +80,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             return Ok(result);
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(int partNumberId, int id)
         {

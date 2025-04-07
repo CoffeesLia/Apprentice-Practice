@@ -22,7 +22,19 @@ namespace Infrastructure.Tests.Data
         }
 
         [Fact]
-        public void BeginTransactionShouldStartTransaction()
+        [SuppressMessage("Minor Code Smell", "S1481:Unused local variables should be removed", Justification = "It's a temporary code.")]
+        [SuppressMessage("Blocker Code Smell", "S2699:Tests should include assertions", Justification = "It's a temporary code.")]
+        [SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "It's a temporary code.")]
+        public void Create_WhenNullForRepositories()
+        {
+            // Act
+            UnitOfWork unitOfWork = new(_context);
+
+            // Assert
+        }
+
+        [Fact]
+        public void BeginTransaction_ShouldStartTransaction()
         {
             // Arrange
             var mockTransaction = new Mock<IDbContextTransaction>();
@@ -41,14 +53,14 @@ namespace Infrastructure.Tests.Data
         }
 
         [Fact]
-        public async Task CommitAsyncWhenNotBebunTransction()
+        public async Task CommitAsync_WhenNotBebunTransction()
         {
             await _unitOfWork.CommitAsync();
             Assert.True(true);
         }
 
         [Fact]
-        public async Task CommitAsyncShouldCallSaveChangesOnContext()
+        public async Task CommitAsync_ShouldCallSaveChangesOnContext()
         {
             // Arrange
             var mockTransaction = new Mock<IDbContextTransaction>();
@@ -69,14 +81,14 @@ namespace Infrastructure.Tests.Data
         }
 
         [Fact]
-        public async Task CommitAsyncShouldRollbackTransactionOnException()
+        public async Task CommitAsync_ShouldRollbackTransactionOnException()
         {
             // Arrange
-            var mockTransaction = new Mock<IDbContextTransaction>();
+            var mockTransaction = new MockDbContextTransaction();
             var mockDatabase = new Mock<DatabaseFacade>(_context);
             mockDatabase
                 .Setup(db => db.BeginTransaction())
-                .Returns(mockTransaction.Object);
+                .Returns(mockTransaction);
             var context = new Mock<Context>(new DbContextOptions<Context>());
             context
                 .Setup(c => c.Database)
@@ -87,7 +99,8 @@ namespace Infrastructure.Tests.Data
 
             // Act & Assert
             await Assert.ThrowsAnyAsync<Exception>(() => unitOfWork.CommitAsync());
-            mockTransaction.Verify(t => t.RollbackAsync(It.IsAny<CancellationToken>()), Times.Once);
+            Assert.True(mockTransaction.RollbackAsyncHasCalled());
         }
     }
 }
+

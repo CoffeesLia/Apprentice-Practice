@@ -1,13 +1,18 @@
-﻿using Stellantis.ProjectName.Application.Models.Filters;
-using Stellantis.ProjectName.Domain.Entities;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Stellantis.ProjectName.Domain.Entity;
 
 namespace Stellantis.ProjectName.Application.Interfaces.Repositories
 {
-    public interface ISquadRepository : IRepositoryEntityBase<Squad>
+    public interface ISquadRepository
     {
-        Task<PagedResult<Squad>> GetListAsync(SquadFilter squadFilter);
-        Task<bool> VerifySquadExistsAsync(int id);
-        Task<bool> VerifyNameAlreadyExistsAsync(string name);
+        void Add(EntitySquad squad);
+        EntitySquad GetByName(string name);
+        IEnumerable<EntitySquad> GetAll();
+        EntitySquad GetById(Guid id);
+        void Update(EntitySquad squad);
     }
-
 }

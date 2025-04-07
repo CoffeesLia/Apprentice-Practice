@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Data.Entity;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
@@ -9,12 +10,8 @@ using Stellantis.ProjectName.Domain.Entities;
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
 {
-    public class GitRepoRepository : RepositoryBase<GitRepo, Context>, IGitRepoRepository
+    public class GitRepoRepository(Context context) : RepositoryBase<GitRepo, Context>(context), IGitRepoRepository
     {
-        public GitRepoRepository(Context context) : base(context)
-        {
-        }
-
         public async Task<bool> DeleteAsync(int id)
         {
             var entity = await GetByIdAsync(id).ConfigureAwait(false);
@@ -71,7 +68,15 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 await SaveChangesAsync().ConfigureAwait(false);
                 return OperationResult.Complete();
             }
-            catch (Exception ex)
+            catch (DbUpdateException ex)
+            {
+                return OperationResult.Conflict(ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return OperationResult.Conflict(ex.Message); // Usando Conflict em vez de InvalidData
+            }
+            catch (Exception ex) when (ex is InvalidOperationException || ex is NotSupportedException)
             {
                 return OperationResult.NotFound(ex.Message);
             }
@@ -82,7 +87,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             return await Context.Set<GitRepo>().AnyAsync(expression).ConfigureAwait(false);
         }
 
-        public async Task<bool> VerifyUrlAlreadyExistsAsync(string url)
+        public async Task<bool> VerifyUrlAlreadyExistsAsync(Uri url)
         {
             return await Context.Set<GitRepo>().AnyAsync(a => a.Url == url).ConfigureAwait(false);
         }

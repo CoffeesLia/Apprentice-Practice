@@ -4,14 +4,17 @@ using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
 using Moq;
-using Stellantis.ProjectName.Application.Interfaces.Repositories;
-using Stellantis.ProjectName.Application.Models;
-using Stellantis.ProjectName.Application.Models.Filters;
+using Microsoft.Extensions.Localization;
+using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Application.Validators;
 using Stellantis.ProjectName.Domain.Entities;
+using System;
 using Xunit;
+using Stellantis.ProjectName.Application.Interfaces.Repositories;
+using Stellantis.ProjectName.Domain.Entity;
+using Stellantis.ProjectName.Application.Resources;
 
 namespace Application.Tests.Services
 {

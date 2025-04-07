@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Stellantis.ProjectName.Application.Models.Filters
 {
-    public class SquadFilter : Filter
+    internal class SquadFilter : Filter
     {
-        public string? Name { get; set; }
+        public required string Name { get; set; }
     }
 }

@@ -122,31 +122,12 @@ namespace Stellantis.ProjectName.Application.Resources {
                 return ResourceManager.GetString("SquadNotFound", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Squads not found..
-        /// </summary>
-        public static string SquadsNotFound {
-            get {
-                return ResourceManager.GetString("SquadsNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Squad successfully deleted..
-        /// </summary>
-        public static string SquadSuccessfullyDeleted {
-            get {
-                return ResourceManager.GetString("SquadSuccessfullyDeleted", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Squad successfully updated.
-        /// </summary>
-        public static string SquadUpdatedSuccessfully {
-            get {
-                return ResourceManager.GetString("SquadUpdatedSuccessfully", resourceCulture);
+
+        public static string NameValidateLength
+        {
+            get
+            {
+                return ResourceManager.GetString("NameValidateLength", resourceCulture);
             }
         }
     }

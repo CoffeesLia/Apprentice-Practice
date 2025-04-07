@@ -117,26 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AlreadyExists" xml:space="preserve">
-    <value>O nome já existe.</value>
+  <data name="SquadDescriptionRequired" xml:space="preserve">
+    <value>Se requiere la descripción del squad.</value>
   </data>
-  <data name="MemberAddedSuccessfully" xml:space="preserve">
-    <value>Membro adicionado com sucesso.</value>
+  <data name="SquadNameAlreadyExists" xml:space="preserve">
+    <value>Ya existe un squad con este nombre.</value>
   </data>
-  <data name="MemberEmailAlreadyExists" xml:space="preserve">
-    <value>Este e-mail já existe.</value>
+  <data name="SquadNameRequired" xml:space="preserve">
+    <value>Se requiere el nombre del squad.</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="MemberRequiredFieldsMissing" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
-  <data name="NameIsRequired" xml:space="preserve">
-    <value>O nome é obrigatório.</value>
-  </data>
-  <data name="NameValidateLength" xml:space="preserve">
-    <value>O nome deve ter entre {0} e {1} caracteres.</value>
-  </data>
-  <data name="Undeleted" xml:space="preserve">
-    <value>Não é possível excluir uma área que tem aplicações associadas.</value>
+  <data name="SquadNotFound" xml:space="preserve">
+    <value>No se encontró el nombre del squad.</value>
   </data>
 </root>

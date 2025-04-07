@@ -2,6 +2,7 @@
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models.Filters;
+using LinqKit;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
@@ -10,49 +11,25 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         public ResponsibleRepository(Context context) : base(context)
         {
         }
-
         public async Task<PagedResult<Responsible>> GetListAsync(ResponsibleFilter filter)
         {
             ArgumentNullException.ThrowIfNull(filter);
 
-            IQueryable<Responsible> query = Context.Set<Responsible>();
+            var filters = PredicateBuilder.New<Responsible>(true);
 
+            if (!string.IsNullOrWhiteSpace(filter.Email))
+                filters = filters.And(x => x.Email.Contains(filter.Email));
+            if (!string.IsNullOrWhiteSpace(filter.Name))
+                filters = filters.And(x => x.Name.Contains(filter.Name));
+            if (filter.AreaId != 0)
+                filters = filters.And(x => x.AreaId == filter.AreaId);
 
-            if (!string.IsNullOrEmpty(filter.Email))
-            {
-                query = query.Where(r => r.Email.Contains(filter.Email));
-            }
-
-            if (!string.IsNullOrEmpty(filter.Name))
-            {
-                query = query.Where(r => r.Name.Contains(filter.Name));
-            }
-
-            if (!string.IsNullOrEmpty(filter.Area))
-            {
-                query = query.Where(r => r.Area.Contains(filter.Area));
-            }
-
-            return await GetPagedResultAsync(query, filter.Page, filter.PageSize).ConfigureAwait(false);
+            return await GetListAsync(filter: filters, page: filter.Page, sort: filter.Sort, sortDir: filter.SortDir).ConfigureAwait(false);
         }
 
         public async Task<bool> VerifyEmailAlreadyExistsAsync(string email)
         {
             return await Context.Set<Responsible>().AnyAsync(r => r.Email == email).ConfigureAwait(false);
-        }
-
-        private static async Task<PagedResult<Responsible>> GetPagedResultAsync(IQueryable<Responsible> query, int page, int pageSize)
-        {
-            var total = await query.CountAsync().ConfigureAwait(false);
-            var result = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync().ConfigureAwait(false);
-
-            return new PagedResult<Responsible>
-            {
-                Total = total,
-                Result = result,
-                Page = page,
-                PageSize = pageSize
-            };
         }
 
         public async Task DeleteAsync(int id, bool saveChanges = true)
@@ -73,6 +50,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             return await Context.Set<Responsible>().FindAsync(id).ConfigureAwait(false);
         }
 
-      
+
     }
 }

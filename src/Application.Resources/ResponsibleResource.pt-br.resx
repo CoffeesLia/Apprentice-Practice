@@ -117,22 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name=" AreaRequired  " xml:space="preserve">
-    <value>A área é obrigatória</value>
-  </data>
   <data name="EmailExists" xml:space="preserve">
     <value>O e-mail já existe</value>
   </data>
-  <data name="DeletedSuccessfully" xml:space="preserve">
-    <value>Deletado com sucesso</value>
-  </data>
-  <data name="EmailInvalid" xml:space="preserve">
-    <value>O e-mail deve ser válido</value>
-  </data>
-  <data name="EmailRequired " xml:space="preserve">
-    <value>O email é obrigatório </value>
-  </data>
   <data name="NameRequired" xml:space="preserve">
     <value>O nome deve ser obrigatório</value>
+  </data>
+  <data name="AreaRequired" xml:space="preserve">
+    <value>A área é obrigatória</value>
+  </data>
+  <data name="EmailRequired" xml:space="preserve">
+    <value>O email é obrigatório </value>
   </data>
 </root>

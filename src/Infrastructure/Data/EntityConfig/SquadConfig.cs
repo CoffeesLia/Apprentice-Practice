@@ -1,12 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Stellantis.ProjectName.Domain.Entities;
+using Stellantis.ProjectName.Domain.Entity;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
 {
-    public class SquadConfig : IEntityTypeConfiguration<Squad>
+    public class SquadConfig : IEntityTypeConfiguration<EntitySquad>
     {
-        public void Configure(EntityTypeBuilder<Squad> builder)
+        public void Configure(EntityTypeBuilder<EntitySquad> builder)
         {
             builder.HasKey(s => s.Id); 
 
