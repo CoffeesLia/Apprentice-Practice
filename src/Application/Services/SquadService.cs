@@ -103,7 +103,8 @@ namespace Stellantis.ProjectName.Application.Services
             {
                 throw new KeyNotFoundException(_localizer[nameof(SquadResources.SquadNotFound)]);
             }
-            await _squadRepository.DeleteAsync(squad.SquadId).ConfigureAwait(false);
+            await _squadRepository.DeleteAsync(id).ConfigureAwait(false);
         }
+
     }
 }

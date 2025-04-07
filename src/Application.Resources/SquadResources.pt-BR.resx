@@ -142,9 +142,9 @@
     <value>Nenhum squad encontrado.</value>
   </data>
   <data name="SquadSuccessfullyDeleted" xml:space="preserve">
-    <value>Squad apagado com sucesso.</value>
+    <value>Squad excluído com sucesso.</value>
   </data>
   <data name="SquadUpdatedSuccessfully" xml:space="preserve">
-    <value>Squad criado com sucesso.</value>
+    <value>Squad atualizado com sucesso.</value>
   </data>
 </root>

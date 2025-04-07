@@ -70,7 +70,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a  Squad Cannot be null..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Squad bannot be null..
         /// </summary>
         public static string SquadCannotBeNull {
             get {

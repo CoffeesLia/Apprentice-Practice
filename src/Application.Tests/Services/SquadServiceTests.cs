@@ -1,4 +1,7 @@
-﻿using FluentValidation;
+﻿using System.Globalization;
+using System.Reflection;
+using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
@@ -6,220 +9,344 @@ using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Application.Services;
+using Stellantis.ProjectName.Application.Validators;
 using Stellantis.ProjectName.Domain.Entities;
 using Xunit;
 
-namespace Stellantis.ProjectName.Tests.Services
+namespace Application.Tests.Services
 {
     public class SquadServiceTests
     {
-        private readonly Mock<ISquadRepository> _squadRepositoryMock;
-        private readonly Mock<IStringLocalizer<SquadResources>> _localizerMock;
-        private readonly Mock<IValidator<Squad>> _validatorMock;
-        private readonly SquadService _squadService;
+        private readonly Mock<ISquadRepository> squadRepositoryMock;
+        private readonly Mock<IStringLocalizer<SquadResources>> localizerMock;
+        private readonly Mock<IValidator<Squad>> validatorMock;
+        private readonly SquadService squadService;
 
         public SquadServiceTests()
         {
-            _squadRepositoryMock = new Mock<ISquadRepository>();
-            _localizerMock = new Mock<IStringLocalizer<SquadResources>>();
-            _validatorMock = new Mock<IValidator<Squad>>();
-            _squadService = new SquadService(_squadRepositoryMock.Object, _localizerMock.Object, _validatorMock.Object);
+            squadRepositoryMock = new Mock<ISquadRepository>();
+            localizerMock = new Mock<IStringLocalizer<SquadResources>>();
+            validatorMock = new Mock<IValidator<Squad>>();
+            squadService = new SquadService(squadRepositoryMock.Object, localizerMock.Object, validatorMock.Object);
+
+            SetupLocalizerMocks();
+            SetupValidatorSuccess();
+        }
+
+        private void SetupLocalizerMocks()
+        {
+            localizerMock.Setup(l => l[nameof(SquadResources.SquadNotFound)])
+                .Returns(new LocalizedString(nameof(SquadResources.SquadNotFound), "Squad não encontrado"));
+            localizerMock.Setup(l => l[nameof(SquadResources.SquadNameAlreadyExists)])
+                .Returns(new LocalizedString(nameof(SquadResources.SquadNameAlreadyExists), "Nome já existe"));
+        }
+
+        private void SetupValidatorSuccess()
+        {
+            validatorMock.Setup(v => v.ValidateAsync(It.IsAny<Squad>(), default))
+                .ReturnsAsync(new ValidationResult());
         }
 
         [Fact]
-        public async Task CreateSquadShouldThrowExceptionWhenNameIsEmpty()
+        public async Task CreateShouldReturnSuccessWhenValidSquad()
         {
-            // Arrange
-            var squad = new Squad { Name = "", Description = "Description" };
-            _localizerMock.Setup(l => l[nameof(SquadResources.SquadNameRequired)])
-                .Returns(new LocalizedString(nameof(SquadResources.SquadNameRequired), "O nome do squad é obrigatório."));
+            var squad = new Squad { Name = "Valid", Description = "Desc" };
+            squadRepositoryMock.Setup(x => x.VerifyNameAlreadyExistsAsync(It.IsAny<string>())).ReturnsAsync(false);
 
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _squadService.CreateAsync(squad));
-            Assert.Equal("O nome do squad é obrigatório.", exception.Message);
-        }
+            var result = await squadService.CreateAsync(squad);
 
-        [Fact]
-        public async Task CreateSquadShouldThrowExceptionWhenDescriptionIsEmpty()
-        {
-            // Arrange
-            var squad = new Squad { Name = "SquadName", Description = "" };
-            _localizerMock.Setup(l => l[nameof(SquadResources.SquadDescriptionRequired)])
-                .Returns(new LocalizedString(nameof(SquadResources.SquadDescriptionRequired), "A descrição do squad é obrigatória."));
-
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _squadService.CreateAsync(squad));
-            Assert.Equal("A descrição do squad é obrigatória.", exception.Message);
-        }
-
-        [Fact]
-        public async Task CreateSquadShouldThrowExceptionWhenSquadNameAlreadyExists()
-        {
-            // Arrange
-            var squad = new Squad { Name = "ExistingSquad", Description = "Description" };
-            _squadRepositoryMock.Setup(repo => repo.VerifyNameAlreadyExistsAsync(It.IsAny<string>())).ReturnsAsync(true);
-            _localizerMock.Setup(l => l[nameof(SquadResources.SquadNameAlreadyExists)])
-                .Returns(new LocalizedString(nameof(SquadResources.SquadNameAlreadyExists), "Um squad com esse nome já existe."));
-
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => _squadService.CreateAsync(squad));
-            Assert.Equal("Um squad com esse nome já existe.", exception.Message);
-        }
-
-        [Fact]
-        public async Task GetSquadByIdShouldReturnSquadWhenSquadExists()
-        {
-            // Arrange
-            var squadId = 1;
-            var squad = new Squad { Id = squadId, Name = "TestSquad", Description = "TestDescription" };
-            _squadRepositoryMock.Setup(repo => repo.GetByIdAsync(squadId)).ReturnsAsync(squad);
-
-            // Act
-            var result = await _squadService.GetItemAsync(squadId);
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal(squadId, result.Id);
-        }
-
-        [Fact]
-        public async Task GetSquadByIdShouldThrowExceptionWhenSquadDoesNotExist()
-        {
-            // Arrange
-            var squadId = 1;
-            _squadRepositoryMock.Setup(repo => repo.GetByIdAsync(squadId)).ReturnsAsync((Squad?)null);
-            _localizerMock.Setup(l => l[nameof(SquadResources.SquadNotFound)])
-                .Returns(new LocalizedString(nameof(SquadResources.SquadNotFound), "Squad não encontrado."));
-
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<KeyNotFoundException>(() => _squadService.GetItemAsync(squadId));
-            Assert.Equal("Squad não encontrado.", exception.Message);
-        }
-
-        [Fact]
-        public async Task UpdateSquadShouldThrowExceptionWhenNameIsEmpty()
-        {
-            // Arrange
-            var squad = new Squad { Id = 1, Name = "", Description = "Description" };
-            _localizerMock.Setup(l => l[nameof(SquadResources.SquadNameRequired)])
-                .Returns(new LocalizedString(nameof(SquadResources.SquadNameRequired), "O nome do squad é obrigatório."));
-
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _squadService.UpdateAsync(squad));
-            Assert.Equal("O nome do squad é obrigatório.", exception.Message);
-        }
-
-        [Fact]
-        public async Task UpdateSquadShouldThrowExceptionWhenDescriptionIsEmpty()
-        {
-            // Arrange
-            var squad = new Squad { Id = 1, Name = "SquadName", Description = "" };
-            _localizerMock.Setup(l => l[nameof(SquadResources.SquadDescriptionRequired)])
-                .Returns(new LocalizedString(nameof(SquadResources.SquadDescriptionRequired), "A descrição do squad é obrigatória."));
-
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _squadService.UpdateAsync(squad));
-            Assert.Equal("A descrição do squad é obrigatória.", exception.Message);
-        }
-
-        [Fact]
-        public async Task UpdateSquadShouldThrowExceptionWhenSquadNameAlreadyExists()
-        {
-            // Arrange
-            var squad = new Squad { Id = 1, Name = "ExistingSquad", Description = "Description" };
-            _squadRepositoryMock.Setup(repo => repo.VerifyNameAlreadyExistsAsync(It.IsAny<string>())).ReturnsAsync(true);
-            _localizerMock.Setup(l => l[nameof(SquadResources.SquadNameAlreadyExists)])
-                .Returns(new LocalizedString(nameof(SquadResources.SquadNameAlreadyExists), "Um squad com esse nome já existe."));
-
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => _squadService.UpdateAsync(squad));
-            Assert.Equal("Um squad com esse nome já existe.", exception.Message);
-        }
-
-        //[Fact] // FAZER DEPOIS
-        //public async Task UpdateSquadShouldUpdateSquadWhenValid()
-        //{
-            // Arrange
-          //  var squad = new Squad { Id = 1, Name = "NewSquad", Description = "NewDescription" };
-            //_squadRepositoryMock.Setup(repo => repo.VerifyNameAlreadyExistsAsync(It.IsAny<string>())).ReturnsAsync(false);
-
-            // Act
-            //await _squadService.UpdateAsync(squad);
-
-            // Assert
-            //_squadRepositoryMock.Verify(repo => repo.UpdateAsync(It.Is<Squad>(s => s.Id == squad.Id && s.Name == squad.Name && s.Description == squad.Description)), Times.Once);
-        //}
-
-
-
-        [Fact]
-        public async Task DeleteSquadShouldReturnSuccessWhenSquadExists()
-        {
-            // Arrange
-            var squadId = 1;
-            var squad = new Squad { Id = squadId, Name = "TestSquad", Description = "TestDescription" };
-            _squadRepositoryMock.Setup(repo => repo.GetByIdAsync(squadId)).ReturnsAsync(squad);
-            _localizerMock.Setup(l => l[nameof(SquadResources.SquadSuccessfullyDeleted)])
-                .Returns(new LocalizedString(nameof(SquadResources.SquadSuccessfullyDeleted), "Squad excluído com sucesso."));
-
-            // Act
-            var result = await _squadService.DeleteAsync(squadId);
-
-            // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
-            Assert.Equal("Squad excluído com sucesso.", result.Message);
-            _squadRepositoryMock.Verify(repo => repo.DeleteAsync(squadId, true), Times.Once);
+            squadRepositoryMock.Verify(x => x.CreateAsync(squad, true), Times.Once);
         }
 
         [Fact]
-        public async Task DeleteSquadShouldThrowExceptionWhenSquadDoesNotExist()
+        public async Task CreateShouldReturnConflictWhenNameExists()
         {
-            // Arrange
-            var squadId = 1;
-            _squadRepositoryMock.Setup(repo => repo.GetByIdAsync(squadId)).ReturnsAsync((Squad?)null);
-            _localizerMock.Setup(l => l[nameof(SquadResources.SquadNotFound)])
-                .Returns(new LocalizedString(nameof(SquadResources.SquadNotFound), "Squad não encontrado."));
+            var squad = new Squad { Name = "Existing", Description = "Desc" };
+            squadRepositoryMock.Setup(x => x.VerifyNameAlreadyExistsAsync(It.IsAny<string>())).ReturnsAsync(true);
 
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<KeyNotFoundException>(() => _squadService.DeleteAsync(squadId));
-            Assert.Equal("Squad não encontrado.", exception.Message);
+            var result = await squadService.CreateAsync(squad);
+
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal("Nome já existe", result.Message);
         }
 
         [Fact]
-        public async Task GetAllSquadsShouldReturnAllSquads()
+        public async Task GetItemShouldReturnSquadWhenExists()
         {
-            // Arrange
-            var squads = new List<Squad>
-            {
-                new Squad { Id = 1, Name = "Squad1", Description = "Description1" },
-                new Squad { Id = 2, Name = "Squad2", Description = "Description2" }
-            };
-            _squadRepositoryMock.Setup(repo => repo.GetListAsync(It.IsAny<SquadFilter>())).ReturnsAsync(new PagedResult<Squad> { Result = squads });
+            var expectedSquad = new Squad { Id = 1, Name = "Test" };
+            squadRepositoryMock.Setup(x => x.GetByIdAsync(1)).ReturnsAsync(expectedSquad);
 
-            // Act
-            var result = await _squadService.GetListAsync(new SquadFilter());
+            var result = await squadService.GetItemAsync(1);
 
-            // Assert
+            Assert.Equal(expectedSquad, result);
+        }
+
+        [Fact]
+        public async Task GetItemShouldThrowWhenNotFound()
+        {
+            squadRepositoryMock.Setup(x => x.GetByIdAsync(1)).ReturnsAsync((Squad?)null);
+
+            await Assert.ThrowsAsync<KeyNotFoundException>(() => squadService.GetItemAsync(1));
+        }
+
+        [Fact]
+        public async Task GetListShouldReturnSquadsWhenExist()
+        {
+            var squads = new List<Squad> { new() { Id = 1 }, new() { Id = 2 } };
+            squadRepositoryMock.Setup(x => x.GetListAsync(It.IsAny<SquadFilter>()))
+                .ReturnsAsync(new PagedResult<Squad> { Result = squads });
+
+            var result = await squadService.GetListAsync(new SquadFilter());
+
             Assert.Equal(2, result.Result.Count());
         }
 
         [Fact]
-        public async Task GetAllSquadsShouldReturnFilteredSquadsWhenNameIsProvided()
+        public async Task UpdateShouldReturnSuccessWhenValid()
+        {
+            var squad = new Squad { Id = 1, Name = "Valid", Description = "Desc" };
+            squadRepositoryMock.Setup(x => x.VerifyNameAlreadyExistsAsync(It.IsAny<string>())).ReturnsAsync(false);
+
+            var result = await squadService.UpdateAsync(squad);
+
+            Assert.Equal(OperationStatus.Success, result.Status);
+        }
+
+        [Fact]
+        public async Task DeleteShouldReturnSuccessWhenExists()
+        {
+            squadRepositoryMock.Setup(x => x.VerifySquadExistsAsync(1)).ReturnsAsync(true);
+
+            var result = await squadService.DeleteAsync(1);
+
+            Assert.Equal(OperationStatus.Success, result.Status);
+        }
+        [Fact]
+        public async Task DeleteSquadShouldCallRepositoryWhenExists()
+        {
+            var squad = new Squad { Id = 1 };
+            squadRepositoryMock.Setup(x => x.GetByIdAsync(1)).ReturnsAsync(squad);
+
+            await squadService.DeleteSquad(1);
+
+            squadRepositoryMock.Verify(x => x.DeleteAsync(1, true), Times.Once);
+        }
+        [Fact]
+        public void SquadValidatorShouldHaveCorrectRules()
         {
             // Arrange
-            var squads = new List<Squad>
-            {
-                new Squad { Id = 1, Name = "Squad1", Description = "Description1" },
-                new Squad { Id = 2, Name = "Squad2", Description = "Description2" }
-            };
-            _squadRepositoryMock.Setup(repo => repo.GetListAsync(It.IsAny<SquadFilter>())).ReturnsAsync(new PagedResult<Squad> { Result = squads });
+            var localizerFactoryMock = new Mock<IStringLocalizerFactory>();
+            var localizerMock = new Mock<IStringLocalizer>();
+            localizerFactoryMock.Setup(x => x.Create(typeof(SquadResources))).Returns(localizerMock.Object);
+            localizerMock.Setup(x => x[nameof(SquadResources.NameValidateLength), It.IsAny<object[]>()])
+                .Returns(new LocalizedString(nameof(SquadResources.NameValidateLength), "Name must be between 3 and 255 characters."));
+
+            var validator = new SquadValidator(localizerFactoryMock.Object);
 
             // Act
-            var result = await _squadService.GetListAsync(new SquadFilter { Name = "Squad1" });
+            var result = validator.Validate(new Squad { Name = "Te" });
 
             // Assert
-            Assert.Single(result.Result);
-            Assert.Equal("Squad1", result.Result.First().Name);
+            Assert.False(result.IsValid);
+            Assert.Contains(result.Errors, e => e.ErrorMessage == "Name must be between 3 and 255 characters.");
         }
+
+        [Fact]
+        public void SquadValidatorShouldPassForValidName()
+        {
+            // Arrange
+            var localizerFactoryMock = new Mock<IStringLocalizerFactory>();
+            var localizerMock = new Mock<IStringLocalizer>();
+            localizerFactoryMock.Setup(x => x.Create(typeof(SquadResources))).Returns(localizerMock.Object);
+            localizerMock.Setup(x => x[nameof(SquadResources.NameValidateLength), It.IsAny<object[]>()])
+                .Returns(new LocalizedString(nameof(SquadResources.NameValidateLength), "Name must be between 3 and 255 characters."));
+
+            var validator = new SquadValidator(localizerFactoryMock.Object);
+
+            // Act
+            var result = validator.Validate(new Squad { Name = "Valid Squad Name" });
+
+            // Assert
+            Assert.True(result.IsValid);
+        }
+        [Fact]
+        public void GetSquadNotFoundShouldReturnCorrectValue()
+        {
+            // Arrange
+            var expectedValue = "O nome do squad não foi encontrado.";
+            localizerMock.Setup(l => l[nameof(SquadResources.SquadNotFound)])
+                .Returns(new LocalizedString(nameof(SquadResources.SquadNotFound), expectedValue));
+
+            // Act
+            var result = SquadResources.SquadNotFound;
+
+            // Assert
+            Assert.Equal(expectedValue, result);
+        }
+
+
+        [Fact]
+        public void GetSquadsNotFoundShouldReturnCorrectValue()
+        {
+            // Arrange
+            var expectedValue = "Nenhum squad encontrado.";
+            localizerMock.Setup(l => l[nameof(SquadResources.SquadsNotFound)])
+                .Returns(new LocalizedString(nameof(SquadResources.SquadsNotFound), expectedValue));
+
+            // Act
+            var result = SquadResources.SquadsNotFound;
+
+            // Assert
+            Assert.Equal(expectedValue, result);
+        }
+
+        [Fact]
+        public void GetSquadNameAlreadyExistsShouldReturnCorrectValue()
+        {
+            // Arrange
+            var expectedValue = "Um squad com esse nome já existe.";
+            localizerMock.Setup(l => l[nameof(SquadResources.SquadNameAlreadyExists)])
+                .Returns(new LocalizedString(nameof(SquadResources.SquadNameAlreadyExists), expectedValue));
+
+            // Act
+            var result = SquadResources.SquadNameAlreadyExists;
+
+            // Assert
+            Assert.Equal(expectedValue, result);
+        }
+
+        [Fact]
+        public void GetSquadNameLengthShouldReturnCorrectValue()
+        {
+            // Arrange
+            var expectedValue = "O nome deve ter entre {3} e {50} caracteres.";
+            localizerMock.Setup(l => l[nameof(SquadResources.NameValidateLength)])
+                .Returns(new LocalizedString(nameof(SquadResources.NameValidateLength), expectedValue));
+
+            // Act
+            var result = SquadResources.NameValidateLength;
+
+            // Assert
+            Assert.Equal(expectedValue, result);
+        }
+
+
+        [Fact]
+        public void GetSquadCannotBeNullShouldReturnCorrectValue()
+        {
+            // Arrange
+            var expectedValue = "O squad não pode ser nulo.";
+            localizerMock.Setup(l => l[nameof(SquadResources.SquadCannotBeNull)])
+                .Returns(new LocalizedString(nameof(SquadResources.SquadCannotBeNull), expectedValue));
+
+            // Act
+            var result = SquadResources.SquadCannotBeNull;
+
+            // Assert
+            Assert.Equal(expectedValue, result);
+        }
+        [Fact]
+        public void GetSquadSuccessfullyDeletedShouldReturnCorrectValue()
+        {
+            // Arrange
+            var expectedValue = "Squad excluído com sucesso.";
+            localizerMock.Setup(l => l[nameof(SquadResources.SquadSuccessfullyDeleted)])
+                .Returns(new LocalizedString(nameof(SquadResources.SquadSuccessfullyDeleted), expectedValue));
+
+            // Act
+            var result = SquadResources.SquadSuccessfullyDeleted;
+
+            // Assert
+            Assert.Equal(expectedValue, result);
+        }
+
+        [Fact]
+        public void GetSquadUpdatedSuccessfullyShouldReturnCorrectValue()
+        {
+            // Arrange
+            var expectedValue = "Squad atualizado com sucesso.";
+            localizerMock.Setup(l => l[nameof(SquadResources.SquadUpdatedSuccessfully)])
+                .Returns(new LocalizedString(nameof(SquadResources.SquadUpdatedSuccessfully), expectedValue));
+
+            // Act
+            var result = SquadResources.SquadUpdatedSuccessfully;
+
+            // Assert
+            Assert.Equal(expectedValue, result);
+        }
+        [Fact]
+        public void GetSquadNameRequiredShouldReturnCorrectValue()
+        {
+            // Arrange
+            var expectedValue = "O nome do squad é obrigatório.";
+            localizerMock.Setup(l => l[nameof(SquadResources.SquadNameRequired)])
+                .Returns(new LocalizedString(nameof(SquadResources.SquadNameRequired), expectedValue));
+
+            // Act
+            var result = SquadResources.SquadNameRequired;
+
+            // Assert
+            Assert.Equal(expectedValue, result);
+        }
+        [Fact]
+        public void GetSquadDescriptionRequiredShouldReturnCorrectValue()
+        {
+            // Arrange
+            var expectedValue = "A descrição do squad é obrigatória.";
+            localizerMock.Setup(l => l[nameof(SquadResources.SquadDescriptionRequired)])
+                .Returns(new LocalizedString(nameof(SquadResources.SquadDescriptionRequired), expectedValue));
+
+            // Act
+            var result = SquadResources.SquadDescriptionRequired;
+
+            // Assert
+            Assert.Equal(expectedValue, result);
+        }
+        [Fact]
+        public void GetSquadCreatedSuccessfullyShouldReturnCorrectValue()
+        {
+            // Arrange
+            var expectedValue = "Squad criado com sucesso.";
+            localizerMock.Setup(l => l[nameof(SquadResources.SquadCreatedSuccessfully)])
+                .Returns(new LocalizedString(nameof(SquadResources.SquadCreatedSuccessfully), expectedValue));
+
+            // Act
+            var result = SquadResources.SquadCreatedSuccessfully;
+
+            // Assert
+            Assert.Equal(expectedValue, result);
+        }
+        [Fact]
+        public void CulturePropertyShouldGetAndSetCorrectValue()
+        {
+            // Arrange
+            var expectedCulture = new CultureInfo("pt-BR");
+
+            // Act
+            SquadResources.Culture = expectedCulture;
+            var result = SquadResources.Culture;
+
+            // Assert
+            Assert.Equal(expectedCulture, result);
+        }
+        [Fact]
+        public void InternalConstructorShouldInstantiateClass()
+        {
+            // Arrange
+            var constructor = typeof(SquadResources).GetConstructor(
+                BindingFlags.Instance | BindingFlags.NonPublic,
+                null,
+                Type.EmptyTypes,
+                null);
+
+            // Act
+            var instance = constructor?.Invoke(null);
+
+            // Assert
+            Assert.NotNull(instance);
+            Assert.IsType<SquadResources>(instance);
+        }
+
     }
 }

@@ -7,23 +7,33 @@ using Stellantis.ProjectName.Infrastructure.Data.Repositories;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
-    public class SquadRepository(Context context) : RepositoryEntityBase<Squad, Context>(context), ISquadRepository
+    public class SquadRepository : RepositoryEntityBase<Squad, Context>, ISquadRepository
     {
-        private readonly Context _context = context;
+        private readonly Context _context;
+
+        public SquadRepository(Context context) : base(context)
+        {
+            _context = context;
+        }
 
         public new async Task CreateAsync(Squad squad, bool saveChanges = true)
         {
             await base.CreateAsync(squad, saveChanges).ConfigureAwait(false);
         }
 
-        public async Task<Squad?> GetByIdAsync(Guid id)
+        public async Task<Squad?> GetByIdAsync(int id)
         {
             return await _context.Squads.FindAsync(id).ConfigureAwait(false);
         }
 
         public new async Task UpdateAsync(Squad squad, bool saveChanges = true)
         {
-            await base.UpdateAsync(squad, saveChanges).ConfigureAwait(false);
+            _context.Squads.Update(squad);
+
+            if (saveChanges)
+            {
+                await _context.SaveChangesAsync().ConfigureAwait(false);
+            }
         }
 
         public new async Task DeleteAsync(int id, bool saveChanges = true)
@@ -31,7 +41,12 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             var squad = await _context.Squads.FindAsync(id).ConfigureAwait(false);
             if (squad != null)
             {
-                await base.DeleteAsync(squad, saveChanges).ConfigureAwait(false);
+                _context.Squads.Remove(squad);
+
+                if (saveChanges)
+                {
+                    await _context.SaveChangesAsync().ConfigureAwait(false);
+                }
             }
         }
 
@@ -59,4 +74,5 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             return await _context.Squads.AnyAsync(s => s.Id == id).ConfigureAwait(false);
         }
     }
+
 }
