@@ -82,6 +82,12 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             }
         }
 
+        public async Task<bool> IsApplicationDataFrom(int applicationDataId, int areaId)
+        {
+            return await Context.Set<ApplicationData>()
+                .AnyAsync(ad => ad.Id == applicationDataId && ad.AreaId == areaId).ConfigureAwait(false);
+        }
+
         public async Task<bool> AnyAsync(Expression<Func<GitRepo, bool>> expression)
         {
             return await Context.Set<GitRepo>().AnyAsync(expression).ConfigureAwait(false);
