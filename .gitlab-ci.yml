@@ -33,18 +33,31 @@ web-build:
     - docker build -t $REPOSITORY_URL:$IMAGE_TAG -f src/WebApi/Dockerfile .
     - docker push $REPOSITORY_URL:$IMAGE_TAG
 
+#sonarqube:
+#  image: 253882794486.dkr.ecr.us-east-1.amazonaws.com/build-tools:latest-devops-master-dotnet
+#  stage: sonarqube
+#  script:
+#    - dotnet restore ./src
+#    - echo $SONAR_URL $SONAR_LOGIN $CI_PROJECT_NAME $PATH
+#    - mono /opt/sonar-scanner-msbuild/SonarScanner.MSBuild.dll begin /d:sonar.host.url=$SONAR_URL /d:sonar.login=$SONAR_LOGIN /k:$CI_PROJECT_NAME /n:$CI_PROJECT_NAME /v:1.0 /d:sonar.coverage.exclusions=**/*
+#    - dotnet build ./src
+#    - mono /opt/sonar-scanner-msbuild/SonarScanner.MSBuild.dll end /d:sonar.login=$SONAR_LOGIN
+#  allow_failure: true
+#  dependencies:
+#    - web-build
+
+
 sonarqube:
-  image: 253882794486.dkr.ecr.us-east-1.amazonaws.com/build-tools:latest-devops-master-dotnet
-  stage: sonarqube
+  image: image: 253882794486.dkr.ecr.us-east-1.amazonaws.com/build-tools:latest-devops-master
+  stage: security
   script:
-    - dotnet restore ./src
-    - echo $SONAR_URL $SONAR_LOGIN $CI_PROJECT_NAME $PATH
-    - mono /opt/sonar-scanner-msbuild/SonarScanner.MSBuild.dll begin /d:sonar.host.url=$SONAR_URL /d:sonar.login=$SONAR_LOGIN /k:$CI_PROJECT_NAME /n:$CI_PROJECT_NAME /v:1.0 /d:sonar.coverage.exclusions=**/*
-    - dotnet build ./src
-    - mono /opt/sonar-scanner-msbuild/SonarScanner.MSBuild.dll end /d:sonar.login=$SONAR_LOGIN
+#    - vault read sonarqube/kv/login >> sonar_url.txt
+#    - export SONAR_URL=$(cat sonar_url.txt | jq -r '.data.SONAR_URL')
+#    - vault read sonarqube/kv/secret >> sonar_login.txt
+#    - export SONAR_LOGIN=$(cat sonar_login.txt | jq -r '.data.SONAR_LOGIN')
+    - export NAMESPACE=$(echo "$CI_PROJECT_NAMESPACE" | jq -Rr 'split("/") | .[1]')
+    - /opt/sonar-scanner/sonar-scanner-6.0.0.4432-linux/bin/sonar-scanner -Dsonar.projectKey="com.ste.sa.$NAMESPACE.$CI_PROJECT_NAME" -Dsonar.sources=. -Dsonar.host.url=https://sonarqube.intra.stellantis.com -Dsonar.login=squ_4f6391317de359b7c13f44e636dc10271296fd57
   allow_failure: true
-  dependencies:
-    - web-build
 
 deploy:
   extends: .deploy-common
