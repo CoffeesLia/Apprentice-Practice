@@ -13,6 +13,7 @@ namespace Stellantis.ProjectName.Application.Services
     public class MemberService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<Member> validator)
         : EntityServiceBase<Member>(unitOfWork, localizerFactory, validator), IMemberService
     {
+        private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(MemberResource));
 
         protected override IMemberRepository Repository =>
             UnitOfWork.MemberRepository;
@@ -29,7 +30,7 @@ namespace Stellantis.ProjectName.Application.Services
 
             if (!await Repository.IsEmailUnique(item.Email).ConfigureAwait(false))
             {
-                return OperationResult.Conflict(Localizer[nameof(MemberResource.MemberEmailAlreadyExists)]);
+                return OperationResult.Conflict(_localizer[nameof(MemberResource.MemberEmailAlreadyExists)]);
             }
 
             return await base.CreateAsync(item).ConfigureAwait(false);
@@ -50,7 +51,7 @@ namespace Stellantis.ProjectName.Application.Services
             var existingMember = await Repository.GetByIdAsync(item.Id).ConfigureAwait(false);
             if (existingMember == null)
             {
-                return OperationResult.NotFound(Localizer[nameof(MemberResource.MemberNotFound)]);
+                return OperationResult.NotFound(_localizer[nameof(MemberResource.MemberNotFound)]);
             }
 
             var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
