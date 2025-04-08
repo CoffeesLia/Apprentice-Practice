@@ -128,9 +128,9 @@ namespace Application.Tests.Services
         {
             // Arrange
             var localizerFactoryMock = new Mock<IStringLocalizerFactory>();
-            var localizerMock = new Mock<IStringLocalizer>();
-            localizerFactoryMock.Setup(x => x.Create(typeof(SquadResources))).Returns(localizerMock.Object);
-            localizerMock.Setup(x => x[nameof(SquadResources.NameValidateLength), It.IsAny<object[]>()])
+            var localizerMockInstance = new Mock<IStringLocalizer>();
+            localizerFactoryMock.Setup(x => x.Create(typeof(SquadResources))).Returns(localizerMockInstance.Object);
+            localizerMockInstance.Setup(x => x[nameof(SquadResources.NameValidateLength), It.IsAny<object[]>()])
                 .Returns(new LocalizedString(nameof(SquadResources.NameValidateLength), "Name must be between 3 and 255 characters."));
 
             var validator = new SquadValidator(localizerFactoryMock.Object);
@@ -148,9 +148,9 @@ namespace Application.Tests.Services
         {
             // Arrange
             var localizerFactoryMock = new Mock<IStringLocalizerFactory>();
-            var localizerMock = new Mock<IStringLocalizer>();
-            localizerFactoryMock.Setup(x => x.Create(typeof(SquadResources))).Returns(localizerMock.Object);
-            localizerMock.Setup(x => x[nameof(SquadResources.NameValidateLength), It.IsAny<object[]>()])
+            var localizerMockInstance = new Mock<IStringLocalizer>();
+            localizerFactoryMock.Setup(x => x.Create(typeof(SquadResources))).Returns(localizerMockInstance.Object);
+            localizerMockInstance.Setup(x => x[nameof(SquadResources.NameValidateLength), It.IsAny<object[]>()])
                 .Returns(new LocalizedString(nameof(SquadResources.NameValidateLength), "Name must be between 3 and 255 characters."));
 
             var validator = new SquadValidator(localizerFactoryMock.Object);
@@ -448,10 +448,11 @@ namespace Application.Tests.Services
                 .Returns(new LocalizedString(nameof(SquadResources.SquadCannotBeNull), "O squad não pode ser nulo."));
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => squadService.CreateAsync(null));
+            var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => squadService.CreateAsync(null!));
             Assert.Equal("squad", exception.ParamName);
             Assert.Equal(expectedMessage, exception.Message);
         }
+
 
 
         [Fact]
