@@ -138,4 +138,10 @@
   <data name="SquadNotFound" xml:space="preserve">
     <value>Squad not found.</value>
   </data>
+  <data name="SquadSuccessfullyDeleted" xml:space="preserve">
+    <value>Squad successfully deleted.</value>
+  </data>
+  <data name="SquadUpdatedSuccessfully" xml:space="preserve">
+    <value>Squad updated successfully.</value>
+  </data>
 </root>
