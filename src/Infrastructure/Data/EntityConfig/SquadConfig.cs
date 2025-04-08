@@ -1,26 +1,20 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Stellantis.ProjectName.Domain.Entities;
-using Stellantis.ProjectName.Domain.Entity;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
 {
-    public class SquadConfig : IEntityTypeConfiguration<EntitySquad>
+    public class SquadConfig : IEntityTypeConfiguration<Squad>
     {
-        public void Configure(EntityTypeBuilder<EntitySquad> builder)
+        public void Configure(EntityTypeBuilder<Squad> builder)
         {
-            builder.HasKey(s => s.Id); 
+            ArgumentNullException.ThrowIfNull(builder);
 
-            builder.Property(s => s.Name)
+            builder.ToTable("Squads");
+            builder.HasKey(p => p.Id);
+            builder.Property(p => p.Name)
                 .IsRequired()
-                .HasMaxLength(100);
-
-            builder.Property(s => s.Description)
-                .IsRequired()
-                .HasMaxLength(500);
-
-            builder.HasIndex(s => s.Name)
-                .IsUnique();
+                .HasMaxLength(50);
         }
     }
 }

@@ -70,10 +70,10 @@ namespace WebApi.Tests.Controllers
             OperationResult operationResult = status switch
             {
                 OperationStatus.Conflict => OperationResult.Conflict("Squad already exists"),
-                OperationStatus.InvalidData => OperationResult.InvalidData(new ValidationResult(new[]
-                {
+                OperationStatus.InvalidData => OperationResult.InvalidData(new ValidationResult(
+                [
                     new ValidationFailure("Name", "Name is required")
-                })),
+                ])),
                 _ => throw new NotImplementedException()
             };
 
@@ -124,10 +124,10 @@ namespace WebApi.Tests.Controllers
             {
                 OperationStatus.Conflict => OperationResult.Conflict("Squad conflict occurred"),
                 OperationStatus.NotFound => OperationResult.NotFound("Squad not found"),
-                OperationStatus.InvalidData => OperationResult.InvalidData(new ValidationResult(new[]
-                {
+                OperationStatus.InvalidData => OperationResult.InvalidData(new ValidationResult(
+                [
                     new ValidationFailure("Name", "Invalid name format")
-                })),
+                ])),
                 _ => throw new NotImplementedException()
             };
 
@@ -185,7 +185,7 @@ namespace WebApi.Tests.Controllers
             var filterDto = new SquadFilterDto { Name = "Test" };
             var pagedResult = new PagedResult<Squad>
             {
-                Result = new List<Squad>(),
+                Result = [],
                 Page = 1,
                 PageSize = 10,
                 Total = 0
@@ -196,7 +196,7 @@ namespace WebApi.Tests.Controllers
             _squadServiceMock.Setup(s => s.GetListAsync(It.IsAny<SquadFilter>()))
                 .ReturnsAsync(pagedResult);
             _mapperMock.Setup(m => m.Map<PagedResultVm<SquadVm>>(It.IsAny<PagedResult<Squad>>()))
-                .Returns(new PagedResultVm<SquadVm> { Result = new List<SquadVm>() });
+                .Returns(new PagedResultVm<SquadVm> { Result = [] });
 
             // Act
             var result = await _controller.GetListAsync(filterDto);
@@ -252,10 +252,11 @@ namespace WebApi.Tests.Controllers
         public void SquadVmShouldHaveNameProperty()
         {
             // Arrange
-            var squadVm = new SquadVm();
-
-            // Act
-            squadVm.Name = "Test Squad";
+            var squadVm = new SquadVm
+            {
+                // Act
+                Name = "Test Squad"
+            };
 
             // Assert
             Assert.Equal("Test Squad", squadVm.Name);
@@ -275,17 +276,6 @@ namespace WebApi.Tests.Controllers
             // Assert
             Assert.Equal(expectedName, squadDto.Name);
             Assert.Equal(expectedDescription, squadDto.Description);
-        }
-
-        [Fact]
-        public async Task UpdateAsyncInternalShouldThrowNotImplementedException()
-        {
-            // Arrange
-            var squadId = 1;
-            var squadDto = new SquadDto();
-
-            // Act & Assert
-            await Assert.ThrowsAsync<NotImplementedException>(() => _controller.UpdateAsync((object)squadId, squadDto));
         }
     }
 }

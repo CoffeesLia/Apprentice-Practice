@@ -1,12 +1,11 @@
-﻿using Stellantis.ProjectName.Application.Interfaces.Repositories;
+﻿using Microsoft.EntityFrameworkCore;
+using Stellantis.ProjectName.Application.Interfaces.Repositories;
+using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
-using Stellantis.ProjectName.Domain.Entity;
 using Stellantis.ProjectName.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Stellantis.ProjectName.Infrastructure.Data.Repositories;
 
-namespace Stellantis.ProjectName.Infrastructure.Repositories
+namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
     public class SquadRepository : RepositoryEntityBase<Squad, Context>, ISquadRepository
     {
@@ -17,18 +16,17 @@ namespace Stellantis.ProjectName.Infrastructure.Repositories
             _context = context;
         }
 
-        public SquadRepository(Context context)
+        public new async Task CreateAsync(Squad squad, bool saveChanges = true)
         {
-            _context = context;
+            await base.CreateAsync(squad, saveChanges).ConfigureAwait(false);
         }
 
-        public async Task<Squad?> GetByIdAsync(int id)
+        public new async Task<Squad?> GetByIdAsync(int id)
         {
-            _context.Squads.Add(squad);
-            _context.SaveChanges();
+            return await _context.Squads.FindAsync(id).ConfigureAwait(false);
         }
 
-        public EntitySquad GetByName(string name)
+        public new async Task UpdateAsync(Squad squad, bool saveChanges = true)
         {
             _context.Squads.Update(squad);
 
@@ -38,7 +36,7 @@ namespace Stellantis.ProjectName.Infrastructure.Repositories
             }
         }
 
-        public IEnumerable<EntitySquad> GetAll()
+        public new async Task DeleteAsync(int id, bool saveChanges = true)
         {
             var squad = await _context.Squads.FindAsync(id).ConfigureAwait(false);
             if (squad != null)
@@ -57,15 +55,23 @@ namespace Stellantis.ProjectName.Infrastructure.Repositories
             return await _context.Squads.AnyAsync(s => s.Name == name).ConfigureAwait(false);
         }
 
-        public EntitySquad GetById(Guid id)
+        public async Task<PagedResult<Squad>> GetListAsync(SquadFilter squadFilter)
         {
-            return _context.Squads.FirstOrDefault(s => s.Id == id);
+            ArgumentNullException.ThrowIfNull(squadFilter);
+
+            var query = _context.Squads.AsQueryable();
+
+            if (!string.IsNullOrEmpty(squadFilter.Name))
+            {
+                query = query.Where(s => s.Name != null && s.Name.Contains(squadFilter.Name));
+            }
+
+            return await GetListAsync(query, squadFilter.Sort, squadFilter.SortDir, squadFilter.Page, squadFilter.PageSize).ConfigureAwait(false);
         }
 
-        public void Update(EntitySquad squad)
+        public async Task<bool> VerifySquadExistsAsync(int id)
         {
-            _context.Squads.Update(squad);
-            _context.SaveChanges();
+            return await _context.Squads.AnyAsync(s => s.Id == id).ConfigureAwait(false);
         }
     }
 

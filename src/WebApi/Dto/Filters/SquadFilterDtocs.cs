@@ -3,6 +3,5 @@
     internal class SquadFilterDto : FilterDto
     {
         public required string Name { get; set; }
-        public required AreaFilterDto Area { get; set; }
     }
 }
