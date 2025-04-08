@@ -48,7 +48,7 @@ web-build:
 
 
 sonarqube:
-  image: image: 253882794486.dkr.ecr.us-east-1.amazonaws.com/build-tools:latest-devops-master
+  image: 253882794486.dkr.ecr.us-east-1.amazonaws.com/build-tools:latest-devops-master
   stage: sonarqube
   script:
 #    - vault read sonarqube/kv/login >> sonar_url.txt
