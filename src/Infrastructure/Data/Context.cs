@@ -14,6 +14,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data
         public DbSet<Member> Members { get; set; }
         public DbSet<EntitySquad> Squads { get; set; }
         public DbSet<Integration> Integrations { get; set; }
+        public DbSet<ApplicationData> ApplicationDatas { get; set; }
 
         public DbSet<DataService> Services { get; set; }
 
