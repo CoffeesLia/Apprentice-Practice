@@ -8,16 +8,21 @@ using System.Linq;
 
 namespace Stellantis.ProjectName.Infrastructure.Repositories
 {
-    public class SquadRepository : ISquadRepository
+    public class SquadRepository : RepositoryEntityBase<Squad, Context>, ISquadRepository
     {
         private readonly Context _context;
+
+        public SquadRepository(Context context) : base(context)
+        {
+            _context = context;
+        }
 
         public SquadRepository(Context context)
         {
             _context = context;
         }
 
-        public void Add(EntitySquad squad)
+        public async Task<Squad?> GetByIdAsync(int id)
         {
             _context.Squads.Add(squad);
             _context.SaveChanges();
@@ -25,12 +30,31 @@ namespace Stellantis.ProjectName.Infrastructure.Repositories
 
         public EntitySquad GetByName(string name)
         {
-            return _context.Squads.FirstOrDefault(s => s.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+            _context.Squads.Update(squad);
+
+            if (saveChanges)
+            {
+                await _context.SaveChangesAsync().ConfigureAwait(false);
+            }
         }
 
         public IEnumerable<EntitySquad> GetAll()
         {
-            return _context.Squads.ToList();
+            var squad = await _context.Squads.FindAsync(id).ConfigureAwait(false);
+            if (squad != null)
+            {
+                _context.Squads.Remove(squad);
+
+                if (saveChanges)
+                {
+                    await _context.SaveChangesAsync().ConfigureAwait(false);
+                }
+            }
+        }
+
+        public async Task<bool> VerifyNameAlreadyExistsAsync(string name)
+        {
+            return await _context.Squads.AnyAsync(s => s.Name == name).ConfigureAwait(false);
         }
 
         public EntitySquad GetById(Guid id)
@@ -44,4 +68,5 @@ namespace Stellantis.ProjectName.Infrastructure.Repositories
             _context.SaveChanges();
         }
     }
+
 }

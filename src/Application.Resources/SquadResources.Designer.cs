@@ -61,6 +61,33 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a The name must be between {3} and {50} characters long..
+        /// </summary>
+        public static string NameValidateLength {
+            get {
+                return ResourceManager.GetString("NameValidateLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Squad bannot be null..
+        /// </summary>
+        public static string SquadCannotBeNull {
+            get {
+                return ResourceManager.GetString("SquadCannotBeNull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Successfully created squad..
+        /// </summary>
+        public static string SquadCreatedSuccessfully {
+            get {
+                return ResourceManager.GetString("SquadCreatedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Squad description is required..
         /// </summary>
         public static string SquadDescriptionRequired {

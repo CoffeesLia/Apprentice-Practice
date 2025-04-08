@@ -9,7 +9,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
     {
         public void Configure(EntityTypeBuilder<EntitySquad> builder)
         {
-            builder.HasKey(s => s.Id);
+            builder.HasKey(s => s.Id); 
 
             builder.Property(s => s.Name)
                 .IsRequired()

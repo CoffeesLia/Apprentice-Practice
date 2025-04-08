@@ -90,7 +90,8 @@ namespace Stellantis.ProjectName.Application.Services
             {
                 return _squadRepository.GetAll();
             }
-            return _squadRepository.GetAll().Where(s => s.Name.Contains(name, StringComparison.OrdinalIgnoreCase));
+            await _squadRepository.DeleteAsync(id).ConfigureAwait(false);
         }
+
     }
 }
