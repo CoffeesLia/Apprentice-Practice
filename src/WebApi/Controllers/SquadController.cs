@@ -1,109 +1,53 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces.Services;
+using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
-using System;
-using System.Collections.Generic;
+using Stellantis.ProjectName.WebApi.Dto;
+using Stellantis.ProjectName.WebApi.Dto.Filters;
+using Stellantis.ProjectName.WebApi.ViewModels;
 
-namespace Stellantis.ProjectName.WebAPI.Controllers
+namespace Stellantis.ProjectName.WebApi.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
-    public class SquadController : ControllerBase
+    [Route("api/[controller]")]
+    internal class SquadController(ISquadService squadService, IMapper mapper, IStringLocalizerFactory localizerFactory)
+        : EntityControllerBase<Squad, SquadDto>(squadService, mapper, localizerFactory)
     {
-        private readonly ISquadService _squadService;
-        private readonly IMapper _mapper;
+        private readonly ISquadService _squadService = squadService;
 
-        public SquadController(ISquadService squadService, IMapper mapper)
-        {
-            _squadService = squadService;
-            _mapper = mapper;
-        }
-
-        // AMS-53: Create a new squad
         [HttpPost]
-        public IActionResult CreateSquad([FromBody] CreateSquadRequest request)
+        public async Task<IActionResult> CreateAsync([FromBody] SquadDto itemDto)
         {
-            try
-            {
-                _squadService.CreateSquad(request.Name, request.Description);
-                return Ok(new { Message = "Squad created successfully." });
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(new { Message = ex.Message });
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Conflict(new { Message = ex.Message });
-            }
+            return await CreateBaseAsync<SquadVm>(itemDto).ConfigureAwait(false);
         }
 
-        // AMS-54: Get squad details by ID
-        [HttpGet("{id}")]
-        public IActionResult GetSquadById(Guid id)
-        {
-            try
-            {
-                var squad = _squadService.GetSquadById(id);
-                var squadDto = _mapper.Map<SquadDto>(squad);
-                return Ok(squadDto);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(new { Message = ex.Message });
-            }
-        }
-
-        // AMS-55: Update an existing squad
         [HttpPut("{id}")]
-        public IActionResult UpdateSquad(Guid id, [FromBody] UpdateSquadRequest request)
+        public async Task<IActionResult> UpdateAsync(int id, [FromBody] SquadDto itemDto)
         {
-            try
-            {
-                _squadService.UpdateSquad(id, request.Name, request.Description);
-                return Ok(new { Message = "Squad updated successfully." });
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(new { Message = ex.Message });
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(new { Message = ex.Message });
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Conflict(new { Message = ex.Message });
-            }
+            return await UpdateBaseAsync<SquadVm>(id, itemDto).ConfigureAwait(false);
         }
 
-        // AMS-56: List all squads
+        [HttpGet("{id}")]
+        public async Task<ActionResult<SquadVm>> GetAsync(int id)
+        {
+            return await GetAsync<SquadVm>(id).ConfigureAwait(false);
+        }
+
         [HttpGet]
-        public IActionResult GetAllSquads([FromQuery] string name = null)
+        public async Task<IActionResult> GetListAsync([FromQuery] SquadFilterDto filterDto)
         {
-            var squads = _squadService.GetAllSquads(name);
-            var squadDtos = _mapper.Map<IEnumerable<SquadDto>>(squads);
-            return Ok(squadDtos);
+            var filter = Mapper.Map<SquadFilter>(filterDto);
+            var pagedResult = await _squadService.GetListAsync(filter!).ConfigureAwait(false);
+            var result = Mapper.Map<PagedResultVm<SquadVm>>(pagedResult);
+            return Ok(result);
         }
-    }
 
-    public class CreateSquadRequest
-    {
-        public string Name { get; set; }
-        public string Description { get; set; }
-    }
-
-    public class UpdateSquadRequest
-    {
-        public string Name { get; set; }
-        public string Description { get; set; }
-    }
-
-    public class SquadDto
-    {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
+        [HttpDelete("{id}")]
+        public override async Task<IActionResult> DeleteAsync(int id)
+        {
+            return await base.DeleteAsync(id).ConfigureAwait(false);
+        }
     }
 }
