@@ -17,5 +17,6 @@ namespace Stellantis.ProjectName.Application.Interfaces.Repositories
         Task<bool> DeleteAsync(int id);
         void GetListAysnc();
         Task<bool> VerifyNameAlreadyExistsAsync(string name);
+        Task<GitRepo?> GetFullByIdAsync(int id);
     }
 }

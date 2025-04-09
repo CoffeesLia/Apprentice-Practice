@@ -10,16 +10,10 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Services
 {
-    public class GitRepoService : EntityServiceBase<GitRepo>, IGitRepoService
+    public class GitRepoService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<GitRepo> validator) : EntityServiceBase<GitRepo>(unitOfWork, localizerFactory, validator), IGitRepoService
     {
         private new IStringLocalizer Localizer => localizerFactory.Create(typeof(GitResource));
-        private readonly IStringLocalizerFactory localizerFactory;
-
-        public GitRepoService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<GitRepo> validator)
-            : base(unitOfWork, localizerFactory, validator)
-        {
-            this.localizerFactory = localizerFactory;
-        }
+        private readonly IStringLocalizerFactory localizerFactory = localizerFactory;
 
         protected override IGitRepoRepository Repository => UnitOfWork.GitRepoRepository;
 
@@ -35,11 +29,10 @@ namespace Stellantis.ProjectName.Application.Services
             }
             if (await Repository.VerifyUrlAlreadyExistsAsync(item.Url).ConfigureAwait(false))
             {
-                throw new InvalidOperationException(Localizer[nameof(GitResource.ExistentRepositoryUrl)]);
+                return OperationResult.Conflict(Localizer[nameof(GitResource.ExistentRepositoryUrl)]);
             }
 
-            await Repository.CreateAsync(item).ConfigureAwait(true);
-            return OperationResult.Complete(Localizer[nameof(ServiceResources.RegisteredSuccessfully)]);
+            return await base.CreateAsync(item).ConfigureAwait(true);
         }
 
         public async Task<bool> VerifyAplicationsExistsAsync(int id)
@@ -82,8 +75,7 @@ namespace Stellantis.ProjectName.Application.Services
             existingRepo.Url = item.Url;
             existingRepo.ApplicationId = item.ApplicationId;
 
-            await Repository.UpdateAsync(existingRepo).ConfigureAwait(false);
-            return OperationResult.Complete(Localizer[nameof(ServiceResources.UpdatedSuccessfully)]);
+            return await base.UpdateAsync(existingRepo).ConfigureAwait(false);
         }
         public async Task<PagedResult<GitRepo>> GetListAsync(GitRepoFilter gitRepoFilter)
         {
@@ -98,13 +90,10 @@ namespace Stellantis.ProjectName.Application.Services
 
         public override async Task<OperationResult> DeleteAsync(int id)
         {
-            var repo = await Repository.GetByIdAsync(id).ConfigureAwait(false);
-            if (repo == null)
-            {
-                return OperationResult.NotFound(Localizer[nameof(GitResource.RepositoryNotFound)]);
-            }
-            await Repository.DeleteAsync(repo).ConfigureAwait(false);
-            return OperationResult.Complete(Localizer[nameof(ServiceResources.DeletedSuccessfully)]);
+            var item = await Repository.GetFullByIdAsync(id).ConfigureAwait(false);
+            if (item == null)
+                return OperationResult.NotFound(base.Localizer[nameof(GitResource.RepositoryNotFound)]);
+            return await base.DeleteAsync(item).ConfigureAwait(false);
         }
     }
 }

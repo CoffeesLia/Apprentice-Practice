@@ -5,6 +5,7 @@ using Microsoft.Extensions.Localization;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
+using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
@@ -38,28 +39,28 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task CreateAsyncShouldReturnInvalidDataWhenRepositoryIsInvalid()
+        public async Task CreateAsyncShouldReturnInvalidDataWhenValidationFails()
         {
             // Arrange
-            var invalidData = new GitRepo("InvalidData")
+            var invalidRepo = new GitRepo("InvalidRepo")
             {
                 Name = "",
                 Description = "",
                 Url = new Uri("http://invalid-url.com"),
+                ApplicationId = 1
             };
 
             var validationResult = new ValidationResult(new List<ValidationFailure>
-            {
-                new("Name", _localizerMock.Object[nameof(GitResource.NameIsRequired)]),
-                new("Description", _localizerMock.Object[nameof(GitResource.DescriptionIsRequired)]),
-                new("Url", _localizerMock.Object[nameof(GitResource.UrlIsRequired)])
-            });
-            
-            _gitRepoRepositoryMock.Setup(r => r.GetByIdAsync(invalidData.Id)).ReturnsAsync(invalidData);
-            _validatorMock.Setup(v => v.ValidateAsync(invalidData, default)).ReturnsAsync(validationResult);
+    {
+        new("Name", _localizerMock.Object[nameof(GitResource.NameIsRequired)]),
+        new("Description", _localizerMock.Object[nameof(GitResource.DescriptionIsRequired)]),
+        new("Url", _localizerMock.Object[nameof(GitResource.UrlIsRequired)])
+    });
+
+            _validatorMock.Setup(v => v.ValidateAsync(invalidRepo, default)).ReturnsAsync(validationResult);
 
             // Act
-            var result = await _gitRepoService.UpdateAsync(invalidData);
+            var result = await _gitRepoService.CreateAsync(invalidRepo);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
@@ -73,56 +74,41 @@ namespace Application.Tests.Services
             {
                 Name = "ExistingRepo",
                 Description = "Description",
-                Url = new Uri("https://existing-url.com")
+                Url = new Uri("https://existing-url.com"),
+                ApplicationId = 1
             };
-            var repositoryMock = new Mock<IGitRepoRepository>();
-            repositoryMock.Setup(r => r.VerifyUrlAlreadyExistsAsync(gitRepo.Url)).ReturnsAsync(true);
-            var service = new GitRepoService(_unitOfWorkMock.Object, _localizerFactoryMock.Object, _validatorMock.Object);
 
-            // Act & Assert
-            await Assert.ThrowsAsync<NullReferenceException>(() => service.CreateAsync(gitRepo));
-        }
-
-        [Fact]
-        public async Task CreateAsyncShouldReturnSuccessWhenRepositoryIsValid()
-        {
-            // Arrange
-            var gitRepo = new GitRepo("ExistingRepo")
-            {
-                Name = "ExistingRepo",
-                Description = "Description",
-                Url = new Uri("https://existing-url.com")
-            };
             var validationResult = new ValidationResult();
 
             _validatorMock.Setup(v => v.ValidateAsync(gitRepo, default)).ReturnsAsync(validationResult);
-            _gitRepoRepositoryMock.Setup(r => r.VerifyUrlAlreadyExistsAsync(gitRepo.Url)).ReturnsAsync(false);
+            _gitRepoRepositoryMock.Setup(r => r.VerifyUrlAlreadyExistsAsync(gitRepo.Url)).ReturnsAsync(true);
+            _localizerMock.Setup(l => l[GitResource.ExistentRepositoryUrl]).Returns(new LocalizedString(GitResource.ExistentRepositoryUrl, "A repository with the same URL already exists."));
 
             // Act
             var result = await _gitRepoService.CreateAsync(gitRepo);
 
             // Assert
-            Assert.Equal(OperationStatus.Success, result.Status);
-
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal(_localizerMock.Object[GitResource.ExistentRepositoryUrl] + gitRepo.Url.ToString(), result.Message);
         }
 
         [Fact]
-        public async Task DeleteAsyncShouldReturnSuccessWhenRepositoryExists()
+        public async Task DeleteAsyncShouldReturnSuccessWhenItemIsDeleted()
         {
             // Arrange
-            var existingRepo = new GitRepo("ExistingRepo") 
-            { 
-                Id = 1, 
-                Name = "ExistingRepo", 
-                Description = "Existing Description", 
-                Url = new Uri ("http://existing-url.com") 
+            var gitRepo = new GitRepo("TestApp")
+            {
+                Id = 1,
+                Name = "RepoName",
+                Description = "RepoDescription",
+                Url = new Uri ("http://existing-url.com"),
             };
 
-            _unitOfWorkMock.Setup(u => u.GitRepoRepository.GetByIdAsync(existingRepo.Id)).ReturnsAsync(existingRepo);
-            _unitOfWorkMock.Setup(u => u.GitRepoRepository.DeleteAsync(existingRepo.Id)).ReturnsAsync(true);
+            _gitRepoRepositoryMock.Setup(r => r.GetFullByIdAsync(gitRepo.Id)).ReturnsAsync(gitRepo);
+            _gitRepoRepositoryMock.Setup(r => r.DeleteAsync(gitRepo.Id, true)).Returns(Task.CompletedTask);
 
             // Act
-            var result = await _gitRepoService.DeleteAsync(existingRepo.Id).ConfigureAwait(true);
+            var result = await _gitRepoService.DeleteAsync(gitRepo.Id);
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
@@ -254,8 +240,8 @@ namespace Application.Tests.Services
             };
             var repos = new PagedResult<GitRepo>
             {
-                Result = new List<GitRepo>
-                {
+                Result =
+                [
                     new GitRepo("Repo1")
                     {
                         Id = 1,
@@ -272,7 +258,7 @@ namespace Application.Tests.Services
                         Url = new Uri ("http://existing-url.com"),
                         ApplicationId = 2
                     }
-                },
+                ],
                 Page = 1,
                 PageSize = 10,
                 Total = 2
@@ -308,7 +294,7 @@ namespace Application.Tests.Services
                 ApplicationId = 0 };
             var repos = new PagedResult<GitRepo>
             {
-                Result = new List<GitRepo>(),
+                Result = [],
                 Page = 1,
                 PageSize = 10,
                 Total = 0
