@@ -33,13 +33,14 @@ namespace Stellantis.ProjectName.Application.Services
             {
                 return OperationResult.InvalidData(validationResult);
             }
+
+             
             if (await Repository.VerifyUrlAlreadyExistsAsync(item.Url).ConfigureAwait(false))
             {
                 throw new InvalidOperationException(Localizer[nameof(GitResource.ExistentRepositoryUrl)]);
             }
 
-            await Repository.CreateAsync(item).ConfigureAwait(true);
-            return OperationResult.Complete(Localizer[nameof(ServiceResources.RegisteredSuccessfully)]);
+            return await base.CreateAsync(item).ConfigureAwait(false);
         }
 
         public async Task<bool> VerifyAplicationsExistsAsync(int id)
@@ -77,14 +78,9 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.Conflict(Localizer[nameof(GitResource.ExistentRepositoryUrl)]);
             }
 
-            existingRepo.Name = item.Name;
-            existingRepo.Description = item.Description;
-            existingRepo.Url = item.Url;
-            existingRepo.ApplicationId = item.ApplicationId;
-
-            await Repository.UpdateAsync(existingRepo).ConfigureAwait(false);
-            return OperationResult.Complete(Localizer[nameof(ServiceResources.UpdatedSuccessfully)]);
+            return await base.UpdateAsync(item).ConfigureAwait(false);
         }
+
         public async Task<PagedResult<GitRepo>> GetListAsync(GitRepoFilter gitRepoFilter)
         {
             gitRepoFilter ??= new GitRepoFilter
@@ -98,13 +94,12 @@ namespace Stellantis.ProjectName.Application.Services
 
         public override async Task<OperationResult> DeleteAsync(int id)
         {
-            var repo = await Repository.GetByIdAsync(id).ConfigureAwait(false);
-            if (repo == null)
+            var item = await Repository.GetByIdAsync(id).ConfigureAwait(false);
+            if (item == null)
             {
                 return OperationResult.NotFound(Localizer[nameof(GitResource.RepositoryNotFound)]);
             }
-            await Repository.DeleteAsync(repo).ConfigureAwait(false);
-            return OperationResult.Complete(Localizer[nameof(ServiceResources.DeletedSuccessfully)]);
+            return await base.DeleteAsync(item).ConfigureAwait(false);
         }
     }
 }
