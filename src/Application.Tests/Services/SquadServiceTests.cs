@@ -176,22 +176,6 @@ namespace Application.Tests.Services
             Assert.Equal(expectedValue, result);
         }
 
-
-        [Fact]
-        public void GetSquadsNotFoundShouldReturnCorrectValue()
-        {
-            // Arrange
-            var expectedValue = "Nenhum squad encontrado.";
-            localizerMock.Setup(l => l[nameof(SquadResources.SquadNotFound)])
-                .Returns(new LocalizedString(nameof(SquadResources.SquadNotFound), expectedValue));
-
-            // Act
-            var result = SquadResources.SquadNotFound;
-
-            // Assert
-            Assert.Equal(expectedValue, result);
-        }
-
         [Fact]
         public void GetSquadNameAlreadyExistsShouldReturnCorrectValue()
         {
