@@ -75,7 +75,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 throw new ArgumentException(AreaResources.Undeleted);
             }
 
-            return area.Applications.Any();
+            return area.Applications.Count != 0;
         }
 
   

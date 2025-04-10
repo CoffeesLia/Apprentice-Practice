@@ -138,9 +138,6 @@
   <data name="SquadNotFound" xml:space="preserve">
     <value>O nome do squad não foi encontrado.</value>
   </data>
-  <data name="SquadsNotFound" xml:space="preserve">
-    <value>Nenhum squad encontrado.</value>
-  </data>
   <data name="SquadSuccessfullyDeleted" xml:space="preserve">
     <value>Squad excluído com sucesso.</value>
   </data>

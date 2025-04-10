@@ -5,7 +5,7 @@ namespace Stellantis.ProjectName.WebApi.Dto
     public class ApplicationDataDto
     {
         public int Id { get; set; }
-        public required AreaDto Area { get; set; }
+        public AreaDto Area { get; set; } = null!;
         public required string Name { get; set; }
         public int AreaId { get; set; }
         public int ResponsibleId { get; set; }
