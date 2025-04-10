@@ -132,7 +132,7 @@ namespace Application.Services.Tests
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
         }
-       
+
         [Fact]
         public async Task UpdateAsyncWhenValidationFails()
         {

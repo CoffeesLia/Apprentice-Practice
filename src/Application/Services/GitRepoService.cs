@@ -10,15 +10,23 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Services
 {
-    public class GitRepoService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<GitRepo> validator)
-                    : EntityServiceBase<GitRepo>(unitOfWork, localizerFactory, validator), IGitRepoService
+    public class GitRepoService : EntityServiceBase<GitRepo>, IGitRepoService
     {
         private new IStringLocalizer Localizer => localizerFactory.Create(typeof(GitResource));
+        private readonly IStringLocalizerFactory localizerFactory;
+
+        public GitRepoService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<GitRepo> validator)
+            : base(unitOfWork, localizerFactory, validator)
+        {
+            this.localizerFactory = localizerFactory;
+        }
 
         protected override IGitRepoRepository Repository => UnitOfWork.GitRepoRepository;
 
         public override async Task<OperationResult> CreateAsync(GitRepo item)
         {
+            ArgumentNullException.ThrowIfNull(item);
+
             var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
 
             if (!validationResult.IsValid)
@@ -50,6 +58,8 @@ namespace Stellantis.ProjectName.Application.Services
         }
         public override async Task<OperationResult> UpdateAsync(GitRepo item)
         {
+            ArgumentNullException.ThrowIfNull(item);
+
             var existingRepo = await Repository.GetByIdAsync(item.Id).ConfigureAwait(false);
             if (existingRepo == null)
             {
@@ -75,15 +85,15 @@ namespace Stellantis.ProjectName.Application.Services
             await Repository.UpdateAsync(existingRepo).ConfigureAwait(false);
             return OperationResult.Complete(Localizer[nameof(ServiceResources.UpdatedSuccessfully)]);
         }
-        public async Task<PagedResult<GitRepo>> GetListAysnc(GitRepoFilter filter)
+        public async Task<PagedResult<GitRepo>> GetListAsync(GitRepoFilter gitRepoFilter)
         {
-            filter ??= new GitRepoFilter
+            gitRepoFilter ??= new GitRepoFilter
             {
                 Name = string.Empty,
                 Description = string.Empty,
-                Url = string.Empty
+                Url = new Uri($"http://example.com"),
             };
-            return await UnitOfWork.GitRepoRepository.GetListAsync(filter).ConfigureAwait(false);
+            return await UnitOfWork.GitRepoRepository.GetListAsync(gitRepoFilter).ConfigureAwait(false);
         }
 
         public override async Task<OperationResult> DeleteAsync(int id)
@@ -96,7 +106,6 @@ namespace Stellantis.ProjectName.Application.Services
             await Repository.DeleteAsync(repo).ConfigureAwait(false);
             return OperationResult.Complete(Localizer[nameof(ServiceResources.DeletedSuccessfully)]);
         }
-
     }
 }
 

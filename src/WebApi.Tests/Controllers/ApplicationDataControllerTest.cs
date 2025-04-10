@@ -41,12 +41,38 @@ namespace WebApi.Tests.Controllers
             // Arrange
             var applicationDataDto = new ApplicationDataDto
             {
+                Id = 1,
                 Name = "Valid Name",
-                Area = new AreaDto() // Add this line to initialize the required 'Area' property
+                AreaId = 1,
+                Description = "Description",
+                External = true,
+                Area = new AreaDto(),
+                ProductOwner = "Owner",
+                ConfigurationItem = "ConfigItem",
+                ResponsibleId = 1
             };
-            var applicationVm = new ApplicationVm { Id = 1, Name = "Valid Name" };
+            var applicationVm = new ApplicationVm
+            {
+                Id = 1,
+                Name = "Valid Name",
+                AreaId = 1,
+                Description = "Description",
+                External = true,
+                ProductOwner = "Owner",
+                ConfigurationItem = "ConfigItem"
+            };
 
-            _mapperMock.Setup(m => m.Map<ApplicationData>(It.IsAny<ApplicationDataDto>())).Returns(new ApplicationData("Valid Name"));
+            _mapperMock.Setup(m => m.Map<ApplicationData>(It.IsAny<ApplicationDataDto>())).Returns(new ApplicationData("Valid Name")
+            {
+                Id = 1,
+                AreaId = 1,
+                Description = "Description",
+                External = true,
+                ProductOwner = "Owner",
+                ConfigurationItem = "ConfigItem",
+                ResponsibleId = 1
+            });
+
             _mapperMock.Setup(m => m.Map<ApplicationVm>(It.IsAny<ApplicationData>())).Returns(applicationVm);
 
             _serviceMock.Setup(s => s.CreateAsync(It.IsAny<ApplicationData>())).ReturnsAsync(OperationResult.Complete("Success"));
@@ -58,13 +84,30 @@ namespace WebApi.Tests.Controllers
             Assert.IsType<CreatedAtActionResult>(result);
         }
 
-
         [Fact]
         public async Task GetAsyncShouldReturnApplicationVmWhenApplicationDataExists()
         {
             // Arrange
-            var applicationVm = new ApplicationVm { Id = 1, Name = "Valid Name" };
-            var applicationData = new ApplicationData("Valid Name") { Id = 1 };
+            var applicationVm = new ApplicationVm
+            {
+                Id = 1,
+                Name = "Valid Name",
+                AreaId = 1,
+                Description = "Description",
+                External = true,
+                ProductOwner = "Owner",
+                ConfigurationItem = "ConfigItem"
+            };
+            var applicationData = new ApplicationData("Valid Name")
+            {
+                Id = 1,
+                AreaId = 1,
+                Description = "Description",
+                External = true,
+                ProductOwner = "Owner",
+                ConfigurationItem = "ConfigItem",
+                ResponsibleId = 1
+            };
 
             _serviceMock.Setup(s => s.GetItemAsync(applicationData.Id)).ReturnsAsync(applicationData);
             _mapperMock.Setup(m => m.Map<ApplicationVm>(applicationData)).Returns(applicationVm);
@@ -85,20 +128,54 @@ namespace WebApi.Tests.Controllers
             var filterDto = new ApplicationDataFilterDto
             {
                 Name = "Valid Name",
-                AreaId = 1, // Adicionando AreaId
-                Area = new AreaFilterDto()
+                AreaId = 1,
+                Area = new AreaFilterDto(),
+                External = true,
+                ProductOwner = "Owner",
+                ConfigurationItem = "ConfigItem"
             };
-            var filter = new ApplicationFilter { Name = "Valid Name", AreaId = 1 }; // Adicionando AreaId
+            var filter = new ApplicationFilter
+            {
+                Name = "Valid Name",
+                AreaId = 1,
+                External = true,
+                ProductOwner = "Owner",
+                ConfigurationItem = "ConfigItem"
+            };
             var pagedResult = new PagedResult<ApplicationData>
             {
-                Result = [new ApplicationData("Valid Name")],
+                Result = new List<ApplicationData>
+                    {
+                        new ApplicationData("Valid Name")
+                        {
+                            Id = 1,
+                            AreaId = 1,
+                            Description = "Description",
+                            External = true,
+                            ProductOwner = "Owner",
+                            ConfigurationItem = "ConfigItem",
+                            ResponsibleId = 1
+                        }
+                    },
                 Page = 1,
                 PageSize = 10,
                 Total = 1
             };
             var pagedVmResult = new PagedResult<ApplicationVm>
             {
-                Result = [new ApplicationVm { Id = 1, Name = "Valid Name" }],
+                Result = new List<ApplicationVm>
+                    {
+                        new ApplicationVm
+                        {
+                            Id = 1,
+                            Name = "Valid Name",
+                            AreaId = 1,
+                            Description = "Description",
+                            External = true,
+                            ProductOwner = "Owner",
+                            ConfigurationItem = "ConfigItem"
+                        }
+                    },
                 Page = 1,
                 PageSize = 10,
                 Total = 1
@@ -123,12 +200,37 @@ namespace WebApi.Tests.Controllers
             // Arrange
             var applicationDataDto = new ApplicationDataDto
             {
+                Id = 1,
                 Name = "Valid Name",
-                Area = new AreaDto() // Add this line to initialize the required 'Area' property
+                AreaId = 1,
+                Description = "Description",
+                External = true,
+                Area = new AreaDto(),
+                ProductOwner = "Owner",
+                ConfigurationItem = "ConfigItem",
+                ResponsibleId = 1
             };
-            var applicationVm = new ApplicationVm { Id = 1, Name = "Valid Name" };
+            var applicationVm = new ApplicationVm
+            {
+                Id = 1,
+                Name = "Valid Name",
+                AreaId = 1,
+                Description = "Description",
+                External = true,
+                ProductOwner = "Owner",
+                ConfigurationItem = "ConfigItem"
+            };
 
-            _mapperMock.Setup(m => m.Map<ApplicationData>(It.IsAny<ApplicationDataDto>())).Returns(new ApplicationData("Valid Name"));
+            _mapperMock.Setup(m => m.Map<ApplicationData>(It.IsAny<ApplicationDataDto>())).Returns(new ApplicationData("Valid Name")
+            {
+                Id = 1,
+                AreaId = 1,
+                Description = "Description",
+                External = true,
+                ProductOwner = "Owner",
+                ConfigurationItem = "ConfigItem",
+                ResponsibleId = 1
+            });
             _mapperMock.Setup(m => m.Map<ApplicationVm>(It.IsAny<ApplicationData>())).Returns(applicationVm);
 
             _serviceMock.Setup(s => s.UpdateAsync(It.IsAny<ApplicationData>())).ReturnsAsync(OperationResult.Complete("Success"));
@@ -140,8 +242,6 @@ namespace WebApi.Tests.Controllers
             var okResult = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(200, okResult.StatusCode);
         }
-
-
 
         [Fact]
         public async Task DeleteAsyncReturnsNoContentWhenDeletionIsSuccessful()
@@ -184,7 +284,6 @@ namespace WebApi.Tests.Controllers
             // Assert
             Assert.IsType<ConflictObjectResult>(result);
         }
-
     }
 }
 

@@ -117,6 +117,15 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="NameValidateLength" xml:space="preserve">
+    <value>O nome deve ter entre {3} e {50} caracteres.</value>
+  </data>
+  <data name="SquadCannotBeNull" xml:space="preserve">
+    <value>O squad não pode ser nulo.</value>
+  </data>
+  <data name="SquadCreatedSuccessfully" xml:space="preserve">
+    <value>Squad criado com sucesso.</value>
+  </data>
   <data name="SquadDescriptionRequired" xml:space="preserve">
     <value>A descrição do squad é obrigatória.</value>
   </data>
@@ -128,5 +137,11 @@
   </data>
   <data name="SquadNotFound" xml:space="preserve">
     <value>O nome do squad não foi encontrado.</value>
+  </data>
+  <data name="SquadSuccessfullyDeleted" xml:space="preserve">
+    <value>Squad excluído com sucesso.</value>
+  </data>
+  <data name="SquadUpdatedSuccessfully" xml:space="preserve">
+    <value>Squad atualizado com sucesso.</value>
   </data>
 </root>

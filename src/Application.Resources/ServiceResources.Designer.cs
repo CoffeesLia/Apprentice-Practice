@@ -70,6 +70,15 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Member updated successfully..
+        /// </summary>
+        public static string MemberUpdatedSuccessfully {
+            get {
+                return ResourceManager.GetString("MemberUpdatedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Not found..
         /// </summary>
         public static string NotFound {
@@ -84,6 +93,42 @@ namespace Stellantis.ProjectName.Application.Resources {
         public static string RegisteredSuccessfully {
             get {
                 return ResourceManager.GetString("RegisteredSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Squad description is required.
+        /// </summary>
+        public static string SquadDescriptionRequired {
+            get {
+                return ResourceManager.GetString("SquadDescriptionRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a A squad with this name already exists..
+        /// </summary>
+        public static string SquadNameAlreadyExists {
+            get {
+                return ResourceManager.GetString("SquadNameAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Squad name is required.
+        /// </summary>
+        public static string SquadNameRequired {
+            get {
+                return ResourceManager.GetString("SquadNameRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Squad not found .
+        /// </summary>
+        public static string SquadNotFound {
+            get {
+                return ResourceManager.GetString("SquadNotFound", resourceCulture);
             }
         }
         

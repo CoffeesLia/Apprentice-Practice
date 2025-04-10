@@ -83,6 +83,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Application\Application.csproj" />
     <ProjectReference Include="..\IoC\IoC.csproj" />
     <ProjectReference Include="..\WebApi.Resources\WebApi.Resources.csproj" />
   </ItemGroup>

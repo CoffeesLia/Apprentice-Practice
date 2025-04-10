@@ -129,4 +129,19 @@
   <data name="UpdatedSuccessfully" xml:space="preserve">
     <value>Updated Successfully.</value>
   </data>
+  <data name="SquadNameRequired" xml:space="preserve">
+    <value>Squad name is required</value>
+  </data>
+  <data name="SquadDescriptionRequired" xml:space="preserve">
+    <value>Squad description is required</value>
+  </data>
+  <data name="SquadNameAlreadyExists" xml:space="preserve">
+    <value>A squad with this name already exists.</value>
+  </data>
+  <data name="SquadNotFound" xml:space="preserve">
+    <value>Squad not found </value>
+  </data>
+  <data name="MemberUpdatedSuccessfully" xml:space="preserve">
+    <value>Member updated successfully.</value>
+  </data>
 </root>

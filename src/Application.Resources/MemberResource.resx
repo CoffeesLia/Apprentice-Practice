@@ -117,16 +117,25 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="SquadDescriptionRequired" xml:space="preserve">
-    <value>Se requiere la descripción del squad.</value>
+  <data name="CostMemberLargestEqualZero" xml:space="preserve">
+    <value>Member cost must be greater than or equal to zero.</value>
   </data>
-  <data name="SquadNameAlreadyExists" xml:space="preserve">
-    <value>Ya existe un squad con este nombre.</value>
+  <data name="MemberEmailAlreadyExists" xml:space="preserve">
+    <value>This e-mail already exists.</value>
   </data>
-  <data name="SquadNameRequired" xml:space="preserve">
-    <value>Se requiere el nombre del squad.</value>
+  <data name="MemberEmailIsRequired" xml:space="preserve">
+    <value>Member email is required.</value>
   </data>
-  <data name="SquadNotFound" xml:space="preserve">
-    <value>No se encontró el nombre del squad.</value>
+  <data name="MemberNotFound" xml:space="preserve">
+    <value>Member not found.</value>
+  </data>
+  <data name="MemberNameIsRequired" xml:space="preserve">
+    <value>Member name is required.</value>
+  </data>
+  <data name="MemberRoleIsRequired" xml:space="preserve">
+    <value>Member role is required.</value>
+  </data>
+  <data name="MemberCostRequired" xml:space="preserve">
+    <value>Member cost is required.</value>
   </data>
 </root>

@@ -95,14 +95,5 @@ namespace Stellantis.ProjectName.Application.Resources {
                 return ResourceManager.GetString("NameRequired", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Person responsible not found.
-        /// </summary>
-        public static string ResponsibleNotFound {
-            get {
-                return ResourceManager.GetString("ResponsibleNotFound", resourceCulture);
-            }
-        }
     }
 }
