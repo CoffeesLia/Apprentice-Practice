@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Data.Entity;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models;
@@ -102,6 +100,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         {
             return await Context.Set<GitRepo>().AnyAsync(repo => repo.ApplicationId == id).ConfigureAwait(false);
         }
+
 
         async Task IRepositoryEntityBase<GitRepo>.DeleteAsync(int id, bool saveChanges)
         {
