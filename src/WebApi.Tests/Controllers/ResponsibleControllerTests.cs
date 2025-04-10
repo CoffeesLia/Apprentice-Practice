@@ -15,27 +15,20 @@ using WebApi.Tests.Helpers;
 using Stellantis.ProjectName.Application.Resources;
 
 
-namespace WebApi.Tests.Controllers
+namespace Stellantis.ProjectName.WebApi.Tests.Controllers
 {
     public class ResponsibleControllerTests
     {
-        private readonly Mock<IResponsibleService> _serviceMock;    
+        private readonly Mock<IResponsibleService> _serviceMock;
         private readonly ResponsibleController _controller;
         private readonly Fixture _fixture;
 
         public ResponsibleControllerTests()
         {
             _serviceMock = new Mock<IResponsibleService>();
-<<<<<<< HEAD
             var mapperConfiguration = new MapperConfiguration(x => { x.AddProfile<AutoMapperProfile>(); });
             var mapper = mapperConfiguration.CreateMapper();
             var localizerFactor = LocalizerFactorHelper.Create();
-=======
-            _mapperMock = new Mock<IMapper>();
-            _localizerFactoryMock = new Mock<IStringLocalizerFactory>();
-
-            _fixture = new Fixture();
->>>>>>> develop
 
             _fixture = new Fixture();
             _controller = new ResponsibleController(_serviceMock.Object, mapper, localizerFactor);
