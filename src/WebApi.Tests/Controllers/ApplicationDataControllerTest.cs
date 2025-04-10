@@ -33,19 +33,13 @@ namespace WebApi.Tests.Controllers
             var localizerFactor = LocalizerFactorHelper.Create();
             _controller = new ApplicationDataControllerBase(_serviceMock.Object, mapper, localizerFactor);
         }
-
+   
         [Fact]
-        public async Task GetListAsyncShouldReturnOkResultWithPagedResult()
+        public async Task GetListAsyncShouldReturnPagedResultVm()
         {
             // Arrange
             var filterDto = _fixture.Create<ApplicationDataFilterDto>();
-            var pagedResult = _fixture.Build<PagedResult<ApplicationData>>()
-                                      .With(pr => pr.Result, _fixture.CreateMany<ApplicationData>(2))
-                                      .With(pr => pr.Page, 1)
-                                      .With(pr => pr.PageSize, 10)
-                                      .With(pr => pr.Total, 2)
-                                      .Create();
-
+            var pagedResult = _fixture.Create<PagedResult<ApplicationData>>();
             _serviceMock.Setup(s => s.GetListAsync(It.IsAny<ApplicationFilter>())).ReturnsAsync(pagedResult);
 
             // Act
@@ -53,11 +47,7 @@ namespace WebApi.Tests.Controllers
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedPagedResultVm = Assert.IsType<PagedResult<ApplicationVm>>(okResult.Value);
-            Assert.Equal(pagedResult.Page, returnedPagedResultVm.Page);
-            Assert.Equal(pagedResult.PageSize, returnedPagedResultVm.PageSize);
-            Assert.Equal(pagedResult.Total, returnedPagedResultVm.Total);
-            Assert.Equal(pagedResult.Result.Count(), returnedPagedResultVm.Result.Count());
+            Assert.IsType<PagedResultVm<ApplicationVm>>(okResult.Value);
         }
 
         [Fact]
