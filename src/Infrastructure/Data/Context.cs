@@ -3,11 +3,8 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Infrastructure.Data
 {
-    public class Context : DbContext
+    public class Context(DbContextOptions<Context> options) : DbContext(options)
     {
-        public Context(DbContextOptions<Context> options) : base(options)
-        {
-        }
         public DbSet<Responsible> Responsibles { get; set; } 
         public DbSet<Area> Areas { get; set; }
         public DbSet<Member> Members { get; set; }

@@ -230,23 +230,6 @@ namespace Infrastructure.Tests.Data.Repositories
             Assert.True(exists);
         }
 
-        [Fact]
-        public async Task GetListAsyncShouldThrowNotImplementedExceptionWhenCalled()
-        {
-            // Arrange
-            var filter = new GitRepoFilter
-            {
-                Description = "Test",
-                Name = "Test",
-                Url = new Uri("https://test.com"),
-                ApplicationId = 1
-            };
-
-            // Act & Assert
-            await Assert.ThrowsAsync<NotImplementedException>(() =>
-                _repository.GetListAsync(filter));
-        }
-
 
         [Fact]
         public async Task ListRepositoriesShouldReturnAllRepositories()

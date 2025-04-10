@@ -7,7 +7,6 @@ namespace Stellantis.ProjectName.Application.Interfaces.Repositories
 {
     public interface IGitRepoRepository : IRepositoryEntityBase<GitRepo>
     {
-        Task<PagedResult<GitRepo>> GetListAsync(GitRepoFilter filter);
         IAsyncEnumerable<GitRepo> ListRepositories();
         Task<GitRepo?> GetRepositoryDetailsAsync(int id);
         Task<OperationResult> CreateAsync(GitRepo newRepo);
@@ -15,7 +14,6 @@ namespace Stellantis.ProjectName.Application.Interfaces.Repositories
         Task<bool> AnyAsync(Expression<Func<GitRepo, bool>> expression);
         Task<bool> VerifyUrlAlreadyExistsAsync(Uri url);
         Task<bool> DeleteAsync(int id);
-        void GetListAysnc();
         Task<bool> VerifyNameAlreadyExistsAsync(string name);
     }
 }
