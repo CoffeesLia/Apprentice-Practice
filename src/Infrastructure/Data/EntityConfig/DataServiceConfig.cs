@@ -11,7 +11,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
             ArgumentNullException.ThrowIfNull(builder);
 
             builder.ToTable("Service");
-            builder.HasKey(p => p.Id);
+            builder.HasKey(p => p.ServiceId);
             builder.Property(p => p.Name)
                 .IsRequired()
                 .HasMaxLength(50);

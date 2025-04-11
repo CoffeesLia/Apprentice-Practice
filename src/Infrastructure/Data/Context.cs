@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Infrastructure.Data
