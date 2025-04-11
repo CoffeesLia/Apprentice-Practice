@@ -16,7 +16,7 @@ using Xunit;
 namespace Application.Tests.Services
 {
     public class SquadServiceTests
-    {
+    { // remove o isrtinglocalizer e add localizerhelp e tira mensagens pre fixas 
         private readonly Mock<ISquadRepository> squadRepositoryMock;
         private readonly Mock<IStringLocalizer<SquadResources>> localizerMock;
         private readonly Mock<IValidator<Squad>> validatorMock;
