@@ -3,18 +3,15 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Infrastructure.Data
 {
-    public class Context : DbContext
+    public class Context(DbContextOptions<Context> options) : DbContext(options)
     {
-        public Context(DbContextOptions<Context> options) : base(options)
-        {
-        }
         public DbSet<Responsible> Responsibles { get; set; } 
         public DbSet<Area> Areas { get; set; }
         public DbSet<Member> Members { get; set; }
         public DbSet<Squad> Squads { get; set; }
         public DbSet<Integration> Integrations { get; set; }
         public DbSet<ApplicationData> ApplicationDatas { get; set; }
-
+        public DbSet<GitRepo> GitRepo { get; set; }
         public DbSet<DataService> Services { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

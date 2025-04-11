@@ -12,6 +12,7 @@ namespace Stellantis.ProjectName.WebApi.Mapper
     {
         public AutoMapperProfile()
         {
+            CreateMap(typeof(PagedResult<>), typeof(PagedResultVm<>));
             CreateMap<ApplicationDataDto, ApplicationData>()
                 .ForMember(x => x.Id, x => x.Ignore())
             .ForMember(dest => dest.Area, opt => opt.MapFrom(src => src.Area))

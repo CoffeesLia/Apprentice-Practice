@@ -17,6 +17,7 @@ namespace Stellantis.ProjectName.Application.Validators
             var localizer = localizerFactory.Create(typeof(ApplicationDataResources));
 
             RuleFor(x => x.Name)
+                .NotNull()
                 .NotEmpty()
                 .WithMessage(localizer[nameof(ApplicationDataResources.NameRequired)])
                 .Length(MinimumLength, MaximumLength)
@@ -25,9 +26,11 @@ namespace Stellantis.ProjectName.Application.Validators
                 .MaximumLength(DescriptionMaxLength)
                 .WithMessage(localizer[nameof(ApplicationDataResources.DescriptionValidateLength), DescriptionMaxLength]);
             RuleFor(x => x.ProductOwner)
+                .NotNull()
                 .NotEmpty()
                 .WithMessage(localizer[nameof(ApplicationDataResources.ProductOwnerRequired)]);
             RuleFor(x => x.ConfigurationItem)
+                .NotNull()
                 .NotEmpty()
                 .WithMessage(localizer[nameof(ApplicationDataResources.ConfigurationItemRequired)]);
         }
