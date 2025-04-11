@@ -53,9 +53,17 @@ namespace Stellantis.ProjectName.WebApi.Mapper
 
 
             CreateMap<DataServiceDto, DataService>()
-                .ForMember(x => x.Id, x => x.Ignore())
-                .ForMember(x => x.ServiceId, x => x.Ignore());
-            CreateMap<DataService, DataServiceVm>();
+                .ForMember(x => x.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(x => x.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.ServiceId, opt => opt.MapFrom(src => src.ServiceId))
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.ServiceId));
+            CreateMap<DataService, DataServiceVm>()
+                .ForMember(x => x.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(x => x.ServiceId, opt => opt.MapFrom(src => src.ServiceId));
+            CreateMap<PagedResult<DataService>, PagedResultVm<DataServiceVm>>();
+            CreateMap<DataServiceFilterDto, DataServiceFilter>()
+                .ForMember(x => x.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.ServiceId, opt => opt.MapFrom(src => src.ServiceId));
 
             CreateMap<SquadDto, EntitySquad>()
                 .ForMember(x => x.Id, x => x.Ignore());

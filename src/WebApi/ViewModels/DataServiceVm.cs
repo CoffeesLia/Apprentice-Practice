@@ -3,5 +3,6 @@
     internal class DataServiceVm : EntityVmBase
     {
         public string? Name { get; set; }
+        public int ServiceId { get; set; }
     }
 }

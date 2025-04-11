@@ -50,7 +50,5 @@ namespace Stellantis.ProjectName.IoC
             services.AddScoped<ISquadRepository, SquadRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
-
-
     }
 }

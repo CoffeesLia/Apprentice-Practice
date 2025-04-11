@@ -4,6 +4,7 @@ namespace Domain.Tests
 {
     public class DataServiceTests
     {
+        // Verifica se o DataService é inicializado com valores padrão.
         [Fact]
         public void DataServiceShouldInitializeWithDefaultValues()
         {
@@ -16,6 +17,7 @@ namespace Domain.Tests
             Assert.Equal(0, dataService.ServiceId);
         }
 
+        // Verifica se a propriedade Name do DataService é definida corretamente.
         [Fact]
         public void DataServiceShouldSetNameProperty()
         {
@@ -30,6 +32,7 @@ namespace Domain.Tests
             Assert.Equal(expectedName, dataService.Name);
         }
 
+        // Verifica se a propriedade Description do DataService é definida corretamente.
         [Fact]
         public void DataServiceShouldSetDescriptionProperty()
         {
@@ -44,6 +47,7 @@ namespace Domain.Tests
             Assert.Equal(expectedDescription, dataService.Description);
         }
 
+        // Verifica se a propriedade ServiceId do DataService é definida corretamente.
         [Fact]
         public void DataServiceShouldSetServiceIdProperty()
         {
