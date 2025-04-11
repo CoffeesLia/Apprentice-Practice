@@ -20,26 +20,7 @@ namespace Infrastructure.Tests.Data.Repositories
             _repository = new DataServiceRepository(_contextMock.Object);
         }
 
-        [Fact]
-        public async Task VerifyServiceExistsAsyncShouldReturnTrueWhenServiceExistsWithValidId()
-        {
-            // Arrange
-            var serviceId = 1;
-            var dataServices = new List<DataService>
-    {
-        new() { Id = serviceId, ServiceId = 1, Name = "Test Service" }
-    };
-
-            var dbSetMock = CreateMockDbSet(dataServices);
-            _contextMock.Setup(c => c.Set<DataService>()).Returns(dbSetMock.Object);
-
-            // Act
-            var result = await _repository.VerifyServiceExistsAsync(serviceId);
-
-            // Assert
-            Assert.True(result);
-        }
-
+        // Verifica se o método CreateAsync adiciona uma entidade e salva as mudanças.
         [Fact]
         public async Task CreateAsyncShouldAddEntityAndSaveChanges()
         {
@@ -56,68 +37,7 @@ namespace Infrastructure.Tests.Data.Repositories
             _contextMock.Verify(c => c.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
-        [Fact]
-        public async Task GetByIdAsyncShouldReturnEntity()
-        {
-            // Arrange
-            var dataService = new DataService { ServiceId = 1, Name = "Test Service" };
-            var dbSetMock = new Mock<DbSet<DataService>>();
-            dbSetMock.Setup(s => s.FindAsync(1)).ReturnsAsync(dataService);
-            _contextMock.Setup(c => c.Set<DataService>()).Returns(dbSetMock.Object);
-
-            // Act
-            var result = await _repository.GetByIdAsync(1);
-
-            // Assert
-            Assert.Equal(dataService, result);
-        }
-
-        [Fact]
-        public async Task GetListAsyncShouldReturnPagedResultWhenFilterMatches()
-        {
-            // Arrange
-            var dataServices = new List<DataService>
-    {
-        new() { Name = "Test Service 1" },
-        new() { Name = "Test Service 2" }
-    };
-
-            var dbSetMock = CreateMockDbSet(dataServices);
-            _contextMock.Setup(c => c.Set<DataService>()).Returns(dbSetMock.Object);
-
-            var filter = new DataServiceFilter { Name = "Test", Page = 1, PageSize = 10 };
-
-            // Act
-            var result = await _repository.GetListAsync(filter);
-
-            // Assert
-            Assert.Equal(2, result.Total);
-            Assert.Equal(2, result.Result.Count());
-        }
-
-        [Fact]
-        public async Task GetListAsyncShouldReturnEmptyResultWhenFilterDoesNotMatch()
-        {
-            // Arrange
-            var dataServices = new List<DataService>
-    {
-        new() { Name = "Test Service 1" },
-        new() { Name = "Test Service 2" }
-    };
-
-            var dbSetMock = CreateMockDbSet(dataServices);
-            _contextMock.Setup(c => c.Set<DataService>()).Returns(dbSetMock.Object);
-
-            var filter = new DataServiceFilter { Name = "NonExistent", Page = 1, PageSize = 10 };
-
-            // Act
-            var result = await _repository.GetListAsync(filter);
-
-            // Assert
-            Assert.Equal(0, result.Total);
-            Assert.Empty(result.Result);
-        }
-
+        // Verifica se o método DeleteAsync remove uma entidade e salva as mudanças.
         [Fact]
         public async Task DeleteAsyncShouldRemoveEntityAndSaveChanges()
         {
@@ -135,6 +55,111 @@ namespace Infrastructure.Tests.Data.Repositories
             _contextMock.Verify(c => c.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
+        // Verifica se o método GetByIdAsync retorna a entidade correta.
+        [Fact]
+        public async Task GetByIdAsyncShouldReturnEntity()
+        {
+            // Arrange
+            var dataService = new DataService { ServiceId = 1, Name = "Test Service" };
+            var dbSetMock = new Mock<DbSet<DataService>>();
+            dbSetMock.Setup(s => s.FindAsync(1)).ReturnsAsync(dataService);
+            _contextMock.Setup(c => c.Set<DataService>()).Returns(dbSetMock.Object);
+
+            // Act
+            var result = await _repository.GetByIdAsync(1);
+
+            // Assert
+            Assert.Equal(dataService, result);
+        }
+
+        // Verifica se o método GetListAsync retorna um resultado paginado quando o filtro corresponde.
+        [Fact]
+        public async Task GetListAsyncShouldReturnPagedResultWhenFilterMatches()
+        {
+            // Arrange
+            var dataServices = new List<DataService>
+            {
+                new() { Name = "Test Service 1" },
+                new() { Name = "Test Service 2" }
+            };
+
+            var dbSetMock = CreateMockDbSet(dataServices);
+            _contextMock.Setup(c => c.Set<DataService>()).Returns(dbSetMock.Object);
+
+            var filter = new DataServiceFilter { Name = "Test", Page = 1, PageSize = 10 };
+
+            // Act
+            var result = await _repository.GetListAsync(filter);
+
+            // Assert
+            Assert.Equal(2, result.Total);
+            Assert.Equal(2, result.Result.Count());
+        }
+
+        // Verifica se o método GetListAsync retorna um resultado vazio quando o filtro não corresponde.
+        [Fact]
+        public async Task GetListAsyncShouldReturnEmptyResultWhenFilterDoesNotMatch()
+        {
+            // Arrange
+            var dataServices = new List<DataService>
+            {
+                new() { Name = "Test Service 1" },
+                new() { Name = "Test Service 2" }
+            };
+
+            var dbSetMock = CreateMockDbSet(dataServices);
+            _contextMock.Setup(c => c.Set<DataService>()).Returns(dbSetMock.Object);
+
+            var filter = new DataServiceFilter { Name = "NonExistent", Page = 1, PageSize = 10 };
+
+            // Act
+            var result = await _repository.GetListAsync(filter);
+
+            // Assert
+            Assert.Equal(0, result.Total);
+            Assert.Empty(result.Result);
+        }
+
+        // Verifica se o método VerifyServiceExistsAsync retorna verdadeiro quando um serviço com um ID válido existe.
+        [Fact]
+        public async Task VerifyServiceExistsAsyncShouldReturnTrueWhenServiceExistsWithValidId()
+        {
+            // Arrange
+            var serviceId = 1;
+            var dataServices = new List<DataService>
+            {
+                new() { Id = serviceId, ServiceId = 1, Name = "Test Service" }
+            };
+
+            var dbSetMock = CreateMockDbSet(dataServices);
+            _contextMock.Setup(c => c.Set<DataService>()).Returns(dbSetMock.Object);
+
+            // Act
+            var result = await _repository.VerifyServiceExistsAsync(serviceId);
+
+            // Assert
+            Assert.True(result);
+        }
+
+        // Verifica se o método VerifyServiceExistsAsync retorna falso quando um serviço com um ID inválido não existe.
+        [Fact]
+        public async Task VerifyServiceExistsAsyncShouldReturnFalseWhenServiceDoesNotExistWithInvalidId()
+        {
+            // Arrange
+            var serviceId = 1;
+            var dataServices = new List<DataService>();
+
+            var dbSetMock = CreateMockDbSet(dataServices);
+            _contextMock.Setup(c => c.Set<DataService>()).Returns(dbSetMock.Object);
+
+            // Act
+            var result = await _repository.VerifyServiceExistsAsync(serviceId);
+
+            // Assert
+            Assert.False(result);
+        }
+
+        // Verifica se o método VerifyNameAlreadyExistsAsync retorna verdadeiro se o nome já existe.
         [Fact]
         public async Task VerifyNameAlreadyExistsAsyncShouldReturnTrueIfNameExists()
         {
@@ -170,8 +195,29 @@ namespace Infrastructure.Tests.Data.Repositories
             Assert.True(result);
         }
 
+        // Verifica se o método VerifyNameAlreadyExistsAsync retorna falso se o nome não existe.
+        [Fact]
+        public async Task VerifyNameAlreadyExistsAsyncShouldReturnFalseIfNameDoesNotExist()
+        {
+            // Arrange
+            var name = "NonExistent Service";
+            var dataServices = new List<DataService>
+            {
+                new() { Name = "Test Service 1" },
+                new() { Name = "Test Service 2" }
+            };
 
+            var dbSetMock = CreateMockDbSet(dataServices);
+            _contextMock.Setup(c => c.Set<DataService>()).Returns(dbSetMock.Object);
 
+            // Act
+            var result = await _repository.VerifyNameAlreadyExistsAsync(name);
+
+            // Assert
+            Assert.False(result);
+        }
+
+        // Criação de recursos necessários para os testes rodarem.
         private static Mock<DbSet<T>> CreateMockDbSet<T>(List<T> elements) where T : class
         {
             var queryable = elements.AsQueryable();

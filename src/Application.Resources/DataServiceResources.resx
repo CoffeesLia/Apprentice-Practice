@@ -132,4 +132,7 @@
   <data name="ServicesNoFound" xml:space="preserve">
     <value>No services found.</value>
   </data>
+  <data name="ServiceSucess" xml:space="preserve">
+    <value>Operation Sucess.</value>
+  </data>
 </root>
