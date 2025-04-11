@@ -35,7 +35,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         {
             var filter = Mapper.Map<ApplicationFilter>(filterDto);
             var result = await Service.GetListAsync(filter).ConfigureAwait(false);
-            return Ok(Mapper.Map<PagedResult<ApplicationVm>>(result));
+            return Ok(Mapper.Map<PagedResultVm<ApplicationVm>>(result));
         }
 
         [HttpPut("{id}")]
