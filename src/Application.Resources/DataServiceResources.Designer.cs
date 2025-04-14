@@ -22,7 +22,7 @@ namespace Stellantis.ProjectName.Application.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class DataServiceResources {
+    internal class DataServiceResources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         ///   Retorna a instância de ResourceManager armazenada em cache usada por essa classe.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Stellantis.ProjectName.Application.Resources.DataServiceResources", typeof(DataServiceResources).Assembly);
@@ -51,7 +51,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         ///   pesquisas de recursos que usam essa classe de recurso de tipo de alta segurança.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -61,55 +61,56 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Not Found..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Service already exists..
         /// </summary>
-        public static string ServiceNotFound
-        {
-            get {
-                return ResourceManager.GetString("ServiceNotFound", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Services Not Found..
-        /// </summary>
-        public static string ServicesNoFound
-        {
-            get
-            {
-                return ResourceManager.GetString("ServicesNoFound", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Service Already Exists..
-        /// </summary>
-        public static string ServiceAlreadyExists
-        {
+        internal static string ServiceAlreadyExists {
             get {
                 return ResourceManager.GetString("ServiceAlreadyExists", resourceCulture);
             }
         }
-
+        
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Service Name Length..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Service cannot be null..
         /// </summary>
-        public static string ServiceNameLength
-        {
-            get
-            {
+        internal static string ServiceCannotBeNull {
+            get {
+                return ResourceManager.GetString("ServiceCannotBeNull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Service name must be between 3 and 50 characters..
+        /// </summary>
+        internal static string ServiceNameLength {
+            get {
                 return ResourceManager.GetString("ServiceNameLength", resourceCulture);
             }
         }
-
+        
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Service Cannot Be Null..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Service not found..
         /// </summary>
-        public static string ServiceCannotBeNull
-        {
-            get
-            {
-                return ResourceManager.GetString("ServiceCannotBeNull", resourceCulture);
+        internal static string ServiceNotFound {
+            get {
+                return ResourceManager.GetString("ServiceNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a No services found..
+        /// </summary>
+        internal static string ServicesNoFound {
+            get {
+                return ResourceManager.GetString("ServicesNoFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Operation Sucess..
+        /// </summary>
+        internal static string ServiceSucess {
+            get {
+                return ResourceManager.GetString("ServiceSucess", resourceCulture);
             }
         }
     }

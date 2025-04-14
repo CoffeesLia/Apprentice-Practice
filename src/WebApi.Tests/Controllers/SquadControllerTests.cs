@@ -1,290 +1,272 @@
-﻿using System.Globalization;
-using AutoFixture;
+﻿using AutoFixture;
+using AutoMapper;
+using FluentValidation.Results;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Moq;
-using Stellantis.ProjectName.Application.Interfaces;
-using Stellantis.ProjectName.Application.Interfaces.Repositories;
+using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Models.Filters;
-using Stellantis.ProjectName.Application.Services;
-using Stellantis.ProjectName.Application.Validators;
 using Stellantis.ProjectName.Domain.Entities;
-using WebApi.Tests.Helpers;
+using Stellantis.ProjectName.WebApi.Controllers;
+using Stellantis.ProjectName.WebApi.Dto;
+using Stellantis.ProjectName.WebApi.Dto.Filters;
+using Stellantis.ProjectName.WebApi.Mapper;
+using Stellantis.ProjectName.WebApi.ViewModels;
+using Stellantis.ProjectName.Application.Resources; 
 
-namespace Application.Tests.Services
+namespace WebApi.Tests.Controllers
 {
-    public class AreaServicesTests
+    public class SquadControllerTests
     {
-        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
-        private readonly Mock<IAreaRepository> _areaRepositoryMock;
-        private readonly AreaService _areaService;
+        private readonly Mock<ISquadService> _squadServiceMock;
+        private readonly SquadController _controller;
+        private readonly Fixture _fixture = new();
+        private readonly Mock<IStringLocalizer<SquadResources>> _localizerMock;
 
-        public AreaServicesTests()
+        public SquadControllerTests()
         {
-            CultureInfo.CurrentCulture = new CultureInfo("en-US");
-            _unitOfWorkMock = new Mock<IUnitOfWork>();
-            _areaRepositoryMock = new Mock<IAreaRepository>();
-            var localizer = LocalizerFactorHelper.Create(); 
-
-            var areaValidator = new AreaValidator(localizer);
-
-            _unitOfWorkMock.Setup(u => u.AreaRepository).Returns(_areaRepositoryMock.Object);
-
-            _areaService = new AreaService(_unitOfWorkMock.Object, localizer, areaValidator);
+            _squadServiceMock = new Mock<ISquadService>();
+            var mapperConfiguration = new MapperConfiguration(x => { x.AddProfile<AutoMapperProfile>(); });
+            var mapper = mapperConfiguration.CreateMapper();
+            var localizerFactoryMock = new Mock<IStringLocalizerFactory>(); 
+            _localizerMock = new Mock<IStringLocalizer<SquadResources>>();
+            _controller = new SquadController(_squadServiceMock.Object, mapper, localizerFactoryMock.Object);
         }
 
         [Fact]
-        public async Task CreateAsyncShouldReturnConflictWhenNameIsNullOrEmptyOrWhitespace()
+        public async Task CreateAsyncShouldReturnCreatedWhenOperationSuccess()
         {
             // Arrange
-            var area = new Area("");
-            var localizer = LocalizerFactorHelper.Create(); // Add this line to initialize the localizer
-            var areaValidator = new AreaValidator(localizer); // Add this line to initialize the validator
-            var _areaService = new AreaService(_unitOfWorkMock.Object, localizer, areaValidator); // Add this line to initialize the service
-
-            _mapperMock.Setup(m => m.Map<Squad>(It.IsAny<SquadDto>()))
-                .Returns(new Squad());
-            _squadServiceMock.Setup(s => s.CreateAsync(It.IsAny<Squad>()))
-                .ReturnsAsync(operationResult);
+            var squadDto = _fixture.Create<SquadDto>();
+            _squadServiceMock.Setup(s => s.CreateAsync(It.IsAny<Squad>())).ReturnsAsync(OperationResult.Complete("Success"));
 
             // Act
-            var result = await _areaService.CreateAsync(area);
+            var result = await _controller.CreateAsync(squadDto);
 
             // Assert
-            Assert.Equal(OperationStatus.InvalidData, result.Status);
-            Assert.Equal(localizer.Create(typeof(AreaValidator))["NameIsRequired"].Value, result.Errors.First()); // Use localizer.Create instead of localizer
+            var createdResult = Assert.IsType<CreatedAtActionResult>(result);
+            Assert.IsType<SquadVm>(createdResult.Value);
         }
 
-
-        [Fact]
-        public async Task CreateAsyncShouldReturnInvalidDataWhenValidationFails()
+        [Theory]
+        [InlineData(OperationStatus.Conflict, typeof(ConflictObjectResult))]
+        [InlineData(OperationStatus.InvalidData, typeof(UnprocessableEntityObjectResult))]
+        public async Task CreateAsyncShouldReturnProperStatusWhenOperationFails(
+            OperationStatus status,
+            Type expectedResultType)
         {
             // Arrange
-            var area = new Area("Eu");
-            var localizer = LocalizerFactorHelper.Create(); // Add this line to initialize the localizer
-            var areaValidator = new AreaValidator(localizer); // Add this line to initialize the validator
-            var _areaService = new AreaService(_unitOfWorkMock.Object, localizer, areaValidator); // Add this line to initialize the service
+            var squadDto = _fixture.Create<SquadDto>();
+            var conflictMessage = new LocalizedString("Conflict", "Squad already exists");
+            var invalidDataMessage = new LocalizedString("InvalidData", "Name is required");
 
-            // Act
-            var result = await _areaService.CreateAsync(area);
+            _localizerMock.Setup(l => l["Conflict"]).Returns(conflictMessage);
+            _localizerMock.Setup(l => l["InvalidData"]).Returns(invalidDataMessage);
 
-            // Assert
-            Assert.Equal(OperationStatus.InvalidData, result.Status);
-            Assert.Equal(localizer["NameValidateLength", AreaValidator.MinimumLength, AreaValidator.MaximumLength], result.Errors.First());
-        }
-
-
-        [Fact]
-        public async Task CreateAsyncShouldReturnConflictWhenNameAlreadyExists()
-        {
-            // Arrange
-            var area = new Area("Test Area");
-            var pagedResult = new PagedResult<Area>
+            OperationResult operationResult = status switch
             {
-                Result = new List<Area> { new Area("Test Area") { Id = 1 } },
-                Page = 1,
-                PageSize = 10,
-                Total = 1
+                OperationStatus.Conflict => OperationResult.Conflict(_localizerMock.Object["Conflict"].Value),
+                OperationStatus.InvalidData => OperationResult.InvalidData(new ValidationResult(
+                new List<ValidationFailure> { new ValidationFailure("Name", _localizerMock.Object["InvalidData"].Value) })),
+                _ => throw new NotImplementedException()
             };
 
-            _areaRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<AreaFilter>())).ReturnsAsync(pagedResult);
-            _areaRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(area.Name)).ReturnsAsync(true);
-            var localizer = LocalizerFactorHelper.Create().Create(typeof(AreaValidator)); // Fix this line
+            _squadServiceMock.Setup(s => s.CreateAsync(It.IsAny<Squad>())).ReturnsAsync(operationResult);
 
             // Act
-            var result = await _areaService.CreateAsync(area);
+            var result = await _controller.CreateAsync(squadDto);
 
             // Assert
-            Assert.Equal(OperationStatus.Conflict, result.Status);
-            Assert.Equal(localizer["AlreadyExists"].Value, result.Message); // Fix this line
+            Assert.IsType(expectedResultType, result);
         }
 
-
-
         [Fact]
-        public async Task CreateAsyncShouldReturnSuccessWhenAreaIsValid()
+        public async Task UpdateAsyncShouldReturnOkWhenOperationSuccess()
         {
             // Arrange
-            var area = new Area("Test Area");
-            _areaRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(area.Name)).ReturnsAsync(false);
-
-            _mapperMock.Setup(m => m.Map<Squad>(It.IsAny<SquadDto>()))
-                .Returns(new Squad());
-            _squadServiceMock.Setup(s => s.UpdateAsync(It.IsAny<Squad>()))
-                .ReturnsAsync(operationResult);
+            var squadDto = _fixture.Create<SquadDto>();
+            _squadServiceMock.Setup(s => s.UpdateAsync(It.IsAny<Squad>())).ReturnsAsync(OperationResult.Complete("Success"));
 
             // Act
-            var result = await _areaService.CreateAsync(area);
+            var result = await _controller.UpdateAsync(squadDto.Id, squadDto);
 
             // Assert
-            Assert.Equal(OperationStatus.Success, result.Status);
-            Assert.Equal(localizer["RegisteredSuccessfully"], result.Message);
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.IsType<SquadVm>(okResult.Value);
         }
 
-        [Fact]
-        public async Task CreateAsyncShouldReturnInvalidDataWhenNameExceedsMaxLength()
+        [Theory]
+        [InlineData(OperationStatus.Conflict, typeof(ConflictObjectResult))]
+        [InlineData(OperationStatus.NotFound, typeof(NotFoundResult))]
+        [InlineData(OperationStatus.InvalidData, typeof(UnprocessableEntityObjectResult))]
+        public async Task UpdateAsyncShouldReturnProperStatusWhenOperationFails(
+            OperationStatus status,
+            Type expectedResultType)
         {
             // Arrange
-            var area = new Area(new string('A', 256)); // Name com 256 caracteres
+            var squadDto = _fixture.Create<SquadDto>();
+            var conflictMessage = new LocalizedString("Conflict", "Squad conflict occurred");
+            var notFoundMessage = new LocalizedString("NotFound", "Squad not found");
+            var invalidDataMessage = new LocalizedString("InvalidData", "Invalid name format");
+
+            _localizerMock.Setup(l => l["Conflict"]).Returns(conflictMessage);
+            _localizerMock.Setup(l => l["NotFound"]).Returns(notFoundMessage);
+            _localizerMock.Setup(l => l["InvalidData"]).Returns(invalidDataMessage);
+
+            OperationResult operationResult = status switch
+            {
+                OperationStatus.Conflict => OperationResult.Conflict(_localizerMock.Object["Conflict"].Value),
+                OperationStatus.NotFound => OperationResult.NotFound(_localizerMock.Object["NotFound"].Value),
+                OperationStatus.InvalidData => OperationResult.InvalidData(new ValidationResult(
+                new List<ValidationFailure> { new ValidationFailure("Name", _localizerMock.Object["InvalidData"].Value) })),
+                _ => throw new NotImplementedException()
+            };
+
+            _squadServiceMock.Setup(s => s.UpdateAsync(It.IsAny<Squad>())).ReturnsAsync(operationResult);
 
             // Act
-            var result = await _areaService.CreateAsync(area);
+            var result = await _controller.UpdateAsync(squadDto.Id, squadDto);
 
             // Assert
-            Assert.Equal(OperationStatus.InvalidData, result.Status);
+            Assert.IsType(expectedResultType, result);
         }
 
         [Fact]
-        public async Task GetListAsyncShouldReturnPagedResultWhenCalledWithValidFilter()
+        public async Task GetAsyncShouldReturnOkWhenSquadExists()
         {
             // Arrange
-            var fixture = new Fixture();
-            var filter = fixture.Create<AreaFilter>();
-            var pagedResult = fixture.Build<PagedResult<Area>>()
-                                     .With(pr => pr.Result, fixture.CreateMany<Area>(2).ToList())
-                                     .With(pr => pr.Page, 1)
-                                     .With(pr => pr.PageSize, 10)
-                                     .With(pr => pr.Total, 2)
-                                     .Create();
+            var squad = _fixture.Create<Squad>();
+            var squadVm = _fixture.Build<SquadVm>().With(s => s.Id, squad.Id).With(s => s.Name, squad.Name).Create();
 
-            _areaRepositoryMock.Setup(r => r.GetListAsync(filter)).ReturnsAsync(pagedResult);
+            _squadServiceMock.Setup(s => s.GetItemAsync(squad.Id)).ReturnsAsync(squad);
 
             // Act
-            var result = await _areaService.GetListAsync(filter);
+            var result = await _controller.GetAsync(squad.Id);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.Equal(2, result.Total);
-            Assert.IsType<List<Area>>(result.Result);
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var returnedSquadVm = Assert.IsType<SquadVm>(okResult.Value);
+            Assert.Equal(squadVm.Id, returnedSquadVm.Id);
+            Assert.Equal(squadVm.Name, returnedSquadVm.Name);
         }
 
         [Fact]
-        public async Task DeleteAsyncShouldReturnConflictWhenApplicationsExist()
+        public async Task GetAsyncShouldReturnNotFoundWhenSquadNotExists()
         {
             // Arrange
-            var areaId = 1;
-            _areaRepositoryMock.Setup(r => r.VerifyAplicationsExistsAsync(areaId)).ReturnsAsync(true);
+            var squadId = _fixture.Create<int>();
+
+            _squadServiceMock.Setup(s => s.GetItemAsync(squadId)).ReturnsAsync((Squad?)null);
 
             // Act
-            var result = await _areaService.DeleteAsync(areaId);
+            var result = await _controller.GetAsync(squadId);
 
             // Assert
-            Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.IsType<NotFoundResult>(result.Result);
         }
 
         [Fact]
-        public async Task DeleteAsyncShouldReturnSuccessWhenNoApplicationsExist()
-        {
-            var areaId = 1;
-            var area = new Area("Test Area") { Id = areaId };
-            _areaRepositoryMock.Setup(r => r.VerifyAplicationsExistsAsync(areaId)).ReturnsAsync(false);
-            _areaRepositoryMock.Setup(r => r.GetByIdAsync(areaId)).ReturnsAsync(area);
-            _areaRepositoryMock.Setup(r => r.DeleteAsync(area, true)).Returns(Task.CompletedTask);
-            _unitOfWorkMock.Setup(u => u.CommitAsync()).Returns(Task.CompletedTask);
-            // Act
-            var result = await _areaService.DeleteAsync(areaId);
-
-            // Assert
-            Assert.Equal(OperationStatus.Success, result.Status);
-        }
-
-        [Fact]
-        public async Task GetItemAsyncShouldReturnCompleteWhenAreaExists()
+        public async Task GetListAsyncShouldReturnPagedResult()
         {
             // Arrange
-            var fixture = new Fixture();
-            var area = fixture.Create<Area>();
+            var filterDto = _fixture.Create<SquadFilterDto>();
+            var pagedResult = _fixture.Build<PagedResult<Squad>>()
+                                      .With(pr => pr.Result, _fixture.CreateMany<Squad>(2))
+                                      .With(pr => pr.Page, 1)
+                                      .With(pr => pr.PageSize, 10)
+                                      .With(pr => pr.Total, 2)
+                                      .Create();
 
-            _areaRepositoryMock.Setup(r => r.GetByIdAsync(area.Id)).ReturnsAsync(area);
+            _squadServiceMock.Setup(s => s.GetListAsync(It.IsAny<SquadFilter>())).ReturnsAsync(pagedResult);
 
             // Act
-            var result = await _areaService.GetItemAsync(area.Id);
+            var result = await _controller.GetListAsync(filterDto);
 
             // Assert
-            Assert.Equal(OperationStatus.Success, result.Status);
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var returnedPagedResultVm = Assert.IsType<PagedResultVm<SquadVm>>(okResult.Value);
+            Assert.Equal(pagedResult.Page, returnedPagedResultVm.Page);
+            Assert.Equal(pagedResult.PageSize, returnedPagedResultVm.PageSize);
+            Assert.Equal(pagedResult.Total, returnedPagedResultVm.Total);
+            Assert.Equal(pagedResult.Result.Count(), returnedPagedResultVm.Result.Count());
         }
 
         [Fact]
-        public async Task GetItemAsyncShouldReturnNotFoundWhenAreaDoesNotExist()
+        public async Task DeleteAsyncShouldReturnNoContentWhenOperationSuccess()
         {
             // Arrange
-            var fixture = new Fixture();
-            var areaId = fixture.Create<int>();
-            _areaRepositoryMock.Setup(r => r.GetByIdAsync(areaId)).ReturnsAsync((Area?)null);
+            var squadId = _fixture.Create<int>();
+            _squadServiceMock.Setup(s => s.DeleteAsync(squadId)).ReturnsAsync(OperationResult.Complete("Success"));
 
             // Act
-            var result = await _areaService.GetItemAsync(areaId);
+            var result = await _controller.DeleteAsync(squadId);
 
             // Assert
-            Assert.Equal(OperationStatus.NotFound, result.Status);
+            var noContentResult = Assert.IsType<NoContentResult>(result);
+            Assert.Equal(204, noContentResult.StatusCode);
+        }
+
+        [Theory]
+        [InlineData(OperationStatus.Conflict, typeof(ConflictObjectResult))]
+        [InlineData(OperationStatus.NotFound, typeof(NotFoundResult))]
+        public async Task DeleteAsyncShouldReturnProperStatusWhenOperationFails(
+            OperationStatus status,
+            Type expectedResultType)
+        {
+            // Arrange
+            var squadId = _fixture.Create<int>();
+            var conflictMessage = new LocalizedString("Conflict", "Cannot delete squad");
+            var notFoundMessage = new LocalizedString("NotFound", "Squad not found");
+
+            _localizerMock.Setup(l => l["Conflict"]).Returns(conflictMessage);
+            _localizerMock.Setup(l => l["NotFound"]).Returns(notFoundMessage);
+
+            OperationResult operationResult = status switch
+            {
+                OperationStatus.Conflict => OperationResult.Conflict(_localizerMock.Object["Conflict"].Value),
+                OperationStatus.NotFound => OperationResult.NotFound(_localizerMock.Object["NotFound"].Value),
+                _ => throw new NotImplementedException()
+            };
+
+            _squadServiceMock.Setup(s => s.DeleteAsync(squadId)).ReturnsAsync(operationResult);
+
+            // Act
+            var result = await _controller.DeleteAsync(squadId);
+
+            // Assert
+            Assert.IsType(expectedResultType, result);
         }
 
         [Fact]
-        public async Task UpdateAsyncShouldReturnInvalidDataWhenValidationFails()
+        public void SquadVmShouldHaveNameProperty()
         {
             // Arrange
-            var area = new Area("IN");
-            _areaRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(area.Name)).ReturnsAsync(false);
-
-            // Act
-            var result = await _areaService.UpdateAsync(area);
+            var squadVm = new SquadVm
+            {
+                // Act
+                Name = "Test Squad"
+            };
 
             // Assert
-            Assert.Equal(OperationStatus.InvalidData, result.Status);
+            Assert.Equal("Test Squad", squadVm.Name);
         }
 
         [Fact]
-        public async Task UpdateAsyncShouldReturnNotFoundWhenAreaDoesNotExist()
+        public void SquadDtoShouldSetAndGetPropertiesCorrectly()
         {
             // Arrange
-            var area = new Area("Non-Existent Area") { Id = 1 };
-            _areaRepositoryMock.Setup(r => r.GetByIdAsync(area.Id)).ReturnsAsync((Area?)null);
-
-            // Act
-            var result = await _areaService.UpdateAsync(area);
-
-            // Assert
-            Assert.Equal(OperationStatus.NotFound, result.Status);
-            Assert.Equal(localizer["NotFound"], result.Message);
-        }
-        [Fact]
-        public async Task UpdateAsyncShouldReturnConflictWhenNameAlreadyExists()
-        {
-            // Arrange
-            var area = new Area("Existing Name") { Id = 1 };
-            _areaRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(area.Name)).ReturnsAsync(true);
-            _areaRepositoryMock.Setup(r => r.GetByIdAsync(area.Id)).ReturnsAsync(area);
-
-            // Act
-            var result = await _areaService.UpdateAsync(area);
-
-            // Assert
-            Assert.Equal(OperationStatus.Conflict, result.Status);
-        }
-        [Fact]
-        public async Task UpdateAsyncShouldReturnSuccessWhenAreaIsValid()
-        {
-            // Arrange
-            var area = new Area("Valid Name") { Id = 1 };
-            _areaRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(area.Name)).ReturnsAsync(false);
-            _areaRepositoryMock.Setup(r => r.GetByIdAsync(area.Id)).ReturnsAsync(area);
-            _areaRepositoryMock.Setup(r => r.UpdateAsync(area, true)).Returns(Task.CompletedTask);
-
-            // Act
-            var result = await _areaService.UpdateAsync(area);
-
-            // Assert
-            Assert.Equal(OperationStatus.Success, result.Status);
-        }
-
-        [Fact]
-        public async Task UpdateAsyncInternalShouldThrowNotImplementedException()
-        {
-            // Arrange
-            var squadId = 1;
             var squadDto = new SquadDto();
+            var expectedName = "Test Squad";
+            var expectedDescription = "Test Description";
 
-            // Act & Assert
-            await Assert.ThrowsAsync<NotImplementedException>(() => _controller.UpdateAsync((object)squadId, squadDto));
+            // Act
+            squadDto.Name = expectedName;
+            squadDto.Description = expectedDescription;
+
+            // Assert
+            Assert.Equal(expectedName, squadDto.Name);
+            Assert.Equal(expectedDescription, squadDto.Description);
         }
     }
 }

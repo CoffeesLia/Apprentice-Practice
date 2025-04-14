@@ -21,7 +21,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             await base.CreateAsync(squad, saveChanges).ConfigureAwait(false);
         }
 
-        public async Task<Squad?> GetByIdAsync(int id)
+        public new async Task<Squad?> GetByIdAsync(int id)
         {
             return await _context.Squads.FindAsync(id).ConfigureAwait(false);
         }

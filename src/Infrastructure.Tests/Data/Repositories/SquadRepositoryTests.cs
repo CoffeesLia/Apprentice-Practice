@@ -119,6 +119,7 @@ namespace Infrastructure.Tests.Data.Repositories
             var exists = await repository.VerifySquadExistsAsync(squad.Id);
             Assert.True(exists);
         }
+
         [Fact]
         public async Task DeleteAsyncShouldRemoveSquad()
         {
@@ -141,9 +142,5 @@ namespace Infrastructure.Tests.Data.Repositories
             var exists = await context.Squads.AnyAsync(s => s.Id == squad.Id);
             Assert.False(exists);
         }
-
-
     }
 }
-
-

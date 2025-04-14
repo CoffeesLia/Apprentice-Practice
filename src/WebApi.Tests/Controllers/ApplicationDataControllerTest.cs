@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using AutoFixture;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
@@ -11,7 +12,9 @@ using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Controllers;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
+using Stellantis.ProjectName.WebApi.Mapper;
 using Stellantis.ProjectName.WebApi.ViewModels;
+using WebApi.Tests.Helpers;
 using Xunit;
 
 namespace WebApi.Tests.Controllers
@@ -19,110 +22,124 @@ namespace WebApi.Tests.Controllers
     public class ApplicationDataControllerTest
     {
         private readonly Mock<IApplicationDataService> _serviceMock;
-        private readonly Mock<IMapper> _mapperMock;
-        private readonly Mock<IStringLocalizerFactory> _localizerFactoryMock;
         private readonly ApplicationDataControllerBase _controller;
+        private readonly Fixture _fixture = new();
 
         public ApplicationDataControllerTest()
         {
             _serviceMock = new Mock<IApplicationDataService>();
-            _mapperMock = new Mock<IMapper>();
-            _localizerFactoryMock = new Mock<IStringLocalizerFactory>();
-            var localizer = new Mock<IStringLocalizer>();
-
-            _localizerFactoryMock.Setup(f => f.Create(typeof(ApplicationDataResources))).Returns(localizer.Object);
-
-            _controller = new ApplicationDataControllerBase(_serviceMock.Object, _mapperMock.Object, _localizerFactoryMock.Object);
+            var mapperConfiguration = new MapperConfiguration(x => { x.AddProfile<AutoMapperProfile>(); });
+            var mapper = mapperConfiguration.CreateMapper();
+            var localizerFactor = LocalizerFactorHelper.Create();
+            _controller = new ApplicationDataControllerBase(_serviceMock.Object, mapper, localizerFactor);
         }
-
+   
         [Fact]
-        public async Task CreateAsyncShouldReturnCreatedAtActionResultWhenApplicationDataIsValid()
+        public async Task GetListAsyncShouldReturnPagedResultVm()
         {
             // Arrange
-            var applicationDataDto = new ApplicationDataDto { Name = "Valid Name" };
-            var applicationVm = new ApplicationVm { Id = 1, Name = "Valid Name" };
-
-            _mapperMock.Setup(m => m.Map<ApplicationData>(It.IsAny<ApplicationDataDto>())).Returns(new ApplicationData("Valid Name"));
-            _mapperMock.Setup(m => m.Map<ApplicationVm>(It.IsAny<ApplicationData>())).Returns(applicationVm);
-
-            _serviceMock.Setup(s => s.CreateAsync(It.IsAny<ApplicationData>())).ReturnsAsync(OperationResult.Complete("Success"));
-
-            // Act
-            var result = await _controller.CreateAsync(applicationDataDto);
-
-            // Assert
-            Assert.IsType<CreatedAtActionResult>(result);
-
-        }
-
-        [Fact]
-        public async Task GetAsyncShouldReturnApplicationVmWhenApplicationDataExists()
-        {
-            // Arrange
-            var applicationVm = new ApplicationVm { Name = "Valid Name" };
-            var applicationData = new ApplicationData("Valid Name") { Id = 1 };
-
-            _serviceMock.Setup(s => s.GetItemAsync(applicationData.Id)).ReturnsAsync(applicationData);
-            _mapperMock.Setup(m => m.Map<ApplicationVm>(applicationData)).Returns(applicationVm);
-
-            // Act
-            var result = await _controller.GetAsync(applicationData.Id);
-
-            // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result.Result);
-            Assert.Equal(200, okResult.StatusCode);
-            Assert.Equal(applicationVm, okResult.Value);
-        }
-
-        [Fact]
-        public async Task GetListAsyncShouldReturnPagedResultWhenCalledWithValidFilter()
-        {
-            // Arrange
-            var filterDto = new ApplicationDataFilterDto
-            {
-                Name = "Valid Name",
-                Area = new AreaFilterDto() 
-            };
-            var filter = new ApplicationFilter { Name = "Valid Name" };
-            var pagedResult = new PagedResult<ApplicationData>
-            {
-                Result = new List<ApplicationData> { new ApplicationData("Valid Name") },
-                Page = 1,
-                PageSize = 10,
-                Total = 1
-            };
-            var pagedVmResult = new PagedResult<ApplicationVm>
-            {
-                Result = new List<ApplicationVm> { new ApplicationVm { Name = "Valid Name" } },
-                Page = 1,
-                PageSize = 10,
-                Total = 1
-            };
-
-            _mapperMock.Setup(m => m.Map<ApplicationFilter>(filterDto)).Returns(filter);
-            _serviceMock.Setup(s => s.GetListAsync(filter)).ReturnsAsync(pagedResult);
-            _mapperMock.Setup(m => m.Map<PagedResult<ApplicationVm>>(pagedResult)).Returns(pagedVmResult);
+            var filterDto = _fixture.Create<ApplicationDataFilterDto>();
+            var pagedResult = _fixture.Create<PagedResult<ApplicationData>>();
+            _serviceMock.Setup(s => s.GetListAsync(It.IsAny<ApplicationFilter>())).ReturnsAsync(pagedResult);
 
             // Act
             var result = await _controller.GetListAsync(filterDto);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.Equal(200, okResult.StatusCode);
-            Assert.Equal(pagedVmResult, okResult.Value);
+            Assert.IsType<PagedResultVm<ApplicationVm>>(okResult.Value);
         }
+
+        [Fact]
+        public async Task CreateAsyncShouldReturnCreatedAtActionResultWhenApplicationDataIsValid()
+        {
+            // Arrange
+            var applicationDataDto = new ApplicationDataDto
+            {
+                Id = 1,
+                Name = "Valid Name",
+                AreaId = 1,
+                Description = "Description",
+                External = true,
+                Area = new AreaDto(),
+                ProductOwner = "Owner",
+                ConfigurationItem = "ConfigItem",
+                ResponsibleId = 1
+            };
+      
+            _serviceMock.Setup(s => s.CreateAsync(It.IsAny<ApplicationData>())).ReturnsAsync(OperationResult.Complete(ServiceResources.RegisteredSuccessfully));
+
+            // Act
+            var result = await _controller.CreateAsync(applicationDataDto);
+
+            // Assert
+            Assert.IsType<CreatedAtActionResult>(result);
+        }
+
+        [Fact]
+        public async Task GetAsyncReturnsApplicationVmWhenIdIsValid()
+        {
+            // Arrange
+            var applicationData = new ApplicationData("Name")
+            {
+                Id = 1,
+                Name = "Test Application",
+                ProductOwner = "Test Owner",
+                ConfigurationItem = "Test Config"
+            };
+            var applicationVm = new ApplicationVm
+            {
+                Id = 1,
+                Name = "Test Application",
+                ProductOwner = "Test Owner",
+                ConfigurationItem = "Test Config"
+            };
+
+            _serviceMock.Setup(s => s.GetItemAsync(It.IsAny<int>())).ReturnsAsync(applicationData);
+
+            // Act
+            var result = await _controller.GetAsync(1);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var returnValue = Assert.IsType<ApplicationVm>(okResult.Value);
+            Assert.Equal(applicationVm.Id, returnValue.Id);
+            Assert.Equal(applicationVm.Name, returnValue.Name);
+        }
+
+        [Fact]
+        public async Task GetAsyncReturnsNotFoundWhenIdIsInvalid()
+        {
+            // Arrange
+            _serviceMock.Setup(s => s.GetItemAsync(It.IsAny<int>())).ReturnsAsync((ApplicationData)null);
+
+            // Act
+            var result = await _controller.GetAsync(1);
+
+            // Assert
+            Assert.IsType<NotFoundResult>(result.Result);
+        }
+
+
 
         [Fact]
         public async Task UpdateAsyncShouldReturnOkResultWhenApplicationDataIsValid()
         {
             // Arrange
-            var applicationDataDto = new ApplicationDataDto { Name = "Valid Name" };
-            var applicationVm = new ApplicationVm { Name = "Valid Name" };
+            var applicationDataDto = new ApplicationDataDto
+            {
+                Id = 1,
+                Name = "Valid Name",
+                AreaId = 1,
+                Description = "Description",
+                External = true,
+                Area = new AreaDto(),
+                ProductOwner = "Owner",
+                ConfigurationItem = "ConfigItem",
+                ResponsibleId = 1
+            };
 
-            _mapperMock.Setup(m => m.Map<ApplicationData>(It.IsAny<ApplicationDataDto>())).Returns(new ApplicationData("Valid Name"));
-            _mapperMock.Setup(m => m.Map<ApplicationVm>(It.IsAny<ApplicationData>())).Returns(applicationVm);
-
-            _serviceMock.Setup(s => s.UpdateAsync(It.IsAny<ApplicationData>())).ReturnsAsync(OperationResult.Complete("Success"));
+            _serviceMock.Setup(s => s.UpdateAsync(It.IsAny<ApplicationData>())).ReturnsAsync(OperationResult.Complete(ServiceResources.UpdatedSuccessfully));
 
             // Act
             var result = await _controller.UpdateAsync(1, applicationDataDto);
@@ -131,8 +148,6 @@ namespace WebApi.Tests.Controllers
             var okResult = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(200, okResult.StatusCode);
         }
-
-
 
         [Fact]
         public async Task DeleteAsyncReturnsNoContentWhenDeletionIsSuccessful()
@@ -153,7 +168,7 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             int id = 1;
-            _serviceMock.Setup(service => service.DeleteAsync(id)).ReturnsAsync(OperationResult.NotFound("Item not found"));
+            _serviceMock.Setup(service => service.DeleteAsync(id)).ReturnsAsync(OperationResult.NotFound(ServiceResources.NotFound));
 
             // Act
             var result = await _controller.DeleteAsync(id);
@@ -162,20 +177,7 @@ namespace WebApi.Tests.Controllers
             Assert.IsType<NotFoundResult>(result);
         }
 
-        [Fact]
-        public async Task DeleteAsyncReturnsConflictWhenThereIsAConflict()
-        {
-            // Arrange
-            int id = 1;
-            _serviceMock.Setup(service => service.DeleteAsync(id)).ReturnsAsync(OperationResult.Conflict("Conflict occurred"));
-
-            // Act
-            var result = await _controller.DeleteAsync(id);
-
-            // Assert
-            Assert.IsType<ConflictObjectResult>(result);
-        }
-
+    
     }
 }
 

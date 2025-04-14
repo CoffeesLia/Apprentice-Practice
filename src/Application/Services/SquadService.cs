@@ -27,7 +27,7 @@ namespace Stellantis.ProjectName.Application.Services
             var result = await _squadRepository.GetListAsync(squadFilter).ConfigureAwait(false);
             if (result == null || !result.Result.Any())
             {
-                throw new KeyNotFoundException(_localizer[nameof(SquadResources.SquadsNotFound)]);
+                throw new KeyNotFoundException(_localizer[nameof(SquadResources.SquadNotFound)]);
             }
             return result;
         }
@@ -94,16 +94,6 @@ namespace Stellantis.ProjectName.Application.Services
                 throw new ArgumentException(_localizer[nameof(SquadResources.SquadNameAlreadyExists)]);
             }
             return false;
-        }
-
-        public async Task DeleteSquad(int id)
-        {
-            var squad = await _squadRepository.GetByIdAsync(id).ConfigureAwait(false);
-            if (squad == null)
-            {
-                throw new KeyNotFoundException(_localizer[nameof(SquadResources.SquadNotFound)]);
-            }
-            await _squadRepository.DeleteAsync(id).ConfigureAwait(false);
         }
 
     }

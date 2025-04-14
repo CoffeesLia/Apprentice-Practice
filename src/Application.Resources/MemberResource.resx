@@ -117,26 +117,25 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AlreadyExists" xml:space="preserve">
-    <value>O nome já existe.</value>
-  </data>
-  <data name="MemberAddedSuccessfully" xml:space="preserve">
-    <value>Membro adicionado com sucesso.</value>
+  <data name="CostMemberLargestEqualZero" xml:space="preserve">
+    <value>Member cost must be greater than or equal to zero.</value>
   </data>
   <data name="MemberEmailAlreadyExists" xml:space="preserve">
-    <value>Este e-mail já existe.</value>
+    <value>This e-mail already exists.</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="MemberRequiredFieldsMissing" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="MemberEmailIsRequired" xml:space="preserve">
+    <value>Member email is required.</value>
   </data>
-  <data name="NameIsRequired" xml:space="preserve">
-    <value>O nome é obrigatório.</value>
+  <data name="MemberNotFound" xml:space="preserve">
+    <value>Member not found.</value>
   </data>
-  <data name="NameValidateLength" xml:space="preserve">
-    <value>O nome deve ter entre {0} e {1} caracteres.</value>
+  <data name="MemberNameIsRequired" xml:space="preserve">
+    <value>Member name is required.</value>
   </data>
-  <data name="Undeleted" xml:space="preserve">
-    <value>Não é possível excluir uma área que tem aplicações associadas.</value>
+  <data name="MemberRoleIsRequired" xml:space="preserve">
+    <value>Member role is required.</value>
+  </data>
+  <data name="MemberCostRequired" xml:space="preserve">
+    <value>Member cost is required.</value>
   </data>
 </root>

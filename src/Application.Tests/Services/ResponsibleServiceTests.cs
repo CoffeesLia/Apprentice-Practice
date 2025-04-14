@@ -1,37 +1,54 @@
 ﻿using AutoFixture;
 using FluentValidation;
 using FluentValidation.Results;
-using Microsoft.Extensions.Localization;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
+using Stellantis.ProjectName.Application.Services;
+using Stellantis.ProjectName.Application.Validators;
 using Stellantis.ProjectName.Domain.Entities;
+using System.Globalization;
 using Xunit;
+using Application.Tests.Helpers;
 
-namespace Stellantis.ProjectName.Application.Services.Tests
+namespace Application.Services.Tests
 {
     public class ResponsibleServiceTests
     {
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
-        private readonly Mock<IStringLocalizer<ResponsibleResource>> _localizerMock;
-        private readonly Mock<IValidator<Responsible>> _validatorMock;
-        private readonly ResponsibleService _service;
+        private readonly Mock<IResponsibleRepository> _responsibleRepositoryMock;
+        private readonly ResponsibleService _responsibleService;
         private readonly Fixture _fixture;
 
         public ResponsibleServiceTests()
         {
+            CultureInfo.CurrentCulture = new CultureInfo("en-US");
             _unitOfWorkMock = new Mock<IUnitOfWork>();
-            _localizerMock = new Mock<IStringLocalizer<ResponsibleResource>>();
-            _validatorMock = new Mock<IValidator<Responsible>>();
+            _responsibleRepositoryMock = new Mock<IResponsibleRepository>();
+            var localizer = LocalizerFactorHelper.Create();
+            var responsibleValidator = new ResponsibleValidator(localizer);
+
+            _unitOfWorkMock.Setup(u => u.ResponsibleRepository).Returns(_responsibleRepositoryMock.Object);
+
+            _responsibleService = new ResponsibleService(_unitOfWorkMock.Object, localizer, responsibleValidator);
             _fixture = new Fixture();
+        }
 
-            var localizerFactoryMock = new Mock<IStringLocalizerFactory>();
-            localizerFactoryMock.Setup(f => f.Create(It.IsAny<Type>())).Returns(_localizerMock.Object);
+        [Fact]
+        public void CulturePropertyShouldGetAndSetCorrectValue()
+        {
+            // Arrange
+            var expectedCulture = new CultureInfo("pt-BR");
 
-            _service = new ResponsibleService(_unitOfWorkMock.Object, localizerFactoryMock.Object, _validatorMock.Object);
+            // Act
+            ResponsibleResource.Culture = expectedCulture;
+            var result = ResponsibleResource.Culture;
+
+            // Assert
+            Assert.Equal(expectedCulture, result);
         }
 
         [Fact]
@@ -40,23 +57,17 @@ namespace Stellantis.ProjectName.Application.Services.Tests
             // Arrange
             var responsible = _fixture.Build<Responsible>()
                                       .With(r => r.Name, string.Empty)
-                                      .With(r => r.Area, string.Empty)
+                                      .With(r => r.Email, string.Empty)
+                                      .Without(r => r.Area)
                                       .Create();
 
-            var validationResult = new ValidationResult(new List<ValidationFailure>
-            {
-                new ValidationFailure(nameof(responsible.Name), ResponsibleResource.NameRequired),
-                new ValidationFailure(nameof(responsible.Area), ResponsibleResource.AreaRequired)
-            });
-
-            _validatorMock.Setup(v => v.ValidateAsync(responsible, default)).ReturnsAsync(validationResult);
-
             // Act
-            var result = await _service.CreateAsync(responsible);
+            var result = await _responsibleService.CreateAsync(responsible);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
             Assert.Contains(ResponsibleResource.NameRequired, result.Errors);
+            Assert.Contains(ResponsibleResource.EmailRequired, result.Errors);
             Assert.Contains(ResponsibleResource.AreaRequired, result.Errors);
         }
 
@@ -65,14 +76,16 @@ namespace Stellantis.ProjectName.Application.Services.Tests
         {
             // Arrange
             var responsible = _fixture.Create<Responsible>();
-            _validatorMock.Setup(v => v.ValidateAsync(responsible, default)).ReturnsAsync(new ValidationResult());
-            _unitOfWorkMock.Setup(u => u.ResponsibleRepository.VerifyEmailAlreadyExistsAsync(responsible.Email)).ReturnsAsync(true);
+            var validatorMock = new Mock<IValidator<Responsible>>();
+            validatorMock.Setup(v => v.ValidateAsync(responsible, default)).ReturnsAsync(new ValidationResult());
+            _responsibleRepositoryMock.Setup(r => r.VerifyEmailAlreadyExistsAsync(responsible.Email)).ReturnsAsync(true);
 
             // Act
-            var result = await _service.CreateAsync(responsible);
+            var result = await _responsibleService.CreateAsync(responsible);
 
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Contains(ResponsibleResource.EmailExists, result.Errors);
         }
 
         [Fact]
@@ -80,11 +93,12 @@ namespace Stellantis.ProjectName.Application.Services.Tests
         {
             // Arrange
             var responsible = _fixture.Create<Responsible>();
-            _validatorMock.Setup(v => v.ValidateAsync(responsible, default)).ReturnsAsync(new ValidationResult());
-            _unitOfWorkMock.Setup(u => u.ResponsibleRepository.VerifyEmailAlreadyExistsAsync(responsible.Email)).ReturnsAsync(false);
+            var validatorMock = new Mock<IValidator<Responsible>>();
+            validatorMock.Setup(v => v.ValidateAsync(responsible, default)).ReturnsAsync(new ValidationResult());
+            _responsibleRepositoryMock.Setup(r => r.VerifyEmailAlreadyExistsAsync(responsible.Email)).ReturnsAsync(false);
 
             // Act
-            var result = await _service.CreateAsync(responsible);
+            var result = await _responsibleService.CreateAsync(responsible);
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
@@ -96,10 +110,10 @@ namespace Stellantis.ProjectName.Application.Services.Tests
             // Arrange
             var filter = _fixture.Create<ResponsibleFilter>();
             var pagedResult = _fixture.Create<PagedResult<Responsible>>();
-            _unitOfWorkMock.Setup(u => u.ResponsibleRepository.GetListAsync(filter)).ReturnsAsync(pagedResult);
+            _responsibleRepositoryMock.Setup(r => r.GetListAsync(filter)).ReturnsAsync(pagedResult);
 
             // Act
-            var result = await _service.GetListAsync(filter);
+            var result = await _responsibleService.GetListAsync(filter);
 
             // Assert
             Assert.Equal(pagedResult, result);
@@ -110,11 +124,10 @@ namespace Stellantis.ProjectName.Application.Services.Tests
         {
             // Arrange
             var id = _fixture.Create<int>();
-            _unitOfWorkMock.Setup(u => u.ResponsibleRepository.GetByIdAsync(id)).ReturnsAsync((Responsible?)null);
-            _localizerMock.Setup(l => l[nameof(ServiceResources.NotFound)]).Returns(new LocalizedString(nameof(ServiceResources.NotFound), "Not found"));
+            _responsibleRepositoryMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync((Responsible?)null);
 
             // Act
-            var result = await _service.GetItemAsync(id);
+            var result = await _responsibleService.GetItemAsync(id);
 
             // Assert
             Assert.Equal(OperationStatus.NotFound, result.Status);
@@ -125,10 +138,10 @@ namespace Stellantis.ProjectName.Application.Services.Tests
         {
             // Arrange
             var responsible = _fixture.Create<Responsible>();
-            _unitOfWorkMock.Setup(u => u.ResponsibleRepository.GetByIdAsync(responsible.Id)).ReturnsAsync(responsible);
+            _responsibleRepositoryMock.Setup(r => r.GetByIdAsync(responsible.Id)).ReturnsAsync(responsible);
 
             // Act
-            var result = await _service.GetItemAsync(responsible.Id);
+            var result = await _responsibleService.GetItemAsync(responsible.Id);
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
@@ -140,23 +153,16 @@ namespace Stellantis.ProjectName.Application.Services.Tests
             // Arrange
             var responsible = _fixture.Build<Responsible>()
                                       .With(r => r.Name, string.Empty)
-                                      .With(r => r.Area, string.Empty)
+                                      .With(r => r.Email, string.Empty)
+                                      .Without(r => r.Area)
                                       .Create();
-
-            var validationResult = new ValidationResult(new List<ValidationFailure>
-            {
-                new ValidationFailure(nameof(responsible.Name), ResponsibleResource.NameRequired),
-                new ValidationFailure(nameof(responsible.Area), ResponsibleResource.AreaRequired)
-            });
-
-            _validatorMock.Setup(v => v.ValidateAsync(responsible, default)).ReturnsAsync(validationResult);
-
             // Act
-            var result = await _service.UpdateAsync(responsible);
+            var result = await _responsibleService.UpdateAsync(responsible);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
             Assert.Contains(ResponsibleResource.NameRequired, result.Errors);
+            Assert.Contains(ResponsibleResource.EmailRequired, result.Errors);
             Assert.Contains(ResponsibleResource.AreaRequired, result.Errors);
         }
 
@@ -165,11 +171,12 @@ namespace Stellantis.ProjectName.Application.Services.Tests
         {
             // Arrange
             var responsible = _fixture.Create<Responsible>();
-            _validatorMock.Setup(v => v.ValidateAsync(responsible, default)).ReturnsAsync(new ValidationResult());
-            _unitOfWorkMock.Setup(u => u.ResponsibleRepository.VerifyEmailAlreadyExistsAsync(responsible.Email)).ReturnsAsync(true);
+            var validatorMock = new Mock<IValidator<Responsible>>();
+            validatorMock.Setup(v => v.ValidateAsync(responsible, default)).ReturnsAsync(new ValidationResult());
+            _responsibleRepositoryMock.Setup(r => r.VerifyEmailAlreadyExistsAsync(responsible.Email)).ReturnsAsync(true);
 
             // Act
-            var result = await _service.UpdateAsync(responsible);
+            var result = await _responsibleService.UpdateAsync(responsible);
 
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
@@ -180,12 +187,13 @@ namespace Stellantis.ProjectName.Application.Services.Tests
         {
             // Arrange
             var responsible = _fixture.Create<Responsible>();
-            _validatorMock.Setup(v => v.ValidateAsync(responsible, default)).ReturnsAsync(new ValidationResult());
-            _unitOfWorkMock.Setup(u => u.ResponsibleRepository.VerifyEmailAlreadyExistsAsync(responsible.Email)).ReturnsAsync(false);
-            _unitOfWorkMock.Setup(u => u.ResponsibleRepository.GetByIdAsync(responsible.Id)).ReturnsAsync(responsible);
+            var validatorMock = new Mock<IValidator<Responsible>>();
+            validatorMock.Setup(v => v.ValidateAsync(responsible, default)).ReturnsAsync(new ValidationResult());
+            _responsibleRepositoryMock.Setup(r => r.VerifyEmailAlreadyExistsAsync(responsible.Email)).ReturnsAsync(false);
+            _responsibleRepositoryMock.Setup(r => r.GetByIdAsync(responsible.Id)).ReturnsAsync(responsible);
 
             // Act
-            var result = await _service.UpdateAsync(responsible);
+            var result = await _responsibleService.UpdateAsync(responsible);
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
@@ -196,11 +204,10 @@ namespace Stellantis.ProjectName.Application.Services.Tests
         {
             // Arrange
             var id = _fixture.Create<int>();
-            _unitOfWorkMock.Setup(u => u.ResponsibleRepository.GetByIdAsync(id)).ReturnsAsync((Responsible?)null);
-            _localizerMock.Setup(l => l[nameof(OperationResult.NotFound)]).Returns(new LocalizedString(nameof(OperationResult.NotFound), "Not found"));
+            _responsibleRepositoryMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync((Responsible?)null);
 
             // Act
-            var result = await _service.DeleteAsync(id);
+            var result = await _responsibleService.DeleteAsync(id);
 
             // Assert
             Assert.Equal(OperationStatus.NotFound, result.Status);
@@ -211,10 +218,10 @@ namespace Stellantis.ProjectName.Application.Services.Tests
         {
             // Arrange
             var responsible = _fixture.Create<Responsible>();
-            _unitOfWorkMock.Setup(u => u.ResponsibleRepository.GetByIdAsync(responsible.Id)).ReturnsAsync(responsible);
+            _responsibleRepositoryMock.Setup(r => r.GetByIdAsync(responsible.Id)).ReturnsAsync(responsible);
 
             // Act
-            var result = await _service.DeleteAsync(responsible.Id);
+            var result = await _responsibleService.DeleteAsync(responsible.Id);
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);

@@ -12,30 +12,33 @@ namespace Stellantis.ProjectName.Application.Validators
         {
             ArgumentNullException.ThrowIfNull(localizer);
             ArgumentNullException.ThrowIfNull(gitRepoRepository);
-
             RuleFor(repo => repo.Name)
-                .NotEmpty().WithMessage(localizer[nameof(GitResource.NameIsRequired)]);
+                       .NotEmpty().WithMessage(GitResource.NameIsRequired);
 
             RuleFor(repo => repo.Description)
-                .NotEmpty().WithMessage(localizer[nameof(GitResource.DescriptionIsRequired)]);
+                .NotEmpty().WithMessage(GitResource.DescriptionIsRequired);
 
             RuleFor(repo => repo.Url)
-                .NotEmpty().WithMessage(localizer[nameof(GitResource.UrlIsRequired)])
-                .Must(BeAValidUrl).WithMessage(localizer[nameof(GitResource.UrlIsRequired)]);
+                .NotEmpty().WithMessage(GitResource.UrlIsRequired)
+                .Must(uri => Uri.IsWellFormedUriString(uri.ToString(), UriKind.Absolute)).WithMessage(GitResource.UrlIsInvalid);
 
             RuleFor(repo => repo.ApplicationId)
                 .GreaterThan(0).WithMessage(localizer[nameof(GitResource.ApplicationNotFound)])
-                .MustAsync(async (id, cancellation) => await gitRepoRepository.VerifyAplicationsExistsAsync(id).ConfigureAwait(false))
+                .MustAsync(async (id, cancellation) =>
+                    await gitRepoRepository.VerifyAplicationsExistsAsync(id).ConfigureAwait(false))
                 .WithMessage(localizer[nameof(GitResource.ApplicationNotFound)]);
 
             RuleFor(repo => repo.Url)
-                .MustAsync(async (url, cancellation) => !await gitRepoRepository.VerifyUrlAlreadyExistsAsync(url).ConfigureAwait(false))
-                .WithMessage(localizer[nameof(GitResource.ExistentRepositoryUrl)]);
-        }
+                .MustAsync(async (url, cancellation) =>
+                {
+                    if (!Uri.TryCreate(url?.ToString(), UriKind.Absolute, out var validUri))
+                    {
+                        return false; // URL inválida, falha na validação
+                    }
 
-        private static bool BeAValidUrl(string url)
-        {
-            return Uri.TryCreate(url, UriKind.Absolute, out _);
+                    return !await gitRepoRepository.VerifyUrlAlreadyExistsAsync(validUri).ConfigureAwait(false);
+                })
+                .WithMessage(localizer[nameof(GitResource.ExistentRepositoryUrl)]);
         }
     }
 }

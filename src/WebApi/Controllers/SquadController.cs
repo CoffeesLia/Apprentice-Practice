@@ -49,10 +49,5 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         {
             return await base.DeleteAsync(id).ConfigureAwait(false);
         }
-
-        internal async Task UpdateAsync(object squadId, SquadDto squadDto)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

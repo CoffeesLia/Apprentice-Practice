@@ -3,5 +3,6 @@
     internal class DataServiceFilterDto : FilterDto
     {
         public required string Name { get; set; }
+        public int ServiceId { get; set; }
     }
 }

@@ -124,15 +124,6 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Squads not found..
-        /// </summary>
-        public static string SquadsNotFound {
-            get {
-                return ResourceManager.GetString("SquadsNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Squad successfully deleted..
         /// </summary>
         public static string SquadSuccessfullyDeleted {
@@ -142,7 +133,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Squad successfully updated.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Squad updated successfully..
         /// </summary>
         public static string SquadUpdatedSuccessfully {
             get {

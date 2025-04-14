@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Stellantis.ProjectName.Domain.Entities;
+﻿using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models.Filters;
-using Stellantis.ProjectName.Application.Resources;
-using System.Security;
+using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
@@ -59,14 +53,14 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         public new async Task DeleteAsync(int id, bool saveChanges = true)
         {
             var entity = await GetByIdAsync(id).ConfigureAwait(false);
-                if (entity != null)
+            if (entity != null)
+            {
+                Context.Set<DataService>().Remove(entity);
+                if (saveChanges)
                 {
-                    Context.Set<DataService>().Remove(entity);
-                    if (saveChanges)
-                    {
-                        await SaveChangesAsync().ConfigureAwait(false);
-                    }
+                    await SaveChangesAsync().ConfigureAwait(false);
                 }
+            }
         }
 
         public async Task<bool> VerifyServiceExistsAsync(int id)

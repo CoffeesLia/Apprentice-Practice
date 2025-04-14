@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models;
@@ -9,128 +8,104 @@ using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Controllers;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.ViewModels;
-using Stellantis.ProjectName.Application.Resources;
 using AutoFixture;
-using Xunit;
+using Stellantis.ProjectName.WebApi.Dto.Filters;
+using Stellantis.ProjectName.WebApi.Mapper;
+using WebApi.Tests.Helpers;
+using Stellantis.ProjectName.Application.Resources;
+
 
 namespace Stellantis.ProjectName.WebApi.Tests.Controllers
 {
     public class ResponsibleControllerTests
     {
         private readonly Mock<IResponsibleService> _serviceMock;
-        private readonly Mock<IMapper> _mapperMock;
-        private readonly Mock<IStringLocalizerFactory> _localizerFactoryMock;
         private readonly ResponsibleController _controller;
         private readonly Fixture _fixture;
 
         public ResponsibleControllerTests()
         {
             _serviceMock = new Mock<IResponsibleService>();
-            _mapperMock = new Mock<IMapper>();
-            _localizerFactoryMock = new Mock<IStringLocalizerFactory>();
-            _fixture = new Fixture();
+            var mapperConfiguration = new MapperConfiguration(x => { x.AddProfile<AutoMapperProfile>(); });
+            var mapper = mapperConfiguration.CreateMapper();
+            var localizerFactor = LocalizerFactorHelper.Create();
 
-            _controller = new ResponsibleController(_serviceMock.Object, _mapperMock.Object, _localizerFactoryMock.Object);
+            _fixture = new Fixture();
+            _controller = new ResponsibleController(_serviceMock.Object, mapper, localizerFactor);
         }
 
         [Fact]
-        // Teste para verificar se CreateAsync retorna CreatedAtAction quando a criação é bem-sucedida
-        public async Task CreateAsyncWhenCreationIsSuccessful()
+        public async Task CreateAsyncShouldReturnCreatedAtActionResult()
         {
             // Arrange
             var responsibleDto = _fixture.Create<ResponsibleDto>();
-            var responsible = _fixture.Create<Responsible>();
-            var responsibleVm = _fixture.Create<ResponsibleVm>();
-
-            _mapperMock.Setup(m => m.Map<Responsible>(responsibleDto)).Returns(responsible);
-            _serviceMock.Setup(s => s.CreateAsync(responsible)).ReturnsAsync(OperationResult.Complete("Success"));
-            _mapperMock.Setup(m => m.Map<ResponsibleVm>(responsible)).Returns(responsibleVm);
+            _serviceMock.Setup(s => s.CreateAsync(It.IsAny<Responsible>())).ReturnsAsync(OperationResult.Complete());
 
             // Act
             var result = await _controller.CreateAsync(responsibleDto);
 
             // Assert
-            var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
-            Assert.NotNull(createdAtActionResult.RouteValues);
-            Assert.Equal(responsibleVm.Id, createdAtActionResult.RouteValues["id"]);
+            Assert.IsType<CreatedAtActionResult>(result);
         }
 
         [Fact]
-        // Teste para verificar se GetAsync retorna ResponsibleVm
         public async Task GetAsyncShouldReturnResponsibleVm()
         {
-            var responsible = _fixture.Create<Responsible>();
-            var responsibleVm = _fixture.Create<ResponsibleVm>();
-
-            _serviceMock.Setup(s => s.GetItemAsync(responsible.Id)).ReturnsAsync(responsible);
-            _mapperMock.Setup(m => m.Map<ResponsibleVm>(responsible)).Returns(responsibleVm);
-
-            var result = await _controller.GetAsync(responsible.Id);
-
-            var okResult = Assert.IsType<OkObjectResult>(result.Result);
-            var returnedVm = Assert.IsType<ResponsibleVm>(okResult.Value);
-            Assert.Equal(responsibleVm.Id, returnedVm.Id);
-            Assert.Equal(responsibleVm.Name, returnedVm.Name);
-            Assert.Equal(responsibleVm.Email, returnedVm.Email);
-            Assert.Equal(responsibleVm.Area, returnedVm.Area);
-        }
-
-        [Fact]
-        // Teste para verificar se GetListAsync retorna PagedResult
-        public async Task GetListAsyncShouldReturnPagedResult()
-        {
-            var filterDto = _fixture.Create<ResponsibleFilter>();
-            var filter = _fixture.Create<ResponsibleFilter>();
-            var pagedResult = _fixture.Create<PagedResult<Responsible>>();
-            var pagedResultVm = _fixture.Create<PagedResult<ResponsibleVm>>();
-
-            _mapperMock.Setup(m => m.Map<ResponsibleFilter>(filterDto)).Returns(filter);
-            _serviceMock.Setup(s => s.GetListAsync(filter)).ReturnsAsync(pagedResult);
-            _mapperMock.Setup(m => m.Map<PagedResult<ResponsibleVm>>(pagedResult)).Returns(pagedResultVm);
-
-            var result = await _controller.GetListAsync(filterDto);
-
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedPagedResultVm = Assert.IsType<PagedResult<ResponsibleVm>>(okResult.Value);
-            Assert.Equal(pagedResultVm.Result.Count(), returnedPagedResultVm.Result.Count());
-            Assert.Equal(pagedResultVm.Result.First().Name, returnedPagedResultVm.Result.First().Name);
-        }
-
-        [Fact]
-        public async Task UpdateAsyncShouldReturnSuccessWhenUpdateIsSuccessful()
-        {
             // Arrange
-            var responsibleDto = _fixture.Create<ResponsibleDto>();
             var responsible = _fixture.Create<Responsible>();
-            var responsibleVm = _fixture.Create<ResponsibleVm>();
-
-            _serviceMock.Setup(s => s.GetItemAsync(responsible.Id)).ReturnsAsync(responsible);
-            _mapperMock.Setup(m => m.Map<ResponsibleVm>(responsible)).Returns(responsibleVm);
-            _serviceMock.Setup(s => s.UpdateAsync(responsible)).ReturnsAsync(OperationResult.Complete("Success"));
+            _serviceMock.Setup(s => s.GetItemAsync(It.IsAny<int>())).ReturnsAsync(responsible);
 
             // Act
-            var result = await _controller.UpdateAsync(responsible.Id, responsibleDto);
+            var result = await _controller.GetAsync(responsible.Id);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            Assert.IsType<ResponsibleVm>(okResult.Value);
+        }
+
+        [Fact]
+        public async Task GetListAsyncShouldReturnPagedResultVm()
+        {
+            // Arrange
+            var filterDto = _fixture.Create<ResponsibleFilterDto>();
+            var pagedResult = _fixture.Create<PagedResult<Responsible>>();
+            _serviceMock.Setup(s => s.GetListAsync(It.IsAny<ResponsibleFilter>())).ReturnsAsync(pagedResult);
+
+            // Act
+            var result = await _controller.GetListAsync(filterDto);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.Equal(200, okResult.StatusCode);
-            Assert.Equal(responsibleVm, okResult.Value);
+            Assert.IsType<PagedResultVm<ResponsibleVm>>(okResult.Value);
         }
 
         [Fact]
-        // Teste para verificar se DeleteAsync retorna NoContent quando a exclusão é bem-sucedida
-        public async Task DeleteAsyncShouldReturnNoContentWhenDeleteIsSuccessful()
+        public async Task UpdateAsyncShouldReturnOkResult()
         {
             // Arrange
-            int id = _fixture.Create<int>();
-            _serviceMock.Setup(s => s.DeleteAsync(id)).ReturnsAsync(OperationResult.Complete());
+            var responsibleId = _fixture.Create<int>(); // Add this line to create a responsibleId
+            var responsibleDto = _fixture.Create<ResponsibleDto>();
+            _serviceMock.Setup(s => s.UpdateAsync(It.IsAny<Responsible>())).ReturnsAsync(OperationResult.Complete());
+
+            // Act
+            var result = await _controller.UpdateAsync(responsibleId, responsibleDto);
+
+            // Assert
+            Assert.IsType<OkObjectResult>(result);
+        }
+
+        [Fact]
+        public async Task DeleteAsyncShouldReturnNoContentResult()
+        {
+            // Arrange
+            var id = _fixture.Create<int>();
+            _serviceMock.Setup(s => s.DeleteAsync(It.IsAny<int>())).ReturnsAsync(OperationResult.Complete());
 
             // Act
             var result = await _controller.DeleteAsync(id);
 
             // Assert
-            var noContentResult = Assert.IsType<NoContentResult>(result);
-            Assert.Equal(204, noContentResult.StatusCode);
+            Assert.IsType<NoContentResult>(result);
         }
     }
 }

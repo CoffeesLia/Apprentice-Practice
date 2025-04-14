@@ -14,7 +14,7 @@ namespace WebApi.Tests.Dto.Validators
         }
 
         [Fact]
-        public void Should_Have_Error_When_Page_Is_Less_Than_One()
+        public void ShouldHaveErrorWhenPageIsLessThanOne()
         {
             // Arrange
             var model = new FilterDto { Page = 0 };
@@ -22,11 +22,11 @@ namespace WebApi.Tests.Dto.Validators
             // Act & Assert
             var result = _validator.TestValidate(model);
             result.ShouldHaveValidationErrorFor(x => x.Page)
-                .WithErrorMessage("Page must be greater than zero.");
+                .WithErrorMessage("A página deve ser maior que zero.");
         }
 
         [Fact]
-        public void Should_Not_Have_Error_When_Page_Is_Greater_Than_Zero()
+        public void ShouldNotHaveErrorWhenPageIsGreaterThanZero()
         {
             // Arrange
             var model = new FilterDto { Page = 1 };

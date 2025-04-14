@@ -121,7 +121,13 @@
     <value>The name already exits.</value>
   </data>
   <data name="ApplicationNotFound" xml:space="preserve">
-    <value>Application not found</value>
+    <value>Application cannot be found</value>
+  </data>
+  <data name="ConfigurationItemRequired" xml:space="preserve">
+    <value>Configuration item is required.</value>
+  </data>
+  <data name="DescriptionValidateLength" xml:space="preserve">
+    <value>The description has a limit of {0} characters.</value>
   </data>
   <data name="NameRequired" xml:space="preserve">
     <value>The name is required.</value>
@@ -130,6 +136,9 @@
     <value>The name must be between {0} and {1} characters long.</value>
   </data>
   <data name="NotFound" xml:space="preserve">
-    <value>Application cannot be found</value>
+    <value>Not Found.</value>
+  </data>
+  <data name="ProductOwnerRequired" xml:space="preserve">
+    <value>Product Owner is required.</value>
   </data>
 </root>

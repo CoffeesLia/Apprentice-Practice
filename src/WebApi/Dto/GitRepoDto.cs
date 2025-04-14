@@ -1,10 +1,13 @@
-﻿namespace Stellantis.ProjectName.WebApi.Dto
+﻿using Stellantis.ProjectName.Domain.Entities;
+
+namespace Stellantis.ProjectName.WebApi.Dto
 {
     internal class GitRepoDto
     {
         public required string Name { get; set; }
         public required string Description { get; set; }
-        public required string Url { get; set; }
+        public required Uri Url { get; set; }
         public int ApplicationId { get; set; }
+        public ApplicationData Application { get; set; } = null!;
     }
 }

@@ -14,7 +14,7 @@ namespace WebApi.Tests
         public ResourcesTests() => LocalizerFactor = LocalizerFactorHelper.Create();
 
         [Fact]
-        public void ControllerResources_AllCultures()
+        public void ControllerResourcesAllCultures()
         {
             var resource = new ControllerResources();
             Assert.NotNull(resource);

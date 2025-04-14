@@ -3,7 +3,7 @@
   <PropertyGroup>
     <AnalysisLevel>latest-all</AnalysisLevel>
     <AssemblyInformationalVersion>1.0.0</AssemblyInformationalVersion>
-    <AssemblyName>Stellantis.$(SolutionName).$(MSBuildProjectName)</AssemblyName>
+    <AssemblyName>Stellantis.ProjectName.$(MSBuildProjectName)</AssemblyName>
     <Authors>Stellantis</Authors>
     <Copyright>© Stellantis. All rights reserved.</Copyright>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
@@ -14,11 +14,11 @@
     <Nullable>enable</Nullable>
     <PackageId>$(AssemblyName)</PackageId>
     <PackageTags>AMS</PackageTags>
-    <Product>$(SolutionName)</Product>
+    <Product>ProjectName</Product>
     <RepositoryUrl>https://gitlab.fcalatam.com/fca/architecture/application/dotnetcore/base-project.git</RepositoryUrl>
-    <RootNamespace>Stellantis.$(SolutionName).$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <RootNamespace>Stellantis.ProjectName.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
     <TargetFramework>net8.0</TargetFramework>
-    <Title>$(SolutionName)</Title>
+    <Title>ProjectName</Title>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -83,6 +83,11 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
+    <Compile Update="DataServiceResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>DataServiceResources.resx</DependentUpon>
+    </Compile>
     <Compile Update="FilterResources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -119,6 +124,10 @@
     <EmbeddedResource Update="AreaResources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>AreaResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="DataServiceResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>DataServiceResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="FilterResources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
@@ -201,8 +210,7 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="SquadResources.pt-BR.resx">
-      <LastGenOutput>SquadResources.pt-BR.Designer.cs</LastGenOutput>
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator></Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="SquadResources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

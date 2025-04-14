@@ -70,6 +70,15 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Member updated successfully..
+        /// </summary>
+        public static string MemberUpdatedSuccessfully {
+            get {
+                return ResourceManager.GetString("MemberUpdatedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Not found..
         /// </summary>
         public static string NotFound {

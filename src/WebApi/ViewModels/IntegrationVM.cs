@@ -1,6 +1,6 @@
 ﻿namespace Stellantis.ProjectName.WebApi.ViewModels
 {
-    internal class IntegrationVm : EntityVmBase
+    internal class IntegrationVM : EntityVmBase
     {
        public string? Name { get; set; }
        public string Description { get; set; } = null!;
