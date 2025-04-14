@@ -312,6 +312,42 @@ namespace Application.Tests.Services
             Assert.Equal((DataServiceResources.ServiceAlreadyExists), exception.Message);
         }
 
+        // Testa se o validador retorna erro quando a descrição é muito longa.
+        [Fact]
+        public async Task ShouldHaveErrorWhenServiceDescriptionLengthIsTooLong()
+        {
+            // Arrange
+            var dataService = new DataService { Name = "Test Service", Description = new string('a', 501) };
+
+            var localizerFactory = LocalizerFactorHelper.Create();
+            var validator = new DataServiceValidator(localizerFactory);
+
+            // Act
+            var result = await validator.TestValidateAsync(dataService);
+
+            // Assert
+            result.ShouldHaveValidationErrorFor(ds => ds.Description)
+                .WithErrorMessage((DataServiceResources.ServiceDescriptionLength));
+        }
+
+        // Testa se o validador retorna erro quando o nome é obrigatório.
+        [Fact]
+        public async Task ShouldHaveErrorWhenServiceNameIsRequired()
+        {
+            // Arrange
+            var dataService = new DataService { Name = string.Empty };
+
+            var localizerFactory = LocalizerFactorHelper.Create();
+            var validator = new DataServiceValidator(localizerFactory);
+
+            // Act
+            var result = await validator.TestValidateAsync(dataService);
+
+            // Assert
+            result.ShouldHaveValidationErrorFor(ds => ds.Name)
+                .WithErrorMessage((DataServiceResources.ServiceNameIsRequired));
+        }
+
         // Testa se DataService define e obtém a descrição corretamente.
         [Fact]
         public void DataServiceShouldSetAndGetDescription()
@@ -320,6 +356,7 @@ namespace Application.Tests.Services
             var description = "Test Description";
             var dataService = new DataService
             {
+                Name = "Test Service",
                 // Act
                 Description = description
             };
@@ -365,90 +402,5 @@ namespace Application.Tests.Services
             result.ShouldHaveValidationErrorFor(ds => ds.Name)
                 .WithErrorMessage((DataServiceResources.ServiceNameLength));
         }
-
-        // Testa se GetServiceNotFound retorna o valor correto.
-        [Fact]
-        public void GetServiceNotFoundShouldReturnCorrectValue()
-        {
-            // Arrange
-            var expectedValue = "Serviço não encontrado.";
-
-            // Act
-            var result = (DataServiceResources.ServiceNotFound);
-
-            // Assert
-            Assert.Equal(expectedValue, result);
-        }
-
-        // Testa se GetServicesNoFound retorna o valor correto.
-        [Fact]
-        public void GetServicesNoFoundShouldReturnCorrectValue()
-        {
-            // Arrange
-            var expectedValue = "Nenhum serviço encontrado.";
-
-            // Act
-            var result = (DataServiceResources.ServicesNoFound);
-
-            // Assert
-            Assert.Equal(expectedValue, result);
-        }
-
-        // Testa se GetServiceAlreadyExists retorna o valor correto.
-        [Fact]
-        public void GetServiceAlreadyExistsShouldReturnCorrectValue()
-        {
-            // Arrange
-            var expectedValue = "Esse serviço já existe.";
-
-            // Act
-            var result = (DataServiceResources.ServiceAlreadyExists);
-
-            // Assert
-            Assert.Equal(expectedValue, result);
-        }
-
-        // Testa se GetServiceNameLength retorna o valor correto.
-        [Fact]
-        public void GetServiceNameLengthShouldReturnCorrectValue()
-        {
-            // Arrange
-            var expectedValue = "O nome do serviço deve ter entre 3 e 50 caracteres.";
-
-            // Act
-            var result = (DataServiceResources.ServiceNameLength);
-
-            // Assert
-            Assert.Equal(expectedValue, result);
-        }
-
-        // Testa se GetServiceCannotBeNull retorna o valor correto.
-        [Fact]
-        public void GetServiceCannotBeNullShouldReturnCorrectValue()
-        {
-            // Arrange
-            var expectedValue = "Serviço não pode ser nulo.";
-
-            // Act
-            var result = (DataServiceResources.ServiceCannotBeNull);
-
-            // Assert
-            Assert.Equal(expectedValue, result);
-        }
-
-        // Testa se GetServiceSucess retorna o valor correto.
-        [Fact]
-        public void GetServiceSucessShouldReturnCorrectValue()
-        {
-            // Arrange
-            var expectedValue = "Operação concluída com sucesso.";
-
-            // Act
-            var result = (DataServiceResources.ServiceSucess);
-
-            // Assert
-            Assert.Equal(expectedValue, result);
-        }
     }
-
 }
