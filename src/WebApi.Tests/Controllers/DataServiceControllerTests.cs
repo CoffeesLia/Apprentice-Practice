@@ -275,8 +275,8 @@ namespace WebApi.Tests.Controllers
         public void DataServiceVmShouldHaveNameProperty()
         {
             // Arrange
-            var dataServiceVm = new DataServiceVm();
             var testName = "Test Service";
+            var dataServiceVm = new DataServiceVm { Name = testName };
 
             // Act
             dataServiceVm.Name = testName;
@@ -299,7 +299,7 @@ namespace WebApi.Tests.Controllers
 
             // Assert
             var entityType = builder.Metadata;
-            Assert.Equal("Service", entityType.GetTableName());
+            Assert.Equal("DataService", entityType.GetTableName());
             var primaryKey = entityType.FindPrimaryKey();
             Assert.NotNull(primaryKey);
             Assert.Equal("ServiceId", primaryKey.Properties[0].Name);

@@ -123,6 +123,12 @@
   <data name="ServiceCannotBeNull" xml:space="preserve">
     <value>Service cannot be null.</value>
   </data>
+  <data name="ServiceDescriptionLength" xml:space="preserve">
+    <value>Service description cannot exceed 255 characters.</value>
+  </data>
+  <data name="ServiceNameIsRequired" xml:space="preserve">
+    <value>Service name is required.</value>
+  </data>
   <data name="ServiceNameLength" xml:space="preserve">
     <value>Service name must be between 3 and 50 characters.</value>
   </data>
@@ -133,6 +139,6 @@
     <value>No services found.</value>
   </data>
   <data name="ServiceSucess" xml:space="preserve">
-    <value>Operation Sucess.</value>
+    <value>Operation sucess.</value>
   </data>
 </root>
