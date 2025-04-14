@@ -5,7 +5,7 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
-    public class DataServiceRepository(Context context) : RepositoryEntityBase<DataService, Context>(context), IDataServiceRepository
+    public class DataServiceRepository(Context context) : RepositoryBase<DataService, Context>(context), IDataServiceRepository
     {
         public new async Task CreateAsync(DataService entity, bool saveChanges = true)
         {
@@ -16,7 +16,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             }
         }
 
-        public new async Task<DataService?> GetByIdAsync(int id)
+        public async Task<DataService?> GetByIdAsync(int id)
         {
             return await Context.Set<DataService>().FindAsync(id).ConfigureAwait(false);
         }
@@ -50,7 +50,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             };
         }
 
-        public new async Task DeleteAsync(int id, bool saveChanges = true)
+        public async Task DeleteAsync(int id, bool saveChanges = true)
         {
             var entity = await GetByIdAsync(id).ConfigureAwait(false);
             if (entity != null)
@@ -65,18 +65,14 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         public async Task<bool> VerifyServiceExistsAsync(int id)
         {
-            var service = await Context.Set<DataService>()
-                .FirstOrDefaultAsync(a => a.Id == id)
-                .ConfigureAwait(false);
+            var service = await Context.Set<DataService>().FirstOrDefaultAsync(a => a.Id == id).ConfigureAwait(false);
 
             return service != null && service.ServiceId > 0;
         }
 
         public async Task<bool> VerifyNameAlreadyExistsAsync(string name)
         {
-            return await Context.Set<DataService>()
-                .AnyAsync(a => a.Name == name)
-                .ConfigureAwait(false);
+            return await Context.Set<DataService>().AnyAsync(a => a.Name == name).ConfigureAwait(false);
         }
     }
 }
