@@ -10,27 +10,24 @@ using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Controllers;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
+using Stellantis.ProjectName.WebApi.Mapper;
 using Stellantis.ProjectName.WebApi.ViewModels;
+using WebApi.Tests.Helpers;
 
 namespace WebApi.Tests.Controllers
 {
     public class MemberControllerTest
     {
         private readonly Mock<IMemberService> _serviceMock;
-        private readonly Mock<IMapper> _mapperMock;
-        private readonly Mock<IStringLocalizerFactory> _localizerFactoryMock;
         private readonly MemberControllerBase _controller;
 
         public MemberControllerTest()
         {
             _serviceMock = new Mock<IMemberService>();
-            _mapperMock = new Mock<IMapper>();
-            _localizerFactoryMock = new Mock<IStringLocalizerFactory>();
-            var localizer = new Mock<IStringLocalizer>();
-
-            _localizerFactoryMock.Setup(f => f.Create(typeof(MemberResource))).Returns(localizer.Object);
-
-            _controller = new MemberControllerBase(_serviceMock.Object, _mapperMock.Object, _localizerFactoryMock.Object);
+            var mapperConfiguration = new MapperConfiguration(x => { x.AddProfile<AutoMapperProfile>(); });
+            var mapper = mapperConfiguration.CreateMapper();
+            var localizerFactor = LocalizerFactorHelper.Create();
+            _controller = new MemberControllerBase(_serviceMock.Object, mapper, localizerFactor);
         }
 
         [Fact]
@@ -61,9 +58,9 @@ namespace WebApi.Tests.Controllers
 
             };
 
-            _mapperMock.Setup(m => m.Map<Member>(It.IsAny<MemberDto>())).Returns(member);
-            _mapperMock.Setup(m => m.Map<MemberVm>(It.IsAny<Member>())).Returns(memberVm);
-            _serviceMock.Setup(s => s.CreateAsync(It.IsAny<Member>())).ReturnsAsync(OperationResult.Complete("Success"));
+            var mapperConfiguration = new MapperConfiguration(x => { x.AddProfile<AutoMapperProfile>(); });
+            var mapper = mapperConfiguration.CreateMapper();
+            _serviceMock.Setup(s => s.CreateAsync(It.IsAny<Member>())).ReturnsAsync(OperationResult.Complete());
 
             // Act
             var result = await _controller.CreateAsync(memberDto);
@@ -96,7 +93,8 @@ namespace WebApi.Tests.Controllers
             };
 
             _serviceMock.Setup(s => s.GetItemAsync(memberId)).ReturnsAsync(member);
-            _mapperMock.Setup(m => m.Map<MemberVm>(member)).Returns(memberVm);
+            var mapperConfiguration = new MapperConfiguration(x => { x.AddProfile<AutoMapperProfile>(); });
+            var mapper = mapperConfiguration.CreateMapper();
 
             // Act
             var result = await _controller.GetAsync(memberId);
@@ -176,9 +174,9 @@ namespace WebApi.Tests.Controllers
                 Total = 1
             };
 
-            _mapperMock.Setup(m => m.Map<MemberFilter>(filterDto)).Returns(filter);
             _serviceMock.Setup(s => s.GetListAsync(filter)).ReturnsAsync(pagedResult);
-            _mapperMock.Setup(m => m.Map<PagedResultVm<MemberVm>>(pagedResult)).Returns(pagedVmResult);
+            var mapperConfiguration = new MapperConfiguration(x => { x.AddProfile<AutoMapperProfile>(); });
+            var mapper = mapperConfiguration.CreateMapper();
 
             // Act
             var result = await _controller.GetListAsync(filterDto);
@@ -200,7 +198,6 @@ namespace WebApi.Tests.Controllers
                 Role = "Valid Role",
                 Email = "valid@example.com",
                 Cost = 100
-
             };
             var memberVm = new MemberVm
             {
@@ -209,21 +206,21 @@ namespace WebApi.Tests.Controllers
                 Role = "Valid Role",
                 Email = "valid@example.com",
                 Cost = 100
-
             };
 
-            _mapperMock.Setup(m => m.Map<Member>(It.IsAny<MemberDto>())).Returns(new Member
+            var member = new Member
             {
                 Id = 1,
                 Name = "Valid Name",
                 Role = "Valid Role",
                 Email = "valid@example.com",
                 Cost = 100
+            };
 
-            });
-            _mapperMock.Setup(m => m.Map<MemberVm>(It.IsAny<Member>())).Returns(memberVm);
+            var mapperConfiguration = new MapperConfiguration(cfg => { cfg.AddProfile<AutoMapperProfile>(); });
+            var mapper = mapperConfiguration.CreateMapper();
 
-            _serviceMock.Setup(s => s.UpdateAsync(It.IsAny<Member>())).ReturnsAsync(OperationResult.Complete("Success"));
+            _serviceMock.Setup(s => s.UpdateAsync(It.IsAny<Member>())).ReturnsAsync(OperationResult.Complete());
 
             // Act
             var result = await _controller.UpdateAsync(1, memberDto);
