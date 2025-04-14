@@ -43,6 +43,21 @@ namespace Application.Tests.Services
         }
 
         [Fact]
+        public void CulturePropertyShouldGetAndSetCorrectValue()
+        {
+            // Arrange
+            var expectedCulture = new CultureInfo("pt-BR");
+
+            // Act
+            ApplicationDataResources.Culture = expectedCulture;
+            var result = ApplicationDataResources.Culture;
+
+            // Assert
+            Assert.Equal(expectedCulture, result);
+        }
+
+
+        [Fact]
         public async Task CreateAsyncShouldReturnInvalidDataNameVali()
         {
             // Arrange
@@ -397,7 +412,7 @@ namespace Application.Tests.Services
                 AreaId = 1,
                 Name = "Test Responsible",
                 Email = "test@example.com",
-                Area = new Area("TestArea") 
+                Area = new Area("TestArea")
 
             };
 

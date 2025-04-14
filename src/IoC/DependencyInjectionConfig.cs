@@ -8,7 +8,6 @@ using Stellantis.ProjectName.Application.Validators;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Stellantis.ProjectName.IoC
 {
@@ -28,6 +27,7 @@ namespace Stellantis.ProjectName.IoC
             services.AddScoped<IValidator<Responsible>, ResponsibleValidator>();
             services.AddScoped<IValidator<Integration>, IntegrationValidator>();
             services.AddScoped<IValidator<DataService>, DataServiceValidator>();
+            services.AddScoped<IValidator<Squad>, SquadValidator>();
         }
 
         private static void Services(IServiceCollection services)
@@ -37,6 +37,7 @@ namespace Stellantis.ProjectName.IoC
             services.AddScoped<IResponsibleService, ResponsibleService>();
             services.AddScoped<IIntegrationService, IntegrationService>();
             services.AddScoped<IDataService, ApplicationService>();
+            services.AddScoped<ISquadService, SquadService>();
         }
 
         private static void Repositories(IServiceCollection services)
@@ -46,9 +47,8 @@ namespace Stellantis.ProjectName.IoC
             services.AddScoped<IResponsibleRepository, ResponsibleRepository>();
             services.AddScoped<IIntegrationRepository, IntegrationRepository>();
             services.AddScoped<IDataServiceRepository, DataServiceRepository>();
+            services.AddScoped<ISquadRepository, SquadRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
-
-
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Domain.Entities;
-using Stellantis.ProjectName.Domain.Entity;
 
 namespace Stellantis.ProjectName.Infrastructure.Data
 {
@@ -12,9 +11,9 @@ namespace Stellantis.ProjectName.Infrastructure.Data
         public DbSet<Responsible> Responsibles { get; set; } 
         public DbSet<Area> Areas { get; set; }
         public DbSet<Member> Members { get; set; }
-        public DbSet<EntitySquad> Squads { get; set; }
+        public DbSet<Squad> Squads { get; set; }
         public DbSet<Integration> Integrations { get; set; }
-
+        public DbSet<ApplicationData> ApplicationDatas { get; set; }
         public DbSet<DataService> Services { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

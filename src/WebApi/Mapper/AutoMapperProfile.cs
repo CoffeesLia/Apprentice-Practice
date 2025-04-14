@@ -1,9 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
-using AutoMapper;
+﻿using AutoMapper;
 using Stellantis.ProjectName.Application.Models.Filters;
-using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Domain.Entities;
-using Stellantis.ProjectName.Domain.Entity;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.ViewModels;
@@ -14,8 +11,10 @@ namespace Stellantis.ProjectName.WebApi.Mapper
     {
         public AutoMapperProfile()
         {
+            CreateMap(typeof(PagedResult<>), typeof(PagedResultVm<>));
             CreateMap<ApplicationDataDto, ApplicationData>()
                 .ForMember(x => x.Id, x => x.Ignore())
+            .ForMember(dest => dest.Area, opt => opt.MapFrom(src => src.Area))
                 .ForMember(x => x.Integration, opt => opt.Ignore())
                 .ForMember(x => x.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(x => x.ProductOwner, opt => opt.MapFrom(src => src.ProductOwner))
@@ -35,14 +34,40 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(x => x.External, opt => opt.MapFrom(src => src.External))
                 .ForMember(x => x.ProductOwner, opt => opt.MapFrom(src => src.ProductOwner));
 
-            CreateMap<DataServiceDto, DataService>()
+            CreateMap<AreaDto, Area>()
+                 .ForMember(x => x.Id, x => x.Ignore())
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Applications, opt => opt.Ignore())
+                .ForMember(dest => dest.Responsibles, opt => opt.Ignore());
+            CreateMap<Area, AreaVm>()
+                .ForMember(x => x.Applications, x => x.Ignore());
+            CreateMap<AreaFilterDto, AreaFilter>();
+    
+            CreateMap<ResponsibleDto, Responsible>()
                 .ForMember(x => x.Id, x => x.Ignore())
-                .ForMember(x => x.ServiceId, x => x.Ignore());
-            CreateMap<DataService, DataServiceVm>();
+                .ForMember(x => x.AreaId, opt => opt.MapFrom(src => src.AreaId));
+            CreateMap<Responsible, ResponsibleVm>()
+                .ForMember(dest => dest.Area, opt => opt.MapFrom(src => src.Area));
+            CreateMap<ResponsibleFilterDto, ResponsibleFilter>();
 
-            CreateMap<SquadDto, EntitySquad>()
+            CreateMap<DataServiceDto, DataService>()
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.ServiceId, opt => opt.MapFrom(src => src.ServiceId))
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.ServiceId));
+            CreateMap<DataService, DataServiceVm>()
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.ServiceId, opt => opt.MapFrom(src => src.ServiceId));
+            CreateMap<DataServiceFilterDto, DataServiceFilter>()
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.ServiceId, opt => opt.MapFrom(src => src.ServiceId));
+            CreateMap<PagedResult<DataService>, PagedResultVm<DataServiceVm>>();
+
+            CreateMap<SquadDto, Squad>()
                 .ForMember(x => x.Id, x => x.Ignore());
-            CreateMap<EntitySquad, SquadDto>();
+            CreateMap<Squad, SquadDto>();
 
             CreateMap<GitRepoDto, GitRepo>()
                 .ForMember(x => x.Id, x => x.Ignore())

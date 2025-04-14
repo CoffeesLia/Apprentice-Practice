@@ -1,9 +1,10 @@
-﻿namespace Stellantis.ProjectName.WebApi.Dto
+﻿using Stellantis.ProjectName.Domain.Entities;
+
+namespace Stellantis.ProjectName.WebApi.Dto
 {
-    internal class SquadDto 
+    internal class SquadDto : EntityBase
     {
-        public required string Name { get; set; }
+        public string? Name { get; set; }
         public string? Description { get; set; }
-       
     }
 }

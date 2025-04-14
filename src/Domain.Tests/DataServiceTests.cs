@@ -4,23 +4,25 @@ namespace Domain.Tests
 {
     public class DataServiceTests
     {
+        // Verifica se o DataService é inicializado com valores padrão.
         [Fact]
         public void DataServiceShouldInitializeWithDefaultValues()
         {
             // Arrange & Act
-            var dataService = new DataService();
+            var dataService = new DataService { Name = "Default Name" };
 
             // Assert
-            Assert.Null(dataService.Name);
+            Assert.Equal("Default Name", dataService.Name);
             Assert.Null(dataService.Description);
             Assert.Equal(0, dataService.ServiceId);
         }
 
+        // Verifica se a propriedade Name do DataService é definida corretamente.
         [Fact]
         public void DataServiceShouldSetNameProperty()
         {
             // Arrange
-            var dataService = new DataService();
+            var dataService = new DataService { Name = "Default Name" };
             var expectedName = "Test Service";
 
             // Act
@@ -30,11 +32,12 @@ namespace Domain.Tests
             Assert.Equal(expectedName, dataService.Name);
         }
 
+        // Verifica se a propriedade Description do DataService é definida corretamente.
         [Fact]
         public void DataServiceShouldSetDescriptionProperty()
         {
             // Arrange
-            var dataService = new DataService();
+            var dataService = new DataService { Name = "Default Name" };
             var expectedDescription = "This is a test service description.";
 
             // Act
@@ -44,11 +47,12 @@ namespace Domain.Tests
             Assert.Equal(expectedDescription, dataService.Description);
         }
 
+        // Verifica se a propriedade ServiceId do DataService é definida corretamente.
         [Fact]
         public void DataServiceShouldSetServiceIdProperty()
         {
             // Arrange
-            var dataService = new DataService();
+            var dataService = new DataService { Name = "Default Name" };
             var expectedServiceId = 123;
 
             // Act
