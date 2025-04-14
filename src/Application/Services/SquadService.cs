@@ -94,6 +94,9 @@ namespace Stellantis.ProjectName.Application.Services
                 throw new ArgumentException(_localizer[nameof(SquadResources.SquadNameAlreadyExists)]);
             }
             return false;
+=========
+            await _squadRepository.DeleteAsync(id).ConfigureAwait(false);
+>>>>>>>>> Temporary merge branch 2
         }
 
     }

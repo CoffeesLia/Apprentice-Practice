@@ -41,6 +41,11 @@ namespace WebApi.Tests.Controllers
             var squadDto = _fixture.Create<SquadDto>();
             _squadServiceMock.Setup(s => s.CreateAsync(It.IsAny<Squad>())).ReturnsAsync(OperationResult.Complete("Success"));
 
+            _mapperMock.Setup(m => m.Map<Squad>(It.IsAny<SquadDto>()))
+                .Returns(new Squad());
+            _squadServiceMock.Setup(s => s.CreateAsync(It.IsAny<Squad>()))
+                .ReturnsAsync(operationResult);
+
             // Act
             var result = await _controller.CreateAsync(squadDto);
 
@@ -87,6 +92,11 @@ namespace WebApi.Tests.Controllers
             // Arrange
             var squadDto = _fixture.Create<SquadDto>();
             _squadServiceMock.Setup(s => s.UpdateAsync(It.IsAny<Squad>())).ReturnsAsync(OperationResult.Complete("Success"));
+
+            _mapperMock.Setup(m => m.Map<Squad>(It.IsAny<SquadDto>()))
+                .Returns(new Squad());
+            _squadServiceMock.Setup(s => s.UpdateAsync(It.IsAny<Squad>()))
+                .ReturnsAsync(operationResult);
 
             // Act
             var result = await _controller.UpdateAsync(squadDto.Id, squadDto);
@@ -237,7 +247,18 @@ namespace WebApi.Tests.Controllers
             // Assert
             Assert.IsType(expectedResultType, result);
         }
+        [Fact]
+        public void SquadVmShouldHaveNameProperty()
+        {
+            // Arrange
+            var squadVm = new SquadVm();
 
+            // Act
+            squadVm.Name = "Test Squad";
+
+            // Assert
+            Assert.Equal("Test Squad", squadVm.Name);
+        }
         [Fact]
         public void SquadVmShouldHaveNameProperty()
         {
