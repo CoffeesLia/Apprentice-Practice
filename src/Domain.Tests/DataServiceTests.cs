@@ -14,7 +14,7 @@ namespace Domain.Tests
             // Assert
             Assert.Equal("Default Name", dataService.Name);
             Assert.Null(dataService.Description);
-            Assert.Equal(0, dataService.ServiceId);
+            Assert.Equal(0, dataService.Id);
         }
 
         // Verifica se a propriedade Name do DataService é definida corretamente.
@@ -56,10 +56,10 @@ namespace Domain.Tests
             var expectedServiceId = 123;
 
             // Act
-            dataService.ServiceId = expectedServiceId;
+            dataService.Id = expectedServiceId;
 
             // Assert
-            Assert.Equal(expectedServiceId, dataService.ServiceId);
+            Assert.Equal(expectedServiceId, dataService.Id);
         }
     }
 }

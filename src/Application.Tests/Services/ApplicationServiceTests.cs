@@ -105,20 +105,20 @@ namespace Application.Tests.Services
         public async Task DeleteAsyncShouldReturnCompleteOperationResult()
         {
             // Arrange
-            var serviceId = 1;
-            var mockService = new DataService { ServiceId = serviceId, Name = "Serviço para deletar" };
+            var Id = 1;
+            var mockService = new DataService { Id = Id, Name = "Serviço para deletar" };
 
-            _serviceRepositoryMock.Setup(repo => repo.VerifyServiceExistsAsync(serviceId))
+            _serviceRepositoryMock.Setup(repo => repo.VerifyServiceExistsAsync(Id))
                 .ReturnsAsync(true);
 
-            _serviceRepositoryMock.Setup(repo => repo.DeleteAsync(serviceId, It.IsAny<bool>()))
+            _serviceRepositoryMock.Setup(repo => repo.DeleteAsync(Id, It.IsAny<bool>()))
                 .Returns(Task.CompletedTask);
 
             _unitOfWorkMock.Setup(uow => uow.CommitAsync())
                 .Returns(Task.CompletedTask);
 
             // Act
-            var result = await _dataService.DeleteAsync(serviceId);
+            var result = await _dataService.DeleteAsync(Id);
 
             // Assert
             Assert.NotNull(result);
@@ -130,13 +130,13 @@ namespace Application.Tests.Services
         public async Task DeleteAsyncShouldReturnNotFoundWhenServiceDoesNotExist()
         {
             // Arrange
-            var serviceId = 1;
+            var Id = 1;
 
-            _serviceRepositoryMock.Setup(repo => repo.VerifyServiceExistsAsync(serviceId))
+            _serviceRepositoryMock.Setup(repo => repo.VerifyServiceExistsAsync(Id))
                 .ReturnsAsync(false);
 
             // Act
-            var result = await _dataService.DeleteAsync(serviceId);
+            var result = await _dataService.DeleteAsync(Id);
 
             // Assert
             Assert.NotNull(result);
@@ -150,7 +150,7 @@ namespace Application.Tests.Services
         {
             // Arrange
             var itemId = 1;
-            var expectedItem = new DataService { ServiceId = itemId, Name = "Test Service" };
+            var expectedItem = new DataService { Id = itemId, Name = "Test Service" };
             _serviceRepositoryMock.Setup(repo => repo.GetByIdAsync(itemId)).ReturnsAsync(expectedItem);
 
             // Act
@@ -158,7 +158,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(expectedItem.ServiceId, result.ServiceId);
+            Assert.Equal(expectedItem.Id, result.Id);
         }
 
         // Testa se GetItemAsync retorna KeyNotFoundException quando o item não existe.
@@ -178,7 +178,7 @@ namespace Application.Tests.Services
         public async Task UpdateAsyncShouldReturnCompleteOperationResult()
         {
             // Arrange
-            var dataService = new DataService { ServiceId = 1, Name = "Updated Service" };
+            var dataService = new DataService { Id = 1, Name = "Updated Service" };
             var localizer = LocalizerFactorHelper.Create();
             var dataServiceValidator = new DataServiceValidator(localizer);
             var validationResult = await dataServiceValidator.ValidateAsync(dataService);
@@ -283,11 +283,11 @@ namespace Application.Tests.Services
         public async Task VerifyServiceExistsAsyncShouldReturnFalseWhenServiceDoesNotExist()
         {
             // Arrange
-            var serviceId = 1;
-            _serviceRepositoryMock.Setup(repo => repo.VerifyServiceExistsAsync(serviceId)).ReturnsAsync(false);
+            var Id = 1;
+            _serviceRepositoryMock.Setup(repo => repo.VerifyServiceExistsAsync(Id)).ReturnsAsync(false);
 
             // Act
-            var result = await _dataService.VerifyServiceExistsAsync(serviceId);
+            var result = await _dataService.VerifyServiceExistsAsync(Id);
 
             // Assert
             Assert.False(result);
@@ -298,17 +298,17 @@ namespace Application.Tests.Services
         public async Task VerifyServiceExistsAsyncShouldThrowWhenServiceExists()
         {
             // Arrange
-            var serviceId = 1;
+            var Id = 1;
             var dataServices = new List<DataService>
             {
-                new() { ServiceId = serviceId, Name = "Test Service" }
+                new() { Id = Id, Name = "Test Service" }
             };
 
-            _serviceRepositoryMock.Setup(repo => repo.VerifyServiceExistsAsync(serviceId)).ReturnsAsync(true);
+            _serviceRepositoryMock.Setup(repo => repo.VerifyServiceExistsAsync(Id)).ReturnsAsync(true);
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<ArgumentException>(() =>
-                _dataService.VerifyServiceExistsAsync(serviceId));
+                _dataService.VerifyServiceExistsAsync(Id));
             Assert.Equal((DataServiceResources.ServiceAlreadyExists), exception.Message);
         }
 
@@ -371,18 +371,18 @@ namespace Application.Tests.Services
         {
             // Arrange
             var name = "Test Service";
-            var serviceId = 1;
+            var Id = 1;
 
             // Act
             var filter = new DataServiceFilter
             {
                 Name = name,
-                ServiceId = serviceId
+                Id = Id
             };
 
             // Assert
             Assert.Equal(name, filter.Name);
-            Assert.Equal(serviceId, filter.ServiceId);
+            Assert.Equal(Id, filter.Id);
         }
 
         // Testa se o validador retorna erro quando o nome é muito curto.

@@ -59,8 +59,8 @@ namespace WebApi.Tests.Controllers
         public async Task UpdateAsyncShouldReturnOkObjectResult()
         {
             // Arrange
-            var itemDto = new DataServiceDto { ServiceId = 1, Name = "Updated Service" };
-            var dataService = new DataService { ServiceId = 1, Name = "Updated Service" };
+            var itemDto = new DataServiceDto { Id = 1, Name = "Updated Service" };
+            var dataService = new DataService { Id = 1, Name = "Updated Service" };
             _serviceMock.Setup(service => service.UpdateAsync(It.IsAny<DataService>()))
                 .ReturnsAsync(OperationResult.Complete());
 
@@ -76,20 +76,19 @@ namespace WebApi.Tests.Controllers
         public async Task GetAsyncShouldReturnOkObjectResult()
         {
             // Arrange
-            var serviceId = 1;
-            var dataService = new DataService { ServiceId = serviceId, Name = "Test Service" };
-            _serviceMock.Setup(service => service.GetItemAsync(serviceId))
+            var Id = 1;
+            var dataService = new DataService { Id = Id, Name = "Test Service" };
+            _serviceMock.Setup(service => service.GetItemAsync(Id))
                 .ReturnsAsync(dataService);
 
             // Act
-            var result = await _controller.GetAsync(serviceId);
+            var result = await _controller.GetAsync(Id);
 
             // Assert
             var actionResult = Assert.IsType<OkObjectResult>(result.Result);
             var model = Assert.IsType<DataServiceVm>(actionResult.Value);
-            Assert.Equal(serviceId, model.ServiceId);
+            Assert.Equal(Id, model.Id);
         }
-
 
         // Testa se DeleteAsync retorna NotFound quando o serviço não existe.
         [Fact]
@@ -159,12 +158,12 @@ namespace WebApi.Tests.Controllers
         public async Task DeleteAsyncShouldReturnNoContentResult()
         {
             // Arrange
-            var serviceId = 1;
-            _serviceMock.Setup(service => service.DeleteAsync(serviceId))
+            var Id = 1;
+            _serviceMock.Setup(service => service.DeleteAsync(Id))
                 .ReturnsAsync(OperationResult.Complete());
 
             // Act
-            var result = await _controller.DeleteAsync(serviceId);
+            var result = await _controller.DeleteAsync(Id);
 
             // Assert
             Assert.IsType<NoContentResult>(result);
@@ -210,20 +209,20 @@ namespace WebApi.Tests.Controllers
             // Arrange
             var name = "Test Service";
             var description = "Test Description";
-            var serviceId = 1;
+            var Id = 1;
 
             // Act
             var dto = new DataServiceDto
             {
                 Name = name,
                 Description = description,
-                ServiceId = serviceId
+                Id = Id
             };
 
             // Assert
             Assert.Equal(name, dto.Name);
             Assert.Equal(description, dto.Description);
-            Assert.Equal(serviceId, dto.ServiceId);
+            Assert.Equal(Id, dto.Id);
         }
 
         // Testa se o validador retorna erro quando o nome é muito curto.
@@ -302,7 +301,7 @@ namespace WebApi.Tests.Controllers
             Assert.Equal("DataService", entityType.GetTableName());
             var primaryKey = entityType.FindPrimaryKey();
             Assert.NotNull(primaryKey);
-            Assert.Equal("ServiceId", primaryKey.Properties[0].Name);
+            Assert.Equal("Id", primaryKey.Properties[0].Name);
             var nameProperty = entityType.FindProperty(nameof(DataService.Name));
             Assert.NotNull(nameProperty);
             Assert.False(nameProperty.IsNullable);
