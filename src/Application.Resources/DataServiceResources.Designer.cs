@@ -22,7 +22,7 @@ namespace Stellantis.ProjectName.Application.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class DataServiceResources {
+    public class DataServiceResources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -63,7 +63,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Service already exists..
         /// </summary>
-        internal static string ServiceAlreadyExists {
+        public static string ServiceAlreadyExists {
             get {
                 return ResourceManager.GetString("ServiceAlreadyExists", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Service cannot be null..
         /// </summary>
-        internal static string ServiceCannotBeNull {
+        public static string ServiceCannotBeNull {
             get {
                 return ResourceManager.GetString("ServiceCannotBeNull", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Service name must be between 3 and 50 characters..
         /// </summary>
-        internal static string ServiceNameLength {
+        public static string ServiceNameLength {
             get {
                 return ResourceManager.GetString("ServiceNameLength", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Service not found..
         /// </summary>
-        internal static string ServiceNotFound {
+        public static string ServiceNotFound {
             get {
                 return ResourceManager.GetString("ServiceNotFound", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a No services found..
         /// </summary>
-        internal static string ServicesNoFound {
+        public static string ServicesNoFound {
             get {
                 return ResourceManager.GetString("ServicesNoFound", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Operation Sucess..
         /// </summary>
-        internal static string ServiceSucess {
+        public static string ServiceSucess {
             get {
                 return ResourceManager.GetString("ServiceSucess", resourceCulture);
             }
