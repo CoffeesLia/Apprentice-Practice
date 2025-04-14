@@ -51,18 +51,17 @@ namespace Stellantis.ProjectName.WebApi.Mapper
             CreateMap<ResponsibleFilterDto, ResponsibleFilter>();
 
             CreateMap<DataServiceDto, DataService>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
-                .ForMember(dest => dest.ServiceId, opt => opt.MapFrom(src => src.ServiceId))
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.ServiceId));
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
             CreateMap<DataService, DataServiceVm>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
-                .ForMember(dest => dest.ServiceId, opt => opt.MapFrom(src => src.ServiceId));
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
             CreateMap<DataServiceFilterDto, DataServiceFilter>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
-                .ForMember(dest => dest.ServiceId, opt => opt.MapFrom(src => src.ServiceId));
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
             CreateMap<PagedResult<DataService>, PagedResultVm<DataServiceVm>>();
 
             CreateMap<SquadDto, Squad>()
