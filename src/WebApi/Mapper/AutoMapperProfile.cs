@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
-using Stellantis.ProjectName.Domain.Entity;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.ViewModels;
@@ -51,23 +50,23 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(dest => dest.Area, opt => opt.MapFrom(src => src.Area));
             CreateMap<ResponsibleFilterDto, ResponsibleFilter>();
 
-
             CreateMap<DataServiceDto, DataService>()
-                .ForMember(x => x.Name, opt => opt.MapFrom(src => src.Name))
-                .ForMember(x => x.Description, opt => opt.MapFrom(src => src.Description))
-                .ForMember(dest => dest.ServiceId, opt => opt.MapFrom(src => src.ServiceId))
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.ServiceId));
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
             CreateMap<DataService, DataServiceVm>()
-                .ForMember(x => x.Name, opt => opt.MapFrom(src => src.Name))
-                .ForMember(x => x.ServiceId, opt => opt.MapFrom(src => src.ServiceId));
-            CreateMap<PagedResult<DataService>, PagedResultVm<DataServiceVm>>();
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
             CreateMap<DataServiceFilterDto, DataServiceFilter>()
-                .ForMember(x => x.Name, opt => opt.MapFrom(src => src.Name))
-                .ForMember(dest => dest.ServiceId, opt => opt.MapFrom(src => src.ServiceId));
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
+            CreateMap<PagedResult<DataService>, PagedResultVm<DataServiceVm>>();
 
-            CreateMap<SquadDto, EntitySquad>()
+            CreateMap<SquadDto, Squad>()
                 .ForMember(x => x.Id, x => x.Ignore());
-            CreateMap<EntitySquad, SquadDto>();
+            CreateMap<Squad, SquadDto>();
 
             CreateMap<GitRepoDto, GitRepo>()
                 .ForMember(x => x.Id, x => x.Ignore())
