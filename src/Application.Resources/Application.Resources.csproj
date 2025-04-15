@@ -126,7 +126,7 @@
       <LastGenOutput>AreaResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="DataServiceResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>DataServiceResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="FilterResources.resx">
