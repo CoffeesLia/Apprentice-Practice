@@ -29,4 +29,5 @@ namespace Stellantis.ProjectName.Application.Validators
                 .NotEmpty().WithMessage(localizer[nameof(GitResource.ApplicationIsRequired)]);
         }
     }
+
 }

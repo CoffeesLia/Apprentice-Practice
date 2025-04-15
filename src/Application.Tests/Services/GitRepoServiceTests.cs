@@ -52,7 +52,6 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
-            Assert.Equal(GitResource.UrlIsRequired, result.Message);
 
         }
 
@@ -64,7 +63,7 @@ namespace Application.Tests.Services
 
             var validationResult = new ValidationResult(
             [
-                new ValidationFailure("Name", "Name is required")
+                new ValidationFailure("Name", GitResource.NameIsRequired) 
             ]);
 
             var validatorMock = new Mock<IValidator<GitRepo>>();
@@ -83,6 +82,8 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
+            Assert.Contains(GitResource.NameIsRequired, result.Errors);
+
         }
 
         [Fact]
