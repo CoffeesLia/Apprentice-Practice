@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models;
-using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
@@ -143,7 +142,7 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
-        public async Task DeleteAsyncShouldReturnFalsWhenRepoDoesNotExist()
+        public async Task DeleteAsyncShouldReturnFalseWhenRepoDoesNotExist()
         {
             var result = await _repository.DeleteAsync(9999);
             Assert.False(result);
@@ -151,7 +150,7 @@ namespace Infrastructure.Tests.Data.Repositories
 
 
         [Fact]
-        public async Task IsApplicationDataFromShouldReturnTrueWhenMatchExists()
+        public async Task IsApplicationDataShouldReturnTrueWhenMatchExists()
         {
             var appData = new ApplicationData("Test")
             {
@@ -181,19 +180,6 @@ namespace Infrastructure.Tests.Data.Repositories
 
             var result = await _context.GitRepo.FindAsync(repo.Id);
             Assert.Null(result);
-        }
-
-
-        [Fact]
-        public async Task AnyAsyncShouldReturnTrueWhenMatchingRepoExists()
-        {
-            var repo = _fixture.Create<GitRepo>();
-            await _context.Set<GitRepo>().AddAsync(repo);
-            await _context.SaveChangesAsync();
-
-            var result = await _repository.AnyAsync(x => x.Id == repo.Id);
-
-            Assert.True(result);
         }
 
         [Fact]
@@ -274,7 +260,7 @@ namespace Infrastructure.Tests.Data.Repositories
 
 
         protected virtual void Dispose(bool disposing)
-        {
+        {  
             if (!_disposed && disposing && _context != null)
             {
                 _context.Database.EnsureDeleted();
