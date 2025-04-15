@@ -31,7 +31,7 @@ namespace Application.Tests.Services
 
         public ApplicationDataServiceTest()
         {
-            CultureInfo.CurrentCulture = new CultureInfo("en-US");
+            CultureInfo.CurrentCulture = new CultureInfo("pt-BR");
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _applicationDataRepositoryMock = new Mock<IApplicationDataRepository>();
             var localizer = Helpers.LocalizerFactorHelper.Create();
