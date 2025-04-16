@@ -95,6 +95,32 @@ namespace Application.Tests.Services
         }
 
         [Fact]
+        public async Task CreateAsyncWhenUrlIsRequired()
+        {
+            // Arrange
+            var gitRepo = _fixture.Build<GitRepo>()
+                                  .With(x => x.Url, (Uri?)null)
+                                  .Create();
+
+            var validationResult = new ValidationResult([
+                new ValidationFailure("Url", GitResource.UrlIsRequired)
+            ]);
+
+            var validatorMock = new Mock<IValidator<GitRepo>>();
+            validatorMock.Setup(v => v.ValidateAsync(gitRepo, It.IsAny<CancellationToken>()))
+                         .ReturnsAsync(validationResult);
+
+            var gitRepoService = new GitRepoService(_unitOfWorkMock.Object, LocalizerFactorHelper.Create(), validatorMock.Object);
+
+            // Act
+            var result = await gitRepoService.CreateAsync(gitRepo);
+
+            // Assert
+            Assert.Contains(GitResource.UrlIsRequired, result.Errors);
+        }
+
+
+        [Fact]
         public async Task UpdateAsyncWhenValid()
         {
             var gitRepo = _fixture.Build<GitRepo>().Create();
