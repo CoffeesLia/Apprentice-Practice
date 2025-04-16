@@ -1,6 +1,3 @@
-using System.Threading.Tasks;
-using FluentValidation;
-using Microsoft.Extensions.Localization;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Interfaces;
@@ -13,8 +10,6 @@ using Stellantis.ProjectName.Application.Validators;
 using System.Globalization;
 using Stellantis.ProjectName.Application.Models.Filters;
 using AutoFixture;
-using FluentValidation.Results;
-using Stellantis.ProjectName.Application.Interfaces.Services;
 
 namespace Application.Tests.Services
 {
