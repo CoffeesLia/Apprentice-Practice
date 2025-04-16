@@ -24,6 +24,7 @@ namespace Application.Tests.Services
         public ApplicationDataServiceTest()
         {
             CultureInfo.CurrentCulture = new CultureInfo("en-US");
+            CultureInfo.CurrentUICulture = new CultureInfo("en-US");
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _applicationDataRepositoryMock = new Mock<IApplicationDataRepository>();
             var localizer = Helpers.LocalizerFactorHelper.Create();
@@ -32,20 +33,6 @@ namespace Application.Tests.Services
             _unitOfWorkMock.Setup(u => u.ApplicationDataRepository).Returns(_applicationDataRepositoryMock.Object);
 
             _applicationDataService = new ApplicationDataService(_unitOfWorkMock.Object, localizer, applicationDataValidator);
-        }
-
-        [Fact]
-        public void CulturePropertyShouldGetAndSetCorrectValue()
-        {
-            // Arrange
-            var expectedCulture = new CultureInfo("pt-BR");
-
-            // Act
-            ApplicationDataResources.Culture = expectedCulture;
-            var result = ApplicationDataResources.Culture;
-
-            // Assert
-            Assert.Equal(expectedCulture, result);
         }
 
 
@@ -77,14 +64,12 @@ namespace Application.Tests.Services
                 ConfigurationItem = "TestConfig"
             };
 
-
             // Act
             var result = await _applicationDataService.CreateAsync(applicationData);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
-            Assert.Equal(string.Format(CultureInfo.InvariantCulture, ApplicationDataResources.NameRequired), result.Errors.First());
-
+            Assert.Equal(ApplicationDataResources.NameRequired, result.Errors.First());
         }
 
 

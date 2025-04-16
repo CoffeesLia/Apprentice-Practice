@@ -14,7 +14,7 @@ using Stellantis.ProjectName.Application.Resources;
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [Route("api/applications")]
-    internal sealed class ApplicationDataControllerBase(IApplicationDataService service, IMapper mapper, IStringLocalizerFactory localizerFactory) : EntityControllerBase<ApplicationData, ApplicationDataDto>(service, mapper, localizerFactory)
+    public sealed class ApplicationDataControllerBase(IApplicationDataService service, IMapper mapper, IStringLocalizerFactory localizerFactory) : EntityControllerBase<ApplicationData, ApplicationDataDto>(service, mapper, localizerFactory)
     {
         protected override IApplicationDataService Service => (IApplicationDataService)base.Service;
 
