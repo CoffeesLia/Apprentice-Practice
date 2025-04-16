@@ -73,6 +73,14 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(x => x.Application, opt => opt.MapFrom(src => src.Application))
                 .ForMember(x => x.ApplicationId, opt => opt.MapFrom(src => src.ApplicationId));
             CreateMap<GitRepo, GitRepoVm>();
+
+
+            CreateMap<MemberDto, Member>()
+                 .ForMember(x => x.Id, x => x.Ignore());
+            CreateMap<Member, MemberVm>();
+            CreateMap<MemberFilterDto, MemberFilter>();
+            CreateMap<PagedResult<Member>, PagedResultVm<MemberVm>>();
+
         }
     }
 }
