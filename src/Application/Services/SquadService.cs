@@ -9,11 +9,18 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Services
 {
-    public class SquadService(ISquadRepository squadRepository, IStringLocalizer<SquadResources> localizer, IValidator<Squad> validator) : ISquadService
+    public class SquadService : ISquadService
     {
-        private readonly ISquadRepository _squadRepository = squadRepository ?? throw new ArgumentNullException(nameof(squadRepository));
-        private readonly IStringLocalizer<SquadResources> _localizer = localizer;
-        private readonly IValidator<Squad> _validator = validator ?? throw new ArgumentNullException(nameof(validator));
+        private readonly ISquadRepository _squadRepository;
+        private readonly IStringLocalizer<SquadResources> _localizer;
+        private readonly IValidator<Squad> _validator;
+
+        public SquadService(ISquadRepository squadRepository, IStringLocalizer<SquadResources> localizer, IValidator<Squad> validator)
+        {
+            _squadRepository = squadRepository ?? throw new ArgumentNullException(nameof(squadRepository));
+            _localizer = localizer;
+            _validator = validator ?? throw new ArgumentNullException(nameof(validator));
+        }
 
         public async Task<Squad?> GetItemAsync(int id)
         {
@@ -95,6 +102,5 @@ namespace Stellantis.ProjectName.Application.Services
             }
             return false;
         }
-
     }
 }
