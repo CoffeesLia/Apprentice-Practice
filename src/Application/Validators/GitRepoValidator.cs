@@ -1,44 +1,33 @@
-﻿using FluentValidation;
+﻿using Stellantis.ProjectName.Domain.Entities;
+using FluentValidation;
 using Microsoft.Extensions.Localization;
-using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Resources;
-using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Validators
 {
     public class GitRepoValidator : AbstractValidator<GitRepo>
     {
-        public GitRepoValidator(IStringLocalizer<GitResource> localizer, IGitRepoRepository gitRepoRepository)
+        public GitRepoValidator(IStringLocalizerFactory localizerFactory)
         {
-            ArgumentNullException.ThrowIfNull(localizer);
-            ArgumentNullException.ThrowIfNull(gitRepoRepository);
+            ArgumentNullException.ThrowIfNull(localizerFactory);
+            var localizer = localizerFactory.Create(typeof(GitResource));
+
             RuleFor(repo => repo.Name)
-                       .NotEmpty().WithMessage(GitResource.NameIsRequired);
+                .NotNull()
+                .NotEmpty().WithMessage(localizer[nameof(GitResource.NameIsRequired)]);
 
             RuleFor(repo => repo.Description)
-                .NotEmpty().WithMessage(GitResource.DescriptionIsRequired);
+                .NotNull()
+                .NotEmpty().WithMessage(localizer[nameof(GitResource.DescriptionIsRequired)]);
 
             RuleFor(repo => repo.Url)
-                .NotEmpty().WithMessage(GitResource.UrlIsRequired)
-                .Must(uri => Uri.IsWellFormedUriString(uri.ToString(), UriKind.Absolute)).WithMessage(GitResource.UrlIsInvalid);
+                .NotNull()
+                .NotEmpty().WithMessage(localizer[nameof(GitResource.UrlIsRequired)]);
 
             RuleFor(repo => repo.ApplicationId)
-                .GreaterThan(0).WithMessage(localizer[nameof(GitResource.ApplicationNotFound)])
-                .MustAsync(async (id, cancellation) =>
-                    await gitRepoRepository.VerifyAplicationsExistsAsync(id).ConfigureAwait(false))
-                .WithMessage(localizer[nameof(GitResource.ApplicationNotFound)]);
-
-            RuleFor(repo => repo.Url)
-                .MustAsync(async (url, cancellation) =>
-                {
-                    if (!Uri.TryCreate(url?.ToString(), UriKind.Absolute, out var validUri))
-                    {
-                        return false; // URL inválida, falha na validação
-                    }
-
-                    return !await gitRepoRepository.VerifyUrlAlreadyExistsAsync(validUri).ConfigureAwait(false);
-                })
-                .WithMessage(localizer[nameof(GitResource.ExistentRepositoryUrl)]);
+                .NotNull()
+                .NotEmpty().WithMessage(localizer[nameof(GitResource.ApplicationIsRequired)]);
         }
     }
+
 }

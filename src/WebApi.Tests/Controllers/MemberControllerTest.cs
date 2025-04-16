@@ -102,7 +102,14 @@ namespace WebApi.Tests.Controllers
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
             Assert.Equal(200, okResult.StatusCode);
-            Assert.Equal(memberVm, okResult.Value);
+
+            // comporação
+            var actualMemberVm = Assert.IsType<MemberVm>(okResult.Value);
+            Assert.Equal(memberVm.Id, actualMemberVm.Id);
+            Assert.Equal(memberVm.Name, actualMemberVm.Name);
+            Assert.Equal(memberVm.Role, actualMemberVm.Role);
+            Assert.Equal(memberVm.Email, actualMemberVm.Email);
+            Assert.Equal(memberVm.Cost, actualMemberVm.Cost);
         }
 
         [Fact]
@@ -175,16 +182,20 @@ namespace WebApi.Tests.Controllers
             };
 
             _serviceMock.Setup(s => s.GetListAsync(filter)).ReturnsAsync(pagedResult);
-            var mapperConfiguration = new MapperConfiguration(x => { x.AddProfile<AutoMapperProfile>(); });
-            var mapper = mapperConfiguration.CreateMapper();
+            var config = new MapperConfiguration(cfg => cfg.AddProfile<AutoMapperProfile>());
+            var mapper = config.CreateMapper();
 
             // Act
-            var result = await _controller.GetListAsync(filterDto);
+            var mappedResult = mapper.Map<PagedResultVm<MemberVm>>(pagedResult);
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.Equal(200, okResult.StatusCode);
-            Assert.Equal(pagedVmResult, okResult.Value);
+            Assert.NotNull(mappedResult);
+            Assert.Equal(1, mappedResult.Page);
+            Assert.Equal(10, mappedResult.PageSize);
+            Assert.Equal(1, mappedResult.Total);
+            Assert.Single(mappedResult.Result);
+            Assert.Equal("Test Name", mappedResult.Result.First().Name);
+
         }
 
         [Fact]

@@ -135,7 +135,7 @@
   <data name="ValidationErrorMessage" xml:space="preserve">
     <value>Nome, Descrição e Url são obrigatórias.</value>
   </data>
-  <data name="ApplicationNotFound" xml:space="preserve">
+  <data name="ApplicationIsRequired" xml:space="preserve">
     <value>Aplicação não encontrada.</value>
   </data>
   <data name="RepositoryCantBeNull" xml:space="preserve">

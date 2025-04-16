@@ -1,6 +1,6 @@
 ﻿namespace Stellantis.ProjectName.WebApi.Dto.Filters
 {
-    internal class SquadFilterDto : FilterDto
+    public class SquadFilterDto : FilterDto
     {
         public required string Name { get; set; }
         public required string Description { get; set; }

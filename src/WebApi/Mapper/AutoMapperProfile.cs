@@ -51,18 +51,17 @@ namespace Stellantis.ProjectName.WebApi.Mapper
             CreateMap<ResponsibleFilterDto, ResponsibleFilter>();
 
             CreateMap<DataServiceDto, DataService>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
-                .ForMember(dest => dest.ServiceId, opt => opt.MapFrom(src => src.ServiceId))
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.ServiceId));
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
             CreateMap<DataService, DataServiceVm>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
-                .ForMember(dest => dest.ServiceId, opt => opt.MapFrom(src => src.ServiceId));
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
             CreateMap<DataServiceFilterDto, DataServiceFilter>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
-                .ForMember(dest => dest.ServiceId, opt => opt.MapFrom(src => src.ServiceId));
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
             CreateMap<PagedResult<DataService>, PagedResultVm<DataServiceVm>>();
 
             CreateMap<SquadDto, Squad>()
@@ -86,6 +85,14 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(x => x.Application, opt => opt.MapFrom(src => src.Application))
                 .ForMember(x => x.ApplicationId, opt => opt.MapFrom(src => src.ApplicationId));
             CreateMap<GitRepo, GitRepoVm>();
+
+
+            CreateMap<MemberDto, Member>()
+                 .ForMember(x => x.Id, x => x.Ignore());
+            CreateMap<Member, MemberVm>();
+            CreateMap<MemberFilterDto, MemberFilter>();
+            CreateMap<PagedResult<Member>, PagedResultVm<MemberVm>>();
+
         }
     }
 }

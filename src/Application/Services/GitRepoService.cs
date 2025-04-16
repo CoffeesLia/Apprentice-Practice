@@ -10,16 +10,10 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Services
 {
-    public class GitRepoService : EntityServiceBase<GitRepo>, IGitRepoService
+    public class GitRepoService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<GitRepo> validator) : EntityServiceBase<GitRepo>(unitOfWork, localizerFactory, validator), IGitRepoService
     {
         private new IStringLocalizer Localizer => localizerFactory.Create(typeof(GitResource));
-        private readonly IStringLocalizerFactory localizerFactory;
-
-        public GitRepoService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<GitRepo> validator)
-            : base(unitOfWork, localizerFactory, validator)
-        {
-            this.localizerFactory = localizerFactory;
-        }
+        private readonly IStringLocalizerFactory localizerFactory = localizerFactory;
 
         protected override IGitRepoRepository Repository => UnitOfWork.GitRepoRepository;
 
@@ -33,28 +27,26 @@ namespace Stellantis.ProjectName.Application.Services
             {
                 return OperationResult.InvalidData(validationResult);
             }
+ 
             if (await Repository.VerifyUrlAlreadyExistsAsync(item.Url).ConfigureAwait(false))
             {
                 throw new InvalidOperationException(Localizer[nameof(GitResource.ExistentRepositoryUrl)]);
             }
 
-            await Repository.CreateAsync(item).ConfigureAwait(true);
-            return OperationResult.Complete(Localizer[nameof(ServiceResources.RegisteredSuccessfully)]);
+            return await base.CreateAsync(item).ConfigureAwait(false);
         }
 
         public async Task<bool> VerifyAplicationsExistsAsync(int id)
         {
-            return await Repository.AnyAsync(a => a.Id == id).ConfigureAwait(false);
+            return await Repository.GetByIdAsync(id).ConfigureAwait(false) != null;
         }
 
-        public async Task<GitRepo?> GetRepositoryDetailsAsync(int id)
+        public new async Task<OperationResult> GetItemAsync(int id)
         {
-            var repo = await Repository.GetRepositoryDetailsAsync(id).ConfigureAwait(false);
-            if (repo == null)
-            {
-                return null;
-            }
-            return repo;
+            var responsible = await Repository.GetByIdAsync(id).ConfigureAwait(false);
+            return responsible != null
+                ? OperationResult.Complete()
+                : OperationResult.NotFound(Localizer[nameof(GitResource.RepositoryNotFound)]);
         }
         public override async Task<OperationResult> UpdateAsync(GitRepo item)
         {
@@ -82,9 +74,9 @@ namespace Stellantis.ProjectName.Application.Services
             existingRepo.Url = item.Url;
             existingRepo.ApplicationId = item.ApplicationId;
 
-            await Repository.UpdateAsync(existingRepo).ConfigureAwait(false);
-            return OperationResult.Complete(Localizer[nameof(ServiceResources.UpdatedSuccessfully)]);
+            return await base.UpdateAsync(existingRepo).ConfigureAwait(false);
         }
+
         public async Task<PagedResult<GitRepo>> GetListAsync(GitRepoFilter gitRepoFilter)
         {
             gitRepoFilter ??= new GitRepoFilter
@@ -98,13 +90,12 @@ namespace Stellantis.ProjectName.Application.Services
 
         public override async Task<OperationResult> DeleteAsync(int id)
         {
-            var repo = await Repository.GetByIdAsync(id).ConfigureAwait(false);
-            if (repo == null)
+            var item = await Repository.GetByIdAsync(id).ConfigureAwait(false);
+            if (item == null)
             {
                 return OperationResult.NotFound(Localizer[nameof(GitResource.RepositoryNotFound)]);
             }
-            await Repository.DeleteAsync(repo).ConfigureAwait(false);
-            return OperationResult.Complete(Localizer[nameof(ServiceResources.DeletedSuccessfully)]);
+            return await base.DeleteAsync(item).ConfigureAwait(false);
         }
     }
 }
