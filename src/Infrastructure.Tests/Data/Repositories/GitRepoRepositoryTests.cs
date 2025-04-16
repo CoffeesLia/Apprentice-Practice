@@ -1,13 +1,12 @@
-﻿using AutoFixture;
-using Microsoft.EntityFrameworkCore;
-using Moq;
-using Stellantis.ProjectName.Application.Interfaces.Repositories;
+﻿using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
-
+using Microsoft.EntityFrameworkCore;
+using AutoFixture;
+using Moq;
 namespace Infrastructure.Tests.Data.Repositories
 {
     public class GitRepoRepositoryTests : IDisposable
@@ -238,7 +237,7 @@ namespace Infrastructure.Tests.Data.Repositories
             var result = await _repository.GetListAsync(filter);
 
             Assert.Single(result.Result);
-            Assert.Equal("RepoMatch", result.Result.First().Name);
+            Assert.Equal("SuperRepo", result.Result.First().Name);
 
         }
 

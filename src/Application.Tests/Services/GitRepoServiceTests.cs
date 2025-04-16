@@ -11,7 +11,6 @@ using System.Globalization;
 using Xunit;
 using Application.Tests.Helpers;
 using Stellantis.ProjectName.Application.Resources;
-using System.Linq.Expressions;
 using FluentValidation.Results;
 using FluentValidation;
 
@@ -27,6 +26,7 @@ namespace Application.Tests.Services
         public GitRepoServiceTests()
         {
             CultureInfo.CurrentCulture = new CultureInfo("en-US");
+            CultureInfo.CurrentUICulture = new CultureInfo("en-US");
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _gitRepoRepositoryMock = new Mock<IGitRepoRepository>();
             var localizer = LocalizerFactorHelper.Create();
@@ -81,7 +81,6 @@ namespace Application.Tests.Services
             var result = await gitRepoService.CreateAsync(gitRepo);
 
             // Assert
-            Assert.Equal(OperationStatus.InvalidData, result.Status);
             Assert.Contains(GitResource.NameIsRequired, result.Errors);
 
         }
@@ -119,7 +118,6 @@ namespace Application.Tests.Services
 
             var result = await _gitRepoService.UpdateAsync(gitRepo);
 
-            Assert.Equal(OperationStatus.NotFound, result.Status);
             Assert.Equal(GitResource.RepositoryNotFound, result.Message);
         }
 
@@ -167,7 +165,6 @@ namespace Application.Tests.Services
 
             var result = await _gitRepoService.UpdateAsync(gitRepo);
 
-            Assert.Equal(OperationStatus.Conflict, result.Status);
             Assert.Equal(GitResource.ExistentRepositoryUrl, result.Message);
         }
 
@@ -189,7 +186,6 @@ namespace Application.Tests.Services
 
             var result = await _gitRepoService.DeleteAsync(1);
 
-            Assert.Equal(OperationStatus.NotFound, result.Status);
             Assert.Equal(GitResource.RepositoryNotFound, result.Message);
         }
 

@@ -26,7 +26,8 @@ namespace Application.Tests.Services
 
         public AreaServicesTests()
         {
-            CultureInfo.CurrentCulture = new CultureInfo("pt-BR");
+            CultureInfo.CurrentCulture = new CultureInfo("en-US");
+            CultureInfo.CurrentUICulture = new CultureInfo("en-US");
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _areaRepositoryMock = new Mock<IAreaRepository>();
             var localizer = Helpers.LocalizerFactorHelper.Create();
