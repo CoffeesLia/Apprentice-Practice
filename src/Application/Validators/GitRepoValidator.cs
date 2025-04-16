@@ -26,7 +26,8 @@ namespace Stellantis.ProjectName.Application.Validators
 
             RuleFor(repo => repo.ApplicationId)
                 .NotNull()
-                .NotEmpty().WithMessage(localizer[nameof(GitResource.ApplicationNotFound)]);
+                .NotEmpty().WithMessage(localizer[nameof(GitResource.ApplicationIsRequired)]);
         }
     }
+
 }

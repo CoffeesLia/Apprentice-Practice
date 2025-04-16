@@ -1,5 +1,5 @@
-﻿using System.Data.Entity;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
+using LinqKit;
 using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models;
@@ -84,11 +84,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 .AnyAsync(ad => ad.Id == applicationDataId && ad.AreaId == areaId).ConfigureAwait(false);
         }
 
-        public async Task<bool> AnyAsync(Expression<Func<GitRepo, bool>> expression)
-        {
-            return await _context.Set<GitRepo>().AnyAsync(expression).ConfigureAwait(false);
-        }
-
         public async Task<bool> VerifyUrlAlreadyExistsAsync(Uri url)
         {
             return await _context.Set<GitRepo>().AnyAsync(a => a.Url == url).ConfigureAwait(false);
@@ -108,5 +103,23 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         {
             throw new NotImplementedException();
         }
+
+        public async Task<PagedResult<GitRepo>> GetListAsync(GitRepoFilter filter)
+        {
+            ArgumentNullException.ThrowIfNull(filter);
+
+            var filters = PredicateBuilder.New<GitRepo>(true);
+
+            if (!string.IsNullOrWhiteSpace(filter.Description))
+                filters = filters.And(x => x.Description.Contains(filter.Description));
+            if (!string.IsNullOrWhiteSpace(filter.Name))
+                filters = filters.And(x => x.Name.Contains(filter.Name));
+            if (filter.Url != null)
+                filters = filters.And(x => x.Url == filter.Url);
+
+            return await GetListAsync(filter: filters, page: filter.Page, sort: filter.Sort, sortDir: filter.SortDir).ConfigureAwait(false);
+        }
+
+
     }
 }

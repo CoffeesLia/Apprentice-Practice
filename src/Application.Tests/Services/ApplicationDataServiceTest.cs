@@ -1,25 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Moq;
-using Stellantis.ProjectName.Application.Interfaces.Repositories;
-using Stellantis.ProjectName.Application.Interfaces;
-using Stellantis.ProjectName.Application.Models;
-using Stellantis.ProjectName.Application.Services;
-using System.Globalization;
-using Stellantis.ProjectName.Application.Validators;
-using Stellantis.ProjectName.Application.Interfaces.Services;
+﻿using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models.Filters;
-using Stellantis.ProjectName.Domain.Entities;
-using Xunit;
-using AutoFixture;
+using Stellantis.ProjectName.Application.Interfaces;
+using Stellantis.ProjectName.Application.Validators;
 using Stellantis.ProjectName.Application.Resources;
-using Microsoft.Extensions.Localization;
+using Stellantis.ProjectName.Application.Services;
+using Stellantis.ProjectName.Application.Models;
+using Stellantis.ProjectName.Domain.Entities;
 using FluentValidation.Results;
+using System.Globalization;
 using FluentValidation;
-using System.Linq.Expressions;
+using System.Text;
+using Xunit;
+using Moq;
 
 namespace Application.Tests.Services
 {

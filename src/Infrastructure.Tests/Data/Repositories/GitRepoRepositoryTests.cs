@@ -30,7 +30,6 @@ namespace Infrastructure.Tests.Data.Repositories
             _repository = new GitRepoRepository(_context);
         }
 
-
         [Fact]
         public async Task CreateAsyncShouldReturnSuccessWhenRepoIsValid()
         {
@@ -143,7 +142,7 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
-        public async Task DeleteAsyncShouldReturnFalsWhenRepoDoesNotExist()
+        public async Task DeleteAsyncShouldReturnFalseWhenRepoDoesNotExist()
         {
             var result = await _repository.DeleteAsync(9999);
             Assert.False(result);
@@ -151,7 +150,7 @@ namespace Infrastructure.Tests.Data.Repositories
 
 
         [Fact]
-        public async Task IsApplicationDataFromShouldReturnTrueWhenMatchExists()
+        public async Task IsApplicationDataShouldReturnTrueWhenMatchExists()
         {
             var appData = new ApplicationData("Test")
             {
@@ -181,19 +180,6 @@ namespace Infrastructure.Tests.Data.Repositories
 
             var result = await _context.GitRepo.FindAsync(repo.Id);
             Assert.Null(result);
-        }
-
-
-        [Fact]
-        public async Task AnyAsyncShouldReturnTrueWhenMatchingRepoExists()
-        {
-            var repo = _fixture.Create<GitRepo>();
-            await _context.Set<GitRepo>().AddAsync(repo);
-            await _context.SaveChangesAsync();
-
-            var result = await _repository.AnyAsync(x => x.Id == repo.Id);
-
-            Assert.True(result);
         }
 
         [Fact]
@@ -228,6 +214,38 @@ namespace Infrastructure.Tests.Data.Repositories
             var exists = await _repository.VerifyAplicationsExistsAsync(repo.ApplicationId);
 
             Assert.True(exists);
+        }
+
+        [Fact]
+        public async Task GetListAsyncShouldApplyMultipleFiltersCorrectly()
+        {
+            var repo = _fixture.Build<GitRepo>()
+                .With(r => r.Name, "SuperRepo")
+                .With(r => r.Description, "Descrição bacana")
+                .With(r => r.Url, new Uri("https://meurepo.com"))
+                .Create();
+
+            await _context.Set<GitRepo>().AddAsync(repo);
+            await _context.SaveChangesAsync();
+
+            var filter = new GitRepoFilter
+            {
+                Name = "SuperRepo",
+                Description = "Descrição bacana",
+                Url = new Uri("https://meurepo.com")
+            };
+
+            var result = await _repository.GetListAsync(filter);
+
+            Assert.Single(result.Result);
+            Assert.Equal("RepoMatch", result.Result.First().Name);
+
+        }
+
+        [Fact]
+        public async Task GetListAsyncShouldThrowArgumentNullExceptionWhenFilterIsNull()
+        {
+            await Assert.ThrowsAsync<ArgumentNullException>(() => _repository.GetListAsync(null!));
         }
 
 
@@ -274,7 +292,7 @@ namespace Infrastructure.Tests.Data.Repositories
 
 
         protected virtual void Dispose(bool disposing)
-        {
+        {  
             if (!_disposed && disposing && _context != null)
             {
                 _context.Database.EnsureDeleted();

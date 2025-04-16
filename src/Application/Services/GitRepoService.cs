@@ -10,16 +10,10 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Services
 {
-    public class GitRepoService : EntityServiceBase<GitRepo>, IGitRepoService
+    public class GitRepoService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<GitRepo> validator) : EntityServiceBase<GitRepo>(unitOfWork, localizerFactory, validator), IGitRepoService
     {
         private new IStringLocalizer Localizer => localizerFactory.Create(typeof(GitResource));
-        private readonly IStringLocalizerFactory localizerFactory;
-
-        public GitRepoService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<GitRepo> validator)
-            : base(unitOfWork, localizerFactory, validator)
-        {
-            this.localizerFactory = localizerFactory;
-        }
+        private readonly IStringLocalizerFactory localizerFactory = localizerFactory;
 
         protected override IGitRepoRepository Repository => UnitOfWork.GitRepoRepository;
 
@@ -44,15 +38,15 @@ namespace Stellantis.ProjectName.Application.Services
 
         public async Task<bool> VerifyAplicationsExistsAsync(int id)
         {
-            return await Repository.AnyAsync(a => a.Id == id).ConfigureAwait(false);
+            return await Repository.GetByIdAsync(id).ConfigureAwait(false) != null;
         }
 
         public new async Task<OperationResult> GetItemAsync(int id)
         {
             var responsible = await Repository.GetByIdAsync(id).ConfigureAwait(false);
             return responsible != null
-             ? OperationResult.Complete()
-                : OperationResult.NotFound(Localizer[nameof(ServiceResources.NotFound)]);
+                ? OperationResult.Complete()
+                : OperationResult.NotFound(Localizer[nameof(GitResource.RepositoryNotFound)]);
         }
         public override async Task<OperationResult> UpdateAsync(GitRepo item)
         {

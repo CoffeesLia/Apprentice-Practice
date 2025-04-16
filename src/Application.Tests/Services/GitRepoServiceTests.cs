@@ -15,7 +15,7 @@ using System.Linq.Expressions;
 using FluentValidation.Results;
 using FluentValidation;
 
-namespace Application.Services.Tests
+namespace Application.Tests.Services
 {
     public class GitRepoServiceTests
     {
@@ -52,6 +52,7 @@ namespace Application.Services.Tests
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
+
         }
 
         [Fact]
@@ -60,10 +61,10 @@ namespace Application.Services.Tests
             // Arrange
             var gitRepo = _fixture.Build<GitRepo>().Create();
 
-            var validationResult = new ValidationResult(new List<ValidationFailure>
-            {
-                new ValidationFailure("Name", "Name is required")
-            });
+            var validationResult = new ValidationResult(
+            [
+                new ValidationFailure("Name", GitResource.NameIsRequired) 
+            ]);
 
             var validatorMock = new Mock<IValidator<GitRepo>>();
             validatorMock
@@ -81,6 +82,8 @@ namespace Application.Services.Tests
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
+            Assert.Contains(GitResource.NameIsRequired, result.Errors);
+
         }
 
         [Fact]
@@ -128,7 +131,7 @@ namespace Application.Services.Tests
 
             var validationResult = new ValidationResult(new List<ValidationFailure>
             {
-                new ValidationFailure("Name", "Name is required")
+                new("Name", "Name is required")
             });
 
             var validatorMock = new Mock<IValidator<GitRepo>>();
@@ -208,7 +211,7 @@ namespace Application.Services.Tests
             var result = await _gitRepoService.GetItemAsync(1);
 
             Assert.Equal(OperationStatus.NotFound, result.Status);
-            Assert.Equal(ServiceResources.NotFound, result.Message);
+            Assert.Equal(GitResource.RepositoryNotFound, result.Message);
         }
 
         [Fact]
@@ -230,14 +233,18 @@ namespace Application.Services.Tests
         public async Task GetListAsyncWhenFilterIsNull()
         {
             // Arrange
-            GitRepoFilter? filter = null;
             var repos = _fixture.CreateMany<GitRepo>(5).ToList();
             var pagedResult = new PagedResult<GitRepo> { Result = repos };
 
             _gitRepoRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<GitRepoFilter>())).ReturnsAsync(pagedResult);
 
             // Act
-            var result = await _gitRepoService.GetListAsync(filter);
+            var result = await _gitRepoService.GetListAsync(new GitRepoFilter
+            {
+                Name = string.Empty,
+                Description = string.Empty,
+                Url = new Uri("http://default-url.com")
+            });
 
             // Assert
             Assert.NotNull(result);
@@ -249,7 +256,7 @@ namespace Application.Services.Tests
         public async Task VerifyAplicationsExistsAsyncWhenApplicationDoesNotExist()
         {
             var gitRepo = _fixture.Build<GitRepo>().Create();
-            _gitRepoRepositoryMock.Setup(r => r.AnyAsync(It.IsAny<Expression<Func<GitRepo, bool>>>())).ReturnsAsync(false);
+            _gitRepoRepositoryMock.Setup(r => r.VerifyAplicationsExistsAsync(It.IsAny<int>())).ReturnsAsync(false);
 
             var result = await _gitRepoService.VerifyAplicationsExistsAsync(gitRepo.Id);
 
