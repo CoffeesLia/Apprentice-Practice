@@ -1,6 +1,3 @@
-using System.Threading.Tasks;
-using FluentValidation;
-using Microsoft.Extensions.Localization;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Interfaces;
@@ -13,8 +10,6 @@ using Stellantis.ProjectName.Application.Validators;
 using System.Globalization;
 using Stellantis.ProjectName.Application.Models.Filters;
 using AutoFixture;
-using FluentValidation.Results;
-using Stellantis.ProjectName.Application.Interfaces.Services;
 
 namespace Application.Tests.Services
 {
@@ -26,7 +21,8 @@ namespace Application.Tests.Services
 
         public AreaServicesTests()
         {
-            CultureInfo.CurrentCulture = new CultureInfo("pt-BR");
+            CultureInfo.CurrentCulture = new CultureInfo("en-US");
+            CultureInfo.CurrentUICulture = new CultureInfo("en-US");
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _areaRepositoryMock = new Mock<IAreaRepository>();
             var localizer = Helpers.LocalizerFactorHelper.Create();
