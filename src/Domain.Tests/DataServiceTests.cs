@@ -9,12 +9,12 @@ namespace Domain.Tests
         public void DataServiceShouldInitializeWithDefaultValues()
         {
             // Arrange & Act
-            var dataService = new DataService();
+            var dataService = new DataService { Name = "Default Name" };
 
             // Assert
-            Assert.Null(dataService.Name);
+            Assert.Equal("Default Name", dataService.Name);
             Assert.Null(dataService.Description);
-            Assert.Equal(0, dataService.ServiceId);
+            Assert.Equal(0, dataService.Id);
         }
 
         // Verifica se a propriedade Name do DataService é definida corretamente.
@@ -22,7 +22,7 @@ namespace Domain.Tests
         public void DataServiceShouldSetNameProperty()
         {
             // Arrange
-            var dataService = new DataService();
+            var dataService = new DataService { Name = "Default Name" };
             var expectedName = "Test Service";
 
             // Act
@@ -37,7 +37,7 @@ namespace Domain.Tests
         public void DataServiceShouldSetDescriptionProperty()
         {
             // Arrange
-            var dataService = new DataService();
+            var dataService = new DataService { Name = "Default Name" };
             var expectedDescription = "This is a test service description.";
 
             // Act
@@ -52,14 +52,14 @@ namespace Domain.Tests
         public void DataServiceShouldSetServiceIdProperty()
         {
             // Arrange
-            var dataService = new DataService();
+            var dataService = new DataService { Name = "Default Name" };
             var expectedServiceId = 123;
 
             // Act
-            dataService.ServiceId = expectedServiceId;
+            dataService.Id = expectedServiceId;
 
             // Assert
-            Assert.Equal(expectedServiceId, dataService.ServiceId);
+            Assert.Equal(expectedServiceId, dataService.Id);
         }
     }
 }

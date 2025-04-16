@@ -10,12 +10,11 @@ using Stellantis.ProjectName.WebApi.ViewModels;
 
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    internal class DataServiceController(IDataService dataService, IMapper mapper, IStringLocalizerFactory localizerFactory)
-        : EntityControllerBase<DataService, DataServiceDto>(dataService, mapper, localizerFactory)
+    [Route("api/services")]
+    public sealed class DataServiceController(IDataService dataService, IMapper mapper, IStringLocalizerFactory localizerFactory)
+    : EntityControllerBase<DataService, DataServiceDto>(dataService, mapper, localizerFactory)
     {
-        private readonly IDataService _dataService = dataService;
+        protected override IDataService Service => (IDataService)base.Service;
 
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] DataServiceDto itemDto)
@@ -39,7 +38,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         public async Task<IActionResult> GetListAsync([FromQuery] DataServiceFilterDto filterDto)
         {
             var filter = Mapper.Map<DataServiceFilter>(filterDto);
-            var pagedResult = await _dataService.GetListAsync(filter!).ConfigureAwait(false);
+            var pagedResult = await Service.GetListAsync(filter!).ConfigureAwait(false);
             var result = Mapper.Map<PagedResultVm<DataServiceVm>>(pagedResult);
             return Ok(result);
         }

@@ -1,8 +1,8 @@
 ﻿namespace Stellantis.ProjectName.WebApi.ViewModels
 {
-    internal class DataServiceVm : EntityVmBase
+    public class DataServiceVm : EntityVmBase
     {
-        public string? Name { get; set; }
-        public int ServiceId { get; set; }
+        public required string Name { get; set; }
+        public string? Description { get; set; }
     }
 }
