@@ -238,7 +238,7 @@ namespace Infrastructure.Tests.Data.Repositories
             var result = await _repository.GetListAsync(filter);
 
             Assert.Single(result.Result);
-            Assert.Equal("RepoMatch", result.Result.First().Name);
+            Assert.Equal("SuperRepo", result.Result.First().Name);
 
         }
 
