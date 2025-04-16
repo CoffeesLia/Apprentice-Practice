@@ -67,7 +67,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         {
             var service = await Context.Set<DataService>().FirstOrDefaultAsync(a => a.Id == id).ConfigureAwait(false);
 
-            return service != null && service.ServiceId > 0;
+            return service != null && service.Id > 0;
         }
 
         public async Task<bool> VerifyNameAlreadyExistsAsync(string name)

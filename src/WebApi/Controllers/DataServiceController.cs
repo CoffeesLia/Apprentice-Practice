@@ -11,7 +11,7 @@ using Stellantis.ProjectName.WebApi.ViewModels;
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [Route("api/services")]
-    internal sealed class DataServiceController(IDataService dataService, IMapper mapper, IStringLocalizerFactory localizerFactory)
+    public sealed class DataServiceController(IDataService dataService, IMapper mapper, IStringLocalizerFactory localizerFactory)
     : EntityControllerBase<DataService, DataServiceDto>(dataService, mapper, localizerFactory)
     {
         protected override IDataService Service => (IDataService)base.Service;

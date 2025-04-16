@@ -135,8 +135,8 @@
   <data name="ValidationErrorMessage" xml:space="preserve">
     <value>NameIsRequired, Description, and URL are required fields.</value>
   </data>
-  <data name="ApplicationNotFound" xml:space="preserve">
-    <value>Application not found.</value>
+  <data name="ApplicationIsRequired" xml:space="preserve">
+    <value>Application is required.</value>
   </data>
   <data name="RepositoryCantBeNull" xml:space="preserve">
     <value>Repository can't be null.</value>
