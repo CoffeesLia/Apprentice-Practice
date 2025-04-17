@@ -3,10 +3,10 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Interfaces.Repositories
 {
-    public interface IDataServiceRepository : IRepositoryEntityBase<DataService>
+    public interface IServiceDataRepository : IRepositoryEntityBase<ServiceData>
     {
-        Task<PagedResult<DataService>> GetListAsync(DataServiceFilter serviceFilter);
+        Task<PagedResult<ServiceData>> GetListAsync(ServiceDataFilter serviceFilter);
         Task<bool> VerifyServiceExistsAsync(int id);
-        Task<bool> VerifyNameAlreadyExistsAsync(string name);
+        Task<bool> VerifyNameExistsAsync(string name);
     }
 }

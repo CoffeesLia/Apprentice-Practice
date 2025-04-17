@@ -35,14 +35,14 @@ namespace Application.Tests
         }
 
         [Fact]
-        public void DataServiceResourcesAllCultures()
+        public void ServiceDataResourcesAllCultures()
         {
-            var resource = new DataServiceResources();
+            var resource = new ServiceDataResources();
             Assert.NotNull(resource);
-            DataServiceResources.Culture = CultureInfo.InvariantCulture;
-            Assert.Equal(CultureInfo.InvariantCulture, DataServiceResources.Culture);
+            ServiceDataResources.Culture = CultureInfo.InvariantCulture;
+            Assert.Equal(CultureInfo.InvariantCulture, ServiceDataResources.Culture);
 
-            VerifyAllResources<DataServiceResources>(DataServiceResources.ResourceManager);
+            VerifyAllResources<ServiceDataResources>(ServiceDataResources.ResourceManager);
         }
 
         private void VerifyAllResources<TResouces>(ResourceManager resourceManager)

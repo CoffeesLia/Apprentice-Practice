@@ -21,21 +21,21 @@ using WebApi.Tests.Helpers;
 
 namespace WebApi.Tests.Controllers
 {
-    public class DataServiceControllerTests
+    public class ServiceDataControllerTests
     {
-        private readonly Mock<IDataService> _serviceMock;
-        private readonly DataServiceController _controller;
+        private readonly Mock<IServiceData> _serviceMock;
+        private readonly ServiceDataController _controller;
         private readonly Fixture _fixture = new();
-        private readonly DataServiceValidator _validator;
+        private readonly ServiceDataValidator _validator;
 
-        public DataServiceControllerTests()
+        public ServiceDataControllerTests()
         {
-            _serviceMock = new Mock<IDataService>();
+            _serviceMock = new Mock<IServiceData>();
             var mapperConfiguration = new MapperConfiguration(x => { x.AddProfile<AutoMapperProfile>(); });
             var mapper = mapperConfiguration.CreateMapper();
             var localizerFactor = LocalizerFactorHelper.Create();
-            _controller = new DataServiceController(_serviceMock.Object, mapper, localizerFactor);
-            _validator = new DataServiceValidator(localizerFactor);
+            _controller = new ServiceDataController(_serviceMock.Object, mapper, localizerFactor);
+            _validator = new ServiceDataValidator(localizerFactor);
         }
 
         // Verifica se o método CreateAsync retorna CreatedAtActionResult quando o serviço é criado com sucesso.
@@ -43,15 +43,15 @@ namespace WebApi.Tests.Controllers
         public async Task CreateAsyncShouldReturnCorrectResultWhenCreationIsSuccessful()
         {
             // Arrange
-            var dataServiceDto = _fixture.Create<DataServiceDto>();
-            _serviceMock.Setup(s => s.CreateAsync(It.IsAny<DataService>())).ReturnsAsync(OperationResult.Complete(DataServiceResources.ServiceSucess));
+            var serviceDataDto = _fixture.Create<ServiceDataDto>();
+            _serviceMock.Setup(s => s.CreateAsync(It.IsAny<ServiceData>())).ReturnsAsync(OperationResult.Complete());
 
             // Act
-            var result = await _controller.CreateAsync(dataServiceDto);
+            var result = await _controller.CreateAsync(serviceDataDto);
 
             // Assert
             var okResult = Assert.IsType<CreatedAtActionResult>(result);
-            Assert.IsType<DataServiceVm>(okResult.Value);
+            Assert.IsType<ServiceDataVm>(okResult.Value);
         }
 
         // Testa se UpdateAsync retorna OkObjectResult.
@@ -59,9 +59,9 @@ namespace WebApi.Tests.Controllers
         public async Task UpdateAsyncShouldReturnOkObjectResult()
         {
             // Arrange
-            var itemDto = new DataServiceDto { Id = 1, Name = "Updated Service" };
-            var dataService = new DataService { Id = 1, Name = "Updated Service" };
-            _serviceMock.Setup(service => service.UpdateAsync(It.IsAny<DataService>()))
+            var itemDto = new ServiceDataDto { Id = 1, Name = "Updated Service" };
+            var serviceData = new ServiceData { Id = 1, Name = "Updated Service" };
+            _serviceMock.Setup(service => service.UpdateAsync(It.IsAny<ServiceData>()))
                 .ReturnsAsync(OperationResult.Complete());
 
             // Act
@@ -77,16 +77,16 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             var Id = 1;
-            var dataService = new DataService { Id = Id, Name = "Test Service" };
+            var serviceData = new ServiceData { Id = Id, Name = "Test Service" };
             _serviceMock.Setup(service => service.GetItemAsync(Id))
-                .ReturnsAsync(dataService);
+                .ReturnsAsync(serviceData);
 
             // Act
             var result = await _controller.GetAsync(Id);
 
             // Assert
             var actionResult = Assert.IsType<OkObjectResult>(result.Result);
-            var model = Assert.IsType<DataServiceVm>(actionResult.Value);
+            var model = Assert.IsType<ServiceDataVm>(actionResult.Value);
             Assert.Equal(Id, model.Id);
         }
 
@@ -101,14 +101,14 @@ namespace WebApi.Tests.Controllers
             _serviceMock.Setup(service => service.DeleteAsync(nonExistentId))
                 .ReturnsAsync(OperationResult.NotFound(notFoundMessage));
 
-            var localizerMock = new Mock<IStringLocalizer<DataServiceResources>>();
-            localizerMock.Setup(l => l[nameof(DataServiceResources.ServiceNotFound)])
-                .Returns(new LocalizedString(nameof(DataServiceResources.ServiceNotFound), notFoundMessage));
+            var localizerMock = new Mock<IStringLocalizer<ServiceDataResources>>();
+            localizerMock.Setup(l => l[nameof(ServiceDataResources.ServiceNotFound)])
+                .Returns(new LocalizedString(nameof(ServiceDataResources.ServiceNotFound), notFoundMessage));
 
             var loggerFactory = new Microsoft.Extensions.Logging.LoggerFactory();
             var mapperConfiguration = new MapperConfiguration(x => { x.AddProfile<AutoMapperProfile>(); });
             var mapper = mapperConfiguration.CreateMapper();
-            var controller = new DataServiceController(
+            var controller = new ServiceDataController(
                 _serviceMock.Object,
                 mapper,
                 new ResourceManagerStringLocalizerFactory(
@@ -122,7 +122,7 @@ namespace WebApi.Tests.Controllers
 
             // Assert
             var actionResult = Assert.IsType<NotFoundResult>(result);
-            Assert.Equal(DataServiceResources.ServiceNotFound, notFoundMessage);
+            Assert.Equal(ServiceDataResources.ServiceNotFound, notFoundMessage);
 
             loggerFactory.Dispose();
         }
@@ -132,16 +132,16 @@ namespace WebApi.Tests.Controllers
         public async Task GetListAsyncShouldReturnOkObjectResult()
         {
             // Arrange
-            var filterDto = new DataServiceFilterDto { Name = "Test Service" };
-            var filter = new DataServiceFilter { Name = "Test Service" };
-            var pagedResult = new PagedResult<DataService>
+            var filterDto = new ServiceDataFilterDto { Name = "Test Service" };
+            var filter = new ServiceDataFilter { Name = "Test Service" };
+            var pagedResult = new PagedResult<ServiceData>
             {
-                Result = [new DataService { Name = "Test Service" }],
+                Result = [new ServiceData { Name = "Test Service" }],
                 Page = 1,
                 PageSize = 10,
                 Total = 1
             };
-            _serviceMock.Setup(service => service.GetListAsync(It.Is<DataServiceFilter>(f => f.Name == filterDto.Name)))
+            _serviceMock.Setup(service => service.GetListAsync(It.Is<ServiceDataFilter>(f => f.Name == filterDto.Name)))
                         .ReturnsAsync(pagedResult);
 
             // Act
@@ -149,7 +149,7 @@ namespace WebApi.Tests.Controllers
 
             // Assert
             var actionResult = Assert.IsType<OkObjectResult>(result);
-            var model = Assert.IsType<PagedResultVm<DataServiceVm>>(actionResult.Value);
+            var model = Assert.IsType<PagedResultVm<ServiceDataVm>>(actionResult.Value);
             Assert.Single(model.Result);
         }
 
@@ -169,31 +169,15 @@ namespace WebApi.Tests.Controllers
             Assert.IsType<NoContentResult>(result);
         }
 
-        // Testa se GetListAsync lança KeyNotFoundException quando nenhum serviço é encontrado.
+        // Testa se ServiceDataFilterDto cria uma instância com dados válidos.
         [Fact]
-        public async Task GetListAsyncShouldThrowKeyNotFoundExceptionWhenNoServicesFound()
-        {
-            // Arrange
-            var filterDto = new DataServiceFilterDto { Name = "NonExistentService" };
-            var filter = new DataServiceFilter { Name = "NonExistentService" };
-
-            _serviceMock.Setup(service => service.GetListAsync(It.Is<DataServiceFilter>(f => f.Name == filterDto.Name)))
-                .ThrowsAsync(new KeyNotFoundException(DataServiceResources.ServicesNoFound));
-
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<KeyNotFoundException>(() => _controller.GetListAsync(filterDto));
-            Assert.Equal(DataServiceResources.ServicesNoFound, exception.Message);
-        }
-
-        // Testa se DataServiceFilterDto cria uma instância com dados válidos.
-        [Fact]
-        public void DataServiceFilterDtoShouldCreateInstanceWithValidData()
+        public void ServiceDataFilterDtoShouldCreateInstanceWithValidData()
         {
             // Arrange
             var name = "Test Service";
 
             // Act
-            var dto = new DataServiceFilterDto
+            var dto = new ServiceDataFilterDto
             {
                 Name = name,
             };
@@ -202,27 +186,30 @@ namespace WebApi.Tests.Controllers
             Assert.Equal(name, dto.Name);
         }
 
-        // Testa se DataServiceDto cria uma instância com dados válidos.
+        // Testa se ServiceDataDto cria uma instância com dados válidos.
         [Fact]
-        public void DataServiceDtoShouldCreateInstanceWithValidData()
+        public void ServiceDataDtoShouldCreateInstanceWithValidData()
         {
             // Arrange
             var name = "Test Service";
             var description = "Test Description";
             var Id = 1;
+            var applicationId = 5;
 
             // Act
-            var dto = new DataServiceDto
+            var dto = new ServiceDataDto
             {
                 Name = name,
                 Description = description,
-                Id = Id
+                Id = Id,
+                ApplicationId = applicationId
             };
 
             // Assert
             Assert.Equal(name, dto.Name);
             Assert.Equal(description, dto.Description);
             Assert.Equal(Id, dto.Id);
+            Assert.Equal(applicationId, dto.ApplicationId);
         }
 
         // Testa se o validador retorna erro quando o nome é muito curto.
@@ -230,14 +217,14 @@ namespace WebApi.Tests.Controllers
         public void ShouldHaveErrorWhenNameIsTooShort()
         {
             // Arrange
-            var model = new DataService { Name = "ab" };
+            var model = new ServiceData { Name = "ab" };
 
             // Act
             var result = _validator.TestValidate(model);
 
             // Assert
             result.ShouldHaveValidationErrorFor(x => x.Name)
-                  .WithErrorMessage(DataServiceResources.ServiceNameLength);
+                  .WithErrorMessage(ServiceDataResources.ServiceNameLength);
         }
 
         // Testa se o validador retorna erro quando o nome é muito longo.
@@ -245,14 +232,14 @@ namespace WebApi.Tests.Controllers
         public void ShouldHaveErrorWhenNameIsTooLong()
         {
             // Arrange
-            var model = new DataService { Name = new string('a', 256) };
+            var model = new ServiceData { Name = new string('a', 256) };
 
             // Act
             var result = _validator.TestValidate(model);
 
             // Assert
             result.ShouldHaveValidationErrorFor(x => x.Name)
-                  .WithErrorMessage(DataServiceResources.ServiceNameLength);
+                  .WithErrorMessage(ServiceDataResources.ServiceNameLength);
         }
 
         // Testa se o validador não retorna erro quando o nome é válido.
@@ -260,7 +247,7 @@ namespace WebApi.Tests.Controllers
         public void ShouldNotHaveErrorWhenNameIsValid()
         {
             // Arrange
-            var model = new DataService { Name = "ValidName" };
+            var model = new ServiceData { Name = "ValidName" };
 
             // Act
             var result = _validator.TestValidate(model);
@@ -269,19 +256,30 @@ namespace WebApi.Tests.Controllers
             result.ShouldNotHaveValidationErrorFor(x => x.Name);
         }
 
-        // Testa se DataServiceVm possui a propriedade Name.
+        // Testa se ServiceDataVm possui a propriedade Name.
         [Fact]
-        public void DataServiceVmShouldHaveNameProperty()
+        public void ServiceDataVmShouldProperty()
         {
             // Arrange
             var testName = "Test Service";
-            var dataServiceVm = new DataServiceVm { Name = testName };
+            var testDescription = "Test Description";
+            var testApplicationId = 123;
+            var serviceDataVm = new ServiceDataVm
+            {
+                Name = testName,
+                Description = testDescription,
+                ApplicationId = testApplicationId
+            };
 
             // Act
-            dataServiceVm.Name = testName;
+            serviceDataVm.Name = testName;
+            serviceDataVm.Description = testDescription;
+            serviceDataVm.ApplicationId = testApplicationId;
 
             // Assert
-            Assert.Equal(testName, dataServiceVm.Name);
+            Assert.Equal(testName, serviceDataVm.Name);
+            Assert.Equal(testDescription, serviceDataVm.Description);
+            Assert.Equal(testApplicationId, serviceDataVm.ApplicationId);
         }
 
         // Testa se a configuração define o nome da tabela e as propriedades corretamente.
@@ -290,19 +288,19 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             var modelBuilder = new ModelBuilder();
-            var builder = modelBuilder.Entity<DataService>();
-            var config = new DataServiceConfig();
+            var builder = modelBuilder.Entity<ServiceData>();
+            var config = new ServiceDataConfig();
 
             // Act
             config.Configure(builder);
 
             // Assert
             var entityType = builder.Metadata;
-            Assert.Equal("DataService", entityType.GetTableName());
+            Assert.Equal("ServiceData", entityType.GetTableName());
             var primaryKey = entityType.FindPrimaryKey();
             Assert.NotNull(primaryKey);
             Assert.Equal("Id", primaryKey.Properties[0].Name);
-            var nameProperty = entityType.FindProperty(nameof(DataService.Name));
+            var nameProperty = entityType.FindProperty(nameof(ServiceData.Name));
             Assert.NotNull(nameProperty);
             Assert.False(nameProperty.IsNullable);
             Assert.Equal(50, nameProperty.GetMaxLength());
