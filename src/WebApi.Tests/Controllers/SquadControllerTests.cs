@@ -22,6 +22,7 @@ namespace WebApi.Tests.Controllers
         private readonly Mock<ISquadService> _squadServiceMock;
         private readonly SquadController _controller;
         private readonly Fixture _fixture = new();
+        private readonly Mock<IMapper> _mapperMock; // Add this line
         public SquadControllerTests()
         {
             var mapperConfiguration = new MapperConfiguration(x => { x.AddProfile<AutoMapperProfile>(); });
@@ -29,6 +30,7 @@ namespace WebApi.Tests.Controllers
             var mapper = mapperConfiguration.CreateMapper();
             var localizerFactory = LocalizerFactorHelper.Create();
             _controller = new SquadController(_squadServiceMock.Object, mapper, localizerFactory);
+            _mapperMock = new Mock<IMapper>(); // Add this line
         }
 
         [Fact]
@@ -36,7 +38,8 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             var squadDto = _fixture.Create<SquadDto>();
-            _squadServiceMock.Setup(s => s.CreateAsync(It.IsAny<Squad>())).ReturnsAsync(OperationResult.Complete());
+            var operationResult = OperationResult.Complete(); // Add this line
+            _squadServiceMock.Setup(s => s.CreateAsync(It.IsAny<Squad>())).ReturnsAsync(operationResult);
 
             // Act
             var result = await _controller.CreateAsync(squadDto);
@@ -78,7 +81,8 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             var squadDto = _fixture.Create<SquadDto>();
-            _squadServiceMock.Setup(s => s.UpdateAsync(It.IsAny<Squad>())).ReturnsAsync(OperationResult.Complete(SquadResources.SquadUpdatedSuccessfully));
+            var operationResult = OperationResult.Complete(SquadResources.SquadUpdatedSuccessfully); // Add this line
+            _squadServiceMock.Setup(s => s.UpdateAsync(It.IsAny<Squad>())).ReturnsAsync(operationResult);
 
             // Act
             var result = await _controller.UpdateAsync(squadDto.Id, squadDto);

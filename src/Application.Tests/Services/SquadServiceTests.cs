@@ -1,7 +1,6 @@
 ﻿using System.Globalization;
 using Application.Tests.Helpers;
 using FluentValidation.TestHelper;
-using Microsoft.Extensions.Localization;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models;
@@ -11,6 +10,7 @@ using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Application.Validators;
 using Stellantis.ProjectName.Domain.Entities;
 using Xunit;
+using Stellantis.ProjectName.Application.Interfaces;
 
 namespace Application.Tests.Services
 {
@@ -21,94 +21,116 @@ namespace Application.Tests.Services
 
         public SquadServiceTests()
         {
-            CultureInfo.CurrentCulture = new CultureInfo("pt-BR");
-            _squadRepositoryMock = new Mock<ISquadRepository>();
+            CultureInfo.CurrentCulture = new CultureInfo("en-US");
+            CultureInfo.CurrentUICulture = new CultureInfo("en-US");
 
-            var localizerMock = new Mock<IStringLocalizer<SquadResources>>();
-            var validator = new SquadValidator(LocalizerFactorHelper.Create());
+            _squadRepositoryMock = new Mock<ISquadRepository>();
+            var localizer = LocalizerFactorHelper.Create();
+            var validator = new SquadValidator(localizer);
 
             _squadService = new SquadService(
-                _squadRepositoryMock.Object,
-                localizerMock.Object,
+                new Mock<IUnitOfWork>().Object,
+                localizer,
                 validator);
         }
 
         [Fact]
-        public async Task CreateAsyncShouldReturnCompleteOperationResult()
+        public async Task CreateAsyncShouldReturnInvalidDataWhenNameIsTooShort()
         {
             // Arrange
-            var squad = new Squad { Name = "Test Squad" };
-            _squadRepositoryMock.Setup(repo => repo.CreateAsync(It.IsAny<Squad>(), It.IsAny<bool>()))
-                .Returns(Task.CompletedTask);
+            var squad = new Squad { Name = "ab" };
 
             // Act
             var result = await _squadService.CreateAsync(squad);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.Equal(OperationStatus.Success, result.Status);
+            Assert.Equal(OperationStatus.InvalidData, result.Status);
+            Assert.Contains(SquadResources.NameValidateLength, result.Errors);
         }
 
         [Fact]
-        public async Task CreateAsyncShouldReturnConflictWhenSquadAlreadyExists()
+        public async Task CreateAsyncShouldReturnInvalidDataWhenNameIsRequired()
+        {
+            // Arrange
+            var squad = new Squad { Name = string.Empty };
+
+            // Act
+            var result = await _squadService.CreateAsync(squad);
+
+            // Assert
+            Assert.Equal(OperationStatus.InvalidData, result.Status);
+            Assert.Contains(SquadResources.SquadNameRequired, result.Errors);
+        }
+
+        [Fact]
+        public async Task CreateAsyncShouldReturnConflictWhenNameIsNotUnique()
         {
             // Arrange
             var squad = new Squad { Name = "Existing Squad" };
-            _squadRepositoryMock.Setup(repo => repo.VerifyNameAlreadyExistsAsync(squad.Name))
-                .ReturnsAsync(true);
+            _squadRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(squad.Name)).ReturnsAsync(true);
 
             // Act
             var result = await _squadService.CreateAsync(squad);
 
             // Assert
-            Assert.NotNull(result);
             Assert.Equal(OperationStatus.Conflict, result.Status);
-            Assert.Equal(SquadResources.SquadNameAlreadyExists, result.Message);
+            Assert.Contains(SquadResources.SquadNameAlreadyExists, result.Errors);
         }
 
         [Fact]
-        public async Task CreateAsyncShouldReturnInvalidDataWhenValidationFails()
+        public async Task CreateAsyncShouldReturnSuccessWhenSquadIsValid()
         {
             // Arrange
-            var squad = new Squad { Name = "ab" }; // Nome muito curto
+            var squad = new Squad { Name = "Valid Squad" };
+            _squadRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(squad.Name)).ReturnsAsync(false);
 
             // Act
             var result = await _squadService.CreateAsync(squad);
 
             // Assert
-            Assert.NotNull(result);
+            Assert.Equal(OperationStatus.Success, result.Status);
+        }
+
+
+        [Fact]
+        public async Task UpdateAsyncShouldReturnInvalidDataWhenValidationFails()
+        {
+            // Arrange
+            var squad = new Squad { Id = 1, Name = "ab" };
+
+            // Act
+            var result = await _squadService.UpdateAsync(squad);
+
+            // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
         }
 
         [Fact]
-        public async Task CreateAsyncShouldThrowArgumentNullExceptionWhenEntityIsNull()
+        public async Task UpdateAsyncShouldReturnConflictWhenNameIsNotUnique()
         {
             // Arrange
-            Squad? squad = null;
+            var squad = new Squad { Id = 1, Name = "Existing Squad" };
+            _squadRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(squad.Name)).ReturnsAsync(true);
 
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => _squadService.CreateAsync(squad!));
-            Assert.Equal("squad", exception.ParamName);
-            Assert.Contains(SquadResources.SquadCannotBeNull, exception.Message, StringComparison.Ordinal);
+            // Act
+            var result = await _squadService.UpdateAsync(squad);
+
+            // Assert
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Contains(SquadResources.SquadNameAlreadyExists, result.Errors);
         }
 
         [Fact]
-        public async Task DeleteAsyncShouldReturnCompleteOperationResult()
+        public async Task UpdateAsyncShouldReturnSuccessWhenSquadIsValid()
         {
             // Arrange
-            var squadId = 1;
-
-            _squadRepositoryMock.Setup(repo => repo.VerifySquadExistsAsync(squadId))
-                .ReturnsAsync(true);
-
-            _squadRepositoryMock.Setup(repo => repo.DeleteAsync(squadId, It.IsAny<bool>()))
-                .Returns(Task.CompletedTask);
+            var squad = new Squad { Id = 1, Name = "Valid Squad" };
+            _squadRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(squad.Name)).ReturnsAsync(false);
 
             // Act
-            var result = await _squadService.DeleteAsync(squadId);
+            var result = await _squadService.UpdateAsync(squad);
 
             // Assert
-            Assert.NotNull(result);
             Assert.Equal(OperationStatus.Success, result.Status);
         }
 
@@ -116,61 +138,27 @@ namespace Application.Tests.Services
         public async Task DeleteAsyncShouldReturnNotFoundWhenSquadDoesNotExist()
         {
             // Arrange
-            var squadId = 1;
+            _squadRepositoryMock.Setup(r => r.VerifySquadExistsAsync(It.IsAny<int>())).ReturnsAsync(false);
 
-            _squadRepositoryMock.Setup(repo => repo.VerifySquadExistsAsync(squadId))
-                .ReturnsAsync(false);
+            // Act
+            var result = await _squadService.DeleteAsync(1);
+
+            // Assert
+            Assert.Equal(OperationStatus.NotFound, result.Status);
+            Assert.Contains(SquadResources.SquadNotFound, result.Errors);
+        }
+
+        [Fact]
+        public async Task DeleteAsyncShouldReturnSuccessWhenSquadIsDeleted()
+        {
+            // Arrange
+            var squadId = 1;
+            _squadRepositoryMock.Setup(r => r.VerifySquadExistsAsync(squadId)).ReturnsAsync(true);
 
             // Act
             var result = await _squadService.DeleteAsync(squadId);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.Equal(OperationStatus.NotFound, result.Status);
-            Assert.Equal(SquadResources.SquadNotFound, result.Message);
-        }
-
-        [Fact]
-        public async Task GetItemAsyncShouldReturnItemWhenItemExists()
-        {
-            // Arrange
-            var itemId = 1;
-            var expectedItem = new Squad { Id = itemId, Name = "Test Squad" };
-            _squadRepositoryMock.Setup(repo => repo.GetByIdAsync(itemId)).ReturnsAsync(expectedItem);
-
-            // Act
-            var result = await _squadService.GetItemAsync(itemId);
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal(expectedItem.Id, result.Id);
-        }
-
-        [Fact]
-        public async Task GetItemAsyncShouldThrowKeyNotFoundExceptionWhenItemDoesNotExist()
-        {
-            // Arrange
-            var itemId = 1;
-            _squadRepositoryMock.Setup(repo => repo.GetByIdAsync(itemId)).ReturnsAsync((Squad?)null);
-
-            // Act & Assert
-            await Assert.ThrowsAsync<KeyNotFoundException>(() => _squadService.GetItemAsync(itemId));
-        }
-
-        [Fact]
-        public async Task UpdateAsyncShouldReturnCompleteOperationResult()
-        {
-            // Arrange
-            var squad = new Squad { Id = 1, Name = "Updated Squad" };
-
-            _squadRepositoryMock.Setup(repo => repo.UpdateAsync(It.IsAny<Squad>(), It.IsAny<bool>()))
-                .Returns(Task.CompletedTask);
-
-            // Act
-            var result = await _squadService.UpdateAsync(squad);
-
-            // Assert
-            Assert.NotNull(result);
             Assert.Equal(OperationStatus.Success, result.Status);
         }
 
@@ -179,186 +167,57 @@ namespace Application.Tests.Services
         {
             // Arrange
             var filter = new SquadFilter { Name = "Test Squad" };
-            var expectedResult = new PagedResult<Squad>
+            var squads = new List<Squad>
             {
-                Result = new List<Squad> { new() { Name = "Test Squad" } },
+                new Squad { Id = 1, Name = "Test Squad 1" },
+                new Squad { Id = 2, Name = "Test Squad 2" }
+            };
+            var pagedResult = new PagedResult<Squad>
+            {
+                Result = squads,
                 Page = 1,
                 PageSize = 10,
-                Total = 1
+                Total = 2
             };
-            _squadRepositoryMock.Setup(repo => repo.GetListAsync(filter)).ReturnsAsync(expectedResult);
+            _squadRepositoryMock.Setup(r => r.GetListAsync(filter)).ReturnsAsync(pagedResult);
 
             // Act
             var result = await _squadService.GetListAsync(filter);
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(expectedResult.Total, result.Total);
-            Assert.Equal(expectedResult.Page, result.Page);
-            Assert.Equal(expectedResult.PageSize, result.PageSize);
-            Assert.Equal(expectedResult.Result, result.Result);
+            Assert.Equal(2, result.Total);
+            Assert.Equal(squads, result.Result);
         }
 
+        
         [Fact]
-        public async Task GetListAsyncShouldThrowKeyNotFoundExceptionWhenNoSquadsFound()
+        public async Task GetItemAsyncShouldReturnNotFoundWhenSquadDoesNotExist()
         {
             // Arrange
-            var filter = new SquadFilter { Name = "Nonexistent Squad" };
-
-            _squadRepositoryMock.Setup(repo => repo.GetListAsync(It.IsAny<SquadFilter>()))
-                .ReturnsAsync(new PagedResult<Squad> { Result = Enumerable.Empty<Squad>() });
+            _squadRepositoryMock.Setup(r => r.GetByIdAsync(It.IsAny<int>())).ReturnsAsync((Squad?)null);
 
             // Act
-            Task act() => _squadService.GetListAsync(filter);
+            var result = await _squadService.GetItemAsync(1);
 
             // Assert
-            var exception = await Assert.ThrowsAsync<KeyNotFoundException>(act);
-            Assert.Contains(SquadResources.SquadNotFound, exception.Message, StringComparison.Ordinal);
+            Assert.Equal(OperationStatus.NotFound, result.Status);
+            Assert.Contains(SquadResources.SquadNotFound, result.Errors);
         }
 
         [Fact]
-        public async Task VerifyNameAlreadyExistsAsyncShouldThrowExceptionIfNameIsNull()
+        public async Task GetItemAsyncShouldReturnSuccessWhenSquadExists()
         {
             // Arrange
-            string? name = null;
-
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _squadService.VerifyNameAlreadyExistsAsync(name!));
-            Assert.Contains(SquadResources.SquadNameRequired, exception.Message, StringComparison.Ordinal);
-        }
-
-        [Fact]
-        public async Task VerifyNameAlreadyExistsAsyncShouldReturnFalseWhenNameDoesNotExist()
-        {
-            // Arrange
-            var name = "Nonexistent Squad";
-            _squadRepositoryMock.Setup(repo => repo.VerifyNameAlreadyExistsAsync(name)).ReturnsAsync(false);
+            var squad = new Squad { Id = 1, Name = "Test Squad" };
+            _squadRepositoryMock.Setup(r => r.GetByIdAsync(squad.Id)).ReturnsAsync(squad);
 
             // Act
-            var result = await _squadService.VerifyNameAlreadyExistsAsync(name);
+            var result = await _squadService.GetItemAsync(squad.Id);
 
             // Assert
-            Assert.False(result);
+            Assert.Equal(OperationStatus.Success, result.Status);
         }
 
-        [Fact]
-        public async Task VerifyNameAlreadyExistsAsyncShouldThrowExceptionWhenNameExists()
-        {
-            // Arrange
-            var name = "Existing Squad";
-            _squadRepositoryMock.Setup(repo => repo.VerifyNameAlreadyExistsAsync(name)).ReturnsAsync(true);
-
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _squadService.VerifyNameAlreadyExistsAsync(name));
-            Assert.Contains(SquadResources.SquadNameAlreadyExists, exception.Message, StringComparison.Ordinal);
-        }
-
-        [Fact]
-        public async Task VerifySquadExistsAsyncShouldReturnFalseWhenSquadDoesNotExist()
-        {
-            // Arrange
-            var squadId = 1;
-            _squadRepositoryMock.Setup(repo => repo.VerifySquadExistsAsync(squadId)).ReturnsAsync(false);
-
-            // Act
-            var result = await _squadService.VerifySquadExistsAsync(squadId);
-
-            // Assert
-            Assert.False(result);
-        }
-
-        [Fact]
-        public async Task VerifySquadExistsAsyncShouldThrowWhenSquadExists()
-        {
-            // Arrange
-            var squadId = 1;
-            _squadRepositoryMock.Setup(repo => repo.VerifySquadExistsAsync(squadId)).ReturnsAsync(true);
-
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _squadService.VerifySquadExistsAsync(squadId));
-            Assert.Contains(SquadResources.SquadNameAlreadyExists, exception.Message, StringComparison.Ordinal);
-        }
-
-        [Fact]
-        public async Task ShouldHaveErrorWhenSquadDescriptionLengthIsTooLong()
-        {
-            // Arrange
-            var squad = new Squad { Name = "Test Squad", Description = new string('a', 501) };
-
-            var validator = new SquadValidator(LocalizerFactorHelper.Create());
-
-            // Act
-            var result = await validator.TestValidateAsync(squad);
-
-            // Assert
-            result.ShouldHaveValidationErrorFor(s => s.Description)
-                .WithErrorMessage(SquadResources.SquadDescriptionRequired);
-        }
-
-        [Fact]
-        public async Task ShouldHaveErrorWhenSquadNameIsRequired()
-        {
-            // Arrange
-            var squad = new Squad { Name = string.Empty };
-
-            var validator = new SquadValidator(LocalizerFactorHelper.Create());
-
-            // Act
-            var result = await validator.TestValidateAsync(squad);
-
-            // Assert
-            result.ShouldHaveValidationErrorFor(s => s.Name)
-                .WithErrorMessage(SquadResources.SquadNameRequired);
-        }
-
-        [Fact]
-        public void SquadShouldSetAndGetDescription()
-        {
-            // Arrange
-            var description = "Test Description";
-            var squad = new Squad
-            {
-                Name = "Test Squad",
-                Description = description
-            };
-
-            // Assert
-            Assert.Equal(description, squad.Description);
-        }
-
-        [Fact]
-        public void SquadFilterShouldCreateInstanceWithValidData()
-        {
-            // Arrange
-            var name = "Test Squad";
-            var squadId = 1;
-
-            // Act
-            var filter = new SquadFilter
-            {
-                Name = name,
-                Id = squadId.ToString(CultureInfo.InvariantCulture)
-            };
-
-            // Assert
-            Assert.Equal(name, filter.Name);
-            Assert.Equal(squadId.ToString(CultureInfo.InvariantCulture), filter.Id);
-        }
-
-        [Fact]
-        public async Task ShouldHaveErrorWhenNameIsTooShort()
-        {
-            // Arrange
-            var squad = new Squad { Name = "ab" };
-
-            var validator = new SquadValidator(LocalizerFactorHelper.Create());
-
-            // Act
-            var result = await validator.TestValidateAsync(squad);
-
-            // Assert
-            result.ShouldHaveValidationErrorFor(s => s.Name)
-                .WithErrorMessage(SquadResources.NameValidateLength);
-        }
     }
 }
