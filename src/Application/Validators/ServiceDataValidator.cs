@@ -5,29 +5,29 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Validators
 {
-    public class DataServiceValidator : AbstractValidator<DataService>
+    public class ServiceDataValidator : AbstractValidator<ServiceData>
     {
         public const int MinimumLength = 3;
         public const int MaximumLength = 50;
         public const int MaximumDescriptionLength = 255;
 
-        public DataServiceValidator(IStringLocalizerFactory localizerFactory)
+        public ServiceDataValidator(IStringLocalizerFactory localizerFactory)
         {
             ArgumentNullException.ThrowIfNull(localizerFactory);
-            var localizer = localizerFactory.Create(typeof(DataServiceResources));
+            var localizer = localizerFactory.Create(typeof(ServiceDataResources));
 
             RuleFor(x => x.Name)
                 .NotNull()
                 .NotEmpty()
-                .WithMessage(localizer[nameof(DataServiceResources.ServiceNameIsRequired)]);
+                .WithMessage(localizer[nameof(ServiceDataResources.ServiceNameIsRequired)]);
             RuleFor(x => x.Name)
                .MinimumLength(MinimumLength)
-               .WithMessage(localizer[nameof(DataServiceResources.ServiceNameLength), MinimumLength, MaximumLength])
+               .WithMessage(localizer[nameof(ServiceDataResources.ServiceNameLength), MinimumLength, MaximumLength])
                .MaximumLength(MaximumLength)
-               .WithMessage(localizer[nameof(DataServiceResources.ServiceNameLength), MinimumLength, MaximumLength]);
+               .WithMessage(localizer[nameof(ServiceDataResources.ServiceNameLength), MinimumLength, MaximumLength]);
             RuleFor(x => x.Description)
                 .MaximumLength(MaximumDescriptionLength)
-                .WithMessage(localizer[nameof(DataServiceResources.ServiceDescriptionLength), MaximumDescriptionLength]);
+                .WithMessage(localizer[nameof(ServiceDataResources.ServiceDescriptionLength), MaximumDescriptionLength]);
         }
     }
 }
