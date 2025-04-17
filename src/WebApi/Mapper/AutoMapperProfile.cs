@@ -50,19 +50,19 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(dest => dest.Area, opt => opt.MapFrom(src => src.Area));
             CreateMap<ResponsibleFilterDto, ResponsibleFilter>();
 
-            CreateMap<DataServiceDto, DataService>()
+            CreateMap<ServiceDataDto, ServiceData>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
-            CreateMap<DataService, DataServiceVm>()
+            CreateMap<ServiceData, ServiceDataVm>().ReverseMap()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
-            CreateMap<DataServiceFilterDto, DataServiceFilter>()
+            CreateMap<ServiceDataFilterDto, ServiceDataFilter>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
-            CreateMap<PagedResult<DataService>, PagedResultVm<DataServiceVm>>();
+            CreateMap<PagedResult<ServiceData>, PagedResultVm<ServiceDataVm>>();
 
             CreateMap<SquadDto, Squad>()
                 .ForMember(x => x.Id, x => x.Ignore());
@@ -73,14 +73,6 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(x => x.Application, opt => opt.MapFrom(src => src.Application))
                 .ForMember(x => x.ApplicationId, opt => opt.MapFrom(src => src.ApplicationId));
             CreateMap<GitRepo, GitRepoVm>();
-
-
-            CreateMap<MemberDto, Member>()
-                 .ForMember(x => x.Id, x => x.Ignore());
-            CreateMap<Member, MemberVm>();
-            CreateMap<MemberFilterDto, MemberFilter>();
-            CreateMap<PagedResult<Member>, PagedResultVm<MemberVm>>();
-
         }
     }
 }

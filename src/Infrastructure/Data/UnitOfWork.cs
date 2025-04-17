@@ -16,7 +16,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data
         public IMemberRepository MemberRepository { get; }
         public IApplicationDataRepository ApplicationDataRepository { get; }
         public ISquadRepository SquadRepository { get; }
-        public IDataServiceRepository DataServiceRepository { get; }
+        public IServiceDataRepository ServiceDataRepository { get; }
         public IGitRepoRepository GitRepoRepository { get; }
 
 
@@ -30,7 +30,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data
             ApplicationDataRepository = new ApplicationDataRepository(context);
             SquadRepository = new SquadRepository(context);
             GitRepoRepository = new GitRepoRepository(context);
-            DataServiceRepository = new DataServiceRepository(context);
+            ServiceDataRepository = new ServiceDataRepository(context);
         }
 
         public void BeginTransaction()

@@ -5,27 +5,27 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
-    public class DataServiceRepository(Context context) : RepositoryBase<DataService, Context>(context), IDataServiceRepository
+    public class ServiceDataRepository(Context context) : RepositoryBase<ServiceData, Context>(context), IServiceDataRepository
     {
-        public new async Task CreateAsync(DataService entity, bool saveChanges = true)
+        public new async Task CreateAsync(ServiceData entity, bool saveChanges = true)
         {
-            await Context.Set<DataService>().AddAsync(entity).ConfigureAwait(false);
+            await Context.Set<ServiceData>().AddAsync(entity).ConfigureAwait(false);
             if (saveChanges)
             {
                 await SaveChangesAsync().ConfigureAwait(false);
             }
         }
 
-        public async Task<DataService?> GetByIdAsync(int id)
+        public async Task<ServiceData?> GetByIdAsync(int id)
         {
-            return await Context.Set<DataService>().FindAsync(id).ConfigureAwait(false);
+            return await Context.Set<ServiceData>().FindAsync(id).ConfigureAwait(false);
         }
 
-        public async Task<PagedResult<DataService>> GetListAsync(DataServiceFilter serviceFilter)
+        public async Task<PagedResult<ServiceData>> GetListAsync(ServiceDataFilter serviceFilter)
         {
-            ArgumentNullException.ThrowIfNull(serviceFilter, nameof(serviceFilter));
+            serviceFilter ??= new ServiceDataFilter();
 
-            IQueryable<DataService> query = Context.Set<DataService>();
+            IQueryable<ServiceData> query = Context.Set<ServiceData>();
 
             if (!string.IsNullOrEmpty(serviceFilter.Name))
             {
@@ -36,12 +36,12 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 .ConfigureAwait(false);
         }
 
-        private static async Task<PagedResult<DataService>> GetPagedResultAsync(IQueryable<DataService> query, int page, int pageSize)
+        private static async Task<PagedResult<ServiceData>> GetPagedResultAsync(IQueryable<ServiceData> query, int page, int pageSize)
         {
             var total = await query.CountAsync().ConfigureAwait(false);
             var result = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync().ConfigureAwait(false);
 
-            return new PagedResult<DataService>
+            return new PagedResult<ServiceData>
             {
                 Total = total,
                 Result = result,
@@ -55,7 +55,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             var entity = await GetByIdAsync(id).ConfigureAwait(false);
             if (entity != null)
             {
-                Context.Set<DataService>().Remove(entity);
+                Context.Set<ServiceData>().Remove(entity);
                 if (saveChanges)
                 {
                     await SaveChangesAsync().ConfigureAwait(false);
@@ -65,14 +65,14 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         public async Task<bool> VerifyServiceExistsAsync(int id)
         {
-            var service = await Context.Set<DataService>().FirstOrDefaultAsync(a => a.Id == id).ConfigureAwait(false);
+            var service = await Context.Set<ServiceData>().FirstOrDefaultAsync(a => a.Id == id).ConfigureAwait(false);
 
             return service != null && service.Id > 0;
         }
 
-        public async Task<bool> VerifyNameAlreadyExistsAsync(string name)
+        public async Task<bool> VerifyNameExistsAsync(string name)
         {
-            return await Context.Set<DataService>().AnyAsync(a => a.Name == name).ConfigureAwait(false);
+            return await Context.Set<ServiceData>().AnyAsync(a => a.Name == name).ConfigureAwait(false);
         }
     }
 }
