@@ -3,8 +3,8 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Interfaces.Services
 {
-    public interface IDataService : IEntityServiceBase<DataService>
+    public interface IServiceData : IEntityServiceBase<ServiceData>
     {
-        Task<PagedResult<DataService>> GetListAsync(DataServiceFilter serviceFilter);
+        Task<PagedResult<ServiceData>> GetListAsync(ServiceDataFilter serviceFilter);
     }
 }

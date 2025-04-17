@@ -83,10 +83,10 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
-    <Compile Update="DataServiceResources.Designer.cs">
+    <Compile Update="ServiceDataResources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>DataServiceResources.resx</DependentUpon>
+      <DependentUpon>ServiceDataResources.resx</DependentUpon>
     </Compile>
     <Compile Update="FilterResources.Designer.cs">
       <DesignTime>True</DesignTime>
@@ -125,9 +125,9 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>AreaResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Update="DataServiceResources.resx">
+    <EmbeddedResource Update="ServiceDataResources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>DataServiceResources.Designer.cs</LastGenOutput>
+      <LastGenOutput>ServiceDataResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="FilterResources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

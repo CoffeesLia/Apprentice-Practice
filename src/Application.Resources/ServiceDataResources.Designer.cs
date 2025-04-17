@@ -22,14 +22,14 @@ namespace Stellantis.ProjectName.Application.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class DataServiceResources {
+    public class ServiceDataResources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal DataServiceResources() {
+        internal ServiceDataResources() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Stellantis.ProjectName.Application.Resources.DataServiceResources", typeof(DataServiceResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Stellantis.ProjectName.Application.Resources.ServiceDataResources", typeof(ServiceDataResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -88,6 +88,15 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Service invalid application id..
+        /// </summary>
+        public static string ServiceInvalidApplicationId {
+            get {
+                return ResourceManager.GetString("ServiceInvalidApplicationId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Service name is required..
         /// </summary>
         public static string ServiceNameIsRequired {
@@ -111,24 +120,6 @@ namespace Stellantis.ProjectName.Application.Resources {
         internal static string ServiceNotFound {
             get {
                 return ResourceManager.GetString("ServiceNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a No services found..
-        /// </summary>
-        internal static string ServicesNoFound {
-            get {
-                return ResourceManager.GetString("ServicesNoFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Operation sucess..
-        /// </summary>
-        internal static string ServiceSucess {
-            get {
-                return ResourceManager.GetString("ServiceSucess", resourceCulture);
             }
         }
     }

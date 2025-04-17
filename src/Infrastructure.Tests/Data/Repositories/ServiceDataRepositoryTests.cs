@@ -9,15 +9,15 @@ using Stellantis.ProjectName.Infrastructure.Data.Repositories;
 
 namespace Infrastructure.Tests.Data.Repositories
 {
-    public class DataServiceRepositoryTests
+    public class ServiceDataRepositoryTests
     {
         private readonly Mock<Context> _contextMock;
-        private readonly DataServiceRepository _repository;
+        private readonly ServiceDataRepository _repository;
 
-        public DataServiceRepositoryTests()
+        public ServiceDataRepositoryTests()
         {
             _contextMock = new Mock<Context>(new DbContextOptions<Context>());
-            _repository = new DataServiceRepository(_contextMock.Object);
+            _repository = new ServiceDataRepository(_contextMock.Object);
         }
 
         // Verifica se o método CreateAsync adiciona uma entidade e salva as mudanças.
@@ -25,15 +25,15 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task CreateAsyncShouldAddEntityAndSaveChanges()
         {
             // Arrange
-            var dataService = new DataService { Name = "Test Service" };
-            var dbSetMock = new Mock<DbSet<DataService>>();
-            _contextMock.Setup(c => c.Set<DataService>()).Returns(dbSetMock.Object);
+            var serviceData = new ServiceData { Name = "Test Service" };
+            var dbSetMock = new Mock<DbSet<ServiceData>>();
+            _contextMock.Setup(c => c.Set<ServiceData>()).Returns(dbSetMock.Object);
 
             // Act
-            await _repository.CreateAsync(dataService);
+            await _repository.CreateAsync(serviceData);
 
             // Assert
-            dbSetMock.Verify(s => s.AddAsync(dataService, It.IsAny<CancellationToken>()), Times.Once);
+            dbSetMock.Verify(s => s.AddAsync(serviceData, It.IsAny<CancellationToken>()), Times.Once);
             _contextMock.Verify(c => c.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
@@ -42,16 +42,16 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task DeleteAsyncShouldRemoveEntityAndSaveChanges()
         {
             // Arrange
-            var dataService = new DataService { Id = 1, Name = "Test Service" };
-            var dbSetMock = new Mock<DbSet<DataService>>();
-            dbSetMock.Setup(s => s.FindAsync(1)).ReturnsAsync(dataService);
-            _contextMock.Setup(c => c.Set<DataService>()).Returns(dbSetMock.Object);
+            var serviceData = new ServiceData { Id = 1, Name = "Test Service" };
+            var dbSetMock = new Mock<DbSet<ServiceData>>();
+            dbSetMock.Setup(s => s.FindAsync(1)).ReturnsAsync(serviceData);
+            _contextMock.Setup(c => c.Set<ServiceData>()).Returns(dbSetMock.Object);
 
             // Act
             await _repository.DeleteAsync(1);
 
             // Assert
-            dbSetMock.Verify(s => s.Remove(dataService), Times.Once);
+            dbSetMock.Verify(s => s.Remove(serviceData), Times.Once);
             _contextMock.Verify(c => c.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
@@ -60,16 +60,16 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task GetByIdAsyncShouldReturnEntity()
         {
             // Arrange
-            var dataService = new DataService { Id = 1, Name = "Test Service" };
-            var dbSetMock = new Mock<DbSet<DataService>>();
-            dbSetMock.Setup(s => s.FindAsync(1)).ReturnsAsync(dataService);
-            _contextMock.Setup(c => c.Set<DataService>()).Returns(dbSetMock.Object);
+            var serviceData = new ServiceData { Id = 1, Name = "Test Service" };
+            var dbSetMock = new Mock<DbSet<ServiceData>>();
+            dbSetMock.Setup(s => s.FindAsync(1)).ReturnsAsync(serviceData);
+            _contextMock.Setup(c => c.Set<ServiceData>()).Returns(dbSetMock.Object);
 
             // Act
             var result = await _repository.GetByIdAsync(1);
 
             // Assert
-            Assert.Equal(dataService, result);
+            Assert.Equal(serviceData, result);
         }
 
         // Verifica se o método GetListAsync retorna um resultado paginado quando o filtro corresponde.
@@ -77,16 +77,16 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task GetListAsyncShouldReturnPagedResultWhenFilterMatches()
         {
             // Arrange
-            var dataServices = new List<DataService>
+            var servicesData = new List<ServiceData>
             {
                 new() { Name = "Test Service 1" },
                 new() { Name = "Test Service 2" }
             };
 
-            var dbSetMock = CreateMockDbSet(dataServices);
-            _contextMock.Setup(c => c.Set<DataService>()).Returns(dbSetMock.Object);
+            var dbSetMock = CreateMockDbSet(servicesData);
+            _contextMock.Setup(c => c.Set<ServiceData>()).Returns(dbSetMock.Object);
 
-            var filter = new DataServiceFilter { Name = "Test", Page = 1, PageSize = 10 };
+            var filter = new ServiceDataFilter { Name = "Test", Page = 1, PageSize = 10 };
 
             // Act
             var result = await _repository.GetListAsync(filter);
@@ -101,16 +101,16 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task GetListAsyncShouldReturnEmptyResultWhenFilterDoesNotMatch()
         {
             // Arrange
-            var dataServices = new List<DataService>
+            var servicesData = new List<ServiceData>
             {
                 new() { Name = "Test Service 1" },
                 new() { Name = "Test Service 2" }
             };
 
-            var dbSetMock = CreateMockDbSet(dataServices);
-            _contextMock.Setup(c => c.Set<DataService>()).Returns(dbSetMock.Object);
+            var dbSetMock = CreateMockDbSet(servicesData);
+            _contextMock.Setup(c => c.Set<ServiceData>()).Returns(dbSetMock.Object);
 
-            var filter = new DataServiceFilter { Name = "NonExistent", Page = 1, PageSize = 10 };
+            var filter = new ServiceDataFilter { Name = "NonExistent", Page = 1, PageSize = 10 };
 
             // Act
             var result = await _repository.GetListAsync(filter);
@@ -126,13 +126,13 @@ namespace Infrastructure.Tests.Data.Repositories
         {
             // Arrange
             var Id = 1;
-            var dataServices = new List<DataService>
+            var servicesData = new List<ServiceData>
             {
                 new() { Id = Id = 1, Name = "Test Service" }
             };
 
-            var dbSetMock = CreateMockDbSet(dataServices);
-            _contextMock.Setup(c => c.Set<DataService>()).Returns(dbSetMock.Object);
+            var dbSetMock = CreateMockDbSet(servicesData);
+            _contextMock.Setup(c => c.Set<ServiceData>()).Returns(dbSetMock.Object);
 
             // Act
             var result = await _repository.VerifyServiceExistsAsync(Id);
@@ -147,10 +147,10 @@ namespace Infrastructure.Tests.Data.Repositories
         {
             // Arrange
             var Id = 1;
-            var dataServices = new List<DataService>();
+            var servicesData = new List<ServiceData>();
 
-            var dbSetMock = CreateMockDbSet(dataServices);
-            _contextMock.Setup(c => c.Set<DataService>()).Returns(dbSetMock.Object);
+            var dbSetMock = CreateMockDbSet(servicesData);
+            _contextMock.Setup(c => c.Set<ServiceData>()).Returns(dbSetMock.Object);
 
             // Act
             var result = await _repository.VerifyServiceExistsAsync(Id);
@@ -165,31 +165,31 @@ namespace Infrastructure.Tests.Data.Repositories
         {
             // Arrange
             var name = "Test Service";
-            var dataService = new DataService { Name = name };
+            var serviceData = new ServiceData { Name = name };
 
-            var dbSetMock = new Mock<DbSet<DataService>>();
-            var queryable = new List<DataService> { dataService }.AsQueryable();
+            var dbSetMock = new Mock<DbSet<ServiceData>>();
+            var queryable = new List<ServiceData> { serviceData }.AsQueryable();
 
-            dbSetMock.As<IAsyncEnumerable<DataService>>()
+            dbSetMock.As<IAsyncEnumerable<ServiceData>>()
                 .Setup(m => m.GetAsyncEnumerator(It.IsAny<CancellationToken>()))
-                .Returns(() => new TestAsyncEnumerator<DataService>(queryable.GetEnumerator()));
-            dbSetMock.As<IQueryable<DataService>>()
+                .Returns(() => new TestAsyncEnumerator<ServiceData>(queryable.GetEnumerator()));
+            dbSetMock.As<IQueryable<ServiceData>>()
                 .Setup(m => m.Provider)
-                .Returns(new TestAsyncQueryProvider<DataService>(queryable.Provider));
-            dbSetMock.As<IQueryable<DataService>>()
+                .Returns(new TestAsyncQueryProvider<ServiceData>(queryable.Provider));
+            dbSetMock.As<IQueryable<ServiceData>>()
                 .Setup(m => m.Expression)
                 .Returns(queryable.Expression);
-            dbSetMock.As<IQueryable<DataService>>()
+            dbSetMock.As<IQueryable<ServiceData>>()
                 .Setup(m => m.ElementType)
                 .Returns(queryable.ElementType);
-            dbSetMock.As<IQueryable<DataService>>()
+            dbSetMock.As<IQueryable<ServiceData>>()
                 .Setup(m => m.GetEnumerator())
                 .Returns(queryable.GetEnumerator());
 
-            _contextMock.Setup(x => x.Set<DataService>()).Returns(dbSetMock.Object);
+            _contextMock.Setup(x => x.Set<ServiceData>()).Returns(dbSetMock.Object);
 
             // Act
-            var result = await _repository.VerifyNameAlreadyExistsAsync(name);
+            var result = await _repository.VerifyNameExistsAsync(name);
 
             // Assert
             Assert.True(result);
@@ -201,17 +201,17 @@ namespace Infrastructure.Tests.Data.Repositories
         {
             // Arrange
             var name = "NonExistent Service";
-            var dataServices = new List<DataService>
+            var servicesData = new List<ServiceData>
             {
                 new() { Name = "Test Service 1" },
                 new() { Name = "Test Service 2" }
             };
 
-            var dbSetMock = CreateMockDbSet(dataServices);
-            _contextMock.Setup(c => c.Set<DataService>()).Returns(dbSetMock.Object);
+            var dbSetMock = CreateMockDbSet(servicesData);
+            _contextMock.Setup(c => c.Set<ServiceData>()).Returns(dbSetMock.Object);
 
             // Act
-            var result = await _repository.VerifyNameAlreadyExistsAsync(name);
+            var result = await _repository.VerifyNameExistsAsync(name);
 
             // Assert
             Assert.False(result);

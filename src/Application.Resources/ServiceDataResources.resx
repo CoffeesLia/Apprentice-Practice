@@ -126,6 +126,9 @@
   <data name="ServiceDescriptionLength" xml:space="preserve">
     <value>Service description cannot exceed 255 characters.</value>
   </data>
+  <data name="ServiceInvalidApplicationId" xml:space="preserve">
+    <value>Service invalid application id.</value>
+  </data>
   <data name="ServiceNameIsRequired" xml:space="preserve">
     <value>Service name is required.</value>
   </data>
@@ -134,11 +137,5 @@
   </data>
   <data name="ServiceNotFound" xml:space="preserve">
     <value>Service not found.</value>
-  </data>
-  <data name="ServicesNoFound" xml:space="preserve">
-    <value>No services found.</value>
-  </data>
-  <data name="ServiceSucess" xml:space="preserve">
-    <value>Operation sucess.</value>
   </data>
 </root>
