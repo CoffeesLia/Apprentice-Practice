@@ -22,7 +22,7 @@ namespace WebApi.Tests.Dto.Validators
             // Act & Assert
             var result = _validator.TestValidate(model);
             result.ShouldHaveValidationErrorFor(x => x.Page)
-                .WithErrorMessage("Page must be greater than zero.");
+                .WithErrorMessage("A página deve ser maior que zero.");
         }
 
         [Fact]

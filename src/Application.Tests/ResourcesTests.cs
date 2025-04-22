@@ -15,7 +15,7 @@ namespace Application.Tests
         public ResourcesTests() => LocalizerFactor = LocalizerFactorHelper.Create();
 
         [Fact]
-        public void FilterResources_AllCultures()
+        public void FilterResourcesAllCultures()
         {
             var resource = new FilterResources();
             Assert.NotNull(resource);
@@ -25,7 +25,7 @@ namespace Application.Tests
         }
 
         [Fact]
-        public void GeneralResources_AllCultures()
+        public void GeneralResourcesAllCultures()
         {
             var resource = new ServiceResources();
             Assert.NotNull(resource);
@@ -35,14 +35,14 @@ namespace Application.Tests
         }
 
         [Fact]
-        public void DataServiceResourcesAllCultures()
+        public void ServiceDataResourcesAllCultures()
         {
-            var resource = new DataServiceResources();
+            var resource = new ServiceDataResources();
             Assert.NotNull(resource);
-            DataServiceResources.Culture = CultureInfo.InvariantCulture;
-            Assert.Equal(CultureInfo.InvariantCulture, DataServiceResources.Culture);
+            ServiceDataResources.Culture = CultureInfo.InvariantCulture;
+            Assert.Equal(CultureInfo.InvariantCulture, ServiceDataResources.Culture);
 
-            VerifyAllResources<DataServiceResources>(DataServiceResources.ResourceManager);
+            VerifyAllResources<ServiceDataResources>(ServiceDataResources.ResourceManager);
         }
 
         private void VerifyAllResources<TResouces>(ResourceManager resourceManager)
@@ -68,7 +68,7 @@ namespace Application.Tests
         }
 
         [Fact]
-        public void ApplicationDataResources_AllCultures()
+        public void ApplicationDataResourcesAllCultures()
         {
             var resource = new ApplicationDataResources();
             Assert.NotNull(resource);
@@ -85,6 +85,16 @@ namespace Application.Tests
             ServiceResources.Culture = CultureInfo.InvariantCulture;
             Assert.Equal(CultureInfo.InvariantCulture, ServiceResources.Culture);
             VerifyAllResources<ServiceResources>(ServiceResources.ResourceManager);
+        }
+
+        [Fact]
+        public void GitResourceAllCultures()
+        {
+            var resource = new GitResource();
+            Assert.NotNull(resource);
+            GitResource.Culture = CultureInfo.InvariantCulture;
+            Assert.Equal(CultureInfo.InvariantCulture, GitResource.Culture);
+            VerifyAllResources<GitResource>(GitResource.ResourceManager);
         }
     }
 }
