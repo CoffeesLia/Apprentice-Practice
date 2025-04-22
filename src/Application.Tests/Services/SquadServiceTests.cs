@@ -48,12 +48,13 @@ public class SquadServiceTests
             var expectedMessage = SquadResources.SquadCannotBeNull;
 
             // Act
-            var result = await _squadService.CreateAsync(null);
+            var result = await _squadService.CreateAsync(null!); 
 
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
             Assert.Equal(expectedMessage, result.Message);
         }
+
 
 
 
@@ -262,9 +263,187 @@ public class SquadServiceTests
         var result = await _squadService.VerifySquadExistsAsync(squadId);
 
         // Assert
-        Assert.Equal(OperationStatus.Success, result.Status); // Changed from "Complete" to "Success"
+        Assert.Equal(OperationStatus.Success, result.Status); 
     }
-        
+        [Fact]
+        public void SquadDescriptionRequiredResourceReturnsCorrectValue()
+        {
+            // Arrange
+            CultureInfo.CurrentCulture = new CultureInfo("pt-BR");
+            CultureInfo.CurrentUICulture = new CultureInfo("pt-BR");
+            var expectedValue = "A descrição do Squad é obrigatória."; // Valor esperado em português
+
+            // Act
+            var actualValue = SquadResources.SquadDescriptionRequired;
+
+            // Assert
+            Assert.Equal(expectedValue, actualValue);
+        }
+
+        [Fact]
+        public void SquadCreatedSuccessfullyResourceReturnsCorrectValue()
+        {
+            // Arrange
+            CultureInfo.CurrentCulture = new CultureInfo("pt-BR");
+            CultureInfo.CurrentUICulture = new CultureInfo("pt-BR");
+            var expectedValue = "O Squad foi criado com sucesso."; // Valor esperado em português
+
+            // Act
+            var actualValue = SquadResources.SquadCreatedSuccessfully;
+
+            // Assert
+            Assert.Equal(expectedValue, actualValue);
+        }
+
+        [Fact]
+        public void NameValidateLengthResourceReturnsCorrectValue()
+        {
+            // Arrange
+            CultureInfo.CurrentCulture = new CultureInfo("pt-BR");
+            CultureInfo.CurrentUICulture = new CultureInfo("pt-BR");
+            var expectedValue = "O nome deve ter entre 3 e 50 caracteres."; 
+
+            // Act
+            var actualValue = SquadResources.NameValidateLength;
+
+            // Assert
+            Assert.Equal(expectedValue, actualValue);
+        }
+        [Fact]
+        public void ResourceCulturePropertyGetAndSetWorksCorrectly()
+        {
+            // Arrange
+            var expectedCulture = new CultureInfo("pt-BR");
+
+            // Act
+            SquadResources.Culture = expectedCulture; 
+            var actualCulture = SquadResources.Culture; 
+
+            // Assert
+            Assert.Equal(expectedCulture, actualCulture);
+        }
+
+        [Fact]
+        public void SquadResourcesConstructorCanBeInstantiated()
+        {
+            // Act
+            var instance = new SquadResources();
+
+            // Assert
+            Assert.NotNull(instance);
+        }
+        [Fact]
+        public async Task GetItemAsyncReturnsCompleteWhenSquadExists()
+        {
+            // Arrange
+            var squadId = 1;
+            var squad = new Squad { Id = squadId, Name = "Existing Squad" };
+            _squadRepositoryMock.Setup(r => r.GetByIdAsync(squadId)).ReturnsAsync(squad);
+
+            // Act
+            var result = await _squadService.GetItemAsync(squadId);
+
+            // Assert
+            Assert.Equal(OperationStatus.Success, result.Status);
+        }
+
+        [Fact]
+        public async Task GetItemAsyncReturnsNotFoundWhenSquadDoesNotExist()
+        {
+            // Arrange
+            var squadId = 1;
+            _squadRepositoryMock.Setup(r => r.GetByIdAsync(squadId)).ReturnsAsync((Squad?)null);
+
+            // Act
+            var result = await _squadService.GetItemAsync(squadId);
+
+            // Assert
+            var expectedMessage = SquadResources.SquadNotFound; 
+            Assert.Equal(OperationStatus.NotFound, result.Status);
+            Assert.Equal(expectedMessage, result.Message);
+        }
+        [Fact]
+        public async Task UpdateAsyncReturnsConflictWhenSquadIsNull()
+        {
+            // Arrange
+            var expectedMessage = SquadResources.SquadCannotBeNull;
+            Squad? squad = null;
+
+            // Act
+            var result = await _squadService.UpdateAsync(squad!);
+
+            // Assert
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal(expectedMessage, result.Message);
+        }
+
+        [Fact]
+        public async Task VerifyNameAlreadyExistsAsyncReturnsConflictWhenNameIsNullOrEmpty()
+        {
+            // Arrange
+            var expectedMessage = SquadResources.SquadCannotBeNull; 
+
+            // Act
+            var result = await _squadService.VerifyNameAlreadyExistsAsync(string.Empty);
+
+            // Assert
+            Assert.Equal(OperationStatus.Conflict, result.Status); 
+            Assert.Equal(expectedMessage, result.Message); 
+        }
+
+        [Fact]
+        public async Task VerifyNameAlreadyExistsAsyncReturnsCompleteWhenNameDoesNotExist()
+        {
+            // Arrange
+            var name = "Unique Squad Name";
+            _squadRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(name)).ReturnsAsync(false);
+
+            // Act
+            var result = await _squadService.VerifyNameAlreadyExistsAsync(name);
+
+            // Assert
+            Assert.Equal(OperationStatus.Success, result.Status); 
+            Assert.Equal(string.Empty, result.Message);
+        }
+
+        [Fact]
+        public async Task VerifySquadExistsAsyncReturnsNotFoundWhenSquadDoesNotExist()
+        {
+            // Arrange
+            var squadId = 1;
+            _squadRepositoryMock.Setup(r => r.VerifySquadExistsAsync(squadId)).ReturnsAsync(false);
+
+            // Act
+            var result = await _squadService.VerifySquadExistsAsync(squadId);
+
+            // Assert
+            var expectedMessage = SquadResources.SquadNotFound;
+            Assert.Equal(OperationStatus.NotFound, result.Status);
+            Assert.Equal(expectedMessage, result.Message); 
+        }
+        [Fact]
+        public async Task UpdateAsyncCallsBaseUpdateAsyncWhenValidationPassesAndSquadExists()
+        {
+            // Arrange
+            var squad = new Squad { Id = 1, Name = "Updated Squad" };
+            var validationResult = new ValidationResult(); 
+            var existingSquad = new Squad { Id = 1, Name = "Existing Squad" };
+
+            _squadRepositoryMock.Setup(r => r.GetByIdAsync(squad.Id)).ReturnsAsync(existingSquad); 
+            _squadRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(squad.Name)).ReturnsAsync(false); 
+            var validatorMock = new Mock<IValidator<Squad>>();
+            validatorMock.Setup(v => v.ValidateAsync(squad, default)).ReturnsAsync(validationResult); 
+
+            var squadService = new SquadService(_unitOfWorkMock.Object, LocalizerFactorHelper.Create(), validatorMock.Object);
+
+            // Act
+            var result = await squadService.UpdateAsync(squad);
+
+            // Assert
+            Assert.Equal(OperationStatus.Success, result.Status); 
+        }
+
+
 
     }
 }
