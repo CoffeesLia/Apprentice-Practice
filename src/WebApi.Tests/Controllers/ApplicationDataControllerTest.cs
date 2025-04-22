@@ -22,7 +22,7 @@ namespace WebApi.Tests.Controllers
     public class ApplicationDataControllerTest
     {
         private readonly Mock<IApplicationDataService> _serviceMock;
-        private readonly ApplicationDataControllerBase _controller;
+        private readonly ApplicationDataController _controller;
         private readonly Fixture _fixture = new();
 
         public ApplicationDataControllerTest()
@@ -31,7 +31,7 @@ namespace WebApi.Tests.Controllers
             var mapperConfiguration = new MapperConfiguration(x => { x.AddProfile<AutoMapperProfile>(); });
             var mapper = mapperConfiguration.CreateMapper();
             var localizerFactor = LocalizerFactorHelper.Create();
-            _controller = new ApplicationDataControllerBase(_serviceMock.Object, mapper, localizerFactor);
+            _controller = new ApplicationDataController(_serviceMock.Object, mapper, localizerFactor);
         }
    
         [Fact]
@@ -61,7 +61,6 @@ namespace WebApi.Tests.Controllers
                 AreaId = 1,
                 Description = "Description",
                 External = true,
-                Area = new AreaDto(),
                 ProductOwner = "Owner",
                 ConfigurationItem = "ConfigItem",
                 ResponsibleId = 1
@@ -133,7 +132,6 @@ namespace WebApi.Tests.Controllers
                 AreaId = 1,
                 Description = "Description",
                 External = true,
-                Area = new AreaDto(),
                 ProductOwner = "Owner",
                 ConfigurationItem = "ConfigItem",
                 ResponsibleId = 1

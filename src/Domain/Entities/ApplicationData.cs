@@ -11,7 +11,7 @@ namespace Stellantis.ProjectName.Domain.Entities
     {
         public string? Name { get; set; } = name;
         public int AreaId { get; set; }
-        public Area Area { get; set; } = null!;
+        public ICollection<Area> Area { get; } = [];
         public ICollection<Integration> Integration { get; } = [];
         public ICollection<Responsible> Responsibles { get; } = [];
         public int ResponsibleId { get; set; }

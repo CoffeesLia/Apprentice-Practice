@@ -140,7 +140,6 @@ namespace Application.Tests.Services
             // Arrange
             var applicationData = new ApplicationData("TestApp")
             {
-                Area = new Area("TestArea"),
                 ProductOwner = "TestOwner",
                 ConfigurationItem = "TestConfig"
             };
@@ -165,7 +164,6 @@ namespace Application.Tests.Services
             {
                 ResponsibleId = 1,
                 AreaId = 1,
-                Area = new Area("TestArea"),
                 ProductOwner = "TestOwner",
                 ConfigurationItem = "TestConfig"
             };
@@ -187,7 +185,6 @@ namespace Application.Tests.Services
             // Arrange
             var applicationData = new ApplicationData("TestApp")
             {
-                Area = new Area("TestArea"),
                 ProductOwner = "TestOwner",
                 ConfigurationItem = "TestConfig"
             };
@@ -222,7 +219,6 @@ namespace Application.Tests.Services
             {
                 ResponsibleId = 1,
                 AreaId = 1,
-                Area = new Area("TestArea"),
                 ProductOwner = "TestOwner",
                 ConfigurationItem = "TestConfig",
                 External = true
@@ -253,7 +249,6 @@ namespace Application.Tests.Services
             // Arrange
             var applicationData = new ApplicationData("TestApp")
             {
-                Area = new Area("TestArea"),
                 ProductOwner = "TestOwner",
                 ConfigurationItem = "TestConfig"
             };
@@ -353,7 +348,6 @@ namespace Application.Tests.Services
             {
                 ResponsibleId = 1,
                 AreaId = 1,
-                Area = new Area("TestArea"),
                 ProductOwner = "TestOwner",
                 ConfigurationItem = "TestConfig"
             };
