@@ -63,7 +63,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Service already exists..
         /// </summary>
-        internal static string ServiceAlreadyExists {
+        public static string ServiceAlreadyExists {
             get {
                 return ResourceManager.GetString("ServiceAlreadyExists", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Service cannot be null..
         /// </summary>
-        internal static string ServiceCannotBeNull {
+        public static string ServiceCannotBeNull {
             get {
                 return ResourceManager.GetString("ServiceCannotBeNull", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Service name must be between 3 and 50 characters..
         /// </summary>
-        internal static string ServiceNameLength {
+        public static string ServiceNameLength {
             get {
                 return ResourceManager.GetString("ServiceNameLength", resourceCulture);
             }
@@ -117,7 +117,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Service not found..
         /// </summary>
-        internal static string ServiceNotFound {
+        public static string ServiceNotFound {
             get {
                 return ResourceManager.GetString("ServiceNotFound", resourceCulture);
             }

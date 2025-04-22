@@ -142,6 +142,6 @@
     <value>Squad updated successfully.</value>
   </data>
   <data name="NameValidateLength" xml:space="preserve">
-    <value>The name must be between {3} and {50} characters long.</value>
+    <value>The name must be between 3 and 50 characters long.</value>
   </data>
 </root>
