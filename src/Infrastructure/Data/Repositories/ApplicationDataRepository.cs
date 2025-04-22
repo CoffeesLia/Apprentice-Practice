@@ -52,7 +52,9 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         public async Task<bool> IsApplicationNameUniqueAsync(string name, int? id = null)
         {
-            return await Context.Set<Area>().AnyAsync(a => a.Name == name).ConfigureAwait(false);
+            return !await Context.Set<ApplicationData>()
+                .AnyAsync(a => a.Name == name && (!id.HasValue || a.Id != id))
+                .ConfigureAwait(false);
         }
 
         public async Task<ApplicationData?> GetFullByIdAsync(int id)

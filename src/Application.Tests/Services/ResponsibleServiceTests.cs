@@ -38,6 +38,20 @@ namespace Application.Services.Tests
         }
 
         [Fact]
+        public void CulturePropertyShouldGetAndSetCorrectValue()
+        {
+            // Arrange
+            var expectedCulture = new CultureInfo("pt-BR");
+
+            // Act
+            ResponsibleResource.Culture = expectedCulture;
+            var result = ResponsibleResource.Culture;
+
+            // Assert
+            Assert.Equal(expectedCulture, result);
+        }
+
+        [Fact]
         public async Task CreateAsyncWhenValidationFails()
         {
             // Arrange

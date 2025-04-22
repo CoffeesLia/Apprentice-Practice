@@ -1,13 +1,8 @@
 ﻿namespace Stellantis.ProjectName.Domain.Entities
 {
-    public class GitRepo : EntityBase
+    public class GitRepo(string name) : EntityBase
     {
-        public GitRepo(string name)
-        {
-            Name = name;
-        }
-
-        public required string Name { get; set; }
+        public required string Name { get; set; } = name;
         public required string Description { get; set; }
         public required Uri Url { get; set; }
         public int ApplicationId { get; set; }
