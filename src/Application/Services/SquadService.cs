@@ -1,5 +1,11 @@
-﻿using FluentValidation;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
+using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models;
@@ -9,92 +15,103 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Services
 {
-    public class SquadService(ISquadRepository squadRepository, IStringLocalizer<SquadResources> localizer, IValidator<Squad> validator) : ISquadService
+    public class SquadService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<Squad> validator)
+        : EntityServiceBase<Squad>(unitOfWork, localizerFactory, validator), ISquadService
     {
-        private readonly ISquadRepository _squadRepository = squadRepository ?? throw new ArgumentNullException(nameof(squadRepository));
-        private readonly IStringLocalizer<SquadResources> _localizer = localizer;
-        private readonly IValidator<Squad> _validator = validator ?? throw new ArgumentNullException(nameof(validator));
+        private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(SquadResources));
+        protected override ISquadRepository Repository => UnitOfWork.SquadRepository;
 
-        public async Task<Squad?> GetItemAsync(int id)
-        {
-            var squad = await _squadRepository.GetByIdAsync(id).ConfigureAwait(false);
-            return squad ?? throw new KeyNotFoundException(_localizer[nameof(SquadResources.SquadNotFound)]);
-        }
-
-        public async Task<PagedResult<Squad>> GetListAsync(SquadFilter squadFilter)
-        {
-            squadFilter ??= new SquadFilter { Name = string.Empty };
-            var result = await _squadRepository.GetListAsync(squadFilter).ConfigureAwait(false);
-            if (result == null || !result.Result.Any())
-            {
-                throw new KeyNotFoundException(_localizer[nameof(SquadResources.SquadNotFound)]);
-            }
-            return result;
-        }
-
-        public async Task<OperationResult> CreateAsync(Squad squad)
+        public override async Task<OperationResult> CreateAsync(Squad squad)
         {
             if (squad == null)
             {
-                throw new ArgumentNullException(nameof(squad), _localizer[nameof(SquadResources.SquadCannotBeNull)]);
+                return OperationResult.Conflict(_localizer[nameof(SquadResources.SquadCannotBeNull)]);
             }
 
-            if (squad.Name?.Length > 50 || squad.Name?.Length < 3)
-            {
-                throw new ArgumentException(_localizer[nameof(SquadResources.NameValidateLength)]);
-            }
-
-            var validationResult = await _validator.ValidateAsync(squad).ConfigureAwait(false);
+            var validationResult = await Validator.ValidateAsync(squad).ConfigureAwait(false);
             if (!validationResult.IsValid)
             {
                 return OperationResult.InvalidData(validationResult);
             }
-            if (await _squadRepository.VerifyNameAlreadyExistsAsync(squad.Name ?? string.Empty).ConfigureAwait(false))
+
+            if (await Repository.VerifyNameAlreadyExistsAsync(squad.Name ?? string.Empty).ConfigureAwait(false))
             {
                 return OperationResult.Conflict(_localizer[nameof(SquadResources.SquadNameAlreadyExists)]);
             }
-            await _squadRepository.CreateAsync(squad).ConfigureAwait(false);
-            return OperationResult.Complete();
+            return await base.CreateAsync(squad).ConfigureAwait(false);
         }
-
-        public async Task<OperationResult> UpdateAsync(Squad squad)
+        public override async Task<OperationResult> UpdateAsync(Squad squad)
         {
-            await _squadRepository.UpdateAsync(squad).ConfigureAwait(false);
-            return OperationResult.Complete();
-        }
+            if (squad == null)
+            {
+                return OperationResult.Conflict(_localizer[nameof(SquadResources.SquadCannotBeNull)]);
+            }
 
-        public async Task<OperationResult> DeleteAsync(int id)
-        {
-            if (!await _squadRepository.VerifySquadExistsAsync(id).ConfigureAwait(false))
+            var validationResult = await Validator.ValidateAsync(squad).ConfigureAwait(false);
+            if (!validationResult.IsValid)
+            {
+                return OperationResult.InvalidData(validationResult);
+            }
+
+            var existingService = await Repository.GetByIdAsync(squad.Id).ConfigureAwait(false);
+            if (existingService == null)
             {
                 return OperationResult.NotFound(_localizer[nameof(SquadResources.SquadNotFound)]);
             }
-            await _squadRepository.DeleteAsync(id).ConfigureAwait(false);
+
+            if (await Repository.VerifyNameAlreadyExistsAsync(squad.Name).ConfigureAwait(false))
+            {
+                return OperationResult.Conflict(_localizer[nameof(SquadResources.SquadNameAlreadyExists)]);
+            }
+            return await base.UpdateAsync(squad).ConfigureAwait(false);
+        }
+
+        public override async Task<OperationResult> DeleteAsync(int id)
+        {
+            if (!await Repository.VerifySquadExistsAsync(id).ConfigureAwait(false))
+            {
+                return OperationResult.NotFound(_localizer[nameof(SquadResources.SquadNotFound)]);
+            }
+
+            await Repository.DeleteAsync(id, true).ConfigureAwait(false); // Certifique-se de que o repositório está configurado para deletar
             return OperationResult.Complete();
         }
 
-        public async Task<bool> VerifySquadExistsAsync(int id)
+
+        public async Task<PagedResult<Squad>> GetListAsync(SquadFilter squadFilter)
         {
-            if (await _squadRepository.VerifySquadExistsAsync(id).ConfigureAwait(false))
+            squadFilter ??= new SquadFilter();
+            return await Repository.GetListAsync(squadFilter).ConfigureAwait(false);
+        }
+        public new async Task<OperationResult> GetItemAsync(int id)
+        {
+            var squad = await Repository.GetByIdAsync(id).ConfigureAwait(false);
+            return squad != null
+               ? OperationResult.Complete()
+               : OperationResult.NotFound(_localizer[nameof(SquadResources.SquadNotFound)]);
+        }
+        public async Task<OperationResult> VerifySquadExistsAsync(int id)
+        {
+            if (await Repository.VerifySquadExistsAsync(id).ConfigureAwait(false))
             {
-                throw new ArgumentException(_localizer[nameof(SquadResources.SquadNameAlreadyExists)]);
+                return OperationResult.Complete(); 
             }
-            return false;
+            return OperationResult.NotFound(_localizer[nameof(SquadResources.SquadNotFound)]);
         }
 
-        public async Task<bool> VerifyNameAlreadyExistsAsync(string name)
+
+        public async Task<OperationResult> VerifyNameAlreadyExistsAsync(string name)
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw new ArgumentException(_localizer[nameof(SquadResources.SquadCannotBeNull)]);
+                return OperationResult.Conflict(_localizer[nameof(SquadResources.SquadCannotBeNull)]);
             }
 
-            if (await _squadRepository.VerifyNameAlreadyExistsAsync(name).ConfigureAwait(false))
+            if (await Repository.VerifyNameAlreadyExistsAsync(name).ConfigureAwait(false))
             {
-                throw new ArgumentException(_localizer[nameof(SquadResources.SquadNameAlreadyExists)]);
+                return OperationResult.Conflict(_localizer[nameof(SquadResources.SquadNameAlreadyExists)]);
             }
-            return false;
+            return OperationResult.Complete();
         }
-
     }
 }
