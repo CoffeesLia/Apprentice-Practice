@@ -61,7 +61,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a The name must be between {3} and {50} characters long..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a The name must be between 3 and 50 characters long..
         /// </summary>
         public static string NameValidateLength {
             get {

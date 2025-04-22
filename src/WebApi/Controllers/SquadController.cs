@@ -12,7 +12,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    internal class SquadController(ISquadService squadService, IMapper mapper, IStringLocalizerFactory localizerFactory)
+    public class SquadController(ISquadService squadService, IMapper mapper, IStringLocalizerFactory localizerFactory)
         : EntityControllerBase<Squad, SquadDto>(squadService, mapper, localizerFactory)
     {
         private readonly ISquadService _squadService = squadService;

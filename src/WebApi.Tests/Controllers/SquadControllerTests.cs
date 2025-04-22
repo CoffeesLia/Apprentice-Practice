@@ -2,18 +2,18 @@
 using AutoMapper;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Controllers;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.Mapper;
 using Stellantis.ProjectName.WebApi.ViewModels;
-using Stellantis.ProjectName.Application.Resources; 
+using WebApi.Tests.Helpers;
 
 namespace WebApi.Tests.Controllers
 {
@@ -22,16 +22,15 @@ namespace WebApi.Tests.Controllers
         private readonly Mock<ISquadService> _squadServiceMock;
         private readonly SquadController _controller;
         private readonly Fixture _fixture = new();
-        private readonly Mock<IStringLocalizer<SquadResources>> _localizerMock;
-
+        private readonly Mock<IMapper> _mapperMock; // Add this line
         public SquadControllerTests()
         {
-            _squadServiceMock = new Mock<ISquadService>();
             var mapperConfiguration = new MapperConfiguration(x => { x.AddProfile<AutoMapperProfile>(); });
+            _squadServiceMock = new Mock<ISquadService>();
             var mapper = mapperConfiguration.CreateMapper();
-            var localizerFactoryMock = new Mock<IStringLocalizerFactory>(); 
-            _localizerMock = new Mock<IStringLocalizer<SquadResources>>();
-            _controller = new SquadController(_squadServiceMock.Object, mapper, localizerFactoryMock.Object);
+            var localizerFactory = LocalizerFactorHelper.Create();
+            _controller = new SquadController(_squadServiceMock.Object, mapper, localizerFactory);
+            _mapperMock = new Mock<IMapper>(); // Add this line
         }
 
         [Fact]
@@ -39,7 +38,13 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             var squadDto = _fixture.Create<SquadDto>();
-            _squadServiceMock.Setup(s => s.CreateAsync(It.IsAny<Squad>())).ReturnsAsync(OperationResult.Complete("Success"));
+            var operationResult = OperationResult.Complete(); // Add this line
+            _squadServiceMock.Setup(s => s.CreateAsync(It.IsAny<Squad>())).ReturnsAsync(operationResult);
+
+            _mapperMock.Setup(m => m.Map<Squad>(It.IsAny<SquadDto>()))
+                .Returns(new Squad());
+            _squadServiceMock.Setup(s => s.CreateAsync(It.IsAny<Squad>()))
+                .ReturnsAsync(operationResult);
 
             // Act
             var result = await _controller.CreateAsync(squadDto);
@@ -58,17 +63,12 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             var squadDto = _fixture.Create<SquadDto>();
-            var conflictMessage = new LocalizedString("Conflict", "Squad already exists");
-            var invalidDataMessage = new LocalizedString("InvalidData", "Name is required");
-
-            _localizerMock.Setup(l => l["Conflict"]).Returns(conflictMessage);
-            _localizerMock.Setup(l => l["InvalidData"]).Returns(invalidDataMessage);
 
             OperationResult operationResult = status switch
             {
-                OperationStatus.Conflict => OperationResult.Conflict(_localizerMock.Object["Conflict"].Value),
+                OperationStatus.Conflict => OperationResult.Conflict(SquadResources.SquadNameAlreadyExists),
                 OperationStatus.InvalidData => OperationResult.InvalidData(new ValidationResult(
-                new List<ValidationFailure> { new ValidationFailure("Name", _localizerMock.Object["InvalidData"].Value) })),
+                new List<ValidationFailure> { new ValidationFailure("Name", SquadResources.SquadNameRequired) })),
                 _ => throw new NotImplementedException()
             };
 
@@ -86,7 +86,13 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             var squadDto = _fixture.Create<SquadDto>();
-            _squadServiceMock.Setup(s => s.UpdateAsync(It.IsAny<Squad>())).ReturnsAsync(OperationResult.Complete("Success"));
+            var operationResult = OperationResult.Complete(SquadResources.SquadUpdatedSuccessfully); // Add this line
+            _squadServiceMock.Setup(s => s.UpdateAsync(It.IsAny<Squad>())).ReturnsAsync(operationResult);
+
+            _mapperMock.Setup(m => m.Map<Squad>(It.IsAny<SquadDto>()))
+                .Returns(new Squad());
+            _squadServiceMock.Setup(s => s.UpdateAsync(It.IsAny<Squad>()))
+                .ReturnsAsync(operationResult);
 
             // Act
             var result = await _controller.UpdateAsync(squadDto.Id, squadDto);
@@ -106,20 +112,13 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             var squadDto = _fixture.Create<SquadDto>();
-            var conflictMessage = new LocalizedString("Conflict", "Squad conflict occurred");
-            var notFoundMessage = new LocalizedString("NotFound", "Squad not found");
-            var invalidDataMessage = new LocalizedString("InvalidData", "Invalid name format");
-
-            _localizerMock.Setup(l => l["Conflict"]).Returns(conflictMessage);
-            _localizerMock.Setup(l => l["NotFound"]).Returns(notFoundMessage);
-            _localizerMock.Setup(l => l["InvalidData"]).Returns(invalidDataMessage);
 
             OperationResult operationResult = status switch
             {
-                OperationStatus.Conflict => OperationResult.Conflict(_localizerMock.Object["Conflict"].Value),
-                OperationStatus.NotFound => OperationResult.NotFound(_localizerMock.Object["NotFound"].Value),
+                OperationStatus.Conflict => OperationResult.Conflict(SquadResources.SquadNameAlreadyExists),
+                OperationStatus.NotFound => OperationResult.NotFound(SquadResources.SquadNotFound),
                 OperationStatus.InvalidData => OperationResult.InvalidData(new ValidationResult(
-                new List<ValidationFailure> { new ValidationFailure("Name", _localizerMock.Object["InvalidData"].Value) })),
+                new List<ValidationFailure> { new ValidationFailure("Name", SquadResources.SquadNameRequired) })),
                 _ => throw new NotImplementedException()
             };
 
@@ -197,7 +196,7 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             var squadId = _fixture.Create<int>();
-            _squadServiceMock.Setup(s => s.DeleteAsync(squadId)).ReturnsAsync(OperationResult.Complete("Success"));
+            _squadServiceMock.Setup(s => s.DeleteAsync(squadId)).ReturnsAsync(OperationResult.Complete(SquadResources.SquadSuccessfullyDeleted));
 
             // Act
             var result = await _controller.DeleteAsync(squadId);
@@ -216,16 +215,11 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             var squadId = _fixture.Create<int>();
-            var conflictMessage = new LocalizedString("Conflict", "Cannot delete squad");
-            var notFoundMessage = new LocalizedString("NotFound", "Squad not found");
-
-            _localizerMock.Setup(l => l["Conflict"]).Returns(conflictMessage);
-            _localizerMock.Setup(l => l["NotFound"]).Returns(notFoundMessage);
 
             OperationResult operationResult = status switch
             {
-                OperationStatus.Conflict => OperationResult.Conflict(_localizerMock.Object["Conflict"].Value),
-                OperationStatus.NotFound => OperationResult.NotFound(_localizerMock.Object["NotFound"].Value),
+                OperationStatus.Conflict => OperationResult.Conflict(SquadResources.SquadNameAlreadyExists),
+                OperationStatus.NotFound => OperationResult.NotFound(SquadResources.SquadNotFound),
                 _ => throw new NotImplementedException()
             };
 
@@ -237,16 +231,14 @@ namespace WebApi.Tests.Controllers
             // Assert
             Assert.IsType(expectedResultType, result);
         }
-
         [Fact]
         public void SquadVmShouldHaveNameProperty()
         {
             // Arrange
-            var squadVm = new SquadVm
-            {
-                // Act
-                Name = "Test Squad"
-            };
+            var squadVm = new SquadVm();
+
+            // Act
+            squadVm.Name = "Test Squad";
 
             // Assert
             Assert.Equal("Test Squad", squadVm.Name);

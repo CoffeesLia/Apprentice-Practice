@@ -65,8 +65,21 @@ namespace Stellantis.ProjectName.WebApi.Mapper
             CreateMap<PagedResult<ServiceData>, PagedResultVm<ServiceDataVm>>();
 
             CreateMap<SquadDto, Squad>()
-                .ForMember(x => x.Id, x => x.Ignore());
-            CreateMap<Squad, SquadDto>();
+     .ForMember(x => x.Id, x => x.Ignore()) // Ignorar o ID porque ele é gerado pelo banco
+     .ForMember(x => x.Description, opt => opt.MapFrom(src => src.Description)) // Mapear Description
+     .ForMember(x => x.Name, opt => opt.MapFrom(src => src.Name)); // Mapear Name
+
+            CreateMap<PagedResult<Squad>, PagedResultVm<SquadVm>>();
+
+            CreateMap<Squad, SquadVm>()
+                            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
+
+            CreateMap<SquadFilterDto, SquadFilter>()
+              .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+              .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+              .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
 
             CreateMap<GitRepoDto, GitRepo>()
                 .ForMember(x => x.Id, x => x.Ignore())
