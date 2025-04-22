@@ -2,7 +2,7 @@
 
 namespace Stellantis.ProjectName.WebApi.Dto
 {
-    internal class GitRepoDto
+    public class GitRepoDto
     {
         public required string Name { get; set; }
         public required string Description { get; set; }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
@@ -11,12 +12,8 @@ using Stellantis.ProjectName.WebApi.ViewModels;
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [Route("api/GitRepos")]
-    internal sealed class GitRepoControllerBase : EntityControllerBase<GitRepo, GitRepoDto>
+    public sealed class GitRepoControllerBase(GitRepoService service, IMapper mapper, IStringLocalizerFactory localizerFactory) : EntityControllerBase<GitRepo, GitRepoDto>(service, mapper, localizerFactory)
     {
-        internal GitRepoControllerBase(IGitRepoService service, IMapper mapper, IStringLocalizerFactory localizerFactory)
-            : base(service, mapper, localizerFactory)
-        {
-        }
 
         protected override IGitRepoService Service => (IGitRepoService)base.Service;
 
