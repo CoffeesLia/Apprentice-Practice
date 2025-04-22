@@ -1,18 +1,18 @@
-﻿using AutoFixture;
+﻿using System.Globalization;
+using Application.Tests.Helpers;
+using AutoFixture;
+using FluentValidation;
+using FluentValidation.Results;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Application.Validators;
 using Stellantis.ProjectName.Domain.Entities;
-using System.Globalization;
 using Xunit;
-using Application.Tests.Helpers;
-using Stellantis.ProjectName.Application.Resources;
-using FluentValidation.Results;
-using FluentValidation;
 
 namespace Application.Tests.Services
 {
@@ -63,7 +63,7 @@ namespace Application.Tests.Services
 
             var validationResult = new ValidationResult(
             [
-                new ValidationFailure("Name", GitResource.NameIsRequired) 
+                new ValidationFailure("Name", GitResource.NameIsRequired)
             ]);
 
             var validatorMock = new Mock<IValidator<GitRepo>>();

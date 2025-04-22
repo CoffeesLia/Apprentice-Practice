@@ -27,7 +27,7 @@ namespace Stellantis.ProjectName.Application.Services
             {
                 return OperationResult.InvalidData(validationResult);
             }
- 
+
             if (await Repository.VerifyUrlAlreadyExistsAsync(item.Url).ConfigureAwait(false))
             {
                 throw new InvalidOperationException(Localizer[nameof(GitResource.ExistentRepositoryUrl)]);
