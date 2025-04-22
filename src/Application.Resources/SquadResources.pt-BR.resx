@@ -136,10 +136,10 @@
     <value>Nenhum squad encontrado.</value>
   </data>
   <data name="SquadSuccessfullyDeleted" xml:space="preserve">
-    <value>Squad excluído com sucesso.</value>
+    <value>Squad apagado com sucesso.</value>
   </data>
   <data name="SquadUpdatedSuccessfully" xml:space="preserve">
-    <value>Squad atualizado com sucesso.</value>
+    <value>Squad criado com sucesso.</value>
   </data>
   <data name="NameValidateLength" xml:space="preserve">
     <value>O nome deve ter entre 3 e 50 caracteres.</value>
