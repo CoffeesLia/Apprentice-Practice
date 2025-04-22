@@ -243,18 +243,6 @@ namespace WebApi.Tests.Controllers
             // Assert
             Assert.Equal("Test Squad", squadVm.Name);
         }
-        [Fact]
-        public void SquadVmShouldHaveNameProperty()
-        {
-            // Arrange
-            var squadVm = new SquadVm();
-
-            // Act
-            squadVm.Name = "Test Squad";
-
-            // Assert
-            Assert.Equal("Test Squad", squadVm.Name);
-        }
 
         [Fact]
         public void SquadDtoShouldSetAndGetPropertiesCorrectly()

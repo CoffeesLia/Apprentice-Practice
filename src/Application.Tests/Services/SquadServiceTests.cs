@@ -112,14 +112,13 @@ public class SquadServiceTests
 
 
         [Fact]
-        // Testa se o método UpdateAsync retorna não encontrado quando o Squad não existe
         public async Task UpdateAsyncReturnsNotFoundWhenSquadDoesNotExist()
         {
             // Arrange
             var squad = new Squad { Id = 1, Name = "Updated Squad" };
-            var validatorMock = new Mock<IValidator<Squad>>(); // Declare and initialize the validator mock
+            var validatorMock = new Mock<IValidator<Squad>>(); // Mock do validador
             validatorMock.Setup(v => v.ValidateAsync(squad, default)).ReturnsAsync(new ValidationResult());
-            _squadRepositoryMock.Setup(r => r.GetByIdAsync(squad.Id)).ReturnsAsync((Squad?)null); // Use nullable type
+            _squadRepositoryMock.Setup(r => r.GetByIdAsync(squad.Id)).ReturnsAsync((Squad?)null); // Retorna null para simular que o Squad não existe
 
             var squadService = new SquadService(_unitOfWorkMock.Object, LocalizerFactorHelper.Create(), validatorMock.Object);
 
@@ -127,9 +126,11 @@ public class SquadServiceTests
             var result = await squadService.UpdateAsync(squad);
 
             // Assert
+            var expectedMessage = SquadResources.SquadNotFound; // Use o valor localizado real
             Assert.Equal(OperationStatus.NotFound, result.Status);
-            Assert.Equal(nameof(SquadResources.SquadNotFound), result.Message);
+            Assert.Equal(expectedMessage, result.Message);
         }
+
 
 
         [Fact]
@@ -153,7 +154,6 @@ public class SquadServiceTests
 
 
         [Fact]
-        // Testa se o método UpdateAsync retorna conflito quando o nome do Squad já existe
         public async Task UpdateAsyncReturnsConflictWhenNameAlreadyExists()
         {
             // Arrange
@@ -169,43 +169,49 @@ public class SquadServiceTests
             var result = await squadService.UpdateAsync(squad);
 
             // Assert
+            var expectedMessage = SquadResources.SquadNameAlreadyExists; // Use o valor localizado real
             Assert.Equal(OperationStatus.Conflict, result.Status);
-            Assert.Equal(nameof(SquadResources.SquadNameAlreadyExists), result.Message);
+            Assert.Equal(expectedMessage, result.Message);
+        }
+
+
+
+        [Fact]
+        public async Task DeleteAsyncReturnsNotFoundWhenSquadDoesNotExist()
+        {
+            // Arrange
+            var squadId = 1;
+            _squadRepositoryMock.Setup(r => r.VerifySquadExistsAsync(squadId)).ReturnsAsync(false);
+
+            // Act
+            var result = await _squadService.DeleteAsync(squadId);
+
+            // Assert
+            var expectedMessage = SquadResources.SquadNotFound; // Use o valor localizado real
+            Assert.Equal(OperationStatus.NotFound, result.Status);
+            Assert.Equal(expectedMessage, result.Message);
         }
 
 
         [Fact]
-    // Testa se o método DeleteAsync retorna não encontrado quando o Squad não existe
-    public async Task DeleteAsyncReturnsNotFoundWhenSquadDoesNotExist()
-    {
-        // Arrange
-        var squadId = 1;
-        _squadRepositoryMock.Setup(r => r.VerifySquadExistsAsync(squadId)).ReturnsAsync(false);
+        public async Task DeleteAsyncReturnsSuccessWhenSquadIsDeleted()
+        {
+            // Arrange
+            var squadId = 1;
+            _squadRepositoryMock.Setup(r => r.VerifySquadExistsAsync(squadId)).ReturnsAsync(true); // Simula que o Squad existe
+            _squadRepositoryMock.Setup(r => r.DeleteAsync(squadId, true)).Returns(Task.CompletedTask); // Simula a exclusão bem-sucedida
 
-        // Act
-        var result = await _squadService.DeleteAsync(squadId);
+            // Act
+            var result = await _squadService.DeleteAsync(squadId);
 
-        // Assert
-        Assert.Equal(OperationStatus.NotFound, result.Status);
-        Assert.Equal(nameof(SquadResources.SquadNotFound), result.Message);
-    }
+            // Assert
+            Assert.Equal(OperationStatus.Success, result.Status);
+        }
 
-    [Fact]
-    // Testa se o método DeleteAsync retorna sucesso quando o Squad é deletado
-    public async Task DeleteAsyncReturnsSuccessWhenSquadIsDeleted()
-    {
-        // Arrange
-        var squadId = 1;
-        _squadRepositoryMock.Setup(r => r.VerifySquadExistsAsync(squadId)).ReturnsAsync(true);
 
-        // Act
-        var result = await _squadService.DeleteAsync(squadId);
 
-        // Assert
-        Assert.Equal(OperationStatus.Success, result.Status);
-    }
 
-    [Fact]
+        [Fact]
     // Testa se o método GetListAsync retorna um resultado paginado
     public async Task GetListAsyncReturnsPagedResult()
     {
@@ -228,23 +234,24 @@ public class SquadServiceTests
         Assert.Single(result.Result);
     }
 
-    [Fact]
-    // Testa se o método VerifyNameAlreadyExistsAsync retorna conflito quando o nome já existe
-    public async Task VerifyNameAlreadyExistsAsyncReturnsConflictWhenNameExists()
-    {
-        // Arrange
-        var name = "Existing Squad";
-        _squadRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(name)).ReturnsAsync(true);
+        [Fact]
+        public async Task VerifyNameAlreadyExistsAsyncReturnsConflictWhenNameExists()
+        {
+            // Arrange
+            var name = "Existing Squad";
+            _squadRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(name)).ReturnsAsync(true);
 
-        // Act
-        var result = await _squadService.VerifyNameAlreadyExistsAsync(name);
+            // Act
+            var result = await _squadService.VerifyNameAlreadyExistsAsync(name);
 
-        // Assert
-        Assert.Equal(OperationStatus.Conflict, result.Status);
-        Assert.Equal(nameof(SquadResources.SquadNameAlreadyExists), result.Message);
-    }
+            // Assert
+            var expectedMessage = SquadResources.SquadNameAlreadyExists; // Use o valor localizado real
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal(expectedMessage, result.Message);
+        }
 
-    [Fact]
+
+        [Fact]
     public async Task VerifySquadExistsAsyncReturnsSuccessWhenSquadExists()
     {
         // Arrange
