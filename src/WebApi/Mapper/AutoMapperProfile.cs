@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Dto;
@@ -14,7 +14,7 @@ namespace Stellantis.ProjectName.WebApi.Mapper
             CreateMap(typeof(PagedResult<>), typeof(PagedResultVm<>));
             CreateMap<ApplicationDataDto, ApplicationData>()
                 .ForMember(x => x.Id, x => x.Ignore())
-            .ForMember(dest => dest.Area, opt => opt.MapFrom(src => src.Area))
+                .ForMember(x =>x.Area, opt => opt.Ignore())
                 .ForMember(x => x.Integration, opt => opt.Ignore())
                 .ForMember(x => x.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(x => x.ProductOwner, opt => opt.MapFrom(src => src.ProductOwner))
@@ -42,12 +42,15 @@ namespace Stellantis.ProjectName.WebApi.Mapper
             CreateMap<Area, AreaVm>()
                 .ForMember(x => x.Applications, x => x.Ignore());
             CreateMap<AreaFilterDto, AreaFilter>();
-    
+
             CreateMap<ResponsibleDto, Responsible>()
-                .ForMember(x => x.Id, x => x.Ignore())
-                .ForMember(x => x.AreaId, opt => opt.MapFrom(src => src.AreaId));
+            .ForMember(x => x.Id, x => x.Ignore())
+            .ForMember(x => x.AreaId, opt => opt.MapFrom(src => src.AreaId))
+            .ForMember(x => x.Area, opt => opt.Ignore());
             CreateMap<Responsible, ResponsibleVm>()
                 .ForMember(dest => dest.Area, opt => opt.MapFrom(src => src.Area));
+
+
             CreateMap<ResponsibleFilterDto, ResponsibleFilter>();
 
             CreateMap<ServiceDataDto, ServiceData>()
@@ -63,6 +66,7 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
             CreateMap<PagedResult<ServiceData>, PagedResultVm<ServiceDataVm>>();
+
 
             CreateMap<SquadDto, Squad>()
      .ForMember(x => x.Id, x => x.Ignore()) // Ignorar o ID porque ele é gerado pelo banco

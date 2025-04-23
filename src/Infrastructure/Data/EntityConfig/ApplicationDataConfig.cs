@@ -22,10 +22,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
             builder.Property(ad => ad.AreaId)
                 .IsRequired();
 
-            builder.HasOne(ad => ad.Area)
-                .WithMany(a => a.Applications)
-                .HasForeignKey(ad => ad.AreaId)
-                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
