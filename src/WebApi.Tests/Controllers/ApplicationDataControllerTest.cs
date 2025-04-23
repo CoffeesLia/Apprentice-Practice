@@ -56,7 +56,6 @@ namespace WebApi.Tests.Controllers
             // Arrange
             var applicationDataDto = new ApplicationDataDto
             {
-                Id = 1,
                 Name = "Valid Name",
                 AreaId = 1,
                 Description = "Description",
@@ -127,7 +126,6 @@ namespace WebApi.Tests.Controllers
             // Arrange
             var applicationDataDto = new ApplicationDataDto
             {
-                Id = 1,
                 Name = "Valid Name",
                 AreaId = 1,
                 Description = "Description",
