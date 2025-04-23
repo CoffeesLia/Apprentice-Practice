@@ -16,22 +16,22 @@ using System.Collections.ObjectModel;
 
 namespace WebApi.Tests.Controllers
 {
-    public class AreaControllerBaseTests
+    public class AreaControllerTests
     {
         private readonly Mock<IAreaService> _serviceMock;
         private readonly Mock<IMapper> _mapperMock;
         private readonly Mock<IStringLocalizerFactory> _localizerFactoryMock;   
-        private readonly AreaControllerBase _controller;
+        private readonly AreaController _controller;
         private readonly Fixture _fixture;
 
-        public AreaControllerBaseTests()
+        public AreaControllerTests()
         {
             _serviceMock = new Mock<IAreaService>();
             _mapperMock = new Mock<IMapper>();
             _localizerFactoryMock = new Mock<IStringLocalizerFactory>();
             _fixture = new Fixture();
 
-            _controller = new AreaControllerBase(_serviceMock.Object, _mapperMock.Object, _localizerFactoryMock.Object);
+            _controller = new AreaController(_serviceMock.Object, _mapperMock.Object, _localizerFactoryMock.Object);
         }
 
         [Fact]
