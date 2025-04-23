@@ -121,10 +121,10 @@
     <value>Squad não pode ser nulo.</value>
   </data>
   <data name="SquadCreatedSuccessfully" xml:space="preserve">
-    <value>Squad criado com sucesso.</value>
+    <value>O Squad foi criado com sucesso.</value>
   </data>
   <data name="SquadDescriptionRequired" xml:space="preserve">
-    <value>Descrição do squad é obrigatória</value>
+    <value>A descrição do Squad é obrigatória.</value>
   </data>
   <data name="SquadNameAlreadyExists" xml:space="preserve">
     <value>Squad com esse nome já existe.</value>
