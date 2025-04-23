@@ -45,13 +45,18 @@ public class SquadServiceTests
         public async Task CreateAsyncReturnsConflictWhenSquadIsNull()
         {
             // Arrange
-            var expectedMessage = SquadResources.SquadCannotBeNull;
+            CultureInfo.CurrentCulture = new CultureInfo("pt-BR");
+            CultureInfo.CurrentUICulture = new CultureInfo("pt-BR");
+
+            var localizerFactory = LocalizerFactorHelper.Create();
+            var localizer = localizerFactory.Create(typeof(SquadResources));
+            var expectedMessage = localizer[nameof(SquadResources.SquadCannotBeNull)]; // Use a mensagem localizada
 
             // Act
             var result = await _squadService.CreateAsync(null!);
 
             // Assert
-            Assert.Equal(expectedMessage, result.Message); // Fix: Ensure the expected message matches the localized resource
+            Assert.Equal(expectedMessage, result.Message); // Compare com a mensagem localizada
             Assert.Equal(OperationStatus.Conflict, result.Status);
         }
 
@@ -98,11 +103,15 @@ public class SquadServiceTests
 
 
         [Fact]
-        // Testa se o método CreateAsync retorna sucesso quando um Squad válido é criado
         public async Task CreateAsyncReturnsSuccessWhenValidSquadIsCreated()
         {
             // Arrange
-            var squad = new Squad { Name = "New Squad" };
+            var squad = new Squad
+            {
+                Name = "Valid Squad Name", // Nome válido que atende aos critérios de validação
+                Description = "Valid Squad Description" // Descrição válida
+            };
+
             _squadRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(squad.Name)).ReturnsAsync(false);
 
             // Act
@@ -111,6 +120,7 @@ public class SquadServiceTests
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
         }
+
 
 
         [Fact]
@@ -190,17 +200,23 @@ public class SquadServiceTests
         public async Task DeleteAsyncReturnsNotFoundWhenSquadDoesNotExist()
         {
             // Arrange
-            var squadId = 1;
-            _squadRepositoryMock.Setup(r => r.VerifySquadExistsAsync(squadId)).ReturnsAsync(false);
-            var expectedMessage = SquadResources.SquadNotFound; // Ensure the localized resource is used
+            CultureInfo.CurrentCulture = new CultureInfo("pt-BR");
+            CultureInfo.CurrentUICulture = new CultureInfo("pt-BR");
+
+            var localizerFactory = LocalizerFactorHelper.Create();
+            var localizer = localizerFactory.Create(typeof(SquadResources));
+            var expectedMessage = localizer[nameof(SquadResources.SquadNotFound)]; // Use a mensagem localizada
+
+            _squadRepositoryMock.Setup(r => r.VerifySquadExistsAsync(It.IsAny<int>())).ReturnsAsync(false);
 
             // Act
-            var result = await _squadService.DeleteAsync(squadId);
+            var result = await _squadService.DeleteAsync(1);
 
             // Assert
-            Assert.Equal(expectedMessage, result.Message); // Fix: Use the localized resource for comparison
+            Assert.Equal(expectedMessage, result.Message); // Compare com a mensagem localizada
             Assert.Equal(OperationStatus.NotFound, result.Status);
         }
+
 
 
 
@@ -367,31 +383,43 @@ public class SquadServiceTests
         public async Task GetItemAsyncReturnsNotFoundWhenSquadDoesNotExist()
         {
             // Arrange
-            var squadId = 1;
-            _squadRepositoryMock.Setup(r => r.GetByIdAsync(squadId)).ReturnsAsync((Squad?)null);
-            var expectedMessage = SquadResources.SquadNotFound; // Ensure the localized resource is used
+            CultureInfo.CurrentCulture = new CultureInfo("pt-BR");
+            CultureInfo.CurrentUICulture = new CultureInfo("pt-BR");
+
+            var localizerFactory = LocalizerFactorHelper.Create();
+            var localizer = localizerFactory.Create(typeof(SquadResources));
+            var expectedMessage = localizer[nameof(SquadResources.SquadNotFound)]; // Use a mensagem localizada
+
+            _squadRepositoryMock.Setup(r => r.GetByIdAsync(It.IsAny<int>())).ReturnsAsync((Squad?)null);
 
             // Act
-            var result = await _squadService.GetItemAsync(squadId);
+            var result = await _squadService.GetItemAsync(1);
 
             // Assert
-            Assert.Equal(expectedMessage, result.Message); // Fix: Use the localized resource for comparison
+            Assert.Equal(expectedMessage, result.Message); // Compare com a mensagem localizada
             Assert.Equal(OperationStatus.NotFound, result.Status);
         }
+
 
         [Fact]
         public async Task UpdateAsyncReturnsConflictWhenSquadIsNull()
         {
             // Arrange
-            var expectedMessage = SquadResources.SquadCannotBeNull; // Ensure the localized resource is used
+            CultureInfo.CurrentCulture = new CultureInfo("pt-BR");
+            CultureInfo.CurrentUICulture = new CultureInfo("pt-BR");
+
+            var localizerFactory = LocalizerFactorHelper.Create();
+            var localizer = localizerFactory.Create(typeof(SquadResources));
+            var expectedMessage = localizer[nameof(SquadResources.SquadCannotBeNull)]; // Use a mensagem localizada
 
             // Act
             var result = await _squadService.UpdateAsync(null!);
 
             // Assert
-            Assert.Equal(expectedMessage, result.Message); // Fix: Compare with the localized resource
+            Assert.Equal(expectedMessage, result.Message); // Compare com a mensagem localizada
             Assert.Equal(OperationStatus.Conflict, result.Status);
         }
+
 
 
 

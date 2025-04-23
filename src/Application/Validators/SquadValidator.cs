@@ -16,7 +16,7 @@ namespace Stellantis.ProjectName.Application.Validators
             ArgumentNullException.ThrowIfNull(localizerFactory);
             var localizer = localizerFactory.Create(typeof(SquadResources));
 
-           
+            
             RuleFor(x => x.Name)
                 .NotEmpty()
                 .WithMessage(localizer[nameof(SquadResources.SquadNameRequired)]) 
@@ -29,7 +29,7 @@ namespace Stellantis.ProjectName.Application.Validators
                         .WithMessage(localizer[nameof(SquadResources.NameValidateLength), MinimumLength, MaximumLength]);
                 });
 
-            
+           
             RuleFor(x => x.Description)
                 .NotEmpty()
                 .WithMessage(localizer[nameof(SquadResources.SquadDescriptionRequired)]) 
