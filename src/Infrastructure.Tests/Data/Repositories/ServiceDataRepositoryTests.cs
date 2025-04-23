@@ -246,7 +246,7 @@ namespace Infrastructure.Tests.Data.Repositories
             return dbSetMock;
         }
 
-        private class TestAsyncEnumerator<T>(IEnumerator<T> inner) : IAsyncEnumerator<T>
+        private sealed class TestAsyncEnumerator<T>(IEnumerator<T> inner) : IAsyncEnumerator<T>
         {
             private readonly IEnumerator<T> _inner = inner;
 
@@ -264,7 +264,7 @@ namespace Infrastructure.Tests.Data.Repositories
             }
         }
 
-        private class TestAsyncQueryProvider<TEntity> : IAsyncQueryProvider
+        private sealed class TestAsyncQueryProvider<TEntity> : IAsyncQueryProvider
         {
             private readonly IQueryProvider _inner;
 
@@ -310,7 +310,7 @@ namespace Infrastructure.Tests.Data.Repositories
             }
         }
 
-        private class TestAsyncEnumerable<T> : EnumerableQuery<T>, IAsyncEnumerable<T>, IQueryable<T>
+        private sealed class TestAsyncEnumerable<T> : EnumerableQuery<T>, IAsyncEnumerable<T>, IQueryable<T>
         {
             public TestAsyncEnumerable(IEnumerable<T> enumerable) : base(enumerable) { }
             public TestAsyncEnumerable(Expression expression) : base(expression) { }
