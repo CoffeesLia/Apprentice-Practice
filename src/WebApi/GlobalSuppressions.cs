@@ -35,4 +35,4 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Maintainability", "CA1515:Considere tornar internos os tipos públicos", Justification = "<Pendente>", Scope = "type", Target = "~T:Stellantis.ProjectName.WebApi.Dto.Filters.ServiceDataFilterDto")]
 [assembly: SuppressMessage("Maintainability", "CA1515:Considere tornar internos os tipos públicos", Justification = "<Pendente>", Scope = "type", Target = "~T:Stellantis.ProjectName.WebApi.Dto.ServiceDataDto")]
 [assembly: SuppressMessage("Maintainability", "CA1515:Considere tornar internos os tipos públicos", Justification = "<Pendente>", Scope = "type", Target = "~T:Stellantis.ProjectName.WebApi.ViewModels.ServiceDataVm")]
-[assembly: SuppressMessage("Maintainability", "CA1515:Considere tornar internos os tipos públicos", Justification = "<Pendente>", Scope = "type", Target = "~T:Stellantis.ProjectName.WebApi.Controllers.AreaController")]
+[assembly: SuppressMessage("Maintainability", "CA1515:Considere tornar internos os tipos públicos", Justification = "<Pendente>", Scope = "type", Target = "~T:Stellantis.ProjectName.WebApi.Controllers.MemberController")]
