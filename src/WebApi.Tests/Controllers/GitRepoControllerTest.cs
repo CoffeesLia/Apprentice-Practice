@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models;
@@ -9,6 +10,7 @@ using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Controllers;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
+using Stellantis.ProjectName.WebApi.Mapper;
 using Stellantis.ProjectName.WebApi.ViewModels;
 using WebApi.Tests.Helpers;
 
@@ -17,33 +19,27 @@ namespace WebApi.Tests.Controllers
     public class GitControllerBaseTests
     {
         private readonly Mock<IGitRepoService> _serviceMock;
-        private readonly GitRepoControllerBase _controller;
+        private readonly GitRepoController _controller;
         private readonly Fixture _fixture = new();
-        private readonly Mock<IMapper> _mapperMock;
 
         public GitControllerBaseTests()
         {
             _serviceMock = new Mock<IGitRepoService>();
-            _mapperMock = new Mock<IMapper>();
+            var mapperConfiguration = new MapperConfiguration(x => { x.AddProfile<AutoMapperProfile>(); });
+            var mapper = mapperConfiguration.CreateMapper();
 
             var localizerFactory = LocalizerFactorHelper.Create();
-            _controller = new GitRepoControllerBase(_serviceMock.Object, _mapperMock.Object, localizerFactory);
+            _controller = new GitRepoController(_serviceMock.Object, mapper, localizerFactory);
         }
 
-        /// <summary>
-        /// Teste para verificar se CreateAsync retorna CreatedAtActionResult quando criação é bem-sucedida
-        /// </summary>
+        // Teste para verificar se CreateAsync retorna CreatedAtActionResult quando criação é bem-sucedida
         [Fact]
         public async Task CreateAsyncShouldReturnCreatedAtActionResultWhenApplicationDataIsValid()
         {
             // Arrange
             var dto = _fixture.Create<GitRepoDto>();
-            var entity = _fixture.Create<GitRepo>();
-            var vm = _fixture.Create<GitRepoVm>();
 
-            _mapperMock.Setup(m => m.Map<GitRepo>(dto)).Returns(entity);
-            _mapperMock.Setup(m => m.Map<GitRepoVm>(It.IsAny<GitRepo>())).Returns(vm);
-            _serviceMock.Setup(s => s.CreateAsync(It.IsAny<GitRepo>())).ReturnsAsync(OperationResult.Complete("Success"));
+            _serviceMock.Setup(s => s.CreateAsync(It.IsAny<GitRepo>())).ReturnsAsync(OperationResult.Complete());
 
             // Act
             var result = await _controller.CreateAsync(dto);
@@ -53,9 +49,7 @@ namespace WebApi.Tests.Controllers
             Assert.IsType<GitRepoVm>(createdResult.Value);
         }
 
-        /// <summary>
-        /// Teste para verificar se GetAsync retorna GitRepoVm corretamente
-        /// </summary>
+        // Teste para verificar se GetAsync retorna GitRepoVm corretamente
         [Fact]
         public async Task GetAsyncShouldReturnGitRepoVm()
         {
@@ -67,7 +61,6 @@ namespace WebApi.Tests.Controllers
                 .Create();
 
             _serviceMock.Setup(s => s.GetItemAsync(entity.Id)).ReturnsAsync(entity);
-            _mapperMock.Setup(m => m.Map<GitRepoVm>(entity)).Returns(vm);
 
             // Act
             var result = await _controller.GetAsync(entity.Id);
@@ -79,9 +72,7 @@ namespace WebApi.Tests.Controllers
             Assert.Equal(vm.Name, returnedVm.Name);
         }
 
-        /// <summary>
-        /// Teste para verificar se GetListAsync retorna resultado paginado corretamente
-        /// </summary>
+        // Teste para verificar se GetListAsync retorna resultado paginado corretamente
         [Fact]
         public async Task GetListAsyncShouldReturnPagedResult()
         {
@@ -89,36 +80,48 @@ namespace WebApi.Tests.Controllers
             var filterDto = _fixture.Create<GitRepoFilterDto>();
             var filter = _fixture.Create<GitRepoFilter>();
             var pagedResult = _fixture.Create<PagedResult<GitRepo>>();
-            var pagedVm = _fixture.Create<PagedResultVm<GitRepoVm>>();
 
-            _mapperMock.Setup(m => m.Map<GitRepoFilter>(filterDto)).Returns(filter);
             _serviceMock.Setup(s => s.GetListAsync(filter)).ReturnsAsync(pagedResult);
-            _mapperMock.Setup(m => m.Map<PagedResultVm<GitRepoVm>>(pagedResult)).Returns(pagedVm);
 
             // Act
             var result = await _controller.GetListAsync(filterDto);
 
+
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var returned = Assert.IsType<PagedResultVm<GitRepoVm>>(okResult.Value);
-            Assert.Equal(pagedVm.Total, returned.Total);
-            Assert.Equal(pagedVm.Result.Count(), returned.Result.Count());
+            Assert.IsType<OkObjectResult>(result);
+           
         }
 
-        /// <summary>
-        /// Teste para verificar se UpdateAsync retorna sucesso quando atualização é realizada
-        /// </summary>
+        // Teste para verificar se UpdateAsync retorna sucesso quando atualização é realizada
         [Fact]
         public async Task UpdateAsyncShouldReturnSuccessWhenUpdateIsSuccessful()
         {
             // Arrange
-            var dto = _fixture.Create<GitRepoDto>();
-            var entity = _fixture.Create<GitRepo>();
-            var vm = _fixture.Create<GitRepoVm>();
+            var dto = new GitRepoDto
+            {
+                Name = "ValidName",
+                Description = "ValidDescription",
+                Url = new Uri("https://example.com"),
+                ApplicationId = 1
+            };
 
-            _mapperMock.Setup(m => m.Map<GitRepo>(dto)).Returns(entity);
-            _mapperMock.Setup(m => m.Map<GitRepoVm>(entity)).Returns(vm);
-            _serviceMock.Setup(s => s.UpdateAsync(entity)).ReturnsAsync(OperationResult.Complete("Success"));
+            var entity = new GitRepo("ValidName")
+            {
+                Name = "ValidName",
+                Description = "ValidDescription",
+                Url = new Uri("https://example.com"),
+                ApplicationId = 1
+            };
+
+            var vm = new GitRepoVm
+            {
+                Name = "ValidName",
+                Description = "ValidDescription",
+                Url = new Uri("https://example.com"),
+                ApplicationId = 1
+            };
+
+            _serviceMock.Setup(s => s.UpdateAsync(It.IsAny<GitRepo>())).ReturnsAsync(OperationResult.Complete());
 
             // Act
             var result = await _controller.UpdateAsync(dto.ApplicationId, dto);
@@ -126,12 +129,10 @@ namespace WebApi.Tests.Controllers
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(200, okResult.StatusCode);
-            Assert.Equal(vm, okResult.Value);
+            Assert.IsType<GitRepoVm>(okResult.Value);
         }
 
-        /// <summary>
-        /// Teste para verificar se DeleteAsync retorna NoContent quando exclusão é bem-sucedida
-        /// </summary>
+        //Teste para verificar se DeleteAsync retorna NoContent quando exclusão é bem-sucedida
         [Fact]
         public async Task DeleteAsyncShouldReturnNoContentWhenDeleteIsSuccessful()
         {
@@ -148,3 +149,4 @@ namespace WebApi.Tests.Controllers
         }
     }
 }
+

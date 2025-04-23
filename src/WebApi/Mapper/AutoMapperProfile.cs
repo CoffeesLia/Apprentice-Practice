@@ -14,7 +14,7 @@ namespace Stellantis.ProjectName.WebApi.Mapper
             CreateMap(typeof(PagedResult<>), typeof(PagedResultVm<>));
             CreateMap<ApplicationDataDto, ApplicationData>()
                 .ForMember(x => x.Id, x => x.Ignore())
-                .ForMember(x =>x.Area, opt => opt.Ignore())
+                .ForMember(x => x.Area, opt => opt.Ignore())
                 .ForMember(x => x.Integration, opt => opt.Ignore())
                 .ForMember(x => x.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(x => x.ProductOwner, opt => opt.MapFrom(src => src.ProductOwner))
@@ -69,9 +69,9 @@ namespace Stellantis.ProjectName.WebApi.Mapper
 
 
             CreateMap<SquadDto, Squad>()
-     .ForMember(x => x.Id, x => x.Ignore()) // Ignorar o ID porque ele é gerado pelo banco
-     .ForMember(x => x.Description, opt => opt.MapFrom(src => src.Description)) // Mapear Description
-     .ForMember(x => x.Name, opt => opt.MapFrom(src => src.Name)); // Mapear Name
+             .ForMember(x => x.Id, x => x.Ignore()) // Ignorar o ID porque ele é gerado pelo banco
+             .ForMember(x => x.Description, opt => opt.MapFrom(src => src.Description)) // Mapear Description
+             .ForMember(x => x.Name, opt => opt.MapFrom(src => src.Name)); // Mapear Name
 
             CreateMap<PagedResult<Squad>, PagedResultVm<SquadVm>>();
 
@@ -87,9 +87,21 @@ namespace Stellantis.ProjectName.WebApi.Mapper
 
             CreateMap<GitRepoDto, GitRepo>()
                 .ForMember(x => x.Id, x => x.Ignore())
-                .ForMember(x => x.Application, opt => opt.MapFrom(src => src.Application))
-                .ForMember(x => x.ApplicationId, opt => opt.MapFrom(src => src.ApplicationId));
-            CreateMap<GitRepo, GitRepoVm>();
+                .ForMember(x => x.Application, opt => opt.Ignore())
+                .ForMember(x => x.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(x => x.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(x => x.Url, opt => opt.MapFrom(src => src.Url));
+
+            CreateMap<GitRepo, GitRepoVm>()
+                .ForMember(x => x.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(x => x.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(x => x.Url, opt => opt.MapFrom(src => src.Url));
+
+            CreateMap<GitRepoFilterDto, GitRepoFilter>()
+                .ForMember(x => x.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(x => x.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(x => x.Url, opt => opt.MapFrom(src => src.Url));
+            CreateMap<PagedResult<GitRepo>, PagedResultVm<GitRepoVm>>();
 
             CreateMap<MemberDto, Member>()
                  .ForMember(x => x.Id, x => x.Ignore());
