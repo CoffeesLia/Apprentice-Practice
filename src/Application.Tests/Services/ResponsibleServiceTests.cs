@@ -58,7 +58,7 @@ namespace Application.Services.Tests
             var responsible = _fixture.Build<Responsible>()
                                       .With(r => r.Name, string.Empty)
                                       .With(r => r.Email, string.Empty)
-                                      .Without(r => r.Area)
+                                      .Without(r => r.AreaId)
                                       .Create();
 
             // Act
@@ -154,7 +154,7 @@ namespace Application.Services.Tests
             var responsible = _fixture.Build<Responsible>()
                                       .With(r => r.Name, string.Empty)
                                       .With(r => r.Email, string.Empty)
-                                      .Without(r => r.Area)
+                                      .Without(r => r.AreaId)
                                       .Create();
             // Act
             var result = await _responsibleService.UpdateAsync(responsible);

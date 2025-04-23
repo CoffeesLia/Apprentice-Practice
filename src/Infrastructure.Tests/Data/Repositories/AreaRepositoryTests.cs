@@ -121,7 +121,6 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
             // Arrange
             var area = _fixture.Create<Area>();
             var application = _fixture.Build<ApplicationData>()
-                .With(a => a.Area, area)
                 .Create();
             area.Applications.Add(application);
 

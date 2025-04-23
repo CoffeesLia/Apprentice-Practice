@@ -18,7 +18,7 @@ namespace Stellantis.ProjectName.Application.Validators
             RuleFor(r => r.Name)
                 .NotEmpty().WithMessage(localizer[nameof(ResponsibleResource.NameRequired)]);
 
-            RuleFor(r => r.Area)
+            RuleFor(r => r.AreaId)
                 .NotEmpty().WithMessage(localizer[nameof(ResponsibleResource.AreaRequired)]);
         }
     }
