@@ -11,14 +11,14 @@ using Stellantis.ProjectName.WebApi.ViewModels;
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [Route("api/areas")]
-    public sealed class AreaControllerBase(IAreaService service, IMapper mapper, IStringLocalizerFactory localizerFactory) : EntityControllerBase<Area, AreaDto>(service, mapper, localizerFactory)
+    public sealed class AreaController(IAreaService service, IMapper mapper, IStringLocalizerFactory localizerFactory) : EntityControllerBase<Area, AreaDto>(service, mapper, localizerFactory)
     {
         protected override IAreaService Service => (IAreaService)base.Service;
 
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] AreaDto itemDto)
         {         
-            return await CreateBaseAsync<AreaVm>(itemDto);
+            return await CreateBaseAsync<AreaVm>(itemDto).ConfigureAwait(false);
         }
 
         [HttpPut("{id}")]
