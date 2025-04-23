@@ -48,12 +48,13 @@ public class SquadServiceTests
             var expectedMessage = SquadResources.SquadCannotBeNull;
 
             // Act
-            var result = await _squadService.CreateAsync(null!); 
+            var result = await _squadService.CreateAsync(null!);
 
             // Assert
+            Assert.Equal(expectedMessage, result.Message); // Fix: Ensure the expected message matches the localized resource
             Assert.Equal(OperationStatus.Conflict, result.Status);
-            Assert.Equal(expectedMessage, result.Message);
         }
+
 
 
 
@@ -121,16 +122,20 @@ public class SquadServiceTests
             validatorMock.Setup(v => v.ValidateAsync(squad, default)).ReturnsAsync(new ValidationResult());
             _squadRepositoryMock.Setup(r => r.GetByIdAsync(squad.Id)).ReturnsAsync((Squad?)null); // Retorna null para simular que o Squad não existe
 
-            var squadService = new SquadService(_unitOfWorkMock.Object, LocalizerFactorHelper.Create(), validatorMock.Object);
+            var localizerFactory = LocalizerFactorHelper.Create();
+            var localizer = localizerFactory.Create(typeof(SquadResources));
+            var squadService = new SquadService(_unitOfWorkMock.Object, localizerFactory, validatorMock.Object);
 
             // Act
             var result = await squadService.UpdateAsync(squad);
 
             // Assert
-            var expectedMessage = SquadResources.SquadNotFound; // Use o valor localizado real
+            var expectedMessage = localizer[nameof(SquadResources.SquadNotFound)]; // Use the localized resource
+            Assert.Equal(expectedMessage, result.Message); // Fix: Compare with the localized resource
             Assert.Equal(OperationStatus.NotFound, result.Status);
-            Assert.Equal(expectedMessage, result.Message);
         }
+
+
 
 
 
@@ -164,16 +169,20 @@ public class SquadServiceTests
             _squadRepositoryMock.Setup(r => r.GetByIdAsync(squad.Id)).ReturnsAsync(new Squad());
             _squadRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(squad.Name)).ReturnsAsync(true);
 
-            var squadService = new SquadService(_unitOfWorkMock.Object, LocalizerFactorHelper.Create(), validatorMock.Object);
+            var localizerFactory = LocalizerFactorHelper.Create();
+            var localizer = localizerFactory.Create(typeof(SquadResources));
+            var squadService = new SquadService(_unitOfWorkMock.Object, localizerFactory, validatorMock.Object);
 
             // Act
             var result = await squadService.UpdateAsync(squad);
 
             // Assert
-            var expectedMessage = SquadResources.SquadNameAlreadyExists; // Use o valor localizado real
+            var expectedMessage = localizer[nameof(SquadResources.SquadNameAlreadyExists)]; // Use the localized resource
+            Assert.Equal(expectedMessage, result.Message); // Fix: Compare with the localized resource
             Assert.Equal(OperationStatus.Conflict, result.Status);
-            Assert.Equal(expectedMessage, result.Message);
         }
+
+
 
 
 
@@ -183,15 +192,16 @@ public class SquadServiceTests
             // Arrange
             var squadId = 1;
             _squadRepositoryMock.Setup(r => r.VerifySquadExistsAsync(squadId)).ReturnsAsync(false);
+            var expectedMessage = SquadResources.SquadNotFound; // Ensure the localized resource is used
 
             // Act
             var result = await _squadService.DeleteAsync(squadId);
 
             // Assert
-            var expectedMessage = SquadResources.SquadNotFound; // Use o valor localizado real
+            Assert.Equal(expectedMessage, result.Message); // Fix: Use the localized resource for comparison
             Assert.Equal(OperationStatus.NotFound, result.Status);
-            Assert.Equal(expectedMessage, result.Message);
         }
+
 
 
         [Fact]
@@ -242,14 +252,20 @@ public class SquadServiceTests
             var name = "Existing Squad";
             _squadRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(name)).ReturnsAsync(true);
 
+            var localizerFactory = LocalizerFactorHelper.Create();
+            var localizer = localizerFactory.Create(typeof(SquadResources));
+            var expectedMessage = localizer[nameof(SquadResources.SquadNameAlreadyExists)]; // Use the localized resource
+
             // Act
             var result = await _squadService.VerifyNameAlreadyExistsAsync(name);
 
             // Assert
-            var expectedMessage = SquadResources.SquadNameAlreadyExists; // Use o valor localizado real
+            Assert.Equal(expectedMessage, result.Message); // Fix: Compare with the localized resource
             Assert.Equal(OperationStatus.Conflict, result.Status);
-            Assert.Equal(expectedMessage, result.Message);
         }
+
+
+
 
 
         [Fact]
@@ -353,43 +369,50 @@ public class SquadServiceTests
             // Arrange
             var squadId = 1;
             _squadRepositoryMock.Setup(r => r.GetByIdAsync(squadId)).ReturnsAsync((Squad?)null);
+            var expectedMessage = SquadResources.SquadNotFound; // Ensure the localized resource is used
 
             // Act
             var result = await _squadService.GetItemAsync(squadId);
 
             // Assert
-            var expectedMessage = SquadResources.SquadNotFound; 
+            Assert.Equal(expectedMessage, result.Message); // Fix: Use the localized resource for comparison
             Assert.Equal(OperationStatus.NotFound, result.Status);
-            Assert.Equal(expectedMessage, result.Message);
         }
+
         [Fact]
         public async Task UpdateAsyncReturnsConflictWhenSquadIsNull()
         {
             // Arrange
-            var expectedMessage = SquadResources.SquadCannotBeNull;
-            Squad? squad = null;
+            var expectedMessage = SquadResources.SquadCannotBeNull; // Ensure the localized resource is used
 
             // Act
-            var result = await _squadService.UpdateAsync(squad!);
+            var result = await _squadService.UpdateAsync(null!);
 
             // Assert
+            Assert.Equal(expectedMessage, result.Message); // Fix: Compare with the localized resource
             Assert.Equal(OperationStatus.Conflict, result.Status);
-            Assert.Equal(expectedMessage, result.Message);
         }
+
+
 
         [Fact]
         public async Task VerifyNameAlreadyExistsAsyncReturnsConflictWhenNameIsNullOrEmpty()
         {
             // Arrange
-            var expectedMessage = SquadResources.SquadCannotBeNull; 
+            var localizerFactory = LocalizerFactorHelper.Create();
+            var localizer = localizerFactory.Create(typeof(SquadResources));
+            var expectedMessage = localizer[nameof(SquadResources.SquadCannotBeNull)]; // Use the localized resource
 
             // Act
             var result = await _squadService.VerifyNameAlreadyExistsAsync(string.Empty);
 
             // Assert
-            Assert.Equal(OperationStatus.Conflict, result.Status); 
-            Assert.Equal(expectedMessage, result.Message); 
+            Assert.Equal(expectedMessage, result.Message); // Fix: Compare with the localized resource
+            Assert.Equal(OperationStatus.Conflict, result.Status);
         }
+
+
+
 
         [Fact]
         public async Task VerifyNameAlreadyExistsAsyncReturnsCompleteWhenNameDoesNotExist()
@@ -413,14 +436,21 @@ public class SquadServiceTests
             var squadId = 1;
             _squadRepositoryMock.Setup(r => r.VerifySquadExistsAsync(squadId)).ReturnsAsync(false);
 
+            var localizerFactory = LocalizerFactorHelper.Create();
+            var localizer = localizerFactory.Create(typeof(SquadResources));
+            var expectedMessage = localizer[nameof(SquadResources.SquadNotFound)]; // Use the localized resource
+
             // Act
             var result = await _squadService.VerifySquadExistsAsync(squadId);
 
             // Assert
-            var expectedMessage = SquadResources.SquadNotFound;
+            Assert.Equal(expectedMessage, result.Message); // Fix: Compare with the localized resource
             Assert.Equal(OperationStatus.NotFound, result.Status);
-            Assert.Equal(expectedMessage, result.Message); 
         }
+
+
+
+
         [Fact]
         public async Task UpdateAsyncCallsBaseUpdateAsyncWhenValidationPassesAndSquadExists()
         {

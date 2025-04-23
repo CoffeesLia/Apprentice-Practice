@@ -140,5 +140,12 @@ namespace Stellantis.ProjectName.Application.Resources {
                 return ResourceManager.GetString("SquadUpdatedSuccessfully", resourceCulture);
             }
         }
+        public static string DescriptionValidateLength
+        {
+            get
+            {
+                return ResourceManager.GetString("DescriptionValidateLength", resourceCulture);
+            }
+        }
     }
 }
