@@ -59,10 +59,11 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.NotFound(_localizer[nameof(SquadResources.SquadNotFound)]);
             }
 
-            if (await Repository.VerifyNameAlreadyExistsAsync(squad.Name).ConfigureAwait(false))
+            if (!string.IsNullOrEmpty(squad.Name) && await Repository.VerifyNameAlreadyExistsAsync(squad.Name).ConfigureAwait(false))
             {
                 return OperationResult.Conflict(_localizer[nameof(SquadResources.SquadNameAlreadyExists)]);
             }
+
             return await base.UpdateAsync(squad).ConfigureAwait(false);
         }
 
@@ -73,7 +74,7 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.NotFound(_localizer[nameof(SquadResources.SquadNotFound)]);
             }
 
-            await Repository.DeleteAsync(id, true).ConfigureAwait(false); // Certifique-se de que o repositório está configurado para deletar
+            await Repository.DeleteAsync(id, true).ConfigureAwait(false); 
             return OperationResult.Complete();
         }
 

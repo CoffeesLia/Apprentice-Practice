@@ -1,12 +1,12 @@
-﻿using Stellantis.ProjectName.Application.Interfaces.Repositories;
+﻿using AutoFixture;
+using Microsoft.EntityFrameworkCore;
+using Moq;
+using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
-using Microsoft.EntityFrameworkCore;
-using AutoFixture;
-using Moq;
 namespace Infrastructure.Tests.Data.Repositories
 {
     public class GitRepoRepositoryTests : IDisposable
@@ -161,7 +161,6 @@ namespace Infrastructure.Tests.Data.Repositories
             await _context.ApplicationDatas.AddAsync(appData);
             await _context.SaveChangesAsync();
 
-            // Use o ID real do appData salvo
             var result = await _repository.IsApplicationDataFrom(appData.Id, 1);
 
             Assert.True(result);
@@ -179,14 +178,6 @@ namespace Infrastructure.Tests.Data.Repositories
 
             var result = await _context.GitRepo.FindAsync(repo.Id);
             Assert.Null(result);
-        }
-
-        [Fact]
-        public async Task VerifyNameAlreadyExistsAsyncShouldThrowNotImplementedExceptionWhenCalled()
-        {
-            // Act & Assert
-            await Assert.ThrowsAsync<NotImplementedException>(() =>
-                _repository.VerifyNameAlreadyExistsAsync("TestName"));
         }
 
         [Fact]
@@ -210,9 +201,54 @@ namespace Infrastructure.Tests.Data.Repositories
             await _context.Set<GitRepo>().AddAsync(repo);
             await _context.SaveChangesAsync();
 
-            var exists = await _repository.VerifyAplicationsExistsAsync(repo.ApplicationId);
+            var exists = await _repository.VerifyNameExistsAsync(repo.ApplicationId);
 
             Assert.True(exists);
+        }
+
+        [Fact]
+        public async Task VerifyDescriptionExistsAsyncShouldReturnTrueWhenDescriptionExists()
+        {
+            // Arrange  
+            var repo = _fixture.Create<GitRepo>();
+            await _context.Set<GitRepo>().AddAsync(repo);
+            await _context.SaveChangesAsync();
+
+            // Act  
+            var result = await _repository.VerifyDescriptionExistsAsync(repo.Description);
+
+            // Assert  
+            Assert.True(result);
+        }        
+        
+        [Fact]
+        public async Task VerifyNameExistsAsyncShouldReturnTrueWhenNameExists()
+        {
+            // Arrange  
+            var repo = _fixture.Create<GitRepo>();
+            await _context.Set<GitRepo>().AddAsync(repo);
+            await _context.SaveChangesAsync();
+
+            // Act  
+            var result = await _repository.VerifyNameExistsAsync(repo.Name);
+
+            // Assert  
+            Assert.True(result);
+        }        
+        
+        [Fact]
+        public async Task VerifyApplicationIdExistsAsyncShouldReturnTrueWhenApplicationIdExists()
+        {
+            // Arrange  
+            var repo = _fixture.Create<GitRepo>();
+            await _context.Set<GitRepo>().AddAsync(repo);
+            await _context.SaveChangesAsync();
+
+            // Act  
+            var result = await _repository.VerifyApplicationIdExistsAsync(repo.ApplicationId);
+
+            // Assert  
+            Assert.True(result);
         }
 
         [Fact]
@@ -291,7 +327,7 @@ namespace Infrastructure.Tests.Data.Repositories
 
 
         protected virtual void Dispose(bool disposing)
-        {  
+        {
             if (!_disposed && disposing && _context != null)
             {
                 _context.Database.EnsureDeleted();

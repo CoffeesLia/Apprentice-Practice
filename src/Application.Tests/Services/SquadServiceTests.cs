@@ -155,7 +155,7 @@ public class SquadServiceTests
         {
             // Arrange
             var squad = new Squad { Id = 1, Name = "Updated Squad" };
-            var validationResult = new ValidationResult(new[] { new ValidationFailure("Name", "Invalid name") });
+            var validationResult = new ValidationResult([new ValidationFailure("Name", "Invalid name")]);
             var validatorMock = new Mock<IValidator<Squad>>(); // Criação do mock local
             validatorMock.Setup(v => v.ValidateAsync(squad, default)).ReturnsAsync(validationResult);
 
@@ -246,7 +246,7 @@ public class SquadServiceTests
         var filter = new SquadFilter { Name = "Test" };
         var pagedResult = new PagedResult<Squad>
         {
-            Result = new List<Squad> { new Squad { Name = "Test Squad" } },
+            Result = [new() { Name = "Test Squad" }],
             Page = 1,
             PageSize = 10,
             Total = 1
@@ -307,21 +307,6 @@ public class SquadServiceTests
 
             // Act
             var actualValue = SquadResources.SquadDescriptionRequired;
-
-            // Assert
-            Assert.Equal(expectedValue, actualValue);
-        }
-
-        [Fact]
-        public void SquadCreatedSuccessfullyResourceReturnsCorrectValue()
-        {
-            // Arrange
-            CultureInfo.CurrentCulture = new CultureInfo("pt-BR");
-            CultureInfo.CurrentUICulture = new CultureInfo("pt-BR");
-            var expectedValue = "O Squad foi criado com sucesso."; // Valor esperado em português
-
-            // Act
-            var actualValue = SquadResources.SquadCreatedSuccessfully;
 
             // Assert
             Assert.Equal(expectedValue, actualValue);
@@ -499,6 +484,35 @@ public class SquadServiceTests
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status); 
+        }
+        [Fact]
+        public void SquadCannotBeNullResourceReturnsCorrectValue()
+        {
+            // Arrange
+            CultureInfo.CurrentCulture = new CultureInfo("pt-BR");
+            CultureInfo.CurrentUICulture = new CultureInfo("pt-BR");
+            var expectedValue = "Squad não pode ser nulo."; // Substitua pelo valor esperado em português
+
+            // Act
+            var actualValue = SquadResources.SquadCannotBeNull;
+
+            // Assert
+            Assert.Equal(expectedValue, actualValue);
+        }
+
+        [Fact]
+        public void DescriptionValidateLengthResourceReturnsCorrectValue()
+        {
+            // Arrange
+            CultureInfo.CurrentCulture = new CultureInfo("pt-BR");
+            CultureInfo.CurrentUICulture = new CultureInfo("pt-BR");
+            var expectedValue = "A descrição deve ter entre 3 e 255 caracteres."; // Substitua pelo valor esperado em português
+
+            // Act
+            var actualValue = SquadResources.DescriptionValidateLength;
+
+            // Assert
+            Assert.Equal(expectedValue, actualValue);
         }
 
 
