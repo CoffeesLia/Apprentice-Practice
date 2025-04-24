@@ -7,15 +7,8 @@ using Stellantis.ProjectName.Infrastructure.Data.Repositories;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
-    public class SquadRepository : RepositoryEntityBase<Squad, Context>, ISquadRepository
+    public class SquadRepository(Context context) : RepositoryEntityBase<Squad, Context>(context), ISquadRepository
     {
-        private readonly Context _context;
-
-        public SquadRepository(Context context) : base(context)
-        {
-            _context = context;
-        }
-
         public new async Task CreateAsync(Squad squad, bool saveChanges = true)
         {
             await base.CreateAsync(squad, saveChanges).ConfigureAwait(false);
@@ -23,43 +16,43 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         public new async Task<Squad?> GetByIdAsync(int id)
         {
-            return await _context.Squads.FindAsync(id).ConfigureAwait(false);
+            return await Context.Squads.FindAsync(id).ConfigureAwait(false);
         }
 
         public new async Task UpdateAsync(Squad squad, bool saveChanges = true)
         {
-            _context.Squads.Update(squad);
+            Context.Squads.Update(squad);
 
             if (saveChanges)
             {
-                await _context.SaveChangesAsync().ConfigureAwait(false);
+                await Context.SaveChangesAsync().ConfigureAwait(false);
             }
         }
 
         public new async Task DeleteAsync(int id, bool saveChanges = true)
         {
-            var squad = await _context.Squads.FindAsync(id).ConfigureAwait(false);
+            var squad = await Context.Squads.FindAsync(id).ConfigureAwait(false);
             if (squad != null)
             {
-                _context.Squads.Remove(squad);
+                Context.Squads.Remove(squad);
 
                 if (saveChanges)
                 {
-                    await _context.SaveChangesAsync().ConfigureAwait(false);
+                    await Context.SaveChangesAsync().ConfigureAwait(false);
                 }
             }
         }
 
         public async Task<bool> VerifyNameAlreadyExistsAsync(string name)
         {
-            return await _context.Squads.AnyAsync(s => s.Name == name).ConfigureAwait(false);
+            return await Context.Squads.AnyAsync(s => s.Name == name).ConfigureAwait(false);
         }
 
         public async Task<PagedResult<Squad>> GetListAsync(SquadFilter squadFilter)
         {
             ArgumentNullException.ThrowIfNull(squadFilter);
 
-            var query = _context.Squads.AsQueryable();
+            var query = Context.Squads.AsQueryable();
 
             if (!string.IsNullOrEmpty(squadFilter.Name))
             {
@@ -71,8 +64,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         public async Task<bool> VerifySquadExistsAsync(int id)
         {
-            return await _context.Squads.AnyAsync(s => s.Id == id).ConfigureAwait(false);
+            return await Context.Squads.AnyAsync(s => s.Id == id).ConfigureAwait(false);
         }
     }
-
 }
