@@ -1,6 +1,6 @@
 ﻿namespace Stellantis.ProjectName.WebApi.ViewModels
 {
-    internal class GitRepoVm : EntityVmBase
+    public class GitRepoVm : EntityVmBase
     {
         public required string Name { get; set; }
         public required string Description { get; set; }

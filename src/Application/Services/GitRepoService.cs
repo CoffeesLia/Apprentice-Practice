@@ -27,10 +27,20 @@ namespace Stellantis.ProjectName.Application.Services
             {
                 return OperationResult.InvalidData(validationResult);
             }
- 
+
+            if (await Repository.VerifyDescriptionExistsAsync(item.Description).ConfigureAwait(false))
+            { 
+                return OperationResult.InvalidData(validationResult);
+            } 
+            
+            if (await Repository.VerifyNameExistsAsync(item.Name).ConfigureAwait(false))
+            { 
+                    return OperationResult.InvalidData(validationResult);
+            }
+
             if (await Repository.VerifyUrlAlreadyExistsAsync(item.Url).ConfigureAwait(false))
             {
-                throw new InvalidOperationException(Localizer[nameof(GitResource.ExistentRepositoryUrl)]);
+                return OperationResult.InvalidData(validationResult);
             }
 
             return await base.CreateAsync(item).ConfigureAwait(false);
@@ -52,13 +62,14 @@ namespace Stellantis.ProjectName.Application.Services
         {
             ArgumentNullException.ThrowIfNull(item);
 
+            var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
+
             var existingRepo = await Repository.GetByIdAsync(item.Id).ConfigureAwait(false);
             if (existingRepo == null)
             {
-                return OperationResult.NotFound(Localizer[nameof(GitResource.RepositoryNotFound)]);
+                return OperationResult.InvalidData(validationResult);
             }
 
-            var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
             if (!validationResult.IsValid)
             {
                 return OperationResult.InvalidData(validationResult);
@@ -66,7 +77,7 @@ namespace Stellantis.ProjectName.Application.Services
 
             if (await Repository.VerifyUrlAlreadyExistsAsync(item.Url).ConfigureAwait(false) && existingRepo.Url != item.Url)
             {
-                return OperationResult.Conflict(Localizer[nameof(GitResource.ExistentRepositoryUrl)]);
+                return OperationResult.Conflict(Localizer[nameof(GitResource.AlreadyExists)]);
             }
 
             existingRepo.Name = item.Name;
@@ -93,7 +104,7 @@ namespace Stellantis.ProjectName.Application.Services
             var item = await Repository.GetByIdAsync(id).ConfigureAwait(false);
             if (item == null)
             {
-                return OperationResult.NotFound(Localizer[nameof(GitResource.RepositoryNotFound)]);
+                return OperationResult.Conflict(Localizer[nameof(GitResource.RepositoryNotFound)]);
             }
             return await base.DeleteAsync(item).ConfigureAwait(false);
         }
