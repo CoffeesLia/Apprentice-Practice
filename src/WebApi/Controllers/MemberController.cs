@@ -13,7 +13,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [Route("api/members")]
   
-    internal sealed class MemberControllerBase(IMemberService service, IMapper mapper, IStringLocalizerFactory localizerFactory)
+    public sealed class MemberController(IMemberService service, IMapper mapper, IStringLocalizerFactory localizerFactory)
         : EntityControllerBase<Member, MemberDto>(service, mapper, localizerFactory)
     {
         [HttpPost]

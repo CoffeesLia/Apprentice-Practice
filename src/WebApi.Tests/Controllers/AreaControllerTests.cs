@@ -112,15 +112,20 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             var areaDto = _fixture.Create<AreaDto>();
-            var area = _fixture.Build<Area>().With(a => a.Id, areaDto.Id).With(a => a.Name, areaDto.Name).Create();
-            var areaVm = _fixture.Build<AreaVm>().With(a => a.Id, areaDto.Id).With(a => a.Name, areaDto.Name).Create();
+            var area = _fixture.Build<Area>()
+                               .With(a => a.Name, areaDto.Name)
+                               .Create();
+            var areaVm = _fixture.Build<AreaVm>()
+                                 .With(a => a.Id, area.Id) 
+                                 .With(a => a.Name, areaDto.Name)
+                                 .Create();
 
             _mapperMock.Setup(m => m.Map<Area>(areaDto)).Returns(area);
             _mapperMock.Setup(m => m.Map<AreaVm>(area)).Returns(areaVm);
             _serviceMock.Setup(s => s.UpdateAsync(area)).ReturnsAsync(OperationResult.Complete("Success"));
 
             // Act
-            var result = await _controller.UpdateAsync(areaDto.Id, areaDto);
+            var result = await _controller.UpdateAsync(area.Id, areaDto); 
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);

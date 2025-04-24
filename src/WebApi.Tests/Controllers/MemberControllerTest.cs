@@ -19,7 +19,7 @@ namespace WebApi.Tests.Controllers
     public class MemberControllerTest
     {
         private readonly Mock<IMemberService> _serviceMock;
-        private readonly MemberControllerBase _controller;
+        private readonly MemberController _controller;
 
         public MemberControllerTest()
         {
@@ -27,7 +27,7 @@ namespace WebApi.Tests.Controllers
             var mapperConfiguration = new MapperConfiguration(x => { x.AddProfile<AutoMapperProfile>(); });
             var mapper = mapperConfiguration.CreateMapper();
             var localizerFactor = LocalizerFactorHelper.Create();
-            _controller = new MemberControllerBase(_serviceMock.Object, mapper, localizerFactor);
+            _controller = new MemberController(_serviceMock.Object, mapper, localizerFactor);
         }
 
         [Fact]
