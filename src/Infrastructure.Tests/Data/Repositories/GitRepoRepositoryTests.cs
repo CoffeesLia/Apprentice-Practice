@@ -161,7 +161,6 @@ namespace Infrastructure.Tests.Data.Repositories
             await _context.ApplicationDatas.AddAsync(appData);
             await _context.SaveChangesAsync();
 
-            // Use o ID real do appData salvo
             var result = await _repository.IsApplicationDataFrom(appData.Id, 1);
 
             Assert.True(result);
@@ -179,14 +178,6 @@ namespace Infrastructure.Tests.Data.Repositories
 
             var result = await _context.GitRepo.FindAsync(repo.Id);
             Assert.Null(result);
-        }
-
-        [Fact]
-        public async Task VerifyNameAlreadyExistsAsyncShouldThrowNotImplementedExceptionWhenCalled()
-        {
-            // Act & Assert
-            await Assert.ThrowsAsync<NotImplementedException>(() =>
-                _repository.VerifyNameAlreadyExistsAsync("TestName"));
         }
 
         [Fact]
@@ -210,9 +201,54 @@ namespace Infrastructure.Tests.Data.Repositories
             await _context.Set<GitRepo>().AddAsync(repo);
             await _context.SaveChangesAsync();
 
-            var exists = await _repository.VerifyAplicationsExistsAsync(repo.ApplicationId);
+            var exists = await _repository.VerifyNameExistsAsync(repo.ApplicationId);
 
             Assert.True(exists);
+        }
+
+        [Fact]
+        public async Task VerifyDescriptionExistsAsyncShouldReturnTrueWhenDescriptionExists()
+        {
+            // Arrange  
+            var repo = _fixture.Create<GitRepo>();
+            await _context.Set<GitRepo>().AddAsync(repo);
+            await _context.SaveChangesAsync();
+
+            // Act  
+            var result = await _repository.VerifyDescriptionExistsAsync(repo.Description);
+
+            // Assert  
+            Assert.True(result);
+        }        
+        
+        [Fact]
+        public async Task VerifyNameExistsAsyncShouldReturnTrueWhenNameExists()
+        {
+            // Arrange  
+            var repo = _fixture.Create<GitRepo>();
+            await _context.Set<GitRepo>().AddAsync(repo);
+            await _context.SaveChangesAsync();
+
+            // Act  
+            var result = await _repository.VerifyNameExistsAsync(repo.Name);
+
+            // Assert  
+            Assert.True(result);
+        }        
+        
+        [Fact]
+        public async Task VerifyApplicationIdExistsAsyncShouldReturnTrueWhenApplicationIdExists()
+        {
+            // Arrange  
+            var repo = _fixture.Create<GitRepo>();
+            await _context.Set<GitRepo>().AddAsync(repo);
+            await _context.SaveChangesAsync();
+
+            // Act  
+            var result = await _repository.VerifyApplicationIdExistsAsync(repo.ApplicationId);
+
+            // Assert  
+            Assert.True(result);
         }
 
         [Fact]

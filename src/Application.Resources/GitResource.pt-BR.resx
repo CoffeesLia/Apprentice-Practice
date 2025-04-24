@@ -117,9 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ExistentRepositoryUrl" xml:space="preserve">
-    <value>Um repositório com este mesmo Url já existe</value>
-  </data>
   <data name="NameIsRequired" xml:space="preserve">
     <value>O Nome é obrigatório</value>
   </data>
@@ -132,25 +129,10 @@
   <data name="DescriptionIsRequired" xml:space="preserve">
     <value>A Descrição é obrigatória</value>
   </data>
-  <data name="ValidationErrorMessage" xml:space="preserve">
-    <value>Nome, Descrição e Url são obrigatórias.</value>
-  </data>
-  <data name="ApplicationIsRequired" xml:space="preserve">
-    <value>Aplicação não encontrada.</value>
-  </data>
-  <data name="RepositoryCantBeNull" xml:space="preserve">
-    <value>Repositório não pode ser nulo</value>
-  </data>
-  <data name="AlreadyExists" xml:space="preserve">
-    <value>Já existe.</value>
-  </data>
-  <data name="UrlIsInvalid" xml:space="preserve">
-    <value>O Url é inválido.</value>
-  </data>
   <data name="ApplicationIdIsRequired" xml:space="preserve">
     <value>O Id da aplicação é obrigatória.</value>
   </data>
-  <data name="Error" xml:space="preserve">
-    <value>Erro.</value>
+  <data name="AlreadyExists" xml:space="preserve">
+    <value>Já existe.</value>
   </data>
 </root>

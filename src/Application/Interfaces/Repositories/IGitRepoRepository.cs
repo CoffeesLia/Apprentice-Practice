@@ -8,8 +8,9 @@ namespace Stellantis.ProjectName.Application.Interfaces.Repositories
         IAsyncEnumerable<GitRepo> ListRepositories();
         Task<PagedResult<GitRepo>> GetListAsync(GitRepoFilter filter);
         Task<GitRepo?> GetRepositoryDetailsAsync(int id);
-        Task<bool> VerifyAplicationsExistsAsync(int id);
+        Task<bool> VerifyNameExistsAsync(string Name);
         Task<bool> VerifyUrlAlreadyExistsAsync(Uri url);
-        Task<bool> VerifyNameAlreadyExistsAsync(string name);
+        Task<bool> VerifyDescriptionExistsAsync(string description);
+        Task<bool> VerifyApplicationIdExistsAsync(int applicationId);
     }
 }
