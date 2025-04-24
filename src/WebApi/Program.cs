@@ -78,10 +78,23 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
 #if DEBUG
 builder.Services.AddAuthentication("AuthenticationForDebug")
     .AddScheme<AuthenticationSchemeOptions, ForDebugAuthenticationHandler>("AuthenticationForDebug", null);
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocal", builder =>
+    {
+        builder.WithOrigins("http://localhost:3000")
+               .AllowAnyHeader()
+               .AllowAnyMethod()
+               .AllowAnyOrigin();
+    });
+});
 #endif
 
 var app = builder.Build();
 app.UseRequestLocalization();
+#if DEBUG
+app.UseCors("AllowLocal");
+#endif
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
