@@ -80,12 +80,11 @@ builder.Services.AddAuthentication("AuthenticationForDebug")
     .AddScheme<AuthenticationSchemeOptions, ForDebugAuthenticationHandler>("AuthenticationForDebug", null);
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowLocal", builder =>
+    options.AddPolicy("AllowAll", policy =>
     {
-        builder.WithOrigins("http://localhost:3000")
-               .AllowAnyHeader()
-               .AllowAnyMethod()
-               .AllowAnyOrigin();
+        policy.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
     });
 });
 #endif
@@ -93,7 +92,7 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 app.UseRequestLocalization();
 #if DEBUG
-app.UseCors("AllowLocal");
+app.UseCors("AllowAll");
 #endif
 
 // Configure the HTTP request pipeline.
