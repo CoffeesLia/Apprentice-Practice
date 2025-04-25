@@ -99,9 +99,9 @@ namespace Stellantis.ProjectName.Application.Resources {
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Repository not found..
         /// </summary>
-        public static string RepositoryNotFound {
+        public static string NotFound {
             get {
-                return ResourceManager.GetString("RepositoryNotFound", resourceCulture);
+                return ResourceManager.GetString("NotFound", resourceCulture);
             }
         }
         
