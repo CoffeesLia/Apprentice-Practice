@@ -13,7 +13,6 @@ namespace Stellantis.ProjectName.Domain.Entities
         public int AreaId { get; set; }
         public ICollection<Area> Area { get; } = [];
         public ICollection<Integration> Integration { get; } = [];
-        public ICollection<Responsible> Responsibles { get; } = [];
         public int ResponsibleId { get; set; }
         public string? Description { get; set; }
         public required string ProductOwner { get; set; }

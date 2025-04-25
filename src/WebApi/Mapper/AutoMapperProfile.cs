@@ -20,8 +20,7 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(x => x.ProductOwner, opt => opt.MapFrom(src => src.ProductOwner))
                 .ForMember(x => x.ConfigurationItem, opt => opt.MapFrom(src => src.ConfigurationItem))
                 .ForMember(x => x.External, opt => opt.MapFrom(src => src.External))
-                .ForMember(x => x.ResponsibleId, opt => opt.MapFrom(src => src.ResponsibleId))
-                .ForMember(x => x.Responsibles, opt => opt.MapFrom(src => src.Responsibles));
+                .ForMember(x => x.ResponsibleId, opt => opt.MapFrom(src => src.ResponsibleId));
 
             CreateMap<ApplicationData, ApplicationVm>()
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
