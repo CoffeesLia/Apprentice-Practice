@@ -2,7 +2,7 @@
 
 namespace Stellantis.ProjectName.WebApi.Dto
 {
-    internal class IntegrationDto
+    public class IntegrationDto
     {
         public int Id { get; set; }
         public string? Name { get; set; }

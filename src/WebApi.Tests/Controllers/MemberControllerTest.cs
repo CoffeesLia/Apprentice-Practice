@@ -134,8 +134,9 @@ namespace WebApi.Tests.Controllers
                 Name = "Test Name",
                 Role = "Test Role",
                 Email = "test@example.com",
-                Cost = 100
-
+                Cost = 100,
+                Page = 1,
+                PageSize = 10
             };
             var filter = new MemberFilter
             {

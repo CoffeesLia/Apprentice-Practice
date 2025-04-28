@@ -45,3 +45,7 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Maintainability", "CA1515:Considere tornar internos os tipos públicos", Justification = "<Pendente>", Scope = "type", Target = "~T:Stellantis.ProjectName.WebApi.Dto.Filters.SquadFilterDto")]
 [assembly: SuppressMessage("Maintainability", "CA1515:Considere tornar internos os tipos públicos", Justification = "<Pendente>", Scope = "type", Target = "~T:Stellantis.ProjectName.WebApi.ViewModels.SquadVm")]
 [assembly: SuppressMessage("Maintainability", "CA1515:Considere tornar internos os tipos públicos", Justification = "<Pendente>", Scope = "type", Target = "~T:Stellantis.ProjectName.WebApi.Dto.SquadDto")]
+[assembly: SuppressMessage("Maintainability", "CA1515:Considere tornar internos os tipos públicos", Justification = "<Pendente>", Scope = "type", Target = "~T:Stellantis.ProjectName.WebApi.Dto.Filters.IntegrationFilterDto")]
+[assembly: SuppressMessage("Maintainability", "CA1515:Considere tornar internos os tipos públicos", Justification = "<Pendente>", Scope = "type", Target = "~T:Stellantis.ProjectName.WebApi.ViewModels.IntegrationVm")]
+[assembly: SuppressMessage("Maintainability", "CA1515:Considere tornar internos os tipos públicos", Justification = "<Pendente>", Scope = "type", Target = "~T:Stellantis.ProjectName.WebApi.Dto.IntegrationDto")]
+[assembly: SuppressMessage("Maintainability", "CA1515:Considere tornar internos os tipos públicos", Justification = "<Pendente>", Scope = "type", Target = "~T:Stellantis.ProjectName.WebApi.Controllers.IntegrationController")]
