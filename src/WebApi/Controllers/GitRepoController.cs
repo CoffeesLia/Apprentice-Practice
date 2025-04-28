@@ -11,12 +11,8 @@ using Stellantis.ProjectName.WebApi.ViewModels;
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [Route("api/GitRepos")]
-    internal sealed class GitRepoControllerBase : EntityControllerBase<GitRepo, GitRepoDto>
+    public sealed class GitRepoController(IGitRepoService service, IMapper mapper, IStringLocalizerFactory localizerFactory) : EntityControllerBase<GitRepo, GitRepoDto>(service, mapper, localizerFactory)
     {
-        internal GitRepoControllerBase(IGitRepoService service, IMapper mapper, IStringLocalizerFactory localizerFactory)
-            : base(service, mapper, localizerFactory)
-        {
-        }
 
         protected override IGitRepoService Service => (IGitRepoService)base.Service;
 
@@ -43,7 +39,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         {
             var filter = Mapper.Map<GitRepoFilter>(filterDto);
             var pagedResult = await Service.GetListAsync(filter!).ConfigureAwait(false);
-            var result = Mapper.Map<PagedResultVm<GitRepoVm>>(pagedResult);
+            var result = Mapper.Map<PagedResult<GitRepoVm>>(pagedResult);
             return Ok(result);
         }
     }

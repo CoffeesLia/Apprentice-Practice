@@ -88,7 +88,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             return await _context.Set<GitRepo>().AnyAsync(a => a.Url == url).ConfigureAwait(false);
         }
 
-        public async Task<bool> VerifyAplicationsExistsAsync(int id)
+        public async Task<bool> VerifyNameExistsAsync(int id)
         {
             return await _context.Set<GitRepo>().AnyAsync(repo => repo.ApplicationId == id).ConfigureAwait(false);
         }
@@ -96,11 +96,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         async Task IRepositoryEntityBase<GitRepo>.DeleteAsync(int id, bool saveChanges)
         {
             await DeleteAsync(id, saveChanges).ConfigureAwait(false);
-        }
-
-        public Task<bool> VerifyNameAlreadyExistsAsync(string name)
-        {
-            throw new NotImplementedException();
         }
 
         public async Task<PagedResult<GitRepo>> GetListAsync(GitRepoFilter filter)
@@ -119,6 +114,19 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             return await GetListAsync(filter: filters, page: filter.Page, sort: filter.Sort, sortDir: filter.SortDir).ConfigureAwait(false);
         }
 
+        public async Task<bool> VerifyDescriptionExistsAsync(string description)
+        {
+            return await _context.Set<GitRepo>().AnyAsync(repo => repo.Description == description).ConfigureAwait(false);
+        }
 
+        public async Task<bool> VerifyNameExistsAsync(string Name)
+        {
+            return await _context.Set<GitRepo>().AnyAsync(repo => repo.Name == Name).ConfigureAwait(false);
+        }
+
+        public async Task<bool> VerifyApplicationIdExistsAsync(int applicationId)
+        {
+            return await _context.Set<GitRepo>().AnyAsync(repo => repo.ApplicationId == applicationId).ConfigureAwait(false);
+        }
     }
 }

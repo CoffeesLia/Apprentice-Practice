@@ -16,7 +16,7 @@ namespace Stellantis.ProjectName.Application.Services
         private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(AreaResources));
         protected override IAreaRepository Repository => UnitOfWork.AreaRepository;
 
-        
+
         public override async Task<OperationResult> CreateAsync(Area item)
         {
             ArgumentNullException.ThrowIfNull(item);
@@ -64,7 +64,7 @@ namespace Stellantis.ProjectName.Application.Services
 
             if (areas == null || areas.Result == null)
             {
-                return true; 
+                return true;
             }
 
             return !areas.Result.Any(a => a.Id != id);

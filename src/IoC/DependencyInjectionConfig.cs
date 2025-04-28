@@ -25,6 +25,7 @@ namespace Stellantis.ProjectName.IoC
             services.AddScoped<IValidator<Area>, AreaValidator>();
             services.AddScoped<IValidator<ApplicationData>, ApplicationDataValidator>();
             services.AddScoped<IValidator<Responsible>, ResponsibleValidator>();
+            services.AddScoped<IValidator<GitRepo>, GitRepoValidator>();
             services.AddScoped<IValidator<Integration>, IntegrationValidator>();
             services.AddScoped<IValidator<ServiceData>, ServiceDataValidator>();
             services.AddScoped<IValidator<Squad>, SquadValidator>();
@@ -36,6 +37,7 @@ namespace Stellantis.ProjectName.IoC
             services.AddScoped<IAreaService, AreaService>();
             services.AddScoped<IApplicationDataService, ApplicationDataService>();
             services.AddScoped<IResponsibleService, ResponsibleService>();
+            services.AddScoped<IGitRepoService, GitRepoService>();
             services.AddScoped<IIntegrationService, IntegrationService>();
             services.AddScoped<IServiceData, ServiceDataService>();
             services.AddScoped<ISquadService, SquadService>();
@@ -47,6 +49,7 @@ namespace Stellantis.ProjectName.IoC
             services.AddScoped<IAreaRepository, AreaRepository>();
             services.AddScoped<IApplicationDataRepository, ApplicationDataRepository>();
             services.AddScoped<IResponsibleRepository, ResponsibleRepository>();
+            services.AddScoped<IGitRepoRepository, GitRepoRepository>();
             services.AddScoped<IIntegrationRepository, IntegrationRepository>();
             services.AddScoped<IServiceDataRepository, ServiceDataRepository>();
             services.AddScoped<ISquadRepository, SquadRepository>();

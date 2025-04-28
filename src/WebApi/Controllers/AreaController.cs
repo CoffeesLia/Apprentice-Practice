@@ -1,15 +1,12 @@
-﻿using System.Buffers;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces.Services;
-using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.ViewModels;
-using Stellantis.ProjectName.Application.Resources;
 
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
@@ -20,7 +17,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
 
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] AreaDto itemDto)
-        {         
+        {
             return await CreateBaseAsync<AreaVm>(itemDto).ConfigureAwait(false);
         }
 
@@ -51,6 +48,6 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             return await base.DeleteAsync(id).ConfigureAwait(false);
         }
 
-       
+
     }
 }

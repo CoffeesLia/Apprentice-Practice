@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Stellantis.ProjectName.Domain.Entities;
+﻿using LinqKit;
+using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models.Filters;
-using LinqKit;
+using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {

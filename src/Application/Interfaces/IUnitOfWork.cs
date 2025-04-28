@@ -14,9 +14,9 @@ namespace Stellantis.ProjectName.Application.Interfaces
 
         public IServiceDataRepository ServiceDataRepository { get; }
 
-        public IApplicationDataRepository ApplicationDataRepository { get; }   
-        
-        public ISquadRepository SquadRepository { get; }    
+        public IApplicationDataRepository ApplicationDataRepository { get; }
+
+        public ISquadRepository SquadRepository { get; }
 
         public IGitRepoRepository GitRepoRepository { get; }
 

@@ -1,5 +1,5 @@
-﻿using AutoMapper;
-using AutoFixture;
+﻿using AutoFixture;
+using AutoMapper;
 using FluentValidation.TestHelper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,8 +15,8 @@ using Stellantis.ProjectName.Infrastructure.Data.EntityConfig;
 using Stellantis.ProjectName.WebApi.Controllers;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
-using Stellantis.ProjectName.WebApi.ViewModels;
 using Stellantis.ProjectName.WebApi.Mapper;
+using Stellantis.ProjectName.WebApi.ViewModels;
 using WebApi.Tests.Helpers;
 
 namespace WebApi.Tests.Controllers
@@ -132,8 +132,17 @@ namespace WebApi.Tests.Controllers
         public async Task GetListAsyncShouldReturnOkObjectResult()
         {
             // Arrange
-            var filterDto = new ServiceDataFilterDto { Name = "Test Service" };
-            var filter = new ServiceDataFilter { Name = "Test Service" };
+            var filterDto = new ServiceDataFilterDto
+            {
+                Name = "Test Service",
+                PageSize = 10,
+                Page = 1 
+            };
+
+            var filter = new ServiceDataFilter
+            {
+                Name = "Test Service"
+            };
             var pagedResult = new PagedResult<ServiceData>
             {
                 Result = [new ServiceData { Name = "Test Service" }],
@@ -180,6 +189,8 @@ namespace WebApi.Tests.Controllers
             var dto = new ServiceDataFilterDto
             {
                 Name = name,
+                PageSize = 10,
+                Page = 1
             };
 
             // Assert
