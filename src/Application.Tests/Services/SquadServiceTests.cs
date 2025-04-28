@@ -1,41 +1,45 @@
-﻿using Application.Tests.Helpers;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using FluentValidation;
 using FluentValidation.Results;
 using Moq;
+using Xunit;
+using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Application.Services;
-using Stellantis.ProjectName.Application.Validators;
 using Stellantis.ProjectName.Domain.Entities;
+using Application.Tests.Helpers;
+using Stellantis.ProjectName.Application.Interfaces.Services;
+using Stellantis.ProjectName.Application.Validators;
 using System.Globalization;
-using Xunit;
 
 namespace Application.Tests.Services
+{ 
+public class SquadServiceTests
 {
-    public class SquadServiceTests
+    private readonly Mock<ISquadRepository> _squadRepositoryMock;
+    private readonly Mock<IUnitOfWork> _unitOfWorkMock;
+    private readonly SquadService _squadService;
+
+    public SquadServiceTests()
     {
-        private readonly Mock<ISquadRepository> _squadRepositoryMock;
-        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
-        private readonly SquadService _squadService;
+        CultureInfo.CurrentCulture = new CultureInfo("pt-BR");
+        CultureInfo.CurrentUICulture = new CultureInfo("pt-BR");
+        CultureInfo.CurrentCulture = new CultureInfo("en-US");
+        CultureInfo.CurrentUICulture = new CultureInfo("en-US");
+        _unitOfWorkMock = new Mock<IUnitOfWork>();
+        _squadRepositoryMock = new Mock<ISquadRepository>();
 
-        public SquadServiceTests()
-        {
-            CultureInfo.CurrentCulture = new CultureInfo("pt-BR");
-            CultureInfo.CurrentUICulture = new CultureInfo("pt-BR");
-            CultureInfo.CurrentCulture = new CultureInfo("en-US");
-            CultureInfo.CurrentUICulture = new CultureInfo("en-US");
-            _unitOfWorkMock = new Mock<IUnitOfWork>();
-            _squadRepositoryMock = new Mock<ISquadRepository>();
+        var localizerFactory = LocalizerFactorHelper.Create();
+        var squadValidator = new SquadValidator(localizerFactory);
 
-            var localizerFactory = LocalizerFactorHelper.Create();
-            var squadValidator = new SquadValidator(localizerFactory);
-
-            _unitOfWorkMock.Setup(u => u.SquadRepository).Returns(_squadRepositoryMock.Object);
-            _squadService = new SquadService(_unitOfWorkMock.Object, localizerFactory, squadValidator);
-        }
+        _unitOfWorkMock.Setup(u => u.SquadRepository).Returns(_squadRepositoryMock.Object);
+        _squadService = new SquadService(_unitOfWorkMock.Object, localizerFactory, squadValidator);
+    }
 
         [Fact]
         public async Task CreateAsyncReturnsConflictWhenSquadIsNull()
@@ -46,13 +50,13 @@ namespace Application.Tests.Services
 
             var localizerFactory = LocalizerFactorHelper.Create();
             var localizer = localizerFactory.Create(typeof(SquadResources));
-            var expectedMessage = localizer[nameof(SquadResources.SquadCannotBeNull)]; // Use a mensagem localizada
+            var expectedMessage = localizer[nameof(SquadResources.SquadCannotBeNull)]; 
 
             // Act
             var result = await _squadService.CreateAsync(null!);
 
             // Assert
-            Assert.Equal(expectedMessage, result.Message); // Compare com a mensagem localizada
+            Assert.Equal(expectedMessage, result.Message); 
             Assert.Equal(OperationStatus.Conflict, result.Status);
         }
 
@@ -64,7 +68,7 @@ namespace Application.Tests.Services
         public async Task CreateAsyncReturnsInvalidDataWhenValidationFails()
         {
             // Arrange
-            var squad = new Squad { Name = "" };
+            var squad = new Squad { Name = "A" }; // Nome com menos de 3 caracteres (falha na validação)
 
             // Act
             var result = await _squadService.CreateAsync(squad);
@@ -72,6 +76,7 @@ namespace Application.Tests.Services
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
         }
+
 
         [Fact]
         public async Task CreateAsyncReturnsConflictWhenNameAlreadyExists()
@@ -235,27 +240,27 @@ namespace Application.Tests.Services
 
 
         [Fact]
-        // Testa se o método GetListAsync retorna um resultado paginado
-        public async Task GetListAsyncReturnsPagedResult()
+    // Testa se o método GetListAsync retorna um resultado paginado
+    public async Task GetListAsyncReturnsPagedResult()
+    {
+        // Arrange
+        var filter = new SquadFilter { Name = "Test" };
+        var pagedResult = new PagedResult<Squad>
         {
-            // Arrange
-            var filter = new SquadFilter { Name = "Test" };
-            var pagedResult = new PagedResult<Squad>
-            {
-                Result = [new() { Name = "Test Squad" }],
-                Page = 1,
-                PageSize = 10,
-                Total = 1
-            };
-            _squadRepositoryMock.Setup(r => r.GetListAsync(filter)).ReturnsAsync(pagedResult);
+            Result = [new() { Name = "Test Squad" }],
+            Page = 1,
+            PageSize = 10,
+            Total = 1
+        };
+        _squadRepositoryMock.Setup(r => r.GetListAsync(filter)).ReturnsAsync(pagedResult);
 
-            // Act
-            var result = await _squadService.GetListAsync(filter);
+        // Act
+        var result = await _squadService.GetListAsync(filter);
 
-            // Assert
-            Assert.NotNull(result);
-            Assert.Single(result.Result);
-        }
+        // Assert
+        Assert.NotNull(result);
+        Assert.Single(result.Result);
+    }
 
         [Fact]
         public async Task VerifyNameAlreadyExistsAsyncReturnsConflictWhenNameExists()
@@ -281,18 +286,18 @@ namespace Application.Tests.Services
 
 
         [Fact]
-        public async Task VerifySquadExistsAsyncReturnsSuccessWhenSquadExists()
-        {
-            // Arrange
-            var squadId = 1;
-            _squadRepositoryMock.Setup(r => r.VerifySquadExistsAsync(squadId)).ReturnsAsync(true);
+    public async Task VerifySquadExistsAsyncReturnsSuccessWhenSquadExists()
+    {
+        // Arrange
+        var squadId = 1;
+        _squadRepositoryMock.Setup(r => r.VerifySquadExistsAsync(squadId)).ReturnsAsync(true);
 
-            // Act
-            var result = await _squadService.VerifySquadExistsAsync(squadId);
+        // Act
+        var result = await _squadService.VerifySquadExistsAsync(squadId);
 
-            // Assert
-            Assert.Equal(OperationStatus.Success, result.Status);
-        }
+        // Assert
+        Assert.Equal(OperationStatus.Success, result.Status); 
+    }
         [Fact]
         public void SquadDescriptionRequiredResourceReturnsCorrectValue()
         {
@@ -314,7 +319,7 @@ namespace Application.Tests.Services
             // Arrange
             CultureInfo.CurrentCulture = new CultureInfo("pt-BR");
             CultureInfo.CurrentUICulture = new CultureInfo("pt-BR");
-            var expectedValue = "O nome deve ter entre 3 e 50 caracteres.";
+            var expectedValue = "O nome deve ter entre 3 e 50 caracteres."; 
 
             // Act
             var actualValue = SquadResources.NameValidateLength;
@@ -329,8 +334,8 @@ namespace Application.Tests.Services
             var expectedCulture = new CultureInfo("pt-BR");
 
             // Act
-            SquadResources.Culture = expectedCulture;
-            var actualCulture = SquadResources.Culture;
+            SquadResources.Culture = expectedCulture; 
+            var actualCulture = SquadResources.Culture; 
 
             // Assert
             Assert.Equal(expectedCulture, actualCulture);
@@ -434,7 +439,7 @@ namespace Application.Tests.Services
             var result = await _squadService.VerifyNameAlreadyExistsAsync(name);
 
             // Assert
-            Assert.Equal(OperationStatus.Success, result.Status);
+            Assert.Equal(OperationStatus.Success, result.Status); 
             Assert.Equal(string.Empty, result.Message);
         }
 
@@ -465,13 +470,13 @@ namespace Application.Tests.Services
         {
             // Arrange
             var squad = new Squad { Id = 1, Name = "Updated Squad" };
-            var validationResult = new ValidationResult();
+            var validationResult = new ValidationResult(); 
             var existingSquad = new Squad { Id = 1, Name = "Existing Squad" };
 
-            _squadRepositoryMock.Setup(r => r.GetByIdAsync(squad.Id)).ReturnsAsync(existingSquad);
-            _squadRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(squad.Name)).ReturnsAsync(false);
+            _squadRepositoryMock.Setup(r => r.GetByIdAsync(squad.Id)).ReturnsAsync(existingSquad); 
+            _squadRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(squad.Name)).ReturnsAsync(false); 
             var validatorMock = new Mock<IValidator<Squad>>();
-            validatorMock.Setup(v => v.ValidateAsync(squad, default)).ReturnsAsync(validationResult);
+            validatorMock.Setup(v => v.ValidateAsync(squad, default)).ReturnsAsync(validationResult); 
 
             var squadService = new SquadService(_unitOfWorkMock.Object, LocalizerFactorHelper.Create(), validatorMock.Object);
 
@@ -479,7 +484,7 @@ namespace Application.Tests.Services
             var result = await squadService.UpdateAsync(squad);
 
             // Assert
-            Assert.Equal(OperationStatus.Success, result.Status);
+            Assert.Equal(OperationStatus.Success, result.Status); 
         }
         [Fact]
         public void SquadCannotBeNullResourceReturnsCorrectValue()
