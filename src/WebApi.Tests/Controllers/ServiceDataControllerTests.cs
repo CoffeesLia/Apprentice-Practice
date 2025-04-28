@@ -132,8 +132,17 @@ namespace WebApi.Tests.Controllers
         public async Task GetListAsyncShouldReturnOkObjectResult()
         {
             // Arrange
-            var filterDto = new ServiceDataFilterDto { Name = "Test Service" };
-            var filter = new ServiceDataFilter { Name = "Test Service" };
+            var filterDto = new ServiceDataFilterDto
+            {
+                Name = "Test Service",
+                PageSize = 10,
+                Page = 1 
+            };
+
+            var filter = new ServiceDataFilter
+            {
+                Name = "Test Service"
+            };
             var pagedResult = new PagedResult<ServiceData>
             {
                 Result = [new ServiceData { Name = "Test Service" }],
@@ -180,6 +189,8 @@ namespace WebApi.Tests.Controllers
             var dto = new ServiceDataFilterDto
             {
                 Name = name,
+                PageSize = 10,
+                Page = 1
             };
 
             // Assert
