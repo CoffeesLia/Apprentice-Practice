@@ -96,5 +96,28 @@ namespace Application.Tests
             Assert.Equal(CultureInfo.InvariantCulture, GitResource.Culture);
             VerifyAllResources<GitResource>(GitResource.ResourceManager);
         }
+
+        [Fact]
+        public void IntegrationResourcesAllCultures()
+        {
+            var resource = new IntegrationResources();
+            Assert.NotNull(resource);
+            ServiceResources.Culture = CultureInfo.InvariantCulture;
+            Assert.Equal(CultureInfo.InvariantCulture, ServiceResources.Culture);
+            VerifyAllResources<ServiceResources>(ServiceResources.ResourceManager);
+        }
+        [Fact]
+        public void IntegrationResourcesCulturePropertySetAndGetReturnsExpectedCulture()
+        {
+            // Arrange
+            var expectedCulture = new CultureInfo("pt-BR");
+
+            // Act
+            IntegrationResources.Culture = expectedCulture;
+            var actualCulture = IntegrationResources.Culture;
+
+            // Assert
+            Assert.Equal(expectedCulture, actualCulture);
+        }
     }
 }

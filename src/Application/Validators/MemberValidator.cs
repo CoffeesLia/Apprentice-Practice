@@ -7,7 +7,7 @@ namespace Stellantis.ProjectName.Application.Validators
 {
     public class MemberValidator : AbstractValidator<Member>
     {
-       
+
 
         public MemberValidator(IStringLocalizerFactory localizerFactory)
         {
@@ -37,7 +37,7 @@ namespace Stellantis.ProjectName.Application.Validators
                 .NotNull()
                 .NotEmpty()
                 .WithMessage(localizer[nameof(MemberResource.MemberEmailIsRequired)]);
-      
+
         }
     }
 }

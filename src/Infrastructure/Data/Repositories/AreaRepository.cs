@@ -1,11 +1,8 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Stellantis.ProjectName.Domain.Entities;
+﻿using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
+using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
@@ -78,6 +75,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             return area.Applications.Count != 0;
         }
 
-  
+
     }
 }

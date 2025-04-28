@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using Application.Tests.Helpers;
+﻿using Application.Tests.Helpers;
 using AutoFixture;
 using FluentValidation;
 using FluentValidation.Results;
@@ -12,6 +11,7 @@ using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Application.Validators;
 using Stellantis.ProjectName.Domain.Entities;
+using System.Globalization;
 using Xunit;
 
 namespace Application.Tests.Services

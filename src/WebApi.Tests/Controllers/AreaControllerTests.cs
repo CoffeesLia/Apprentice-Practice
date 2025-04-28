@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using AutoFixture;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Moq;
@@ -10,7 +11,6 @@ using Stellantis.ProjectName.WebApi.Controllers;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.ViewModels;
-using AutoFixture;
 using System.Collections.ObjectModel;
 
 
@@ -20,7 +20,7 @@ namespace WebApi.Tests.Controllers
     {
         private readonly Mock<IAreaService> _serviceMock;
         private readonly Mock<IMapper> _mapperMock;
-        private readonly Mock<IStringLocalizerFactory> _localizerFactoryMock;   
+        private readonly Mock<IStringLocalizerFactory> _localizerFactoryMock;
         private readonly AreaController _controller;
         private readonly Fixture _fixture;
 
@@ -116,7 +116,7 @@ namespace WebApi.Tests.Controllers
                                .With(a => a.Name, areaDto.Name)
                                .Create();
             var areaVm = _fixture.Build<AreaVm>()
-                                 .With(a => a.Id, area.Id) 
+                                 .With(a => a.Id, area.Id)
                                  .With(a => a.Name, areaDto.Name)
                                  .Create();
 
@@ -125,7 +125,7 @@ namespace WebApi.Tests.Controllers
             _serviceMock.Setup(s => s.UpdateAsync(area)).ReturnsAsync(OperationResult.Complete("Success"));
 
             // Act
-            var result = await _controller.UpdateAsync(area.Id, areaDto); 
+            var result = await _controller.UpdateAsync(area.Id, areaDto);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);

@@ -1,9 +1,9 @@
 ﻿using AutoFixture;
 using Microsoft.EntityFrameworkCore;
+using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
-using Stellantis.ProjectName.Domain.Entities;
-using Stellantis.ProjectName.Application.Models.Filters; 
 
 namespace Infrastructure.Tests.Data.Repositories
 {
@@ -57,7 +57,7 @@ namespace Infrastructure.Tests.Data.Repositories
             Assert.Equal(100, result.Result.First().Cost);
         }
 
-       
+
         [Fact]
         public async Task CreateAsyncShouldAddMember()
         {

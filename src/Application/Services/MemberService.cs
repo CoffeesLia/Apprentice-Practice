@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Localization;
+﻿using FluentValidation;
+using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Interfaces.Services;
@@ -6,7 +7,6 @@ using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
-using FluentValidation;
 
 namespace Stellantis.ProjectName.Application.Services
 {
@@ -37,12 +37,12 @@ namespace Stellantis.ProjectName.Application.Services
         }
 
         public new async Task<OperationResult> GetItemAsync(int id)
-{
-    var member = await Repository.GetByIdAsync(id).ConfigureAwait(false);
-    return member != null
-        ? OperationResult.Complete()
-        : OperationResult.NotFound(Localizer[nameof(ServiceResources.NotFound)]);
-}
+        {
+            var member = await Repository.GetByIdAsync(id).ConfigureAwait(false);
+            return member != null
+                ? OperationResult.Complete()
+                : OperationResult.NotFound(Localizer[nameof(ServiceResources.NotFound)]);
+        }
 
         public override async Task<OperationResult> UpdateAsync(Member item)
         {

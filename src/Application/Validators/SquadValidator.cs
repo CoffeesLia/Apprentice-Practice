@@ -1,5 +1,4 @@
-﻿using System;
-using FluentValidation;
+﻿using FluentValidation;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
@@ -16,10 +15,10 @@ namespace Stellantis.ProjectName.Application.Validators
             ArgumentNullException.ThrowIfNull(localizerFactory);
             var localizer = localizerFactory.Create(typeof(SquadResources));
 
-            
+
             RuleFor(x => x.Name)
                 .NotEmpty()
-                .WithMessage(localizer[nameof(SquadResources.SquadNameRequired)]) 
+                .WithMessage(localizer[nameof(SquadResources.SquadNameRequired)])
                 .DependentRules(() =>
                 {
                     RuleFor(x => x.Name)
@@ -29,10 +28,10 @@ namespace Stellantis.ProjectName.Application.Validators
                         .WithMessage(localizer[nameof(SquadResources.NameValidateLength), MinimumLength, MaximumLength]);
                 });
 
-           
+
             RuleFor(x => x.Description)
                 .NotEmpty()
-                .WithMessage(localizer[nameof(SquadResources.SquadDescriptionRequired)]) 
+                .WithMessage(localizer[nameof(SquadResources.SquadDescriptionRequired)])
                 .DependentRules(() =>
                 {
                     RuleFor(x => x.Description)

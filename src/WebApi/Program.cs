@@ -3,20 +3,12 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Stellantis.ProjectName.Application.Interfaces.Repositories;
-using Stellantis.ProjectName.Application.Interfaces.Services;
-using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Infrastructure.Data;
 using Stellantis.ProjectName.IoC;
 using Stellantis.ProjectName.WebApi;
 using Stellantis.ProjectName.WebApi.Extensions;
 using Stellantis.ProjectName.WebApi.Filters;
-using Stellantis.ProjectName.Application.Validators;
 using System.Globalization;
-using Stellantis.ProjectName.Infrastructure.Data.Repositories;
-using Stellantis.ProjectName.WebApi.Dto.Validators;
-using Stellantis.ProjectName.WebApi.Dto;
-using Stellantis.ProjectName.Domain.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,12 +41,14 @@ builder.Services.Configure<ApiBehaviorOptions>(p =>
 });
 builder.Services.ConfigureDependencyInjection();
 builder.Services.RegisterMapper();
+
+#if DEBUG
+
 var databaseType = configuration["DatabaseType"];
 switch (databaseType)
 {
     case "InMemory":
-        builder.Services.AddDbContext<Context>(options => options.UseInMemoryDatabase(databaseName: "InMemory")
-        );
+        builder.Services.AddDbContext<Context>(options => options.UseInMemoryDatabase(databaseName: "InMemory"));
         break;
     case "SqlServer":
         builder.Services.AddDbContext<Context>(options => options.UseSqlServer(configuration["ConnectionString"]));
@@ -62,6 +56,10 @@ switch (databaseType)
     default:
         throw new NotSupportedException(databaseType);
 }
+
+#else
+builder.Services.AddDbContext<Context>(options => options.UseSqlServer(configuration["ConnectionString"]));
+#endif
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
@@ -76,33 +74,39 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
 });
 
 #if DEBUG
+
 builder.Services.AddAuthentication("AuthenticationForDebug")
     .AddScheme<AuthenticationSchemeOptions, ForDebugAuthenticationHandler>("AuthenticationForDebug", null);
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowLocal", builder =>
+    options.AddPolicy("AllowAll", policy =>
     {
-        builder.WithOrigins("http://localhost:3000")
-               .AllowAnyHeader()
-               .AllowAnyMethod()
-               .AllowAnyOrigin();
+        policy
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
     });
 });
+
 #endif
 
 var app = builder.Build();
-app.UseRequestLocalization();
-#if DEBUG
-app.UseCors("AllowLocal");
-#endif
 
-// Configure the HTTP request pipeline.
+#if DEBUG
+
+await ForDebugHelper.LoadDataForTestsAsync(databaseType, app).ConfigureAwait(false);
+
+app.UseCors("AllowAll");
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+#endif
+
+app.UseRequestLocalization();
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();

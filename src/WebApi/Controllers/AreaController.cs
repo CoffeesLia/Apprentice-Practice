@@ -17,7 +17,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
 
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] AreaDto itemDto)
-        {         
+        {
             return await CreateBaseAsync<AreaVm>(itemDto).ConfigureAwait(false);
         }
 
@@ -48,6 +48,6 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             return await base.DeleteAsync(id).ConfigureAwait(false);
         }
 
-       
+
     }
 }

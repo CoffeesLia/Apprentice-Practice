@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FluentValidation;
-using FluentValidation.Results;
+﻿using FluentValidation;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
@@ -74,7 +69,7 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.NotFound(_localizer[nameof(SquadResources.SquadNotFound)]);
             }
 
-            await Repository.DeleteAsync(id, true).ConfigureAwait(false); 
+            await Repository.DeleteAsync(id, true).ConfigureAwait(false);
             return OperationResult.Complete();
         }
 
@@ -95,7 +90,7 @@ namespace Stellantis.ProjectName.Application.Services
         {
             if (await Repository.VerifySquadExistsAsync(id).ConfigureAwait(false))
             {
-                return OperationResult.Complete(); 
+                return OperationResult.Complete();
             }
             return OperationResult.NotFound(_localizer[nameof(SquadResources.SquadNotFound)]);
         }

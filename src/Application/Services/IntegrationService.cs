@@ -1,46 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using FluentValidation;
 using Microsoft.Extensions.Localization;
+using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
+using Stellantis.ProjectName.Application.Interfaces.Services;
+using Stellantis.ProjectName.Application.Models;
+using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
-using Stellantis.ProjectName.Application.Models;
-using Stellantis.ProjectName.Application.Interfaces.Services;
-using Stellantis.ProjectName.Application.Models.Filters;
-using Stellantis.ProjectName.Application.Interfaces;
-using FluentValidation;
-using System.Linq.Expressions;
 
 namespace Stellantis.ProjectName.Application.Services
 {
-
-
     public class IntegrationService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<Integration> validator)
-        : EntityServiceBase<Integration>(unitOfWork, localizerFactory, validator), IIntegrationService
+            : EntityServiceBase<Integration>(unitOfWork, localizerFactory, validator), IIntegrationService
     {
-        private new IStringLocalizer Localizer => localizerFactory.Create(typeof(IntegrationResources));
-
         protected override IIntegrationRepository Repository => UnitOfWork.IntegrationRepository;
-        public async Task<PagedResult<Integration>> GetListAsync(IntegrationFilter filter)
-        {
-            Expression<Func<Integration, bool>>? filterExpression = null;
-
-            if (!string.IsNullOrEmpty(filter.Name))
-            {
-                OperationResult.Conflict(Localizer[IntegrationResources.NameIsRequired]);
-            }
-
-            return await Repository.GetListAsync(filterExpression, filter.Sort, filter.SortDir, null, filter.Page, filter.PageSize).ConfigureAwait(false);
-        }
 
         public override async Task<OperationResult> CreateAsync(Integration item)
         {
             ArgumentNullException.ThrowIfNull(item);
-            var existingIntegration = await Repository.GetByIdAsync(item.Id).ConfigureAwait(false);
-            if (existingIntegration != null)
+
+            var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
+            if (!validationResult.IsValid)
             {
-                return OperationResult.Conflict(Localizer[IntegrationResources.MessageConflict]);
+                return OperationResult.InvalidData(validationResult);
             }
 
             await Repository.CreateAsync(item).ConfigureAwait(false);
@@ -62,25 +44,59 @@ namespace Stellantis.ProjectName.Application.Services
         public new async Task<Integration?> GetItemAsync(int id)
         {
             var integration = await Repository.GetByIdAsync(id).ConfigureAwait(false);
-            if (integration == null)
-            {
-                throw new KeyNotFoundException(Localizer[IntegrationResources.MessageNotFound]);
-            }
-            return integration;
+            return integration ?? throw new KeyNotFoundException(Localizer[IntegrationResources.MessageNotFound]);
         }
 
         public override async Task<OperationResult> UpdateAsync(Integration item)
         {
             ArgumentNullException.ThrowIfNull(item);
+            ArgumentNullException.ThrowIfNull(item.Name);
+
+            var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
+            if (!validationResult.IsValid)
+            {
+                return OperationResult.InvalidData(validationResult);
+            }
+
 
             var existingIntegration = await Repository.GetByIdAsync(item.Id).ConfigureAwait(false);
             if (existingIntegration == null)
             {
-                return OperationResult.NotFound(Localizer[IntegrationResources.NameIsRequired]);
+                return OperationResult.NotFound(Localizer[IntegrationResources.MessageNotFound]);
             }
 
             await Repository.UpdateAsync(item).ConfigureAwait(false);
             return OperationResult.Complete(Localizer[IntegrationResources.UpdatedSuccessfully]);
+        }
+
+        public async Task<bool> IsIntegrationNameUniqueAsync(string name)
+        {
+            var filter = new IntegrationFilter
+            {
+                Name = name
+            };
+            var integration = await GetListAsync(filter).ConfigureAwait(false);
+
+            if (integration == null || integration.Result == null)
+            {
+                return true;
+            }
+
+            return !integration.Result.Any(a => a.Name == name);
+        }
+
+        public async Task<PagedResult<Integration>> GetListAsync(IntegrationFilter filter)
+        {
+            filter ??= new IntegrationFilter();
+            var integrationFilter = new IntegrationFilter
+            {
+                Name = filter.Name,
+                ApplicationData = filter.ApplicationData,
+                Page = filter.Page,
+                PageSize = filter.PageSize
+            };
+
+            return await UnitOfWork.IntegrationRepository.GetListAsync(integrationFilter).ConfigureAwait(false);
         }
     }
 }
