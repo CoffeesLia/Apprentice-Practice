@@ -18,21 +18,13 @@ namespace Stellantis.ProjectName.Application.Validators
                            .NotNull()
                            .NotEmpty()
                            .WithMessage(localizer[nameof(IntegrationResources.NameIsRequired)]);
-            RuleFor(x => x.Name)
-                .MinimumLength(MinimumLength)
-                .WithMessage(localizer[nameof(IntegrationResources.NameValidateLength), MinimumLength, MaximumLength])
-                .MaximumLength(MaximumLength)
-                .WithMessage(localizer[nameof(AreaResources.NameValidateLength), MinimumLength, MaximumLength]);
+            RuleFor(x => x.Name);
 
             RuleFor(x => x.Description)
                .NotNull()
                .NotEmpty()
                .WithMessage(localizer[nameof(IntegrationResources.NameIsRequired)]);
-            RuleFor(x => x.Description)
-                .MinimumLength(MinimumLength)
-                .WithMessage(localizer[nameof(IntegrationResources.NameValidateLength), MinimumLength, MaximumLength])
-                .MaximumLength(MaximumLength)
-                .WithMessage(localizer[nameof(AreaResources.NameValidateLength), MinimumLength, MaximumLength]);
+            RuleFor(x => x.Description);
         }
     }
 }
