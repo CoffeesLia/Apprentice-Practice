@@ -1,10 +1,7 @@
-using System.Data.Entity;
-using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
-using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
-using Stellantis.ProjectName.Application.Resources;
+using System.Data.Entity;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {

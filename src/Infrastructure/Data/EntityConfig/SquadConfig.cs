@@ -19,7 +19,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
 
             builder.Property(p => p.Description)
                 .IsRequired()
-                .HasMaxLength(200); 
+                .HasMaxLength(200);
 
         }
     }

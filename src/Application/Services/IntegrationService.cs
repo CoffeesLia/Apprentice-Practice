@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using FluentValidation;
 using Microsoft.Extensions.Localization;
+using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
+using Stellantis.ProjectName.Application.Interfaces.Services;
+using Stellantis.ProjectName.Application.Models;
+using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
-using Stellantis.ProjectName.Application.Models;
-using Stellantis.ProjectName.Application.Interfaces.Services;
-using Stellantis.ProjectName.Application.Models.Filters;
-using Stellantis.ProjectName.Application.Interfaces;
-using FluentValidation;
 using System.Linq.Expressions;
 
 namespace Stellantis.ProjectName.Application.Services

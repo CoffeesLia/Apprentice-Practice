@@ -12,7 +12,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [Route("api/GitRepos")]
     public sealed class GitRepoController(IGitRepoService service, IMapper mapper, IStringLocalizerFactory localizerFactory) : EntityControllerBase<GitRepo, GitRepoDto>(service, mapper, localizerFactory)
-    { 
+    {
 
         protected override IGitRepoService Service => (IGitRepoService)base.Service;
 

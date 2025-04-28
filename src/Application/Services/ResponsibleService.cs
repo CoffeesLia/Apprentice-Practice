@@ -15,7 +15,7 @@ namespace Stellantis.ProjectName.Application.Services
     {
         private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(ResponsibleResource));
         protected override IResponsibleRepository Repository => UnitOfWork.ResponsibleRepository;
-        
+
 
         public override async Task<OperationResult> CreateAsync(Responsible item)
         {

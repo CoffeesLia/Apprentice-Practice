@@ -1,5 +1,5 @@
-﻿using AutoMapper;
-using AutoFixture;
+﻿using AutoFixture;
+using AutoMapper;
 using FluentValidation.TestHelper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,8 +15,8 @@ using Stellantis.ProjectName.Infrastructure.Data.EntityConfig;
 using Stellantis.ProjectName.WebApi.Controllers;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
-using Stellantis.ProjectName.WebApi.ViewModels;
 using Stellantis.ProjectName.WebApi.Mapper;
+using Stellantis.ProjectName.WebApi.ViewModels;
 using WebApi.Tests.Helpers;
 
 namespace WebApi.Tests.Controllers

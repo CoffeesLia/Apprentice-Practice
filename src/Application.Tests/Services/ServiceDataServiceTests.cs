@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using Application.Tests.Helpers;
+﻿using Application.Tests.Helpers;
 using FluentValidation;
 using FluentValidation.Results;
 using FluentValidation.TestHelper;
@@ -12,6 +11,7 @@ using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Application.Validators;
 using Stellantis.ProjectName.Domain.Entities;
+using System.Globalization;
 using Xunit;
 
 namespace Application.Tests.Services
@@ -499,7 +499,7 @@ namespace Application.Tests.Services
 
             // Assert
             result.ShouldHaveValidationErrorFor(ds => ds.Description)
-                .WithErrorMessage((ServiceDataResources.ServiceDescriptionLength));
+                .WithErrorMessage(ServiceDataResources.ServiceDescriptionLength);
         }
 
         // Testa se o validador retorna erro quando o nome é obrigatório.
@@ -517,7 +517,7 @@ namespace Application.Tests.Services
 
             // Assert
             result.ShouldHaveValidationErrorFor(ds => ds.Name)
-                .WithErrorMessage((ServiceDataResources.ServiceNameIsRequired));
+                .WithErrorMessage(ServiceDataResources.ServiceNameIsRequired);
         }
 
         // Testa se ServiceData define e obtém a descrição corretamente.
@@ -572,7 +572,7 @@ namespace Application.Tests.Services
 
             // Assert
             result.ShouldHaveValidationErrorFor(ds => ds.Name)
-                .WithErrorMessage((ServiceDataResources.ServiceNameLength));
+                .WithErrorMessage(ServiceDataResources.ServiceNameLength);
         }
     }
 }

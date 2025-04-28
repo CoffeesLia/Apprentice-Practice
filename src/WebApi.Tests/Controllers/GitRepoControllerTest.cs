@@ -1,7 +1,6 @@
 ﻿using AutoFixture;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models;
@@ -89,7 +88,7 @@ namespace WebApi.Tests.Controllers
 
             // Assert
             Assert.IsType<OkObjectResult>(result);
-           
+
         }
 
         // Teste para verificar se UpdateAsync retorna sucesso quando atualização é realizada

@@ -29,13 +29,13 @@ namespace Stellantis.ProjectName.Application.Services
             }
 
             if (await Repository.VerifyDescriptionExistsAsync(item.Description).ConfigureAwait(false))
-            { 
+            {
                 return OperationResult.InvalidData(validationResult);
-            } 
-            
+            }
+
             if (await Repository.VerifyNameExistsAsync(item.Name).ConfigureAwait(false))
-            { 
-                    return OperationResult.InvalidData(validationResult);
+            {
+                return OperationResult.InvalidData(validationResult);
             }
 
             if (await Repository.VerifyUrlAlreadyExistsAsync(item.Url).ConfigureAwait(false))
