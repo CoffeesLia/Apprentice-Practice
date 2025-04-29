@@ -56,7 +56,7 @@ namespace Stellantis.ProjectName.Application.Services
             var responsible = await Repository.GetByIdAsync(id).ConfigureAwait(false);
             return responsible != null
                 ? OperationResult.Complete()
-                : OperationResult.NotFound(Localizer[nameof(GitResource.RepositoryNotFound)]);
+                : OperationResult.NotFound(Localizer[nameof(GitResource.NotFound)]);
         }
         public override async Task<OperationResult> UpdateAsync(GitRepo item)
         {
@@ -72,7 +72,7 @@ namespace Stellantis.ProjectName.Application.Services
 
             if (!validationResult.IsValid)
             {
-                return OperationResult.InvalidData(validationResult);
+                return OperationResult.NotFound(Localizer[nameof(GitResource.NotFound)]);
             }
 
             if (await Repository.VerifyUrlAlreadyExistsAsync(item.Url).ConfigureAwait(false) && existingRepo.Url != item.Url)
@@ -104,7 +104,7 @@ namespace Stellantis.ProjectName.Application.Services
             var item = await Repository.GetByIdAsync(id).ConfigureAwait(false);
             if (item == null)
             {
-                return OperationResult.Conflict(Localizer[nameof(GitResource.RepositoryNotFound)]);
+                return OperationResult.NotFound(Localizer[nameof(GitResource.NotFound)]);
             }
             return await base.DeleteAsync(item).ConfigureAwait(false);
         }
