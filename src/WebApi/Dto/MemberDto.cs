@@ -1,6 +1,6 @@
 ﻿namespace Stellantis.ProjectName.WebApi.Dto
 {
-    public class MemberDto 
+    public class MemberDto
     {
         public int Id { get; set; }
         public required string Name { get; set; }

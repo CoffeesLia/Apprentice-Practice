@@ -1,17 +1,17 @@
-﻿using Stellantis.ProjectName.Application.Interfaces.Repositories;
-using Stellantis.ProjectName.Application.Models.Filters;
+﻿using FluentValidation;
+using FluentValidation.Results;
+using Moq;
 using Stellantis.ProjectName.Application.Interfaces;
-using Stellantis.ProjectName.Application.Validators;
+using Stellantis.ProjectName.Application.Interfaces.Repositories;
+using Stellantis.ProjectName.Application.Models;
+using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Application.Services;
-using Stellantis.ProjectName.Application.Models;
+using Stellantis.ProjectName.Application.Validators;
 using Stellantis.ProjectName.Domain.Entities;
-using FluentValidation.Results;
 using System.Globalization;
-using FluentValidation;
 using System.Text;
 using Xunit;
-using Moq;
 
 namespace Application.Tests.Services
 {

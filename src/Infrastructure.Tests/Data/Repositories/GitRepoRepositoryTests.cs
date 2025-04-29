@@ -89,7 +89,7 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task GetRepositoryDetailsAsyncShouldReturnRepoWhenExists()
         {
             var repo = _fixture.Create<GitRepo>();
-            await _context.GitRepo.AddAsync(repo);
+            await _context.Repositories.AddAsync(repo);
             await _context.SaveChangesAsync();
 
             var result = await _repository.GetRepositoryDetailsAsync(repo.Id);
@@ -130,13 +130,13 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task DeleteAsyncShouldDeleteRepoAndReturnTrue()
         {
             var repo = _fixture.Create<GitRepo>();
-            await _context.GitRepo.AddAsync(repo);
+            await _context.Repositories.AddAsync(repo);
             await _context.SaveChangesAsync();
 
             var deleted = await _repository.DeleteAsync(repo.Id);
 
             Assert.True(deleted);
-            var result = await _context.GitRepo.FindAsync(repo.Id);
+            var result = await _context.Repositories.FindAsync(repo.Id);
             Assert.Null(result);
         }
 
@@ -158,7 +158,7 @@ namespace Infrastructure.Tests.Data.Repositories
                 ProductOwner = "Owner",
                 ConfigurationItem = "ConfigItem"
             };
-            await _context.ApplicationDatas.AddAsync(appData);
+            await _context.Applications.AddAsync(appData);
             await _context.SaveChangesAsync();
 
             var result = await _repository.IsApplicationDataFrom(appData.Id, 1);
@@ -170,13 +170,13 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task IRepositoryEntityBaseDeleteAsyncShouldWork()
         {
             var repo = _fixture.Create<GitRepo>();
-            await _context.GitRepo.AddAsync(repo);
+            await _context.Repositories.AddAsync(repo);
             await _context.SaveChangesAsync();
 
             var interfaceRepo = (IRepositoryEntityBase<GitRepo>)_repository;
             await interfaceRepo.DeleteAsync(repo.Id, true);
 
-            var result = await _context.GitRepo.FindAsync(repo.Id);
+            var result = await _context.Repositories.FindAsync(repo.Id);
             Assert.Null(result);
         }
 
@@ -219,8 +219,8 @@ namespace Infrastructure.Tests.Data.Repositories
 
             // Assert  
             Assert.True(result);
-        }        
-        
+        }
+
         [Fact]
         public async Task VerifyNameExistsAsyncShouldReturnTrueWhenNameExists()
         {
@@ -234,8 +234,8 @@ namespace Infrastructure.Tests.Data.Repositories
 
             // Assert  
             Assert.True(result);
-        }        
-        
+        }
+
         [Fact]
         public async Task VerifyApplicationIdExistsAsyncShouldReturnTrueWhenApplicationIdExists()
         {

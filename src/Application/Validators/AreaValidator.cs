@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Stellantis.ProjectName.Domain.Entities;
-using FluentValidation;
+﻿using FluentValidation;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Resources;
+using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Validators
 {
     public class AreaValidator : AbstractValidator<Area>
     {
         internal const int MinimumLength = 3;
-        internal const int MaximumLength = 255; 
+        internal const int MaximumLength = 255;
 
         public AreaValidator(IStringLocalizerFactory localizerFactory)
         {

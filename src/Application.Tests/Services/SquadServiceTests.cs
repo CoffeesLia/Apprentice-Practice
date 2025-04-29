@@ -50,13 +50,13 @@ public class SquadServiceTests
 
             var localizerFactory = LocalizerFactorHelper.Create();
             var localizer = localizerFactory.Create(typeof(SquadResources));
-            var expectedMessage = localizer[nameof(SquadResources.SquadCannotBeNull)]; // Use a mensagem localizada
+            var expectedMessage = localizer[nameof(SquadResources.SquadCannotBeNull)]; 
 
             // Act
             var result = await _squadService.CreateAsync(null!);
 
             // Assert
-            Assert.Equal(expectedMessage, result.Message); // Compare com a mensagem localizada
+            Assert.Equal(expectedMessage, result.Message); 
             Assert.Equal(OperationStatus.Conflict, result.Status);
         }
 
@@ -68,7 +68,7 @@ public class SquadServiceTests
         public async Task CreateAsyncReturnsInvalidDataWhenValidationFails()
         {
             // Arrange
-            var squad = new Squad { Name = "" }; 
+            var squad = new Squad { Name = "A" }; // Nome com menos de 3 caracteres (falha na validação)
 
             // Act
             var result = await _squadService.CreateAsync(squad);
@@ -76,6 +76,7 @@ public class SquadServiceTests
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
         }
+
 
         [Fact]
         public async Task CreateAsyncReturnsConflictWhenNameAlreadyExists()

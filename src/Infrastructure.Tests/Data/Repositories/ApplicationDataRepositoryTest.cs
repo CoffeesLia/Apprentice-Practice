@@ -1,13 +1,9 @@
 ﻿using AutoFixture;
 using Microsoft.EntityFrameworkCore;
-using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
-using System.Data.Entity.Core.Objects;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Infrastructure.Tests.Data.Repositories
 {
@@ -28,7 +24,7 @@ namespace Infrastructure.Tests.Data.Repositories
             _repository = new ApplicationDataRepository(_context);
         }
 
-            [Fact]
+        [Fact]
         public async Task GetListAsyncByAreaId()
         {
             // Arrange
@@ -258,7 +254,7 @@ namespace Infrastructure.Tests.Data.Repositories
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-       
+
         ~ApplicationDataRepositoryTest()
         {
             Dispose(false);

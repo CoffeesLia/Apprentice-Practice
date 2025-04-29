@@ -5,13 +5,13 @@ namespace Stellantis.ProjectName.Infrastructure.Data
 {
     public class Context(DbContextOptions<Context> options) : DbContext(options)
     {
-        public DbSet<Responsible> Responsibles { get; set; } 
+        public DbSet<Responsible> Responsibles { get; set; }
         public DbSet<Area> Areas { get; set; }
         public DbSet<Member> Members { get; set; }
         public DbSet<Squad> Squads { get; set; }
         public DbSet<Integration> Integrations { get; set; }
-        public DbSet<ApplicationData> ApplicationDatas { get; set; }
-        public DbSet<GitRepo> GitRepo { get; set; }
+        public DbSet<ApplicationData> Applications { get; set; }
+        public DbSet<GitRepo> Repositories { get; set; }
         public DbSet<ServiceData> Services { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

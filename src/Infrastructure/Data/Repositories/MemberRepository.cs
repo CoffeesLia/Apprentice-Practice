@@ -1,8 +1,8 @@
 ﻿using LinqKit;
+using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
@@ -50,6 +50,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 }
             }
         }
-    
+
     }
 }

@@ -5,7 +5,6 @@ using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
-using Xunit;
 
 namespace Stellantis.ProjectName.Tests.Data.Repositories
 {

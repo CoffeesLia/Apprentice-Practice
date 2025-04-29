@@ -1,8 +1,6 @@
-﻿using System.Threading.Tasks;
-using AutoFixture;
+﻿using AutoFixture;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models;
@@ -15,7 +13,6 @@ using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.Mapper;
 using Stellantis.ProjectName.WebApi.ViewModels;
 using WebApi.Tests.Helpers;
-using Xunit;
 
 namespace WebApi.Tests.Controllers
 {
@@ -33,7 +30,7 @@ namespace WebApi.Tests.Controllers
             var localizerFactor = LocalizerFactorHelper.Create();
             _controller = new ApplicationDataController(_serviceMock.Object, mapper, localizerFactor);
         }
-   
+
         [Fact]
         public async Task GetListAsyncShouldReturnPagedResultVm()
         {
@@ -64,7 +61,7 @@ namespace WebApi.Tests.Controllers
                 ConfigurationItem = "ConfigItem",
                 ResponsibleId = 1
             };
-      
+
             _serviceMock.Setup(s => s.CreateAsync(It.IsAny<ApplicationData>())).ReturnsAsync(OperationResult.Complete(ServiceResources.RegisteredSuccessfully));
 
             // Act
@@ -173,7 +170,7 @@ namespace WebApi.Tests.Controllers
             Assert.IsType<NotFoundResult>(result);
         }
 
-    
+
     }
 }
 

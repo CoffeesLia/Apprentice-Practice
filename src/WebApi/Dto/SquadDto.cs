@@ -1,10 +1,9 @@
-﻿using Stellantis.ProjectName.Domain.Entities;
-
-namespace Stellantis.ProjectName.WebApi.Dto
+﻿namespace Stellantis.ProjectName.WebApi.Dto
 {
-    public class SquadDto 
+    public class SquadDto
     {
-        public string? Name { get; set; }
-        public string? Description { get; set; }
+        public string? Name { get; set; } 
+        public string? Description { get; set; } 
     }
+
 }
