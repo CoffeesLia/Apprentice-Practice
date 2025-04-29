@@ -148,8 +148,8 @@ namespace WebApi.Tests.Controllers
             };
             var pagedResult = new PagedResult<Member>
             {
-                Result = new List<Member>
-                {
+                Result =
+                [
                     new Member
                     {
                         Name = "Test Name",
@@ -157,15 +157,15 @@ namespace WebApi.Tests.Controllers
                         Email = "test@example.com",
                         Cost = 100
                     }
-                },
+                ],
                 Page = 1,
                 PageSize = 10,
                 Total = 1
             };
             var pagedVmResult = new PagedResultVm<MemberVm>
             {
-                Result = new List<MemberVm>
-                {
+                Result =
+                [
                     new MemberVm
                     {
                         Name = "Test Name",
@@ -174,7 +174,7 @@ namespace WebApi.Tests.Controllers
                         Cost = 100
 
                     }
-                },
+                ],
                 Page = 1,
                 PageSize = 10,
                 Total = 1
