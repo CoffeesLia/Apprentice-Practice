@@ -23,6 +23,7 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(x => x.ResponsibleId, opt => opt.MapFrom(src => src.ResponsibleId));
 
             CreateMap<ApplicationData, ApplicationVm>()
+                .ForMember(dest => dest.Area, opt => opt.MapFrom(src => src.Area))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(dest => dest.ProductOwner, opt => opt.MapFrom(src => src.ProductOwner))
                 .ForMember(dest => dest.ConfigurationItem, opt => opt.MapFrom(src => src.ConfigurationItem))
@@ -39,7 +40,7 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(dest => dest.Applications, opt => opt.Ignore())
                 .ForMember(dest => dest.Responsibles, opt => opt.Ignore());
             CreateMap<Area, AreaVm>()
-                .ForMember(x => x.Applications, x => x.Ignore());
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
             CreateMap<AreaFilterDto, AreaFilter>();
 
             CreateMap<ResponsibleDto, Responsible>()
