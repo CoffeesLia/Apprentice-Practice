@@ -2,6 +2,7 @@
 using AutoMapper;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models;
@@ -243,5 +244,40 @@ namespace WebApi.Tests.Controllers
             Assert.Equal(expectedName, squadDto.Name);
             Assert.Equal(expectedDescription, squadDto.Description);
         }
+        [Fact]
+        public async Task CreateAsyncReturnsBadRequestWhenSquadDtoIsNull()
+        {
+            // Arrange
+            var squadServiceMock = new Mock<ISquadService>();
+            var mapperMock = new Mock<IMapper>();
+            var localizerFactoryMock = new Mock<IStringLocalizerFactory>();
+            var controller = new SquadController(squadServiceMock.Object, mapperMock.Object, localizerFactoryMock.Object);
+
+            // Act
+            var result = await controller.CreateAsync(null!);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("O objeto SquadDto não pode ser nulo.", badRequestResult.Value);
+        }
+
+        [Fact]
+        public async Task UpdateAsyncReturnsBadRequestWhenSquadDtoIsNull()
+        {
+            // Arrange
+            var squadServiceMock = new Mock<ISquadService>();
+            var mapperMock = new Mock<IMapper>();
+            var localizerFactoryMock = new Mock<IStringLocalizerFactory>();
+            var controller = new SquadController(squadServiceMock.Object, mapperMock.Object, localizerFactoryMock.Object);
+
+            // Act
+            var result = await controller.UpdateAsync(1, null!);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("O objeto SquadDto não pode ser nulo.", badRequestResult.Value);
+        }
+
+
     }
 }
