@@ -20,12 +20,24 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] SquadDto itemDto)
         {
+            // Validação opcional (se necessário)
+            if (itemDto == null)
+            {
+                return BadRequest("O objeto SquadDto não pode ser nulo.");
+            }
+
             return await CreateBaseAsync<SquadVm>(itemDto).ConfigureAwait(false);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] SquadDto itemDto)
         {
+            // Validação opcional (se necessário)
+            if (itemDto == null)
+            {
+                return BadRequest("O objeto SquadDto não pode ser nulo.");
+            }
+
             return await UpdateBaseAsync<SquadVm>(id, itemDto).ConfigureAwait(false);
         }
 
