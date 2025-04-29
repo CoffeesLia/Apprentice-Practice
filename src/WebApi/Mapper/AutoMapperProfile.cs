@@ -40,16 +40,16 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(dest => dest.Applications, opt => opt.Ignore())
                 .ForMember(dest => dest.Responsibles, opt => opt.Ignore());
             CreateMap<Area, AreaVm>()
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
+               .ForMember(x => x.Applications, x => x.Ignore());
             CreateMap<AreaFilterDto, AreaFilter>();
+
 
             CreateMap<ResponsibleDto, Responsible>()
             .ForMember(x => x.Id, x => x.Ignore())
             .ForMember(x => x.AreaId, opt => opt.MapFrom(src => src.AreaId))
             .ForMember(x => x.Area, opt => opt.Ignore());
-            CreateMap<Responsible, ResponsibleVm>()
-                .ForMember(dest => dest.Area, opt => opt.MapFrom(src => src.Area));
-
+            CreateMap<Responsible, ResponsibleVm>();
+               
 
             CreateMap<ResponsibleFilterDto, ResponsibleFilter>();
 
