@@ -59,7 +59,7 @@ namespace WebApi.Tests.Controllers
         public async Task UpdateAsyncShouldReturnOkObjectResult()
         {
             // Arrange
-            var itemDto = new ServiceDataDto { Id = 1, Name = "Updated Service" };
+            var itemDto = new ServiceDataDto { Name = "Updated Service" };
             var serviceData = new ServiceData { Id = 1, Name = "Updated Service" };
             _serviceMock.Setup(service => service.UpdateAsync(It.IsAny<ServiceData>()))
                 .ReturnsAsync(OperationResult.Complete());
@@ -204,7 +204,6 @@ namespace WebApi.Tests.Controllers
             // Arrange
             var name = "Test Service";
             var description = "Test Description";
-            var Id = 1;
             var applicationId = 5;
 
             // Act
@@ -212,14 +211,12 @@ namespace WebApi.Tests.Controllers
             {
                 Name = name,
                 Description = description,
-                Id = Id,
                 ApplicationId = applicationId
             };
 
             // Assert
             Assert.Equal(name, dto.Name);
             Assert.Equal(description, dto.Description);
-            Assert.Equal(Id, dto.Id);
             Assert.Equal(applicationId, dto.ApplicationId);
         }
 
