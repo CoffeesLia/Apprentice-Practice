@@ -59,6 +59,29 @@ namespace Application.Tests.Services
         }
 
         [Fact]
+        public async Task CreateAsyncWhenValidShouldReturnSuccess()
+        {
+            // Arrange
+            var gitRepo = _fixture.Build<GitRepo>().Create();
+            var validatorMock = new Mock<IValidator<GitRepo>>();
+            validatorMock.Setup(v => v.ValidateAsync(gitRepo, default))
+                         .ReturnsAsync(new ValidationResult());
+
+            _gitRepoRepositoryMock.Setup(r => r.VerifyDescriptionExistsAsync(gitRepo.Description)).ReturnsAsync(false);
+            _gitRepoRepositoryMock.Setup(r => r.VerifyNameExistsAsync(gitRepo.Name)).ReturnsAsync(false);
+            _gitRepoRepositoryMock.Setup(r => r.VerifyUrlAlreadyExistsAsync(gitRepo.Url)).ReturnsAsync(false);
+
+            var service = new GitRepoService(_unitOfWorkMock.Object, LocalizerFactorHelper.Create(), validatorMock.Object);
+
+            // Act
+            var result = await service.CreateAsync(gitRepo);
+
+            // Assert
+            Assert.Equal(OperationStatus.Success, result.Status);
+        }
+
+
+        [Fact]
         public async Task CreateAsyncShouldReturnExpectedValidationMessages()
         {
             // Arrange  
@@ -118,6 +141,95 @@ namespace Application.Tests.Services
             // Assert
             Assert.Contains(GitResource.NameIsRequired, result.Errors);
 
+        }
+
+        [Fact]
+        public async Task CreateAsyncWhenValidationFailsShouldReturnInvalidData()
+        {
+            // Arrange
+            var gitRepo = _fixture.Build<GitRepo>().Create();
+            var validationResult = new ValidationResult([
+                new ValidationFailure("Name", GitResource.NameIsRequired)
+            ]);
+
+            var validatorMock = new Mock<IValidator<GitRepo>>();
+            validatorMock.Setup(v => v.ValidateAsync(gitRepo, It.IsAny<CancellationToken>()))
+                         .ReturnsAsync(validationResult);
+
+            var service = new GitRepoService(_unitOfWorkMock.Object, LocalizerFactorHelper.Create(), validatorMock.Object);
+
+            // Act
+            var result = await service.CreateAsync(gitRepo);
+
+            // Assert
+            Assert.Equal(OperationStatus.InvalidData, result.Status);
+            Assert.Contains(GitResource.NameIsRequired, result.Errors);
+        }
+
+        [Fact]
+        public async Task CreateAsyncWhenDescriptionAlreadyExistsShouldReturnInvalidData()
+        {
+            // Arrange
+            var gitRepo = _fixture.Build<GitRepo>().Create();
+
+            var validatorMock = new Mock<IValidator<GitRepo>>();
+            validatorMock.Setup(v => v.ValidateAsync(gitRepo, It.IsAny<CancellationToken>()))
+                         .ReturnsAsync(new ValidationResult());
+
+            _gitRepoRepositoryMock.Setup(r => r.VerifyDescriptionExistsAsync(gitRepo.Description)).ReturnsAsync(true);
+
+            var service = new GitRepoService(_unitOfWorkMock.Object, LocalizerFactorHelper.Create(), validatorMock.Object);
+
+            // Act
+            var result = await service.CreateAsync(gitRepo);
+
+            // Assert
+            Assert.Equal(OperationStatus.InvalidData, result.Status);
+        }
+
+        [Fact]
+        public async Task CreateAsyncWhenNameAlreadyExistsShouldReturnInvalidData()
+        {
+            // Arrange
+            var gitRepo = _fixture.Build<GitRepo>().Create();
+
+            var validatorMock = new Mock<IValidator<GitRepo>>();
+            validatorMock.Setup(v => v.ValidateAsync(gitRepo, It.IsAny<CancellationToken>()))
+                         .ReturnsAsync(new ValidationResult());
+
+            _gitRepoRepositoryMock.Setup(r => r.VerifyDescriptionExistsAsync(gitRepo.Description)).ReturnsAsync(false);
+            _gitRepoRepositoryMock.Setup(r => r.VerifyNameExistsAsync(gitRepo.Name)).ReturnsAsync(true);
+
+            var service = new GitRepoService(_unitOfWorkMock.Object, LocalizerFactorHelper.Create(), validatorMock.Object);
+
+            // Act
+            var result = await service.CreateAsync(gitRepo);
+
+            // Assert
+            Assert.Equal(OperationStatus.InvalidData, result.Status);
+        }
+
+        [Fact]
+        public async Task CreateAsyncWhenUrlAlreadyExistsShouldReturnInvalidData()
+        {
+            // Arrange
+            var gitRepo = _fixture.Build<GitRepo>().Create();
+
+            var validatorMock = new Mock<IValidator<GitRepo>>();
+            validatorMock.Setup(v => v.ValidateAsync(gitRepo, It.IsAny<CancellationToken>()))
+                         .ReturnsAsync(new ValidationResult());
+
+            _gitRepoRepositoryMock.Setup(r => r.VerifyDescriptionExistsAsync(gitRepo.Description)).ReturnsAsync(false);
+            _gitRepoRepositoryMock.Setup(r => r.VerifyNameExistsAsync(gitRepo.Name)).ReturnsAsync(false);
+            _gitRepoRepositoryMock.Setup(r => r.VerifyUrlAlreadyExistsAsync(gitRepo.Url)).ReturnsAsync(true);
+
+            var service = new GitRepoService(_unitOfWorkMock.Object, LocalizerFactorHelper.Create(), validatorMock.Object);
+
+            // Act
+            var result = await service.CreateAsync(gitRepo);
+
+            // Assert
+            Assert.Equal(OperationStatus.InvalidData, result.Status);
         }
 
         [Fact]
@@ -204,7 +316,7 @@ namespace Application.Tests.Services
             var result = await gitRepoService.UpdateAsync(gitRepo);
 
             // Assert
-            Assert.Equal(OperationStatus.InvalidData, result.Status);
+            Assert.Equal(OperationStatus.NotFound, result.Status);
         }
 
         [Fact]
@@ -239,7 +351,7 @@ namespace Application.Tests.Services
 
             var result = await _gitRepoService.DeleteAsync(1);
 
-            Assert.Equal(GitResource.RepositoryNotFound, result.Message);
+            Assert.Equal(GitResource.NotFound, result.Message);
         }
 
         [Fact]
@@ -310,5 +422,6 @@ namespace Application.Tests.Services
 
             Assert.False(result);
         }
+
     }
 }

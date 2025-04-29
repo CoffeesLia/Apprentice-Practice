@@ -120,9 +120,6 @@
   <data name="NameIsRequired" xml:space="preserve">
     <value>Name is required.</value>
   </data>
-  <data name="RepositoryNotFound" xml:space="preserve">
-    <value>Repository not found.</value>
-  </data>
   <data name="UrlIsRequired" xml:space="preserve">
     <value>Url is required.</value>
   </data>
