@@ -101,6 +101,7 @@ namespace Stellantis.ProjectName.Application.Services
         public async Task<PagedResult<ApplicationData>> GetListAsync(ApplicationFilter applicationFilter)
         {
             applicationFilter ??= new ApplicationFilter();
+
             return await UnitOfWork.ApplicationDataRepository.GetListAsync(applicationFilter).ConfigureAwait(false);
         }
 

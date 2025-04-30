@@ -4,9 +4,8 @@ namespace Stellantis.ProjectName.Domain.Entities
     {
         public string? Name { get; set; } = name;
         public int AreaId { get; set; }
-        public ICollection<Area> Area { get; } = [];
+        public Area Area { get; set; }
         public ICollection<Integration> Integration { get; } = [];
-        public ICollection<Responsible> Responsibles { get; } = [];
         public int ResponsibleId { get; set; }
         public string? Description { get; set; }
         public required string ProductOwner { get; set; }
