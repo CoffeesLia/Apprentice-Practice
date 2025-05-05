@@ -27,9 +27,14 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             IQueryable<ServiceData> query = Context.Set<ServiceData>();
 
+            if (serviceFilter.ApplicationId > 0)
+            {
+                query = query.Where(a => a.ApplicationId == serviceFilter.ApplicationId);
+            }
+
             if (!string.IsNullOrEmpty(serviceFilter.Name))
             {
-                query = query.Where(a => a.Name != null && a.Name.Contains(serviceFilter.Name));
+                query = query.Where(a => a.Name != null && a.Name.Contains(serviceFilter.Name, StringComparison.OrdinalIgnoreCase));
             }
 
             return await GetPagedResultAsync(query, serviceFilter.Page, serviceFilter.PageSize)
