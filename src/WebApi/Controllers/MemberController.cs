@@ -28,6 +28,15 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             return await GetAsync<MemberVm>(id).ConfigureAwait(false);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetListAsync([FromQuery] MemberFilterDto filterDto)
+        {
+            var filter = Mapper.Map<MemberFilter>(filterDto);
+            var pagedResult = await ((IMemberService)Service).GetListAsync(filter!).ConfigureAwait(false);
+            var result = Mapper.Map<PagedResultVm<MemberVm>>(pagedResult);
+            return Ok(result);
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] MemberDto itemDto)
         {
