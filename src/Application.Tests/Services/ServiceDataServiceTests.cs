@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using Application.Tests.Helpers;
+﻿using Application.Tests.Helpers;
 using FluentValidation;
 using FluentValidation.Results;
 using FluentValidation.TestHelper;
@@ -12,6 +11,7 @@ using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Application.Validators;
 using Stellantis.ProjectName.Domain.Entities;
+using System.Globalization;
 using Xunit;
 
 namespace Application.Tests.Services
@@ -88,9 +88,13 @@ namespace Application.Tests.Services
             var localizer = localizerFactory.Create(typeof(ServiceDataResources));
             var serviceDataValidator = new ServiceDataValidator(localizerFactory);
 
-            _serviceRepositoryMock
-                .Setup(r => r.GetByIdAsync(It.IsAny<int>()))
-                .ReturnsAsync(new ServiceData { Id = 1, Name = "Default Name" });
+            _unitOfWorkMock.Setup(uow => uow.ApplicationDataRepository.GetByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync(new ApplicationData("Valid Application Name")
+                {
+                    Id = 1,
+                    ConfigurationItem = "Valid Configuration Item",
+                    ProductOwner = "Valid Product Owner"
+                });
 
             _serviceRepositoryMock
                 .Setup(r => r.VerifyNameExistsAsync(It.IsAny<string>()))
@@ -105,8 +109,8 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
-            _serviceRepositoryMock.Verify(r => r.GetByIdAsync(It.IsAny<int>()), Times.Once);
             _serviceRepositoryMock.Verify(r => r.VerifyNameExistsAsync(It.IsAny<string>()), Times.Once);
+            _unitOfWorkMock.Verify(uow => uow.ApplicationDataRepository.GetByIdAsync(serviceData.ApplicationId), Times.Once);
         }
 
         // Verifica se CreateAsync retorna conflito quando o ApplicationId é inválido.
@@ -142,8 +146,13 @@ namespace Application.Tests.Services
             serviceDataValidator.Setup(v => v.ValidateAsync(serviceData, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(validationResult);
 
-            _serviceRepositoryMock.Setup(r => r.GetByIdAsync(serviceData.ApplicationId))
-                .ReturnsAsync(new Mock<ServiceData>().Object);
+            _unitOfWorkMock.Setup(uow => uow.ApplicationDataRepository.GetByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync(new ApplicationData("Valid Application Name")
+                {
+                    Id = 1,
+                    ConfigurationItem = "Valid Configuration Item",
+                    ProductOwner = "Valid Product Owner"
+                });
 
             _serviceRepositoryMock.Setup(r => r.VerifyNameExistsAsync(serviceData.Name))
                 .ReturnsAsync(true);
@@ -158,6 +167,7 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.Conflict, result.Status);
             Assert.Contains(ServiceDataResources.ServiceAlreadyExists, result.Message, StringComparison.OrdinalIgnoreCase);
             _serviceRepositoryMock.Verify(r => r.VerifyNameExistsAsync(serviceData.Name), Times.Once);
+            _unitOfWorkMock.Verify(uow => uow.ApplicationDataRepository.GetByIdAsync(serviceData.ApplicationId), Times.Once);
         }
 
         // Testa se DeleteAsync retorna NotFound quando o serviço não existe.
@@ -489,7 +499,7 @@ namespace Application.Tests.Services
 
             // Assert
             result.ShouldHaveValidationErrorFor(ds => ds.Description)
-                .WithErrorMessage((ServiceDataResources.ServiceDescriptionLength));
+                .WithErrorMessage(ServiceDataResources.ServiceDescriptionLength);
         }
 
         // Testa se o validador retorna erro quando o nome é obrigatório.
@@ -507,7 +517,7 @@ namespace Application.Tests.Services
 
             // Assert
             result.ShouldHaveValidationErrorFor(ds => ds.Name)
-                .WithErrorMessage((ServiceDataResources.ServiceNameIsRequired));
+                .WithErrorMessage(ServiceDataResources.ServiceNameIsRequired);
         }
 
         // Testa se ServiceData define e obtém a descrição corretamente.
@@ -562,7 +572,7 @@ namespace Application.Tests.Services
 
             // Assert
             result.ShouldHaveValidationErrorFor(ds => ds.Name)
-                .WithErrorMessage((ServiceDataResources.ServiceNameLength));
+                .WithErrorMessage(ServiceDataResources.ServiceNameLength);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using AutoFixture;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Moq;
@@ -10,28 +11,27 @@ using Stellantis.ProjectName.WebApi.Controllers;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.ViewModels;
-using AutoFixture;
 using System.Collections.ObjectModel;
 
 
 namespace WebApi.Tests.Controllers
 {
-    public class AreaControllerBaseTests
+    public class AreaControllerTests
     {
         private readonly Mock<IAreaService> _serviceMock;
         private readonly Mock<IMapper> _mapperMock;
-        private readonly Mock<IStringLocalizerFactory> _localizerFactoryMock;   
-        private readonly AreaControllerBase _controller;
+        private readonly Mock<IStringLocalizerFactory> _localizerFactoryMock;
+        private readonly AreaController _controller;
         private readonly Fixture _fixture;
 
-        public AreaControllerBaseTests()
+        public AreaControllerTests()
         {
             _serviceMock = new Mock<IAreaService>();
             _mapperMock = new Mock<IMapper>();
             _localizerFactoryMock = new Mock<IStringLocalizerFactory>();
             _fixture = new Fixture();
 
-            _controller = new AreaControllerBase(_serviceMock.Object, _mapperMock.Object, _localizerFactoryMock.Object);
+            _controller = new AreaController(_serviceMock.Object, _mapperMock.Object, _localizerFactoryMock.Object);
         }
 
         [Fact]
@@ -112,15 +112,20 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             var areaDto = _fixture.Create<AreaDto>();
-            var area = _fixture.Build<Area>().With(a => a.Id, areaDto.Id).With(a => a.Name, areaDto.Name).Create();
-            var areaVm = _fixture.Build<AreaVm>().With(a => a.Id, areaDto.Id).With(a => a.Name, areaDto.Name).Create();
+            var area = _fixture.Build<Area>()
+                               .With(a => a.Name, areaDto.Name)
+                               .Create();
+            var areaVm = _fixture.Build<AreaVm>()
+                                 .With(a => a.Id, area.Id)
+                                 .With(a => a.Name, areaDto.Name)
+                                 .Create();
 
             _mapperMock.Setup(m => m.Map<Area>(areaDto)).Returns(area);
             _mapperMock.Setup(m => m.Map<AreaVm>(area)).Returns(areaVm);
             _serviceMock.Setup(s => s.UpdateAsync(area)).ReturnsAsync(OperationResult.Complete("Success"));
 
             // Act
-            var result = await _controller.UpdateAsync(areaDto.Id, areaDto);
+            var result = await _controller.UpdateAsync(area.Id, areaDto);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);

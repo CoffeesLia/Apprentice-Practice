@@ -29,8 +29,8 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.InvalidData(validationResult);
             }
 
-            var application = await Repository.GetByIdAsync(service.ApplicationId).ConfigureAwait(false);
-            if (application == null)
+            var applicationData = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(service.ApplicationId).ConfigureAwait(false);
+            if (applicationData == null)
             {
                 return OperationResult.Conflict(_localizer[nameof(ServiceDataResources.ServiceInvalidApplicationId)]);
             }

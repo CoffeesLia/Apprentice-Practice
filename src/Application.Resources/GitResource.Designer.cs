@@ -77,16 +77,7 @@ namespace Stellantis.ProjectName.Application.Resources {
                 return ResourceManager.GetString("ApplicationIdIsRequired", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Application not found..
-        /// </summary>
-        public static string ApplicationIsRequired {
-            get {
-                return ResourceManager.GetString("ApplicationNotFound", resourceCulture);
-            }
-        }
-        
+
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Description is required..
         /// </summary>
@@ -95,25 +86,7 @@ namespace Stellantis.ProjectName.Application.Resources {
                 return ResourceManager.GetString("DescriptionIsRequired", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Error..
-        /// </summary>
-        public static string Error {
-            get {
-                return ResourceManager.GetString("Error", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a A repository with the same URL already exists..
-        /// </summary>
-        public static string ExistentRepositoryUrl {
-            get {
-                return ResourceManager.GetString("ExistentRepositoryUrl", resourceCulture);
-            }
-        }
-        
+
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Name is required..
         /// </summary>
@@ -124,29 +97,11 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Repository can&apos;t be null..
-        /// </summary>
-        public static string RepositoryCantBeNull {
-            get {
-                return ResourceManager.GetString("RepositoryCantBeNull", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Repository not found..
         /// </summary>
-        public static string RepositoryNotFound {
+        public static string NotFound {
             get {
-                return ResourceManager.GetString("RepositoryNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Url is Invalid..
-        /// </summary>
-        public static string UrlIsInvalid {
-            get {
-                return ResourceManager.GetString("UrlIsInvalid", resourceCulture);
+                return ResourceManager.GetString("NotFound", resourceCulture);
             }
         }
         
@@ -156,15 +111,6 @@ namespace Stellantis.ProjectName.Application.Resources {
         public static string UrlIsRequired {
             get {
                 return ResourceManager.GetString("UrlIsRequired", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a NameIsRequired, Description, and URL are required fields..
-        /// </summary>
-        public static string ValidationErrorMessage {
-            get {
-                return ResourceManager.GetString("ValidationErrorMessage", resourceCulture);
             }
         }
     }

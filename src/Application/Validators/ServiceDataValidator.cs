@@ -24,7 +24,8 @@ namespace Stellantis.ProjectName.Application.Validators
                .MinimumLength(MinimumLength)
                .WithMessage(localizer[nameof(ServiceDataResources.ServiceNameLength), MinimumLength, MaximumLength])
                .MaximumLength(MaximumLength)
-               .WithMessage(localizer[nameof(ServiceDataResources.ServiceNameLength), MinimumLength, MaximumLength]);
+               .WithMessage(localizer[nameof(ServiceDataResources.ServiceNameLength), MinimumLength, MaximumLength])
+               .When(service => !string.IsNullOrEmpty(service.Name));
             RuleFor(x => x.Description)
                 .MaximumLength(MaximumDescriptionLength)
                 .WithMessage(localizer[nameof(ServiceDataResources.ServiceDescriptionLength), MaximumDescriptionLength]);

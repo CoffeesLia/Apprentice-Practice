@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Stellantis.ProjectName.Domain.Entities;
+﻿using LinqKit;
+using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models.Filters;
-using LinqKit;
+using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
@@ -25,7 +25,12 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             if (responsibleFilter.AreaId != 0)
                 filters = filters.And(x => x.AreaId == responsibleFilter.AreaId);
 
-            return await GetListAsync(filter: filters, page: responsibleFilter.Page, sort: responsibleFilter.Sort, sortDir: responsibleFilter.SortDir).ConfigureAwait(false);
+            return await GetListAsync(filter: filters,
+                page: responsibleFilter.Page, 
+                sort: responsibleFilter.Sort, 
+                sortDir: responsibleFilter.SortDir,
+                includeProperties: nameof(Responsible.Area)
+                ).ConfigureAwait(false);
         }
 
         public async Task<bool> VerifyEmailAlreadyExistsAsync(string email)

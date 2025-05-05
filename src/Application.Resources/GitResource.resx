@@ -117,14 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ExistentRepositoryUrl" xml:space="preserve">
-    <value>A repository with the same URL already exists.</value>
-  </data>
   <data name="NameIsRequired" xml:space="preserve">
     <value>Name is required.</value>
-  </data>
-  <data name="RepositoryNotFound" xml:space="preserve">
-    <value>Repository not found.</value>
   </data>
   <data name="UrlIsRequired" xml:space="preserve">
     <value>Url is required.</value>
@@ -132,25 +126,13 @@
   <data name="DescriptionIsRequired" xml:space="preserve">
     <value>Description is required.</value>
   </data>
-  <data name="ValidationErrorMessage" xml:space="preserve">
-    <value>NameIsRequired, Description, and URL are required fields.</value>
-  </data>
-  <data name="ApplicationIsRequired" xml:space="preserve">
-    <value>Application is required.</value>
-  </data>
-  <data name="RepositoryCantBeNull" xml:space="preserve">
-    <value>Repository can't be null.</value>
-  </data>
-  <data name="AlreadyExists" xml:space="preserve">
-    <value>Already Exists.</value>
-  </data>
-  <data name="UrlIsInvalid" xml:space="preserve">
-    <value>Url is Invalid.</value>
-  </data>
   <data name="ApplicationIdIsRequired" xml:space="preserve">
     <value>Application Id is required.</value>
   </data>
-  <data name="Error" xml:space="preserve">
-    <value>Error.</value>
+  <data name="AlreadyExists" xml:space="preserve">
+    <value>AlreadyExists</value>
+  </data>
+  <data name="NotFound" xml:space="preserve">
+    <value>Not found.</value>
   </data>
 </root>

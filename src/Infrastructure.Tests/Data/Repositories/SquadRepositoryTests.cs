@@ -1,9 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Moq;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
-using Xunit;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
 
 namespace Infrastructure.Tests.Data.Repositories
@@ -22,7 +20,7 @@ namespace Infrastructure.Tests.Data.Repositories
         [Fact]
         public async Task CreateAsyncShouldAddSquad()
         {
-            await using var context = new Context(_dbContextOptions);
+            using var context = new Context(_dbContextOptions);
             var repository = new SquadRepository(context);
 
             var squad = new Squad { Name = "Test Squad", Description = "Test Description" };
@@ -35,7 +33,7 @@ namespace Infrastructure.Tests.Data.Repositories
         [Fact]
         public async Task GetByIdAsyncShouldReturnSquad()
         {
-            await using var context = new Context(_dbContextOptions);
+            using var context = new Context(_dbContextOptions);
             var repository = new SquadRepository(context);
 
             var squad = new Squad { Name = "Test Squad", Description = "Test Description" };
@@ -50,7 +48,7 @@ namespace Infrastructure.Tests.Data.Repositories
         [Fact]
         public async Task UpdateAsyncShouldUpdateSquad()
         {
-            await using var context = new Context(_dbContextOptions);
+            using var context = new Context(_dbContextOptions);
             var repository = new SquadRepository(context);
 
             var squad = new Squad { Name = "Test Squad", Description = "Test Description" };
@@ -76,7 +74,7 @@ namespace Infrastructure.Tests.Data.Repositories
         [Fact]
         public async Task VerifyNameAlreadyExistsAsyncShouldReturnTrueIfNameExists()
         {
-            await using var context = new Context(_dbContextOptions);
+            using var context = new Context(_dbContextOptions);
             var repository = new SquadRepository(context);
 
             var squad = new Squad { Name = "Test Squad", Description = "Test Description" };
@@ -90,7 +88,7 @@ namespace Infrastructure.Tests.Data.Repositories
         [Fact]
         public async Task GetListAsyncShouldReturnFilteredSquads()
         {
-            await using var context = new Context(_dbContextOptions);
+            using var context = new Context(_dbContextOptions);
             var repository = new SquadRepository(context);
 
             context.Squads.AddRange(
@@ -109,7 +107,7 @@ namespace Infrastructure.Tests.Data.Repositories
         [Fact]
         public async Task VerifySquadExistsAsyncShouldReturnTrueIfSquadExists()
         {
-            await using var context = new Context(_dbContextOptions);
+            using var context = new Context(_dbContextOptions);
             var repository = new SquadRepository(context);
 
             var squad = new Squad { Name = "Test Squad", Description = "Test Description" };
@@ -123,7 +121,7 @@ namespace Infrastructure.Tests.Data.Repositories
         [Fact]
         public async Task DeleteAsyncShouldRemoveSquad()
         {
-            await using var context = new Context(_dbContextOptions);
+            using var context = new Context(_dbContextOptions);
             var repository = new SquadRepository(context);
 
             var squad = new Squad { Name = "Test Squad", Description = "Test Description" };

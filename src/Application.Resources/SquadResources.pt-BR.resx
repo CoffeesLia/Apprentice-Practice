@@ -120,11 +120,8 @@
   <data name="SquadCannotBeNull" xml:space="preserve">
     <value>Squad não pode ser nulo.</value>
   </data>
-  <data name="SquadCreatedSuccessfully" xml:space="preserve">
-    <value>Squad criado com sucesso.</value>
-  </data>
   <data name="SquadDescriptionRequired" xml:space="preserve">
-    <value>Descrição do squad é obrigatória</value>
+    <value>A descrição do Squad é obrigatória.</value>
   </data>
   <data name="SquadNameAlreadyExists" xml:space="preserve">
     <value>Squad com esse nome já existe.</value>
@@ -138,10 +135,10 @@
   <data name="SquadSuccessfullyDeleted" xml:space="preserve">
     <value>Squad apagado com sucesso.</value>
   </data>
-  <data name="SquadUpdatedSuccessfully" xml:space="preserve">
-    <value>Squad criado com sucesso.</value>
-  </data>
   <data name="NameValidateLength" xml:space="preserve">
     <value>O nome deve ter entre 3 e 50 caracteres.</value>
+  </data>
+  <data name="DescriptionValidateLength" xml:space="preserve">
+    <value>A descrição deve ter entre 3 e 255 caracteres.</value>
   </data>
 </root>

@@ -1,19 +1,19 @@
 ﻿
-using Microsoft.AspNetCore.Mvc;
-using Stellantis.ProjectName.Application.Interfaces.Services;
-using Stellantis.ProjectName.Domain.Entities;
-using Stellantis.ProjectName.WebApi.ViewModels;
-using Microsoft.Extensions.Localization;
 using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
+using Stellantis.ProjectName.Application.Interfaces.Services;
+using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
-using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.WebApi.ViewModels;
 
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [Route("api/members")]
-  
-    internal sealed class MemberControllerBase(IMemberService service, IMapper mapper, IStringLocalizerFactory localizerFactory)
+
+    public sealed class MemberController(IMemberService service, IMapper mapper, IStringLocalizerFactory localizerFactory)
         : EntityControllerBase<Member, MemberDto>(service, mapper, localizerFactory)
     {
         [HttpPost]
@@ -26,15 +26,6 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         public async Task<ActionResult<MemberVm>> GetAsync(int id)
         {
             return await GetAsync<MemberVm>(id).ConfigureAwait(false);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetListAsync([FromQuery] MemberFilterDto filterDto)
-        {
-            var filter = Mapper.Map<MemberFilter>(filterDto);
-            var pagedResult = await ((IMemberService)Service).GetListAsync(filter!).ConfigureAwait(false);
-            var result = Mapper.Map<PagedResultVm<MemberVm>>(pagedResult);
-            return Ok(result);
         }
 
         [HttpPut("{id}")]

@@ -4,7 +4,6 @@ namespace Stellantis.ProjectName.WebApi.Dto
 {
     public class ApplicationDataDto
     {
-        public int Id { get; set; }
         public required string Name { get; set; }
         public int AreaId { get; set; }
         public int ResponsibleId { get; set; }
@@ -12,7 +11,6 @@ namespace Stellantis.ProjectName.WebApi.Dto
         public required string ProductOwner { get; set; }
         public required string ConfigurationItem { get; set; }
         public bool External { get; set; }
-        public ICollection<Responsible> Responsibles { get; } = [];
 
     }
 

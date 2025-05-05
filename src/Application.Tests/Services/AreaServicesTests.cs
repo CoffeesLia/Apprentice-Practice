@@ -1,15 +1,15 @@
+using AutoFixture;
 using Moq;
-using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Interfaces;
+using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models;
+using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Application.Services;
-using Stellantis.ProjectName.Domain.Entities;
-using Xunit;
 using Stellantis.ProjectName.Application.Validators;
+using Stellantis.ProjectName.Domain.Entities;
 using System.Globalization;
-using Stellantis.ProjectName.Application.Models.Filters;
-using AutoFixture;
+using Xunit;
 
 namespace Application.Tests.Services
 {
@@ -176,7 +176,7 @@ namespace Application.Tests.Services
 
         [Fact]
 
-     
+
         public async Task GetItemAsyncShouldReturnCompleteWhenAreaExists()
         {
             // Arrange
@@ -230,7 +230,7 @@ namespace Application.Tests.Services
             // Arrange
             var area = new Area("Non-Existent Area") { Id = 1 };
             _areaRepositoryMock.Setup(r => r.GetByIdAsync(area.Id)).ReturnsAsync((Area?)null);
-       
+
 
             // Act
             var result = await _areaService.UpdateAsync(area);

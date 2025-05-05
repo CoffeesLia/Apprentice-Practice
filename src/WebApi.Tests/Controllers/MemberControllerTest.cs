@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Models.Filters;
-using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Controllers;
 using Stellantis.ProjectName.WebApi.Dto;
@@ -19,7 +17,7 @@ namespace WebApi.Tests.Controllers
     public class MemberControllerTest
     {
         private readonly Mock<IMemberService> _serviceMock;
-        private readonly MemberControllerBase _controller;
+        private readonly MemberController _controller;
 
         public MemberControllerTest()
         {
@@ -27,7 +25,7 @@ namespace WebApi.Tests.Controllers
             var mapperConfiguration = new MapperConfiguration(x => { x.AddProfile<AutoMapperProfile>(); });
             var mapper = mapperConfiguration.CreateMapper();
             var localizerFactor = LocalizerFactorHelper.Create();
-            _controller = new MemberControllerBase(_serviceMock.Object, mapper, localizerFactor);
+            _controller = new MemberController(_serviceMock.Object, mapper, localizerFactor);
         }
 
         [Fact]
@@ -136,8 +134,9 @@ namespace WebApi.Tests.Controllers
                 Name = "Test Name",
                 Role = "Test Role",
                 Email = "test@example.com",
-                Cost = 100
-
+                Cost = 100,
+                Page = 1,
+                PageSize = 10
             };
             var filter = new MemberFilter
             {
@@ -149,8 +148,8 @@ namespace WebApi.Tests.Controllers
             };
             var pagedResult = new PagedResult<Member>
             {
-                Result = new List<Member>
-                {
+                Result =
+                [
                     new Member
                     {
                         Name = "Test Name",
@@ -158,15 +157,15 @@ namespace WebApi.Tests.Controllers
                         Email = "test@example.com",
                         Cost = 100
                     }
-                },
+                ],
                 Page = 1,
                 PageSize = 10,
                 Total = 1
             };
             var pagedVmResult = new PagedResultVm<MemberVm>
             {
-                Result = new List<MemberVm>
-                {
+                Result =
+                [
                     new MemberVm
                     {
                         Name = "Test Name",
@@ -175,7 +174,7 @@ namespace WebApi.Tests.Controllers
                         Cost = 100
 
                     }
-                },
+                ],
                 Page = 1,
                 PageSize = 10,
                 Total = 1
