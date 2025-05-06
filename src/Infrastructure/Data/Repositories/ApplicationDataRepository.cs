@@ -42,7 +42,8 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 filters = filters.And(x => x.ConfigurationItem != null && x.ConfigurationItem.Contains(applicationFilter.ConfigurationItem));
             if (applicationFilter.External.HasValue)
                 filters = filters.And(x => x.External == applicationFilter.External.Value);
-            return await GetListAsync(filter: filters, page: applicationFilter.Page, sort: applicationFilter.Sort, sortDir: applicationFilter.SortDir).ConfigureAwait(false);
+            return await GetListAsync(filter: filters, page: applicationFilter.Page, sort: applicationFilter.Sort, sortDir: applicationFilter.SortDir, includeProperties: nameof(ApplicationData.Area)
+).ConfigureAwait(false);
 
         }
 
