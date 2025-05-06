@@ -203,7 +203,6 @@ namespace WebApi.Tests.Controllers
             // Arrange
             var memberDto = new MemberDto
             {
-                Id = 1,
                 Name = "Valid Name",
                 Role = "Valid Role",
                 Email = "valid@example.com",

@@ -50,6 +50,9 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         {
             ArgumentNullException.ThrowIfNull(squadFilter);
 
+            // Garante que o valor de Page seja pelo menos 1
+            squadFilter.Page = squadFilter.Page <= 0 ? 1 : squadFilter.Page;
+
             var query = Context.Squads.AsQueryable();
 
             if (!string.IsNullOrEmpty(squadFilter.Name))
@@ -59,6 +62,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             return await GetListAsync(query, squadFilter.Sort, squadFilter.SortDir, squadFilter.Page, squadFilter.PageSize).ConfigureAwait(false);
         }
+
 
         public async Task<bool> VerifySquadExistsAsync(int id)
         {

@@ -147,20 +147,23 @@ namespace WebApi.Tests.Controllers
             // Assert
             Assert.IsType<NotFoundResult>(result.Result);
         }
-
         [Fact]
         public async Task GetListAsyncShouldReturnPagedResult()
         {
             // Arrange
             var filterDto = _fixture.Create<SquadFilterDto>();
-            var pagedResult = _fixture.Build<PagedResult<Squad>>()
-                                      .With(pr => pr.Result, _fixture.CreateMany<Squad>(2))
-                                      .With(pr => pr.Page, 1)
-                                      .With(pr => pr.PageSize, 10)
-                                      .With(pr => pr.Total, 2)
-                                      .Create();
+            var squads = _fixture.CreateMany<Squad>(2).ToList();
+            var squadVms = squads.Select(s => new SquadVm { Id = s.Id, Name = s.Name, Description = s.Description }).ToList();
+            var pagedResult = new PagedResult<Squad>
+            {
+                Result = squads,
+                Page = 1,
+                PageSize = 10,
+                Total = squads.Count
+            };
 
             _squadServiceMock.Setup(s => s.GetListAsync(It.IsAny<SquadFilter>())).ReturnsAsync(pagedResult);
+            _mapperMock.Setup(m => m.Map<IEnumerable<SquadVm>>(squads)).Returns(squadVms);
 
             // Act
             var result = await _controller.GetListAsync(filterDto);
@@ -173,6 +176,9 @@ namespace WebApi.Tests.Controllers
             Assert.Equal(pagedResult.Total, returnedPagedResultVm.Total);
             Assert.Equal(pagedResult.Result.Count(), returnedPagedResultVm.Result.Count());
         }
+
+
+
 
         [Fact]
         public async Task DeleteAsyncShouldReturnNoContentWhenOperationSuccess()
@@ -237,6 +243,7 @@ namespace WebApi.Tests.Controllers
             var expectedDescription = "Test Description";
 
             // Act
+
             squadDto.Name = expectedName;
             squadDto.Description = expectedDescription;
 
