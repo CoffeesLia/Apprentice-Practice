@@ -237,6 +237,7 @@ namespace WebApi.Tests.Controllers
             var expectedDescription = "Test Description";
 
             // Act
+
             squadDto.Name = expectedName;
             squadDto.Description = expectedDescription;
 

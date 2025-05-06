@@ -50,11 +50,25 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetListAsync([FromQuery] SquadFilterDto filterDto)
         {
+            // Mapeia o DTO de filtro para o modelo de filtro
             var filter = Mapper.Map<SquadFilter>(filterDto);
+
+            // Obtém o resultado paginado do serviço
             var pagedResult = await _squadService.GetListAsync(filter!).ConfigureAwait(false);
-            var result = Mapper.Map<PagedResultVm<SquadVm>>(pagedResult);
+
+            // Mapeia o resultado para o ViewModel
+            var result = new
+            {
+                result = Mapper.Map<IEnumerable<SquadVm>>(pagedResult.Result),
+                page = pagedResult.Page,
+                pageSize = pagedResult.PageSize,
+                total = pagedResult.Total
+            };
+
+            // Retorna o resultado no formato esperado pelo frontend
             return Ok(result);
         }
+
 
         [HttpDelete("{id}")]
         public override async Task<IActionResult> DeleteAsync(int id)
