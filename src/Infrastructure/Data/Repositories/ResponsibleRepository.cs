@@ -6,11 +6,8 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
-    public class ResponsibleRepository : RepositoryBase<Responsible, Context>, IResponsibleRepository
+    public class ResponsibleRepository(Context context) : RepositoryBase<Responsible, Context>(context), IResponsibleRepository
     {
-        public ResponsibleRepository(Context context) : base(context)
-        {
-        }
         public async Task<PagedResult<Responsible>> GetListAsync(ResponsibleFilter filter)
         {
             ArgumentNullException.ThrowIfNull(filter);

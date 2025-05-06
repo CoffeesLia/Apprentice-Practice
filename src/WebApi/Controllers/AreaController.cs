@@ -47,7 +47,5 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         {
             return await base.DeleteAsync(id).ConfigureAwait(false);
         }
-
-
     }
 }
