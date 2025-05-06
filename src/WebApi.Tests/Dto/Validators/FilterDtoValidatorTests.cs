@@ -13,7 +13,7 @@ namespace WebApi.Tests.Dto.Validators
         public FilterDtoValidatorTests()
         {
             _validator = new FilterDtoValidator<FilterDto>();
-            CultureInfo.CurrentUICulture = new CultureInfo("en-US");
+            CultureInfo.CurrentUICulture = new CultureInfo("pt-BR");
         }
 
         [Fact]

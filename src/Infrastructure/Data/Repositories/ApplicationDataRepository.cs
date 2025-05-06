@@ -31,7 +31,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             ArgumentNullException.ThrowIfNull(applicationFilter);
 
             var filters = PredicateBuilder.New<ApplicationData>(true);
-
+            applicationFilter.Page = applicationFilter.Page <= 0 ? 1 : applicationFilter.Page;
             if (!string.IsNullOrWhiteSpace(applicationFilter.Name))
                 filters = filters.And(x => x.Name != null && x.Name.Contains(applicationFilter.Name));
             if (applicationFilter.AreaId > 0)
@@ -42,7 +42,9 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 filters = filters.And(x => x.ConfigurationItem != null && x.ConfigurationItem.Contains(applicationFilter.ConfigurationItem));
             if (applicationFilter.External.HasValue)
                 filters = filters.And(x => x.External == applicationFilter.External.Value);
-            return await GetListAsync(filter: filters, page: applicationFilter.Page, sort: applicationFilter.Sort, sortDir: applicationFilter.SortDir).ConfigureAwait(false);
+            return await GetListAsync(filter: filters, page: applicationFilter.Page, sort: applicationFilter.Sort, sortDir: applicationFilter.SortDir, includeProperties: nameof(ApplicationData.Area)
+).ConfigureAwait(false);
+
         }
 
 

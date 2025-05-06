@@ -120,6 +120,31 @@ namespace Infrastructure.Tests.Data.Repositories
             Assert.Empty(result.Result);
         }
 
+        // Verifica o filtro por aplicação
+        [Fact]
+        public async Task GetListAsyncShouldFilterByApplicationId()
+        {
+            // Arrange
+            var applicationId = 1;
+            var servicesData = new List<ServiceData>
+            {
+                new() { Id = 1, Name = "Service 1", ApplicationId = applicationId },
+                new() { Id = 2, Name = "Service 2", ApplicationId = 2 }
+            };
+
+            var dbSetMock = CreateMockDbSet(servicesData);
+            _contextMock.Setup(c => c.Set<ServiceData>()).Returns(dbSetMock.Object);
+
+            var filter = new ServiceDataFilter { ApplicationId = applicationId };
+
+            // Act
+            var result = await _repository.GetListAsync(filter);
+
+            // Assert
+            Assert.Single(result.Result);
+            Assert.Equal(applicationId, result.Result.First().ApplicationId);
+        }
+
         // Verifica se o método VerifyServiceExistsAsync retorna verdadeiro quando um serviço com um ID válido existe.
         [Fact]
         public async Task VerifyServiceExistsAsyncShouldReturnTrueWhenServiceExistsWithValidId()
