@@ -57,17 +57,18 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             var pagedResult = await _squadService.GetListAsync(filter!).ConfigureAwait(false);
 
             // Mapeia o resultado para o ViewModel
-            var result = new
+            var result = new PagedResultVm<SquadVm>
             {
-                result = Mapper.Map<IEnumerable<SquadVm>>(pagedResult.Result),
-                page = pagedResult.Page,
-                pageSize = pagedResult.PageSize,
-                total = pagedResult.Total
+                Result = Mapper.Map<IEnumerable<SquadVm>>(pagedResult.Result),
+                Page = pagedResult.Page,
+                PageSize = pagedResult.PageSize,
+                Total = pagedResult.Total
             };
 
             // Retorna o resultado no formato esperado pelo frontend
             return Ok(result);
         }
+
 
 
         [HttpDelete("{id}")]
