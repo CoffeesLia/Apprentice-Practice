@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AnalysisLevel>latest-all</AnalysisLevel>
+    <AssemblyInformationalVersion>1.0.0</AssemblyInformationalVersion>
+    <AssemblyName>Stellantis.ProjectName.$(MSBuildProjectName)</AssemblyName>
+    <Authors>Stellantis</Authors>
+    <Copyright>© Stellantis. All rights reserved.</Copyright>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GeneratedAssemblyInfoFile>Properties\AssemblyInfo.cs</GeneratedAssemblyInfoFile>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <NeutralLanguage>en</NeutralLanguage>
+    <NeutralResourcesLanguage>en</NeutralResourcesLanguage>
+    <Nullable>enable</Nullable>
+    <PackageId>$(AssemblyName)</PackageId>
+    <PackageTags>AMS</PackageTags>
+    <Product>ProjectName</Product>
+    <RepositoryUrl>https://gitlab.fcalatam.com/fca/architecture/application/dotnetcore/base-project.git</RepositoryUrl>
+    <RootNamespace>Stellantis.ProjectName.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <TargetFramework>net8.0</TargetFramework>
+    <Title>ProjectName</Title>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <WarningLevel>9999</WarningLevel>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <WarningLevel>9999</WarningLevel>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Messages.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="Messages.pt-BR.resx" />
+    <EmbeddedResource Remove="Messages.resx" />
+  </ItemGroup>
+
+</Project>

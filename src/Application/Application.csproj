@@ -1,20 +1,84 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <AnalysisLevel>latest-all</AnalysisLevel>
+    <AssemblyInformationalVersion>1.0.0</AssemblyInformationalVersion>
+    <AssemblyName>Stellantis.ProjectName.$(MSBuildProjectName)</AssemblyName>
+    <Authors>Stellantis</Authors>
+    <Copyright>© Stellantis. All rights reserved.</Copyright>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GeneratedAssemblyInfoFile>Properties\AssemblyInfo.cs</GeneratedAssemblyInfoFile>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AnalysisLevel>latest-all</AnalysisLevel>
+    <PackageId>$(AssemblyName)</PackageId>
+    <PackageTags>AMS</PackageTags>
+    <Product>ProjectName</Product>
+    <RepositoryType>GitLab</RepositoryType>
+    <RepositoryUrl>https://gitlab.fcalatam.com/fca/architecture/application/dotnetcore/base-project.git</RepositoryUrl>
+    <RootNamespace>Stellantis.ProjectName.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <TargetFramework>net8.0</TargetFramework>
+    <Title>ProjectName</Title>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <WarningLevel>9999</WarningLevel>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <WarningLevel>9999</WarningLevel>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="13.0.1" />
-    <PackageReference Include="AutoMapper.Collection" Version="10.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="9.0.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <Compile Remove="Dto\**" />
+    <Compile Remove="Helpers\**" />
+    <Compile Remove="ViewModel\**" />
+    <EmbeddedResource Remove="Dto\**" />
+    <EmbeddedResource Remove="Helpers\**" />
+    <EmbeddedResource Remove="ViewModel\**" />
+    <None Remove="Dto\**" />
+    <None Remove="Helpers\**" />
+    <None Remove="ViewModel\**" />
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Interfaces\Repositories\IEmployeeRepository.cs" />
+    <Compile Remove="Interfaces\Repositories\IPartNumberRepository.cs" />
+    <Compile Remove="Interfaces\Repositories\ISupplierRepository.cs" />
+    <Compile Remove="Interfaces\Repositories\IVehicleRepository.cs" />
+    <Compile Remove="Interfaces\Services\IEmployeeService.cs" />
+    <Compile Remove="Interfaces\Services\IPartNumberService.cs" />
+    <Compile Remove="Interfaces\Services\ISupplierService.cs" />
+    <Compile Remove="Interfaces\Services\IVehicleService.cs" />
+    <Compile Remove="Models\Filters\PartNumberFilter.cs" />
+    <Compile Remove="Models\Filters\PartNumberSupplierFilter.cs" />
+    <Compile Remove="Models\Filters\SupplierFilter.cs" />
+    <Compile Remove="Models\Filters\VehicleFilter.cs" />
+    <Compile Remove="Services\EmployeeService.cs" />
+    <Compile Remove="Services\PartNumberService.cs" />
+    <Compile Remove="Services\SupplierService.cs" />
+    <Compile Remove="Services\VehicleService.cs" />
+    <Compile Remove="Validators\PartNumberValidator.cs" />
+    <Compile Remove="Validators\SupplierValidator.cs" />
+    <Compile Remove="Validators\VehicleValidator.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Interfaces\Repositories\IAreaRepository.cs.bak" />
+    <None Remove="Interfaces\Services\IAreaService.cs.bak" />
+    <None Remove="Models\Filters\AreaFilter.cs.bak" />
+    <None Remove="Services\AreaService.cs.bak" />
+    <None Remove="Validators\AreaValidator.cs.bak" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="9.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Application.Resources\Application.Resources.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 

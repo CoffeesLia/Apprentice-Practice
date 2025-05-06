@@ -1,11 +1,8 @@
-﻿namespace Domain.ViewModel
+﻿namespace Stellantis.ProjectName.Application.Models
 {
-    public class PaginationVM<T> where T : class
+    public class PaginationVm<T> where T : class
     {
-        public List<T>? Result { get; set; }
+        public IQueryable<T>? Result { get; set; }
         public int Total { get; set; }
-
     }
-
-
 }

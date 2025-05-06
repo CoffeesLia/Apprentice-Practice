@@ -1,16 +1,17 @@
-﻿using Domain.DTO;
-using Domain.Entities;
-using Domain.Interfaces;
-using Infrastructure.Data.Context;
-using LinqKit;
+﻿using LinqKit;
 using Microsoft.EntityFrameworkCore;
+using Stellantis.ProjectName.Application.Interfaces.Repositories;
+using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Domain.Entities;
 
-namespace Infrastructure.Data.Repositories
+namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
-    public class SupplierRepository(CleanArchBaseContext context) : BaseRepository<Supplier>(context), ISupplierRepository
+    public class SupplierRepository(Context context) : RepositoryEntityBase<Supplier, Context>(context), ISupplierRepository
     {
-        public async Task<PaginationDTO<Supplier>> GetListFilter(SupplierFilterDTO filter)
+        public async Task<PagedResult<Supplier>> GetListAsync(SupplierFilter filter)
         {
+            ArgumentNullException.ThrowIfNull(filter);
+
             var filters = PredicateBuilder.New<Supplier>(true);
 
             if (!string.IsNullOrWhiteSpace(filter.Address))
@@ -19,25 +20,25 @@ namespace Infrastructure.Data.Repositories
                 filters = filters.And(x => x.Code.Contains(filter.Code));
             if (!string.IsNullOrWhiteSpace(filter.CompanyName))
                 filters = filters.And(x => x.CompanyName.Contains(filter.CompanyName));
-            if (!string.IsNullOrWhiteSpace(filter.Fone))
-                filters = filters.And(x => x.Fone.Contains(filter.Fone));
+            if (!string.IsNullOrWhiteSpace(filter.Phone))
+                filters = filters.And(x => x.Phone.Contains(filter.Phone));
 
-
-            return await GetListAsync(filter: filters, page: filter.Page, sort: filter.Sort, sortDir: filter.SortDir);
+            return await GetListAsync(filter: filters, page: filter.Page, sort: filter.Sort, sortDir: filter.SortDir).ConfigureAwait(false);
         }
 
-        public bool VerifyCodeExists(string code)
+        public async Task<bool> VerifyCodeExistsAsync(string code)
         {
-            return _context.Supplier.Any(p => p.Code == code);
+            return await Context.Suppliers.AnyAsync(p => p.Code == code).ConfigureAwait(false);
         }
 
-        public async Task<Supplier?> GetByIdWithPartNumber(int id)
+        public async Task<Supplier?> GetFullByIdAsync(int id)
         {
-            return await _context.Supplier
-                .Include(x => x.PartNumberSupplier!)
-                .ThenInclude(x => x.PartNumber)
-                .FirstOrDefaultAsync(x => x.Id == id);
+            return await GetByIdWithIncludeAsync(id, x => x.PartNumbers!).ConfigureAwait(false);
         }
 
+        public async Task<bool> ExistsAsync(int id)
+        {
+            return await Context.Suppliers.AnyAsync(x => x.Id == id).ConfigureAwait(false);
+        }
     }
 }

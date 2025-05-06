@@ -1,0 +1,34 @@
+﻿using System;
+using FluentValidation;
+using Microsoft.Extensions.Localization;
+using Stellantis.ProjectName.Application.Resources;
+using Stellantis.ProjectName.Domain.Entities;
+
+namespace Stellantis.ProjectName.Application.Validators
+{
+    public class SquadValidator : AbstractValidator<Squad>
+    {
+        internal const int MinimumLength = 3;
+        internal const int MaximumLength = 255;
+
+        public SquadValidator(IStringLocalizerFactory localizerFactory)
+        {
+            ArgumentNullException.ThrowIfNull(localizerFactory);
+            var localizer = localizerFactory.Create(typeof(SquadResources));
+
+            RuleFor(x => x.Name)
+                .MaximumLength(MaximumLength)
+                .WithMessage(localizer[nameof(SquadResources.NameValidateLength), MinimumLength, MaximumLength])
+                .MinimumLength(MinimumLength)
+                .When(x => !string.IsNullOrEmpty(x.Name))
+                .WithMessage(localizer[nameof(SquadResources.NameValidateLength), MinimumLength, MaximumLength]);
+
+            RuleFor(x => x.Description)
+                .MaximumLength(MaximumLength)
+                .WithMessage(localizer[nameof(SquadResources.DescriptionValidateLength), MinimumLength, MaximumLength])
+                .MinimumLength(MinimumLength)
+                .When(x => !string.IsNullOrEmpty(x.Description))
+                .WithMessage(localizer[nameof(SquadResources.DescriptionValidateLength), MinimumLength, MaximumLength]);
+        }
+    }
+}

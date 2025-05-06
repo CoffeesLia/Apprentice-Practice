@@ -1,19 +1,11 @@
-﻿namespace Domain.Entities
+﻿namespace Stellantis.ProjectName.Domain.Entities
 {
-    public class PartNumberSupplier : BaseEntity
+    public class PartNumberSupplier(int partNumberId, int supplierId, decimal unitPrice)
     {
-        public int? PartNumberId { get; private set; }
-        public int? SupplierId { get; private set; }
-        public decimal? UnitPrice { get; private set; }
-        public virtual PartNumber? PartNumber { get; private set; }
-        public virtual Supplier? Supplier { get; private set; }
-        private PartNumberSupplier() { }
-        public PartNumberSupplier(int partNumberId, int supplierId, decimal unitPrice)
-        {
-            PartNumberId = partNumberId;
-            SupplierId = supplierId;
-            UnitPrice = unitPrice;
-        }
-
+        public int PartNumberId { get; set; } = partNumberId;
+        public int SupplierId { get; set; } = supplierId;
+        public decimal UnitPrice { get; set; } = unitPrice;
+        public virtual PartNumber? PartNumber { get; }
+        public virtual Supplier? Supplier { get; }
     }
 }

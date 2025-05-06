@@ -1,27 +1,26 @@
-﻿
-using Application.ViewModel;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Stellantis.ProjectName.WebApi.ViewModels;
 using System.Net;
 using System.Net.Mime;
 
-namespace CleanArchBase.Filters
+namespace Stellantis.ProjectName.WebApi.Filters
 {
-
-    public class ValidateModelStateFilterAttribute(ILogger<ValidateModelStateFilterAttribute> logger) : ActionFilterAttribute
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
+    internal sealed class ValidateModelStateFilterAttribute() : ActionFilterAttribute
     {
-        private readonly ILogger<ValidateModelStateFilterAttribute> _logger = logger;
-
         public override void OnActionExecuting(ActionExecutingContext context)
         {
+            ArgumentNullException.ThrowIfNull(context);
             if (!context.ModelState.IsValid)
             {
-                var errors = context.ModelState.Values.Where(p => p.Errors.Count > 0)
-                                                  .SelectMany(p => p.Errors)
-                                                  .Select(p => p.ErrorMessage)
-                                                  .ToList();
-                context.Result = new BadRequestObjectResult(new ErrorResponseVM((int)HttpStatusCode.BadRequest, "", errors));
+                var errors = context.ModelState.Values
+                    .Where(p => p.Errors.Count > 0)
+                    .SelectMany(p => p.Errors)
+                    .Select(p => p.ErrorMessage)
+                    .ToArray();
 
+                context.Result = new BadRequestObjectResult(new ErrorResponseVm((int)HttpStatusCode.BadRequest, "", errors));
                 context.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 context.HttpContext.Response.ContentType = MediaTypeNames.Application.Json;
             }

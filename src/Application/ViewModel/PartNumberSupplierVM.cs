@@ -1,10 +1,11 @@
-﻿namespace Domain.ViewModel
+﻿namespace Stellantis.ProjectName.Application.Models
 {
-    public class PartNumberSupplierVM
+    public class PartNumberSupplierVm(int partNumberId, int supplierId, decimal unitPrice)
     {
-        public int PartNumberId { get; set; }
-        public int SupplierId { get; set; }
-        public decimal UnitPrice { get; set; }
-        public PartNumberVM? PartNumber { get; set; }
+        public int PartNumberId { get; } = partNumberId;
+        public int SupplierId { get; } = supplierId;
+        public decimal UnitPrice { get; } = unitPrice;
+        public PartNumberVM? PartNumber { get; }
+        public SupplierVm? Supplier { get; }
     }
 }

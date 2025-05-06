@@ -1,0 +1,50 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AnalysisLevel>latest-all</AnalysisLevel>
+    <AssemblyInformationalVersion>1.0.0</AssemblyInformationalVersion>
+    <AssemblyName>Stellantis.ProjectName.$(MSBuildProjectName)</AssemblyName>
+    <Authors>Stellantis</Authors>
+    <Copyright>© Stellantis. All rights reserved.</Copyright>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GeneratedAssemblyInfoFile>Properties\AssemblyInfo.cs</GeneratedAssemblyInfoFile>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <NeutralLanguage>en</NeutralLanguage>
+    <NeutralResourcesLanguage>en</NeutralResourcesLanguage>
+    <Nullable>enable</Nullable>
+    <PackageId>$(AssemblyName)</PackageId>
+    <PackageTags>AMS</PackageTags>
+    <Product>ProjectName</Product>
+    <RepositoryUrl>https://gitlab.fcalatam.com/fca/architecture/application/dotnetcore/base-project.git</RepositoryUrl>
+    <RootNamespace>Stellantis.ProjectName.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <TargetFramework>net8.0</TargetFramework>
+    <Title>ProjectName</Title>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Update="Messages.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Messages.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Messages.it.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Messages.resx">
+      <LastGenOutput>Messages.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="PartNumberResources.es-AR.resx">
+      <DependentUpon>PartNumberResources.resx</DependentUpon>
+      <Generator></Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="PartNumberResources.ja-JP.resx">
+      <DependentUpon>PartNumberResources.resx</DependentUpon>
+      <Generator></Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

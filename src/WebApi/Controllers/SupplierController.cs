@@ -1,63 +1,29 @@
-﻿using Application.Interfaces;
-using Application.ViewModel;
-using AutoMapper;
-using Domain.DTO;
-using Domain.Resources;
-using Domain.ViewModel;
-using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
+using Stellantis.ProjectName.Application.Interfaces.Services;
+using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Domain.Entities;
+using Stellantis.ProjectName.WebApi.Dto;
+using Stellantis.ProjectName.WebApi.Dto.Filters;
+using Stellantis.ProjectName.WebApi.ViewModels;
 
-namespace CleanArchBase.Controllers
+namespace Stellantis.ProjectName.WebApi.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
-    [AllowAnonymous]
-    public class SupplierController(IMapper mapper, ISupplierService supplierService, IStringLocalizer<Messages> localizer) : ControllerBase
+    [Route("api/suppliers")]
+    public sealed class SupplierController(IMapper mapper, ISupplierService SupplierService, IStringLocalizerFactory localizerFactory) :
+        EntityControllerBase<SupplierDto, SupplierVm, Supplier>(mapper, SupplierService, localizerFactory)
     {
-        private readonly ISupplierService _supplierService = supplierService;
-        private readonly IStringLocalizer<Messages> _localizer = localizer;
-        private readonly IMapper _mapper = mapper;
+        protected override ISupplierService Service => (ISupplierService)base.Service;
 
-        [HttpPost]
-        public async Task<ActionResult> Create([FromBody] SupplierVM supplierVM)
+        [HttpGet]
+        public async Task<IActionResult> GetListAsync([FromQuery] SupplierFilterDto? filterDto)
         {
-            var supplierDTO = this._mapper.Map<SupplierDTO>(supplierVM);
-            await _supplierService.Create(supplierDTO);
+            var filter = Mapper.Map<SupplierFilter>(filterDto);
+            var pagedResult = await Service.GetListAsync(filter!);
+            var result = Mapper.Map<PagedResultVm<SupplierVm>>(pagedResult);
 
-            return Ok(_localizer["SuccessRegister"].Value);
+            return Ok(result);
         }
-
-        [HttpPut]
-        public async Task<ActionResult> Update([FromBody] SupplierVM supplierVM)
-        {
-            var supplierDTO = this._mapper.Map<SupplierDTO>(supplierVM);
-            await _supplierService.Update(supplierDTO);
-
-            return Ok(_localizer["SuccessUpdate"].Value);
-        }
-
-        [HttpGet("Get/{id}")]
-        public async Task<SupplierVM> Get([FromRoute] int id)
-        {
-            return this._mapper.Map<SupplierVM>(await _supplierService.Get(id));
-        }
-
-        [HttpGet("GetList")]
-        public async Task<ActionResult> GetList([FromQuery] SupplierFilterVM filter)
-        {
-            var supplierFilterDTO = this._mapper.Map<SupplierFilterDTO>(filter);
-            return Ok(this._mapper.Map<PaginationDTO<SupplierVM>>(await _supplierService.GetList(supplierFilterDTO)));
-        }
-
-        [HttpDelete("Delete/{id}")]
-        public async Task<ActionResult> Delete([FromRoute] int id)
-        {
-            await _supplierService.Delete(id);
-
-            return Ok(_localizer["SuccessDelete"].Value);
-        }
-
-
     }
 }

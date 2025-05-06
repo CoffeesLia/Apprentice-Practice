@@ -1,61 +1,29 @@
-﻿using Application.Interfaces;
-using Application.ViewModel;
-using AutoMapper;
-using Domain.DTO;
-using Domain.Resources;
-using Domain.ViewModel;
-using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
+using Stellantis.ProjectName.Application.Interfaces.Services;
+using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Domain.Entities;
+using Stellantis.ProjectName.WebApi.Dto;
+using Stellantis.ProjectName.WebApi.Dto.Filters;
+using Stellantis.ProjectName.WebApi.ViewModels;
 
-namespace CleanArchBase.Controllers
+namespace Stellantis.ProjectName.WebApi.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
-    [AllowAnonymous]
-    public class VehicleController(IMapper mapper, IVehicleService vehicleService, IStringLocalizer<Messages> localizer) : ControllerBase
+    [Route("api/vehicles")]
+    public sealed class VehicleController(IMapper mapper, IVehicleService VehicleService, IStringLocalizerFactory localizerFactory) :
+        EntityControllerBase<VehicleDto, VehicleVm, Vehicle>(mapper, VehicleService, localizerFactory)
     {
-        private readonly IVehicleService _vehicleService = vehicleService;
-        private readonly IStringLocalizer<Messages> _localizer = localizer;
-        private readonly IMapper _mapper = mapper;
+        protected override IVehicleService Service => (IVehicleService)base.Service;
 
-        [HttpPost]
-        public async Task<ActionResult> Create([FromBody] VehicleVM vehicleVM)
+        [HttpGet]
+        public async Task<IActionResult> GetListAsync([FromQuery] VehicleFilterDto? filterDto)
         {
-            var VehicleDTO = this._mapper.Map<VehicleDTO>(vehicleVM);
-            await _vehicleService.Create(VehicleDTO);
+            var filter = Mapper.Map<VehicleFilter>(filterDto);
+            var pagedResult = await Service.GetListAsync(filter!);
+            var result = Mapper.Map<PagedResultVm<VehicleVm>>(pagedResult);
 
-            return Ok(_localizer["SuccessRegister"].Value);
-        }
-
-        [HttpGet("GetList")]
-        public async Task<ActionResult> GetList([FromQuery] VehicleFilterVM filter)
-        {
-            var filterDTO = this._mapper.Map<VehicleFilterDTO>(filter);
-            return Ok(this._mapper.Map<PaginationDTO<VehicleVM>>(await _vehicleService.GetList(filterDTO)));
-        }
-
-        [HttpPut]
-        public async Task<ActionResult> Update([FromBody] VehicleVM vehicleVM)
-        {
-            var VehicleDTO = this._mapper.Map<VehicleDTO>(vehicleVM);
-            await _vehicleService.Update(VehicleDTO);
-
-            return Ok(_localizer["SuccessUpdate"].Value);
-        }
-
-        [HttpGet("Get/{id}")]
-        public async Task<VehicleVM> Get([FromRoute] int id)
-        {
-            return this._mapper.Map<VehicleVM>(await _vehicleService.Get(id));
-        }
-
-        [HttpDelete("Delete/{id}")]
-        public async Task<ActionResult> Delete([FromRoute] int id)
-        {
-            await _vehicleService.Delete(id);
-
-            return Ok(_localizer["SuccessDelete"].Value);
+            return Ok(result);
         }
     }
 }

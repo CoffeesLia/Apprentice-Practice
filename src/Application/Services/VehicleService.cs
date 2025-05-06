@@ -1,83 +1,77 @@
-﻿using Application.Interfaces;
-using AutoMapper;
-using Domain.DTO;
-using Domain.Entities;
-using Domain.Interfaces;
-using Domain.Resources;
+﻿using FluentValidation;
 using Microsoft.Extensions.Localization;
+using Stellantis.ProjectName.Application.Interfaces;
+using Stellantis.ProjectName.Application.Interfaces.Repositories;
+using Stellantis.ProjectName.Application.Interfaces.Services;
+using Stellantis.ProjectName.Application.Models;
+using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Application.Resources;
+using Stellantis.ProjectName.Domain.Entities;
 
-namespace Application.Services
+namespace Stellantis.ProjectName.Application.Services
 {
-    public class VehicleService(IMapper mapper, IUnitOfWork unitOfWork, IStringLocalizer<Messages> localizer) : IVehicleService
+    public class VehicleService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<Vehicle> validator)
+        : EntityServiceBase<Vehicle, IVehicleRepository>(unitOfWork, localizerFactory, validator), IVehicleService
     {
-        private readonly IMapper _mapper = mapper;
-        private readonly IUnitOfWork _unitOfWork = unitOfWork;
-        private readonly IStringLocalizer<Messages> _localizer = localizer;
+        protected override IVehicleRepository Repository => UnitOfWork.VehicleRepository;
+        private readonly IStringLocalizer _vehicleLocalizer = localizerFactory.Create(typeof(VehicleResources));
 
-        public async Task Create(VehicleDTO vehicleDTO)
+        public override async Task<OperationResult> CreateAsync(Vehicle item)
         {
+            ArgumentNullException.ThrowIfNull(item);
+            var (duplicate, message) = VerifyDuplicatePartNumbers(item);
+            if (duplicate)
+                return OperationResult.Conflict(message);
+            if (await Repository.VerifyChassiExistsAsync(item.Chassi).ConfigureAwait(false))
+                return OperationResult.Conflict(_vehicleLocalizer[VehicleResources.AlreadyExistChassis]);
+            return await base.CreateAsync(item).ConfigureAwait(false);
+        }
 
-            if (_unitOfWork.VehicleRepository.VerifyChassiExists(vehicleDTO.Chassi!))
+        public override async Task<OperationResult> DeleteAsync(int id)
+        {
+            var item = await Repository.GetFullByIdAsync(id).ConfigureAwait(false);
+            if (item == null)
+                return OperationResult.NotFound(Localizer[nameof(ServiceResources.NotFound)]);
+            if (item.PartNumbers.Count > 0)
+                return OperationResult.Conflict(_vehicleLocalizer[nameof(VehicleResources.Undeleted)]);
+            return await DeleteAsync(item).ConfigureAwait(false);
+        }
+
+        public async Task<PagedResult<Vehicle>> GetListAsync(VehicleFilter filter)
+        {
+            return await Repository.GetListAsync(filter).ConfigureAwait(false);
+        }
+
+        public override async Task<OperationResult> UpdateAsync(Vehicle item)
+        {
+            ArgumentNullException.ThrowIfNull(item);
+            var (duplicate, message) = VerifyDuplicatePartNumbers(item);
+            if (duplicate)
+                return OperationResult.Conflict(message);
+            else
             {
-                throw new InvalidOperationException(_localizer["AlreadyExistChassi"].Value);
+                UnitOfWork.BeginTransaction();
+                var itemOld = await Repository.GetFullByIdAsync(item.Id).ConfigureAwait(false);
+                if (itemOld == null)
+                    return OperationResult.NotFound(Localizer[nameof(ServiceResources.NotFound)]);
+                Repository.RemovePartnumbers(item.PartNumbers);
+                await Repository.UpdateAsync(item).ConfigureAwait(false);
+                await UnitOfWork.CommitAsync().ConfigureAwait(false);
+                return OperationResult.Complete(Localizer[ServiceResources.UpdatedSuccessfully]);
             }
-
-            var vehicle = this._mapper.Map<Vehicle>(vehicleDTO);
-
-            VerifyDuplicatePartNumbers(vehicle);
-
-            await this._unitOfWork.VehicleRepository.Create(vehicle);
         }
 
-        public async Task Delete(int id)
+        private (bool, string) VerifyDuplicatePartNumbers(Vehicle item)
         {
-            var vehicle = await _unitOfWork.VehicleRepository.GetByIdWithInclude(id, x => x.PartNumberVehicle!);
-            await _unitOfWork.VehicleRepository.Delete(vehicle);
-        }
-
-        public async Task<VehicleDTO> Get(int id)
-        {
-            var vehicle = await _unitOfWork.VehicleRepository.GetByIdWithPartNumber(id);
-            return vehicle == null ? throw new InvalidOperationException(_localizer["NotFound"].Value) : this._mapper.Map<VehicleDTO>(vehicle);
-        }
-
-        public async Task<PaginationDTO<VehicleDTO>> GetList(VehicleFilterDTO filter)
-        {
-            return this._mapper.Map<PaginationDTO<VehicleDTO>>(await _unitOfWork.VehicleRepository.GetListFilter(filter));
-
-        }
-
-        public async Task Update(VehicleDTO vehicleDTO)
-        {
-            var vehicle = this._mapper.Map<Vehicle>(vehicleDTO);
-            VerifyDuplicatePartNumbers(vehicle);
-
-            _unitOfWork.BeginTransaction();
-
-            await this.DeleteExists(vehicle);
-            await this._unitOfWork.VehicleRepository.Update(vehicle);
-
-            await _unitOfWork.Commit();
-        }
-
-        private async Task DeleteExists(Vehicle vehicle)
-        {
-            var oldVehicle = await _unitOfWork.VehicleRepository.GetByIdWithPartNumber(vehicle.Id) ?? throw new InvalidOperationException(_localizer["NotFound"].Value);
-            foreach (var partNumberVehicle in oldVehicle.PartNumberVehicle!)
+            if (item.PartNumbers.Count > 0)
             {
-                await this._unitOfWork.PartNumberVehicleRepository.Delete(partNumberVehicle);
+                var group = item.PartNumbers.GroupBy(p => p.PartNumberId);
+                var duplicates = group.Where(g => g.Count() > 1).ToList();
+
+                if (duplicates.Count > 0)
+                    return (true, _vehicleLocalizer[nameof(VehicleResources.DuplicatePartNumbers), string.Join(", ", duplicates.Select(p => p.Key))]);
             }
-            this._unitOfWork.VehicleRepository.DetachEntity(oldVehicle);
-        }
-
-        private void VerifyDuplicatePartNumbers(Vehicle vehicle)
-        {
-            var group = vehicle.PartNumberVehicle!.GroupBy(p => p.PartNumberId);
-            var duplicates = group.Where(g => g.Count() > 1).ToList();
-
-            if (duplicates.Count > 0)
-                throw new InvalidOperationException(_localizer["TheDrawing"].Value + " " + $"{string.Join(", ", duplicates.Select(p => p.Key))}" + " " + _localizer["AlreadyExistPartNumberSupplier"].Value);
+            return (false, string.Empty);
         }
     }
 }
-

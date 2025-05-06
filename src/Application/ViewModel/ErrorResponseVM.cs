@@ -1,34 +1,34 @@
-﻿namespace Application.ViewModel
+﻿namespace Stellantis.ProjectName.Application.Models
 {
-    public class ErrorResponseVM
+    public class ErrorResponseVm
     {
         public int Code { get; private set; }
         public string Message { get; private set; }
-        public List<string>? Errors { get; private set; }
+        public ICollection<string>? Errors { get { return this._Errors; } }
+        private readonly List<string> _Errors = [];
 
-        public ErrorResponseVM(int code, string message)
+        public ErrorResponseVm(int code, string message)
         {
             Code = code;
             Message = message;
         }
 
-        public ErrorResponseVM(int code, string message, Exception ex)
+        public ErrorResponseVm(int code, string message, Exception ex)
         {
             Code = code;
             Message = message;
-            Errors = [];
 
             while (ex != null)
             {
-                Errors.Add(ex.Message);
+                _Errors.Add(ex.Message);
             }
         }
 
-        public ErrorResponseVM(int code, string message, List<string> errors)
+        public ErrorResponseVm(int code, string message, ICollection<string> errors)
         {
             Code = code;
             Message = message;
-            Errors = errors;
+            _Errors.AddRange(errors);
         }
     }
 }

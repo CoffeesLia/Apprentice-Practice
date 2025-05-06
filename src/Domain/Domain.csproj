@@ -1,41 +1,62 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <AnalysisLevel>latest-all</AnalysisLevel>
+    <AssemblyInformationalVersion>1.0.0</AssemblyInformationalVersion>
+    <AssemblyName>Stellantis.ProjectName.$(MSBuildProjectName)</AssemblyName>
+    <Authors>Stellantis</Authors>
+    <Copyright>© Stellantis. All rights reserved.</Copyright>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GeneratedAssemblyInfoFile>Properties\AssemblyInfo.cs</GeneratedAssemblyInfoFile>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AnalysisLevel>latest-all</AnalysisLevel>
+    <PackageId>$(AssemblyName)</PackageId>
+    <PackageTags>AMS</PackageTags>
+    <Product>ProjectName</Product>
+    <RepositoryUrl>https://gitlab.fcalatam.com/fca/architecture/application/dotnetcore/base-project.git</RepositoryUrl>
+    <RootNamespace>Stellantis.ProjectName.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <TargetFramework>net8.0</TargetFramework>
+    <Title>ProjectName</Title>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <WarningLevel>9999</WarningLevel>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <WarningLevel>9999</WarningLevel>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Interfaces\PartNumberSupplierRepository.cs" />
+    <Compile Remove="Entities\ValueObject\**" />
+    <EmbeddedResource Remove="Entities\ValueObject\**" />
+    <None Remove="Entities\ValueObject\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Entities\ValueObject\" />
+    <Compile Remove="Entities\Employee.cs" />
+    <Compile Remove="Entities\PartNumber.cs" />
+    <Compile Remove="Entities\PartNumberSupplier.cs" />
+    <Compile Remove="Entities\Supplier.cs" />
+    <Compile Remove="Entities\Vehicle.cs" />
+    <Compile Remove="Entities\VehiclePartNumber.cs" />
+    <Compile Remove="Enums\PartNumberType.cs" />
+    <Compile Remove="Services\VehicleCostService.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <None Remove="Entities\Area.cs.bak" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Resources\Messages.Designer.cs">
-      <DependentUpon>Messages.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
+    <ProjectReference Include="..\Domain.Resources\Domain.Resources.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="Resources\Messages.pt-BR.resx">
-      <SubType>Designer</SubType>
-      <Generator>PublicResXFileCodeGenerator</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Resources\Messages.resx">
-      <LastGenOutput>Messages.Designer.cs</LastGenOutput>
-      <Generator>PublicResXFileCodeGenerator</Generator>
-    </EmbeddedResource>
+    <Folder Include="Enums\" />
+    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

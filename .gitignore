@@ -268,5 +268,7 @@ __pycache__/
 */**/bin/Release 
 */**/obj/Debug 
 */**/obj/Release
-/src/WebApi/appsettings.json
-/src/WebApi/appsettings.json
+/src/TestsCoverageReport
+/src/Application.Tests/Services/SquadServiceTestes.cs
+/src/Domain/Entities/EntitieSquad.cs
+/src/Application/Services/ResponsibleService.cs

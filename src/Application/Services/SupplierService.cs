@@ -1,92 +1,72 @@
-﻿using Application.Helpers;
-using Application.Interfaces;
-using AutoMapper;
-using Domain.DTO;
-using Domain.Entities;
-using Domain.Interfaces;
-using Domain.Resources;
-
+﻿using FluentValidation;
 using Microsoft.Extensions.Localization;
+using Stellantis.ProjectName.Application.Interfaces;
+using Stellantis.ProjectName.Application.Interfaces.Repositories;
+using Stellantis.ProjectName.Application.Interfaces.Services;
+using Stellantis.ProjectName.Application.Models;
+using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Application.Resources;
+using Stellantis.ProjectName.Domain.Entities;
 
-namespace Application.Services
+namespace Stellantis.ProjectName.Application.Services
 {
-    public class SupplierService(IMapper mapper, IUnitOfWork unitOfWork, IStringLocalizer<Messages> localizer) : ISupplierService
+    public class SupplierService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<Supplier> validator)
+        : EntityServiceBase<Supplier, ISupplierRepository>(unitOfWork, localizerFactory, validator), ISupplierService
     {
-        private readonly IMapper _mapper = mapper;
-        private readonly IUnitOfWork _unitOfWork = unitOfWork;
-        private readonly IStringLocalizer<Messages> _localizer = localizer;
+        private readonly IStringLocalizer _supplierLocalizer = localizerFactory.Create(typeof(SupplierResources));
+        protected override ISupplierRepository Repository => UnitOfWork.SupplierRepository;
 
-        public async Task Create(SupplierDTO supplierDTO)
+        public override async Task<OperationResult> CreateAsync(Supplier item)
         {
-            VerifyDuplicatePartNumbers(supplierDTO);
+            ArgumentNullException.ThrowIfNull(item);
+            var (duplicate, message) = VerifyDuplicatePartNumbers(item);
+            if (duplicate)
+                return OperationResult.Conflict(message);
+            if (await Repository.VerifyCodeExistsAsync(item.Code).ConfigureAwait(false))
+                return OperationResult.Conflict(_supplierLocalizer[nameof(SupplierResources.AlreadyExistCode)]);
+            return await base.CreateAsync(item).ConfigureAwait(false);
+        }
 
-            if (_unitOfWork.SupplierRepository.VerifyCodeExists(supplierDTO.Code!))
+        public override async Task<OperationResult> DeleteAsync(int id)
+        {
+            var item = await Repository.GetFullByIdAsync(id).ConfigureAwait(false);
+            if (item == null)
+                return OperationResult.NotFound(Localizer[nameof(ServiceResources.NotFound)]);
+            if (item.PartNumbers!.Count > 0)
+                return OperationResult.Conflict(_supplierLocalizer[nameof(SupplierResources.Undeleted)]);
+            return await base.DeleteAsync(item).ConfigureAwait(false);
+        }
+
+        public override async Task<OperationResult> UpdateAsync(Supplier item)
+        {
+            ArgumentNullException.ThrowIfNull(item);
+            var (duplicate, message) = VerifyDuplicatePartNumbers(item);
+            if (duplicate)
+                return OperationResult.Conflict(message);
+            return await base.UpdateAsync(item).ConfigureAwait(false);
+        }
+
+        public async Task<PagedResult<Supplier>> GetListAsync(SupplierFilter filter)
+        {
+            return await UnitOfWork.SupplierRepository.GetListAsync(filter).ConfigureAwait(false);
+        }
+
+        private (bool, string) VerifyDuplicatePartNumbers(Supplier item)
+        {
+            if (item.PartNumbers.Count > 0)
             {
-                throw new InvalidOperationException(_localizer["AlreadyExistCode"].Value);
+                var group = item.PartNumbers.GroupBy(p => p.PartNumberId);
+                var duplicates = group.Where(g => g.Count() > 1).ToList();
+
+                if (duplicates.Count > 0)
+                    return (true, _supplierLocalizer[nameof(SupplierResources.DuplicatePartNumbers), string.Join(", ", duplicates.Select(p => p.Key))]);
             }
-
-            var supplier = this._mapper.Map<Supplier>(supplierDTO);
-
-
-            await this._unitOfWork.SupplierRepository.Create(supplier);
+            return (false, string.Empty);
         }
 
-        public async Task Delete(int id)
+        public async Task<bool> ExistsAsync(int id)
         {
-            var supplier = await _unitOfWork.SupplierRepository.GetByIdWithInclude(id, x => x.PartNumberSupplier!);
-            await _unitOfWork.SupplierRepository.Delete(supplier);
-        }
-
-        public async Task<SupplierDTO> Get(int id)
-        {
-            var supplier = await _unitOfWork.SupplierRepository.GetByIdWithPartNumber(id);
-            return supplier == null
-                ? throw new InvalidOperationException(_localizer["NotFound"].Value)
-                : this._mapper.Map<SupplierDTO>(supplier);
-        }
-
-        public async Task Update(SupplierDTO supplierDTO)
-        {
-            VerifyDuplicatePartNumbers(supplierDTO);
-
-            var supplier = await _unitOfWork.SupplierRepository.GetByIdWithPartNumber(supplierDTO.Id) ?? throw new InvalidOperationException(_localizer["NotFound"].Value);
-
-            var partnumbersIdsToDelete = EntityComparison.PropsDiffer(supplier.PartNumberSupplier, supplierDTO.PartNumberSupplier, "PartNumberId").ToList();
-            await _unitOfWork.PartNumberSupplierRepository.Delete(supplier.PartNumberSupplier.Where(f => partnumbersIdsToDelete.Contains(f.PartNumberId.GetValueOrDefault())), false);
-
-            _mapper.Map(supplierDTO, supplier);
-
-            await this._unitOfWork.SupplierRepository.Update(supplier);
-        }
-
-        public async Task<PaginationDTO<SupplierDTO>> GetList(SupplierFilterDTO filter)
-        {
-            return this._mapper.Map<PaginationDTO<SupplierDTO>>(await _unitOfWork.SupplierRepository.GetListFilter(filter));
-        }
-
-        private async Task DeleteExists(Supplier supplier)
-        {
-            var oldSupplier = await _unitOfWork.SupplierRepository.GetByIdWithPartNumber(supplier.Id) ?? throw new InvalidOperationException(_localizer["NotFound"].Value);
-            foreach (var partNumberSupplier in oldSupplier.PartNumberSupplier!)
-            {
-                await this._unitOfWork.PartNumberSupplierRepository.Delete(partNumberSupplier);
-            }
-            this._unitOfWork.SupplierRepository.DetachEntity(oldSupplier);
-        }
-
-        private void VerifyDuplicatePartNumbers(SupplierDTO supplier)
-        {
-
-            var group = supplier.PartNumberSupplier!.GroupBy(p => p.PartNumberId);
-            var duplicates = group.Where(g => g.Count() > 1).ToList();
-
-            if (duplicates.Count > 0)
-                throw new InvalidOperationException(_localizer["TheDrawing"].Value + " " + $"{string.Join(", ", duplicates.Select(p => p.Key))}" + " " + _localizer["AlreadyExistPartNumberSupplier"].Value);
-
+            return await Repository.ExistsAsync(id).ConfigureAwait(false);
         }
     }
-
-
-
 }
-

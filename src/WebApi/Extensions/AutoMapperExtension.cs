@@ -1,17 +1,17 @@
-﻿using Application.Mapper;
-using AutoMapper;
+﻿using AutoMapper;
 using AutoMapper.EquivalencyExpression;
+using Stellantis.ProjectName.WebApi.Mapper;
 
-namespace WebApi.Extensions
+namespace Stellantis.ProjectName.WebApi.Extensions
 {
-    public static class AutoMapperExtension
+    internal static class AutoMapperExtension
     {
         public static IServiceCollection RegisterMapper(this IServiceCollection services)
         {
             var mappingConfig = new MapperConfiguration(mc =>
             {
                 mc.AddCollectionMappers();
-                mc.AddProfile(new AutoMapperConfig());
+                mc.AddProfile(new AutoMapperProfile());
             });
 
             mappingConfig.AssertConfigurationIsValid();
@@ -21,5 +21,4 @@ namespace WebApi.Extensions
             return services;
         }
     }
-
 }

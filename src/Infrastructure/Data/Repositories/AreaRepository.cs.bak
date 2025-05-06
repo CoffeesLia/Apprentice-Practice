@@ -1,0 +1,35 @@
+﻿using LinqKit;
+using Stellantis.ProjectName.Application.Interfaces.Repositories;
+using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Domain.Entities;
+using System.Data.Entity;
+
+namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
+{
+    public class AreaRepository(Context context)
+        : RepositoryEntityBase<Area, Context>(context), IAreaRepository
+    {
+        public async Task<Area?> GetByNameAsync(string name)
+        {
+
+            return await Context.Areas.AsQueryable().SingleOrDefaultAsync(x => x.Name == name).ConfigureAwait(false);
+        }
+
+        public async Task<PagedResult<Area>> GetListAsync(AreaFilter? filter)
+        {
+            filter ??= new AreaFilter();
+
+            var filters = PredicateBuilder.New<Area>(true);
+
+            if (!string.IsNullOrWhiteSpace(filter.Name))
+                filters = filters.And(x => x.Name.Contains(filter.Name));
+
+            return await base.GetListAsync(filters, filter).ConfigureAwait(false);
+        }
+
+        public Task<bool> HasApplicationsAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}
