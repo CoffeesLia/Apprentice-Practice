@@ -15,22 +15,38 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             return await Context.Set<Member>().FindAsync(id).ConfigureAwait(false);
         }
 
-        public async Task<PagedResult<Member>> GetListAsync(MemberFilter filter)
+        public async Task<PagedResult<Member>> GetListAsync(MemberFilter membersFilter)
         {
-            ArgumentNullException.ThrowIfNull(filter);
+            membersFilter ??= new MemberFilter();
 
-            var filters = PredicateBuilder.New<Member>(true);
+            // Garantir valores padrão para paginação
+            membersFilter.Page = membersFilter.Page > 0 ? membersFilter.Page : 1;
+            membersFilter.PageSize = membersFilter.PageSize > 0 ? membersFilter.PageSize : 10;
 
-            if (!string.IsNullOrWhiteSpace(filter.Name))
-                filters = filters.And(x => x.Name.Contains(filter.Name));
-            if (!string.IsNullOrWhiteSpace(filter.Role))
-                filters = filters.And(x => x.Role.Contains(filter.Role));
-            if (!string.IsNullOrWhiteSpace(filter.Email))
-                filters = filters.And(x => x.Email.Contains(filter.Email));
-            if (filter.Cost.HasValue)
-                filters = filters.And(x => x.Cost == filter.Cost);
+            IQueryable<Member> query = Context.Set<Member>();
 
-            return await GetListAsync(filter: filters, page: filter.Page, sort: filter.Sort, sortDir: filter.SortDir).ConfigureAwait(false);
+            if (!string.IsNullOrEmpty(membersFilter.Name))
+            {
+                query = query.Where(a => a.Name != null && a.Name.Contains(membersFilter.Name));
+            }
+
+            return await GetPagedResultAsync(query, membersFilter.Page, membersFilter.PageSize)
+                .ConfigureAwait(false);
+        }
+
+
+        private static async Task<PagedResult<Member>> GetPagedResultAsync(IQueryable<Member> query, int page, int pageSize)
+        {
+            var total = await query.CountAsync().ConfigureAwait(false);
+            var result = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync().ConfigureAwait(false);
+
+            return new PagedResult<Member>
+            {
+                Total = total,
+                Result = result,
+                Page = page,
+                PageSize = pageSize
+            };
         }
 
         public async Task<bool> IsEmailUnique(string email)

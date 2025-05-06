@@ -125,9 +125,23 @@ namespace Stellantis.ProjectName.WebApi.Mapper
             CreateMap<PagedResult<GitRepo>, PagedResultVm<GitRepoVm>>();
 
             CreateMap<MemberDto, Member>()
-                 .ForMember(x => x.Id, x => x.Ignore());
-            CreateMap<Member, MemberVm>();
-            CreateMap<MemberFilterDto, MemberFilter>();
+               .ForMember(dest => dest.Id, opt => opt.Ignore())
+               .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+               .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role))
+               .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+               .ForMember(dest => dest.Cost, opt => opt.MapFrom(src => src.Cost));
+            CreateMap<Member, MemberVm>().ReverseMap()
+               .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+               .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+               .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role))
+               .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+               .ForMember(dest => dest.Cost, opt => opt.MapFrom(src => src.Cost));
+            CreateMap<MemberFilterDto, MemberFilter>()
+               .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+               .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+               .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role))
+               .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+               .ForMember(dest => dest.Cost, opt => opt.MapFrom(src => src.Cost));
             CreateMap<PagedResult<Member>, PagedResultVm<MemberVm>>();
         }
     }

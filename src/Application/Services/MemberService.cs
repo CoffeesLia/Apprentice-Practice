@@ -68,10 +68,10 @@ namespace Stellantis.ProjectName.Application.Services
             return await base.UpdateAsync(item).ConfigureAwait(false);
         }
 
-        public async Task<PagedResult<Member>> GetListAsync(MemberFilter memberFilter)
+        public async Task<PagedResult<Member>> GetListAsync(MemberFilter membersFilter)
         {
-            memberFilter ??= new MemberFilter();
-            return await UnitOfWork.MemberRepository.GetListAsync(memberFilter).ConfigureAwait(false);
+            membersFilter ??= new MemberFilter();
+            return await Repository.GetListAsync(membersFilter).ConfigureAwait(false);
         }
 
         public override async Task<OperationResult> DeleteAsync(int id)

@@ -5,6 +5,6 @@ namespace Stellantis.ProjectName.Application.Interfaces.Services
 {
     public interface IMemberService : IEntityServiceBase<Member>
     {
-        Task<PagedResult<Member>> GetListAsync(MemberFilter memberFilter);
+        Task<PagedResult<Member>> GetListAsync(MemberFilter membersFilter);
     }
 }
