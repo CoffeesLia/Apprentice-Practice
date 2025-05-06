@@ -106,7 +106,7 @@ namespace WebApi.Tests.Controllers
         public async Task GetAsyncReturnsNotFoundWhenIdIsInvalid()
         {
             // Arrange
-            _serviceMock.Setup(s => s.GetItemAsync(It.IsAny<int>())).ReturnsAsync((ApplicationData)null);
+            _serviceMock.Setup(s => s.GetItemAsync(It.IsAny<int>())).ReturnsAsync((ApplicationData?)null);
 
             // Act
             var result = await _controller.GetAsync(1);
