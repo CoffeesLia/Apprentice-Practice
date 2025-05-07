@@ -26,17 +26,19 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             return await Context.Set<Area>().FindAsync(id).ConfigureAwait(false);
         }
 
-        public async Task<PagedResult<Area>> GetListAsync(AreaFilter filter)
+        public async Task<PagedResult<Area>> GetListAsync(AreaFilter areaFilter)
         {
-            ArgumentNullException.ThrowIfNull(filter);
-
+            ArgumentNullException.ThrowIfNull(areaFilter);
+            areaFilter.Page = areaFilter.Page <= 0 ? 1 : areaFilter.Page;
             IQueryable<Area> query = Context.Set<Area>();
-            if (filter.Id.HasValue)
-                query = query.Where(a => a.Id == filter.Id);
-            if (!string.IsNullOrEmpty(filter.Name))
-                query = query.Where(a => a.Name.Contains(filter.Name, StringComparison.OrdinalIgnoreCase));
+            if (areaFilter.Id.HasValue)
+                query = query.Where(a => a.Id == areaFilter.Id);
+            if (!string.IsNullOrEmpty(areaFilter.Name))
+                query = query.Where(a => a.Name.Contains(areaFilter.Name, StringComparison.OrdinalIgnoreCase));
 
-            return await base.GetListAsync(query, sort: filter.Sort, sortDir: filter.SortDir, page: filter.Page, pageSize: filter.PageSize).ConfigureAwait(false);
+            return await GetListAsync ( page: areaFilter.Page, sort: areaFilter.Sort, sortDir: areaFilter.SortDir
+).ConfigureAwait(false);
+
         }
 
         public async Task<bool> VerifyNameAlreadyExistsAsync(string name)
