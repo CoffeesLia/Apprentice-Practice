@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Stellantis.ProjectName.Domain.Entities;
 
-
 namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
 {
     public class ApplicationDataConfig : IEntityTypeConfiguration<ApplicationData>
@@ -26,6 +25,10 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
             builder.Property(ad => ad.AreaId)
                 .IsRequired();
 
+            builder.HasOne(r => r.Area)
+                .WithMany(a => a.Applications)
+                .HasForeignKey(r => r.AreaId)
+                .IsRequired();
         }
     }
 }

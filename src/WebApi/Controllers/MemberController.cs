@@ -16,6 +16,10 @@ namespace Stellantis.ProjectName.WebApi.Controllers
     public sealed class MemberController(IMemberService service, IMapper mapper, IStringLocalizerFactory localizerFactory)
         : EntityControllerBase<Member, MemberDto>(service, mapper, localizerFactory)
     {
+
+        protected override IMemberService Service => (IMemberService)base.Service;
+
+
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] MemberDto itemDto)
         {
@@ -32,7 +36,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         public async Task<IActionResult> GetListAsync([FromQuery] MemberFilterDto filterDto)
         {
             var filter = Mapper.Map<MemberFilter>(filterDto);
-            var pagedResult = await ((IMemberService)Service).GetListAsync(filter!).ConfigureAwait(false);
+            var pagedResult = await Service.GetListAsync(filter!).ConfigureAwait(false);
             var result = Mapper.Map<PagedResultVm<MemberVm>>(pagedResult);
             return Ok(result);
         }

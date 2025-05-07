@@ -6,12 +6,8 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
-    public class AreaRepository : RepositoryBase<Area, Context>, IAreaRepository
+    public class AreaRepository(Context context) : RepositoryBase<Area, Context>(context), IAreaRepository
     {
-        public AreaRepository(Context context) : base(context)
-        {
-        }
-
         public async Task DeleteAsync(int id, bool saveChanges = true)
         {
             var entity = await GetByIdAsync(id).ConfigureAwait(false);
@@ -32,14 +28,15 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         public async Task<PagedResult<Area>> GetListAsync(AreaFilter filter)
         {
+            ArgumentNullException.ThrowIfNull(filter);
+
             IQueryable<Area> query = Context.Set<Area>();
-
+            if (filter.Id.HasValue)
+                query = query.Where(a => a.Id == filter.Id);
             if (!string.IsNullOrEmpty(filter.Name))
-            {
-                query = query.Where(a => a.Name.Contains(filter.Name));
-            }
+                query = query.Where(a => a.Name.Contains(filter.Name, StringComparison.OrdinalIgnoreCase));
 
-            return await GetPagedResultAsync(query, filter.Page, filter.PageSize).ConfigureAwait(false);
+            return await base.GetListAsync(query, sort: filter.Sort, sortDir: filter.SortDir, page: filter.Page, pageSize: filter.PageSize).ConfigureAwait(false);
         }
 
         public async Task<bool> VerifyNameAlreadyExistsAsync(string name)
@@ -47,19 +44,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             return await Context.Set<Area>().AnyAsync(a => a.Name == name).ConfigureAwait(false);
         }
 
-        private static async Task<PagedResult<Area>> GetPagedResultAsync(IQueryable<Area> query, int page, int pageSize)
-        {
-            var total = await query.CountAsync().ConfigureAwait(false);
-            var result = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync().ConfigureAwait(false);
-
-            return new PagedResult<Area>
-            {
-                Total = total,
-                Result = result,
-                Page = page,
-                PageSize = pageSize
-            };
-        }
         public async Task<bool> VerifyAplicationsExistsAsync(int id)
         {
             var area = await Context.Set<Area>()
@@ -74,7 +58,5 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             return area.Applications.Count != 0;
         }
-
-
     }
 }

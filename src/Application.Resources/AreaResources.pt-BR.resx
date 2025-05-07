@@ -120,6 +120,9 @@
   <data name="AlreadyExists" xml:space="preserve">
     <value>O nome já existe.</value>
   </data>
+  <data name="NotFound" xml:space="preserve">
+    <value>Área não encontrada.</value>
+  </data>
   <data name="NameIsRequired" xml:space="preserve">
     <value>O nome é obrigatório.</value>
   </data>
