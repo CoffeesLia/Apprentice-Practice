@@ -205,7 +205,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         /// <param name="pageSize">The number of items per page. Default is 10.</param>
         /// <returns>A task representing the asynchronous operation that returns a <see cref="PagedResult{TEntity}"/> containing the paginated list of entities and the total count.</returns>
         /// <exception cref="ArgumentNullException">Thrown when the query is null.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when the page or pageSize is less than 1 or when the page number exceeds the total number of pages.</exception>
         protected async Task<PagedResult<TEntity>> GetListAsync(IQueryable<TEntity> query, string? sort = null, string? sortDir = null, int page = 1, int pageSize = 10)
         {
             ArgumentNullException.ThrowIfNull(query);
@@ -219,12 +218,13 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 .ConfigureAwait(false);
             var total = await query.CountAsync().ConfigureAwait(false);
 
-            if (page > 1 && total < page * pageSize)
-                throw new ArgumentOutOfRangeException(nameof(page), "Page number exceeds the total number of pages.");
+            int totalPages = (int)Math.Ceiling((double)total / pageSize);
+            if (total == 0 && page != 1 || total > 0 && (page < 1 || page > totalPages))
+                page = totalPages;
 
             return new PagedResult<TEntity>()
             {
-                Page = 1,
+                Page = page,
                 PageSize = pageSize,
                 Result = [.. list],
                 Total = total

@@ -96,14 +96,15 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             var nonExistentId = 999;
-            var notFoundMessage = "Serviço não encontrado.";
-
-            _serviceMock.Setup(service => service.DeleteAsync(nonExistentId))
-                .ReturnsAsync(OperationResult.NotFound(notFoundMessage));
 
             var localizerMock = new Mock<IStringLocalizer<ServiceDataResources>>();
             localizerMock.Setup(l => l[nameof(ServiceDataResources.ServiceNotFound)])
-                .Returns(new LocalizedString(nameof(ServiceDataResources.ServiceNotFound), notFoundMessage));
+                .Returns(new LocalizedString(nameof(ServiceDataResources.ServiceNotFound), ServiceDataResources.ServiceNotFound));
+
+            var notFoundMessage = localizerMock.Object[nameof(ServiceDataResources.ServiceNotFound)].Value;
+
+            _serviceMock.Setup(service => service.DeleteAsync(nonExistentId))
+                .ReturnsAsync(OperationResult.NotFound(notFoundMessage));
 
             var loggerFactory = new Microsoft.Extensions.Logging.LoggerFactory();
             var mapperConfiguration = new MapperConfiguration(x => { x.AddProfile<AutoMapperProfile>(); });

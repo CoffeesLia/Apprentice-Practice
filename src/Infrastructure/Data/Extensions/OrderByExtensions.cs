@@ -1,5 +1,6 @@
 ﻿using Stellantis.ProjectName.Infrastructure.Data.Extensions;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Extensions
 {
@@ -15,7 +16,10 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Extensions
                 MemberExpression member;
                 try
                 {
-                    member = Expression.MakeMemberAccess(parameter, typeof(TSource).GetMember(keySelector)[0]);
+                    member = Expression.MakeMemberAccess(parameter, typeof(TSource).GetMember(
+                        keySelector, 
+                        BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase
+                    )[0]);
                 }
                 catch (IndexOutOfRangeException exception)
                 {

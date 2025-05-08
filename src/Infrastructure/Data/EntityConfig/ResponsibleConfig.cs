@@ -20,8 +20,8 @@ namespace Stellantis.Domain.EntityConfig
                 .IsRequired()
                 .HasMaxLength(200);
 
-            builder.Property(r => r.AreaId) // Chave estrangeira
-           .IsRequired();
+            builder.Property(r => r.AreaId)
+                .IsRequired();
 
             builder.HasOne(r => r.Area) // Configura a navegação
                 .WithMany(a => a.Responsibles)

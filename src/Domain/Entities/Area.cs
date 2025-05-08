@@ -7,7 +7,5 @@ namespace Stellantis.ProjectName.Domain.Entities
         public string Name { get; set; } = name;
         public Collection<ApplicationData> Applications { get; } = [];
         public ICollection<Responsible> Responsibles { get; } = [];
-
-
     }
 }

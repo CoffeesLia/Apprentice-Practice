@@ -6,7 +6,7 @@ using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
 
-namespace Stellantis.ProjectName.Tests.Data.Repositories
+namespace Infrastructure.Tests.Data.Repositories
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1001:Tipos que têm campos descartáveis devem ser descartáveis", Justification = "<Pendente>")]
     public class AreaRepositoryTests

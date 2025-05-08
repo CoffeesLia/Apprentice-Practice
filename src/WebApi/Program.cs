@@ -1,8 +1,10 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Stellantis.ProjectName.Infrastructure.Data;
 using Stellantis.ProjectName.IoC;
 using Stellantis.ProjectName.WebApi;
@@ -61,8 +63,6 @@ switch (databaseType)
 builder.Services.AddDbContext<Context>(options => options.UseSqlServer(configuration["ConnectionString"]));
 #endif
 
-builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
-
 var arrLanguage = new[] { "en-US", "pt-BR", "es-AR", "fr-FR", "it-IT", "nl-NL" };
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
@@ -71,10 +71,16 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
         .SetDefaultCulture(supportedCultures[0])
         .AddSupportedCultures(supportedCultures)
         .AddSupportedUICultures(supportedCultures);
+
+    options.RequestCultureProviders = new List<IRequestCultureProvider>
+    {
+        new AcceptLanguageHeaderRequestCultureProvider()
+    };
 });
 
 #if DEBUG
 
+builder.Services.AddLocalization();
 builder.Services.AddAuthentication("AuthenticationForDebug")
     .AddScheme<AuthenticationSchemeOptions, ForDebugAuthenticationHandler>("AuthenticationForDebug", null);
 builder.Services.AddCors(options =>
@@ -106,7 +112,8 @@ if (app.Environment.IsDevelopment())
 
 #endif
 
-app.UseRequestLocalization();
+var localizationOptions = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value;
+app.UseRequestLocalization(localizationOptions);
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();

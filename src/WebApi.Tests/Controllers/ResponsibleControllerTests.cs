@@ -14,7 +14,7 @@ using Stellantis.ProjectName.WebApi.ViewModels;
 using WebApi.Tests.Helpers;
 
 
-namespace Stellantis.ProjectName.WebApi.Tests.Controllers
+namespace WebApi.Tests.Controllers
 {
     public class ResponsibleControllerTests
     {

@@ -14,7 +14,7 @@ using Stellantis.ProjectName.Domain.Entities;
 using System.Globalization;
 using Xunit;
 
-namespace Application.Services.Tests
+namespace Application.Tests.Services
 {
     public class MemberServiceTests
     {
