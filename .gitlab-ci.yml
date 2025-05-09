@@ -38,15 +38,18 @@ test:
         - ./src/artifacts/*-result.xml
 
 sonarqube:
-  image: 253882794486.dkr.ecr.us-east-1.amazonaws.com/build-tools:latest-devops-master-dotnet
+  image: 253882794486.dkr.ecr.us-east-1.amazonaws.com/build-tools:latest-devops-master
   stage: quality
   script:
     - apt-get update && apt-get install -y dotnet-sdk-8.0
     - dotnet tool install --global dotnet-coverage
     - export PATH="$PATH:/root/.dotnet/tools"
     - dotnet restore ./src
-    - echo $SONAR_URL $SONAR_LOGIN $CI_PROJECT_ID-$CI_PROJECT_NAME $PATH
-    - mono /opt/sonar-scanner-msbuild/SonarScanner.MSBuild.dll begin /d:sonar.host.url=$SONAR_URL /d:sonar.login=$SONAR_LOGIN /k:$CI_PROJECT_ID-$CI_PROJECT_NAME /n:"AMS Portal - Web API" /v:1.0 /d:sonar.coverage.exclusions="**/*.Tests/*" /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
-    - dotnet build ./src --no-restore
+    - vault read sonarqube/kv/login >> sonar_url.txt
+    - export SONAR_URL=$(cat sonar_url.txt | jq -r '.data.SONAR_URL')
+    - vault read sonarqube/kv/secret >> sonar_login.txt
+    - export SONAR_LOGIN=$(cat sonar_login.txt | jq -r '.data.SONAR_LOGIN')
+    - export NAMESPACE=$(echo "$CI_PROJECT_NAMESPACE" | jq -Rr 'split("/") | .[1]')
+    - /opt/sonar-scanner/sonar-scanner-6.0.0.4432-linux/bin/sonar-scanner begin -Dsonar.projectKey="com.ste.sa.$NAMESPACE.$CI_PROJECT_NAME" -Dsonar.sources=. -Dsonar.host.url=$SONAR_URL -Dsonar.login=$SONAR_LOGIN -Dbitegarden.project.tag=South_America
     - dotnet-coverage collect "dotnet test ./src" -f xml -o "coverage.xml"
-    - mono /opt/sonar-scanner-msbuild/SonarScanner.MSBuild.dll end /d:sonar.login=$SONAR_LOGIN
+    - /opt/sonar-scanner/sonar-scanner-6.0.0.4432-linux/bin/sonar-scanner end -Dsonar.login=$SONAR_LOGIN
