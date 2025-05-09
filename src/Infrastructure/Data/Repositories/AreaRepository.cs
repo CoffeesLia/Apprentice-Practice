@@ -29,7 +29,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         public async Task<PagedResult<Area>> GetListAsync(AreaFilter filter)
         {
             ArgumentNullException.ThrowIfNull(filter);
-
+            filter.Page = filter.Page <= 0 ? 1 : filter.Page;
             IQueryable<Area> query = Context.Set<Area>();
             if (filter.Id.HasValue)
             {

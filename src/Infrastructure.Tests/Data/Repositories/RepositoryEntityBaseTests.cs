@@ -1,4 +1,7 @@
-﻿using AutoFixture;
+﻿#pragma warning disable IDE0079
+#pragma warning disable CA1812
+#pragma warning disable CA1852
+using AutoFixture;
 using AutoFixture.AutoMoq;
 using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Domain.Entities;
@@ -188,22 +191,22 @@ namespace Infrastructure.Tests.Data.Repositories
             Assert.Equal(entity.Id, result.Id);
         }
 
-        private class TestRepository(TestContext context) : RepositoryEntityBase<TestEntity, TestContext>(context)
+        private sealed class TestRepository(TestContext context) : RepositoryEntityBase<TestEntity, TestContext>(context)
         {
         }
 
-        private class TestEntity(string name) : EntityBase
+        private sealed class TestEntity(string name) : EntityBase
         {
             public string Name { get; set; } = name;
             public ICollection<TestEntityChildren> RelatedEntities { get; set; } = [];
         }
 
-        internal class TestEntityChildren(string name) : EntityBase
+        internal sealed class TestEntityChildren(string name) : EntityBase
         {
             public string Name { get; set; } = name;
         }
 
-        private class TestContext(DbContextOptions<TestContext> options) : DbContext(options)
+        private sealed class TestContext(DbContextOptions<TestContext> options) : DbContext(options)
         {
             public DbSet<TestEntity> Entities { get; set; } = default!;
         }

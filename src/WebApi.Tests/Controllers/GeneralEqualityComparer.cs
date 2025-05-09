@@ -1,31 +1,12 @@
 ﻿using System.Collections;
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace WebApi.Tests.Controllers
 {
     /// <summary>
-    /// A generic equality comparer that compares all public properties of two objects of type <typeparamref name="T"/>.
-    /// Review: transforma this classe em um biblioteca de testes para reparoveitar em outros projetos.
-    /// </summary>
-    /// <typeparam name="T">The type of objects to compare.</typeparam>
-    internal class GeneralEqualityComparer<T> : GeneralEqualityComparer, IEqualityComparer<T>
-    {
-        public bool Equals(T? x, T? y)
-        {
-            return base.Equals(x, y);
-        }
-
-        public int GetHashCode([DisallowNull] T obj)
-        {
-            return base.GetHashCode(obj);
-        }
-    }
-
-    /// <summary>
     /// A generic equality comparer that compares all public properties of two objects of object type.
     /// </summary>
-    internal class GeneralEqualityComparer : IEqualityComparer
+    internal sealed class GeneralEqualityComparer : IEqualityComparer
     {
         /// <summary>
         /// Determines whether two enumerables are equal by comparing their elements.

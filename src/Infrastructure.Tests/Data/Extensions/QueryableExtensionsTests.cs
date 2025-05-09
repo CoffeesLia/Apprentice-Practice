@@ -1,4 +1,7 @@
-﻿using AutoFixture;
+﻿#pragma warning disable IDE0079
+#pragma warning disable CA1812
+#pragma warning disable CA1852
+using AutoFixture;
 using Stellantis.ProjectName.Infrastructure.Data.Extensions;
 using System.ComponentModel;
 
@@ -6,7 +9,7 @@ namespace Infrastructure.Tests.Data.Extensions
 {
     public class QueryableExtensionsTests
     {
-        private class TestEntity
+        private sealed class TestEntity
         {
             [DefaultValue(0)]
             public int Id { get; set; }

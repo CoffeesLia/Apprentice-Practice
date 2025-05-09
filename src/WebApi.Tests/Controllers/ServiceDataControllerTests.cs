@@ -18,6 +18,7 @@ using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.Mapper;
 using Stellantis.ProjectName.WebApi.ViewModels;
 using System.Globalization;
+using System.Net;
 using WebApi.Tests.Helpers;
 
 namespace WebApi.Tests.Controllers
@@ -93,26 +94,27 @@ namespace WebApi.Tests.Controllers
 
         // Testa se DeleteAsync retorna NotFound quando o serviço não existe.
         [Fact]
-        public void DeleteAsyncShouldReturnNotFoundWhenServiceDoesNotExist()
+        public async Task DeleteAsyncShouldReturnNotFoundWhenServiceDoesNotExist()
         {
-
             // Arrange
             int nonExistentId = 999;
-            string notFoundMessage = "Serviço não encontrado.";
+
+            var localizerMock = new Mock<IStringLocalizer<ServiceDataResources>>();
+            localizerMock.Setup(l => l[nameof(ServiceDataResources.ServiceNotFound)])
+                .Returns(new LocalizedString(nameof(ServiceDataResources.ServiceNotFound), ServiceDataResources.ServiceNotFound));
+
+            var notFoundMessage = localizerMock.Object[nameof(ServiceDataResources.ServiceNotFound)].Value;
 
             _serviceMock.Setup(service => service.DeleteAsync(nonExistentId))
                 .ReturnsAsync(OperationResult.NotFound(notFoundMessage));
 
-            Mock<IStringLocalizer<ServiceDataResources>> localizerMock = new();
-            localizerMock.Setup(l => l[nameof(ServiceDataResources.ServiceNotFound)])
-                .Returns(new LocalizedString(nameof(ServiceDataResources.ServiceNotFound), notFoundMessage));
 
-            Microsoft.Extensions.Logging.LoggerFactory loggerFactory = new();
+            // Act
+            IActionResult result = await _controller.DeleteAsync(nonExistentId);
 
             // Assert
-            Assert.Equal(ServiceDataResources.ServiceNotFound, notFoundMessage);
-
-            loggerFactory.Dispose();
+            var notFoundResult = Assert.IsType<NotFoundResult>(result);
+            Assert.Equal((int)HttpStatusCode.NotFound, notFoundResult.StatusCode);
         }
 
         // Testa se GetListAsync retorna OkObjectResult.

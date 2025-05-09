@@ -5,3 +5,4 @@
 [assembly: SuppressMessage("Maintainability", "CA1515:Consider making public types internal", Justification = "The class is only tests.", Scope = "type", Target = "~T:Infrastructure.Tests.Data.Repositories.RepositoryBaseTests.TestEntityNode")]
 [assembly: SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "The class is only tests.", Scope = "type", Target = "~T:Infrastructure.Tests.Data.Repositories.RepositoryBaseTests.TestEntity")]
 [assembly: SuppressMessage("Maintainability", "CA1515:Consider making public types internal", Justification = "The class is only tests.", Scope = "type", Target = "~T:Infrastructure.Tests.Data.Repositories.RepositoryBaseTests.TestEntity")]
+[assembly: SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "<Pending>", Scope = "namespace", Target = "~N:Infrastructure.Tests.Data.Extensions")]

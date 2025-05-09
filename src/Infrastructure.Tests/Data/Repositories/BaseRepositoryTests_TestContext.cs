@@ -4,7 +4,7 @@ namespace Infrastructure.Tests.Data.Repositories
 {
     public partial class RepositoryBaseTests
     {
-        internal class TestContext(DbContextOptions<TestContext> options) : DbContext(options)
+        internal sealed class TestContext(DbContextOptions<TestContext> options) : DbContext(options)
         {
             public DbSet<TestEntity> Entities { get; set; }
             public DbSet<TestEntityNode> Nodes { get; set; }

@@ -3,8 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Infrastructure.Tests.Data
 {
-    [SuppressMessage("Major Code Smell", "S3881:\"IDisposable\" should be implemented correctly", Justification = "Class only for tests.")]
-    internal class MockDbContextTransaction : IDbContextTransaction
+    internal sealed class MockDbContextTransaction : IDbContextTransaction
     {
         private bool _rollbackAsyncHasCalled;
         public Guid TransactionId => Guid.NewGuid();
