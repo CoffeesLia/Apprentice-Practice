@@ -45,11 +45,15 @@ sonarqube:
     - dotnet tool install --global dotnet-coverage
     - export PATH="$PATH:/root/.dotnet/tools"
     - dotnet restore ./src
+    - wget https://github.com/SonarSource/sonar-scanner-msbuild/releases/download/5.14.0.31672/sonar-scanner-msbuild-5.14.0.31672-net5.0.zip
+    - unzip sonar-scanner-msbuild-5.14.0.31672-net5.0.zip -d sonar-scanner
+    - export PATH="$PATH:$(pwd)/sonar-scanner"
     - vault read sonarqube/kv/login >> sonar_url.txt
     - export SONAR_URL=$(cat sonar_url.txt | jq -r '.data.SONAR_URL')
     - vault read sonarqube/kv/secret >> sonar_login.txt
     - export SONAR_LOGIN=$(cat sonar_login.txt | jq -r '.data.SONAR_LOGIN')
     - export NAMESPACE=$(echo "$CI_PROJECT_NAMESPACE" | jq -Rr 'split("/") | .[1]')
-    - /opt/sonar-scanner/sonar-scanner-6.0.0.4432-linux/bin/sonar-scanner begin -Dsonar.projectKey="com.ste.sa.$NAMESPACE.$CI_PROJECT_NAME" -Dsonar.sources=. -Dsonar.host.url=$SONAR_URL -Dsonar.login=$SONAR_LOGIN -Dbitegarden.project.tag=South_America
+    - mono ./sonar-scanner/SonarScanner.MSBuild.exe begin /k:"com.ste.sa.$NAMESPACE.$CI_PROJECT_NAME" /d:sonar.host.url=$SONAR_URL /d:sonar.login=$SONAR_LOGIN /d:bitegarden.project.tag=South_America
+    - dotnet build ./src
     - dotnet-coverage collect "dotnet test ./src" -f xml -o "coverage.xml"
-    - /opt/sonar-scanner/sonar-scanner-6.0.0.4432-linux/bin/sonar-scanner end -Dsonar.login=$SONAR_LOGIN
+    - mono ./sonar-scanner/SonarScanner.MSBuild.exe end /d:sonar.login=$SONAR_LOGIN
