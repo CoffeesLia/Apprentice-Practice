@@ -3,15 +3,16 @@ image: 253882794486.dkr.ecr.us-east-1.amazonaws.com/build-tools:master-net8
 include:
   - project: "fca/architecture/IaC/cloud-digital/common-ci"
     file: "/job-commons.yml"
+  - project: 'fca/architecture/IaC/cloud-digital/common-ci'  
+    file: 'job-commons-sqube.yml'
 
 variables:
   REPOSITORY_URL: 924431524709.dkr.ecr.us-east-1.amazonaws.com/digital-esb-app-esb-baseproject-esb
 
 stages:
   - test
-#  - quality
+  - quality
   - build
-#  - deploy
 
 before_script:
   - IMAGE_TAG="$(echo $CI_COMMIT_SHA | head -c 8)"
@@ -27,7 +28,7 @@ test:
     - dotnet test ./src/Application.Tests/Application.Tests.csproj --verbosity normal --logger:"junit;LogFilePath=../artifacts/{assembly}-result.xml;MethodFormat=Class;FailureBodyFormat=Verbose"
     - dotnet test ./src/Domain.Tests/Domain.Tests.csproj --verbosity normal --logger:"junit;LogFilePath=../artifacts/{assembly}-result.xml;MethodFormat=Class;FailureBodyFormat=Verbose"
     - dotnet test ./src/Infrastructure.Tests/Infrastructure.Tests.csproj --verbosity normal --logger:"junit;LogFilePath=../artifacts/{assembly}-result.xml;MethodFormat=Class;FailureBodyFormat=Verbose"
-    #- dotnet test ./src/WebApi.Tests/WebApi.Tests.csproj --verbosity normal --logger:"junit;LogFilePath=../artifacts/{assembly}-result.xml;MethodFormat=Class;FailureBodyFormat=Verbose"
+    - dotnet test ./src/WebApi.Tests/WebApi.Tests.csproj --verbosity normal --logger:"junit;LogFilePath=../artifacts/{assembly}-result.xml;MethodFormat=Class;FailureBodyFormat=Verbose"
   artifacts:
     when: always
     paths:
@@ -36,37 +37,16 @@ test:
       junit:
         - ./src/artifacts/*-result.xml
 
-#web-build:
-#  stage: build
-#  script:
-#    - docker build -t $REPOSITORY_URL:$IMAGE_TAG -f src/WebApi/Dockerfile .
-#    - docker push $REPOSITORY_URL:$IMAGE_TAG
-
-#sonarqube:
-#  image: 253882794486.dkr.ecr.us-east-1.amazonaws.com/build-tools:latest-devops-master-dotnet
-#  stage: quality
-#  script:
-#    - apt-get update && apt-get install -y dotnet-sdk-8.0
-#    - dotnet tool install --global dotnet-coverage
-#    - export PATH="$PATH:/root/.dotnet/tools"
-#    - dotnet restore ./src
-#    - echo $SONAR_URL $SONAR_LOGIN $CI_PROJECT_ID-$CI_PROJECT_NAME $PATH
-#    - mono /opt/sonar-scanner-msbuild/SonarScanner.MSBuild.dll begin /d:sonar.host.url=$SONAR_URL /d:sonar.login=$SONAR_LOGIN /k:$CI_PROJECT_ID-$CI_PROJECT_NAME /n:"AMS Portal - Web API" /v:1.0 /d:sonar.coverage.exclusions="**/*.Tests/*" /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
-#    - dotnet build ./src --no-restore
-#    - dotnet-coverage collect "dotnet test ./src" -f xml -o "coverage.xml"
-#    - mono /opt/sonar-scanner-msbuild/SonarScanner.MSBuild.dll end /d:sonar.login=$SONAR_LOGIN
-
-#deploy:
-#  extends: .deploy-common
-#  stage: deploy
-#  script:
-#    - chmod +x version-update.sh
-#    - ./version-update.sh $IMAGE_TAG $CI_COMMIT_REF_NAME $CI_COMMIT_SHORT_SHA "baseproject-api" || { echo 'task failed' ; exit 1; }
-#    - git add . && git commit -am "Update module $CI_PROJECT_NAME with version $CI_COMMIT_SHORT_SHA $CI_COMMIT_REF_NAME by CI's jobs $CI_JOB_URL trigged by $GITLAB_USER_EMAIL"
-#    - git push origin $CI_COMMIT_REF_NAME
-#  when: manual
-#  only:
-#    - master
-#  dependencies:
-#    - web-build
-#    - sonarqube
+sonarqube:
+  image: 253882794486.dkr.ecr.us-east-1.amazonaws.com/build-tools:latest-devops-master-dotnet
+  stage: quality
+  script:
+    - apt-get update && apt-get install -y dotnet-sdk-8.0
+    - dotnet tool install --global dotnet-coverage
+    - export PATH="$PATH:/root/.dotnet/tools"
+    - dotnet restore ./src
+    - echo $SONAR_URL $SONAR_LOGIN $CI_PROJECT_ID-$CI_PROJECT_NAME $PATH
+    - mono /opt/sonar-scanner-msbuild/SonarScanner.MSBuild.dll begin /d:sonar.host.url=$SONAR_URL /d:sonar.login=$SONAR_LOGIN /k:$CI_PROJECT_ID-$CI_PROJECT_NAME /n:"AMS Portal - Web API" /v:1.0 /d:sonar.coverage.exclusions="**/*.Tests/*" /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
+    - dotnet build ./src --no-restore
+    - dotnet-coverage collect "dotnet test ./src" -f xml -o "coverage.xml"
+    - mono /opt/sonar-scanner-msbuild/SonarScanner.MSBuild.dll end /d:sonar.login=$SONAR_LOGIN
