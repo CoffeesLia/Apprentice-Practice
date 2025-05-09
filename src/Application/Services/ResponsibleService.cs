@@ -62,8 +62,16 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.InvalidData(validationResult);
             }
 
-            // Verificação se o e-mail já existe
-            if (await Repository.VerifyEmailAlreadyExistsAsync(item.Email).ConfigureAwait(false))
+            // Obter o responsável atual do banco de dados
+            var existingResponsible = await Repository.GetByIdAsync(item.Id).ConfigureAwait(false);
+            if (existingResponsible == null)
+            {
+                return OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
+            }
+
+            // Verificar se o e-mail foi alterado e se já existe no banco
+            if (!string.Equals(existingResponsible.Email, item.Email, StringComparison.OrdinalIgnoreCase) &&
+                await Repository.VerifyEmailAlreadyExistsAsync(item.Email).ConfigureAwait(false))
             {
                 return OperationResult.Conflict(_localizer[nameof(ResponsibleResource.EmailExists)]);
             }
