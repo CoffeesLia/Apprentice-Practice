@@ -45,9 +45,6 @@ sonarqube:
     - dotnet tool install --global dotnet-coverage
     - export PATH="$PATH:/root/.dotnet/tools"
     - dotnet restore ./src
-    - wget https://github.com/SonarSource/sonar-scanner-msbuild/releases/download/5.14.0.31672/sonar-scanner-msbuild-5.14.0.31672-net5.0.zip
-    - unzip sonar-scanner-msbuild-5.14.0.31672-net5.0.zip -d sonar-scanner
-    - export PATH="$PATH:$(pwd)/sonar-scanner"
     - vault read sonarqube/kv/login >> sonar_url.txt
     - export SONAR_URL=$(cat sonar_url.txt | jq -r '.data.SONAR_URL')
     - vault read sonarqube/kv/secret >> sonar_login.txt
