@@ -14,9 +14,9 @@ namespace WebApi.Tests.Controllers
         /// <param name="message">Expected message</param>
         internal static void IsBadRequest(IActionResult result, string message)
         {
-            var expected = ErrorResponse.BadRequest(message);
-            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-            var errorResponse = Assert.IsType<ErrorResponse>(badRequestResult.Value);
+            ErrorResponse expected = ErrorResponse.BadRequest(message);
+            BadRequestObjectResult badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            ErrorResponse errorResponse = Assert.IsType<ErrorResponse>(badRequestResult.Value);
             Assert.Equal(expected, errorResponse);
         }
 
@@ -25,15 +25,19 @@ namespace WebApi.Tests.Controllers
             typeof(TEntity).GetProperties().ToList()
                 .ForEach(xProperty =>
                 {
-                    var xValue = xProperty.GetValue(item);
-                    var yProperty = itemVm.GetType().GetProperty(xProperty.Name);
+                    object? xValue = xProperty.GetValue(item);
+                    System.Reflection.PropertyInfo? yProperty = itemVm.GetType().GetProperty(xProperty.Name);
                     if (yProperty != null)
                     {
                         object? yValue = yProperty!.GetValue(itemVm);
                         if (xValue is IEnumerable xEnumerable && yValue is IEnumerable yEnumerable)
+                        {
                             EnumerablesAreEqual(xEnumerable, yEnumerable);
+                        }
                         else
+                        {
                             Assert.Equal(xValue, yValue);
+                        }
                     }
                 });
         }
@@ -46,12 +50,15 @@ namespace WebApi.Tests.Controllers
         /// <returns><c>true</c> if the enumerables are equal; otherwise, <c>false</c>.</returns>
         private static void EnumerablesAreEqual(IEnumerable xEnumerable, IEnumerable yEnumerable)
         {
-            var xEnumerator = xEnumerable.GetEnumerator();
-            var yEnumerator = yEnumerable.GetEnumerator();
+            IEnumerator xEnumerator = xEnumerable.GetEnumerator();
+            IEnumerator yEnumerator = yEnumerable.GetEnumerator();
             while (xEnumerator.MoveNext())
             {
                 if (!yEnumerator.MoveNext())
+                {
                     Assert.Fail();
+                }
+
                 EqualsProperties(xEnumerator.Current, yEnumerator.Current);
             }
             Assert.False(yEnumerator.MoveNext());

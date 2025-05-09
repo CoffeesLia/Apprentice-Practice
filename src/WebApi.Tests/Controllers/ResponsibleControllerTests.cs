@@ -14,7 +14,7 @@ using Stellantis.ProjectName.WebApi.ViewModels;
 using WebApi.Tests.Helpers;
 
 
-namespace Stellantis.ProjectName.WebApi.Tests.Controllers
+namespace WebApi.Tests.Controllers
 {
     public class ResponsibleControllerTests
     {
@@ -25,9 +25,9 @@ namespace Stellantis.ProjectName.WebApi.Tests.Controllers
         public ResponsibleControllerTests()
         {
             _serviceMock = new Mock<IResponsibleService>();
-            var mapperConfiguration = new MapperConfiguration(x => { x.AddProfile<AutoMapperProfile>(); });
-            var mapper = mapperConfiguration.CreateMapper();
-            var localizerFactor = LocalizerFactorHelper.Create();
+            MapperConfiguration mapperConfiguration = new(x => { x.AddProfile<AutoMapperProfile>(); });
+            IMapper mapper = mapperConfiguration.CreateMapper();
+            Microsoft.Extensions.Localization.IStringLocalizerFactory localizerFactor = LocalizerFactorHelper.Create();
 
             _fixture = new Fixture();
             _controller = new ResponsibleController(_serviceMock.Object, mapper, localizerFactor);
@@ -37,11 +37,11 @@ namespace Stellantis.ProjectName.WebApi.Tests.Controllers
         public async Task CreateAsyncShouldReturnCreatedAtActionResult()
         {
             // Arrange
-            var responsibleDto = _fixture.Create<ResponsibleDto>();
+            ResponsibleDto responsibleDto = _fixture.Create<ResponsibleDto>();
             _serviceMock.Setup(s => s.CreateAsync(It.IsAny<Responsible>())).ReturnsAsync(OperationResult.Complete());
 
             // Act
-            var result = await _controller.CreateAsync(responsibleDto);
+            IActionResult result = await _controller.CreateAsync(responsibleDto);
 
             // Assert
             Assert.IsType<CreatedAtActionResult>(result);
@@ -51,14 +51,14 @@ namespace Stellantis.ProjectName.WebApi.Tests.Controllers
         public async Task GetAsyncShouldReturnResponsibleVm()
         {
             // Arrange
-            var responsible = _fixture.Create<Responsible>();
+            Responsible responsible = _fixture.Create<Responsible>();
             _serviceMock.Setup(s => s.GetItemAsync(It.IsAny<int>())).ReturnsAsync(responsible);
 
             // Act
-            var result = await _controller.GetAsync(responsible.Id);
+            ActionResult<ResponsibleVm> result = await _controller.GetAsync(responsible.Id);
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            OkObjectResult okResult = Assert.IsType<OkObjectResult>(result.Result);
             Assert.IsType<ResponsibleVm>(okResult.Value);
         }
 
@@ -66,15 +66,15 @@ namespace Stellantis.ProjectName.WebApi.Tests.Controllers
         public async Task GetListAsyncShouldReturnPagedResultVm()
         {
             // Arrange
-            var filterDto = _fixture.Create<ResponsibleFilterDto>();
-            var pagedResult = _fixture.Create<PagedResult<Responsible>>();
+            ResponsibleFilterDto filterDto = _fixture.Create<ResponsibleFilterDto>();
+            PagedResult<Responsible> pagedResult = _fixture.Create<PagedResult<Responsible>>();
             _serviceMock.Setup(s => s.GetListAsync(It.IsAny<ResponsibleFilter>())).ReturnsAsync(pagedResult);
 
             // Act
-            var result = await _controller.GetListAsync(filterDto);
+            IActionResult result = await _controller.GetListAsync(filterDto);
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
+            OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
             Assert.IsType<PagedResultVm<ResponsibleVm>>(okResult.Value);
         }
 
@@ -82,12 +82,12 @@ namespace Stellantis.ProjectName.WebApi.Tests.Controllers
         public async Task UpdateAsyncShouldReturnOkResult()
         {
             // Arrange
-            var responsibleId = _fixture.Create<int>(); // Add this line to create a responsibleId
-            var responsibleDto = _fixture.Create<ResponsibleDto>();
+            int responsibleId = _fixture.Create<int>(); // Add this line to create a responsibleId
+            ResponsibleDto responsibleDto = _fixture.Create<ResponsibleDto>();
             _serviceMock.Setup(s => s.UpdateAsync(It.IsAny<Responsible>())).ReturnsAsync(OperationResult.Complete());
 
             // Act
-            var result = await _controller.UpdateAsync(responsibleId, responsibleDto);
+            IActionResult result = await _controller.UpdateAsync(responsibleId, responsibleDto);
 
             // Assert
             Assert.IsType<OkObjectResult>(result);
@@ -97,11 +97,11 @@ namespace Stellantis.ProjectName.WebApi.Tests.Controllers
         public async Task DeleteAsyncShouldReturnNoContentResult()
         {
             // Arrange
-            var id = _fixture.Create<int>();
+            int id = _fixture.Create<int>();
             _serviceMock.Setup(s => s.DeleteAsync(It.IsAny<int>())).ReturnsAsync(OperationResult.Complete());
 
             // Act
-            var result = await _controller.DeleteAsync(id);
+            IActionResult result = await _controller.DeleteAsync(id);
 
             // Assert
             Assert.IsType<NoContentResult>(result);

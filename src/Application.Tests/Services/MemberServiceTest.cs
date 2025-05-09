@@ -14,7 +14,7 @@ using Stellantis.ProjectName.Domain.Entities;
 using System.Globalization;
 using Xunit;
 
-namespace Application.Services.Tests
+namespace Application.Tests.Services
 {
     public class MemberServiceTests
     {
@@ -29,8 +29,8 @@ namespace Application.Services.Tests
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _memberRepositoryMock = new Mock<IMemberRepository>();
 
-            var localizer = LocalizerFactorHelper.Create();
-            var memberValidator = new MemberValidator(localizer);
+            Microsoft.Extensions.Localization.IStringLocalizerFactory localizer = LocalizerFactorHelper.Create();
+            MemberValidator memberValidator = new(localizer);
 
             _unitOfWorkMock.Setup(u => u.MemberRepository).Returns(_memberRepositoryMock.Object);
 
@@ -44,14 +44,14 @@ namespace Application.Services.Tests
         public async Task CreateAsyncWhenValidationFails()
         {
             // Arrange
-            var member = _fixture.Build<Member>()
+            Member member = _fixture.Build<Member>()
                                  .With(m => m.Name, string.Empty)
                                  .With(m => m.Email, string.Empty)
                                  .With(m => m.Role, string.Empty)
                                  .Create();
 
             // Act
-            var result = await _memberService.CreateAsync(member);
+            OperationResult result = await _memberService.CreateAsync(member);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
@@ -66,7 +66,7 @@ namespace Application.Services.Tests
         public async Task CreateAsyncShouldReturnInvalidDataWhenMemberCostIsRequired()
         {
             // Arrange
-            var member = new Member
+            Member member = new()
             {
                 Name = "Name",
                 Role = "test",
@@ -75,7 +75,7 @@ namespace Application.Services.Tests
             };
 
             // Act
-            var result = await _memberService.CreateAsync(member);
+            OperationResult result = await _memberService.CreateAsync(member);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
@@ -87,7 +87,7 @@ namespace Application.Services.Tests
         public async Task CreateAsyncShouldReturnInvalidDataWhenCostIsLessThanZero()
         {
             // Arrange
-            var member = new Member
+            Member member = new()
             {
                 Name = "Name",
                 Role = "test",
@@ -96,7 +96,7 @@ namespace Application.Services.Tests
             };
 
             // Act
-            var result = await _memberService.CreateAsync(member);
+            OperationResult result = await _memberService.CreateAsync(member);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
@@ -111,17 +111,17 @@ namespace Application.Services.Tests
         public async Task CreateAsyncWhenEmailAlreadyExists()
         {
             // Arrange
-            var member = _fixture.Build<Member>()
+            Member member = _fixture.Build<Member>()
                                  .With(m => m.Name, "Valid Name")
                                  .With(m => m.Email, "valid.email@example.com")
                                  .Create();
-            var validatorMock = new Mock<IValidator<Member>>();
-            var validationResult = new ValidationResult();
+            Mock<IValidator<Member>> validatorMock = new();
+            ValidationResult validationResult = new();
             validatorMock.Setup(v => v.ValidateAsync(member, default)).ReturnsAsync(validationResult);
             _memberRepositoryMock.Setup(r => r.IsEmailUnique(member.Email)).ReturnsAsync(false);
 
             // Act
-            var result = await _memberService.CreateAsync(member);
+            OperationResult result = await _memberService.CreateAsync(member);
 
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
@@ -133,20 +133,20 @@ namespace Application.Services.Tests
         public async Task CreateAsyncWhenSuccessful()
         {
             // Arrange
-            var member = _fixture.Build<Member>()
+            Member member = _fixture.Build<Member>()
                                  .With(m => m.Name, "Valid Name")
                                  .With(m => m.Email, "valid.email@example.com")
                                  .Create();
-            var validatorMock = new Mock<IValidator<Member>>();
-            var validationResult = new ValidationResult();
+            Mock<IValidator<Member>> validatorMock = new();
+            ValidationResult validationResult = new();
             validatorMock.Setup(v => v.ValidateAsync(member, default)).ReturnsAsync(validationResult);
             _memberRepositoryMock.Setup(r => r.IsEmailUnique(member.Email)).ReturnsAsync(true);
 
             // Act
-            var result = await _memberService.CreateAsync(member);
+            OperationResult result = await _memberService.CreateAsync(member);
 
             // Inspecione o resultado da validação
-            foreach (var error in validationResult.Errors)
+            foreach (ValidationFailure? error in validationResult.Errors)
             {
                 Console.WriteLine(error.ErrorMessage);
             }
@@ -159,12 +159,12 @@ namespace Application.Services.Tests
         public async Task GetListAsyncShouldReturnPagedResult()
         {
             // Arrange
-            var filter = _fixture.Create<MemberFilter>();
-            var pagedResult = _fixture.Create<PagedResult<Member>>();
+            MemberFilter filter = _fixture.Create<MemberFilter>();
+            PagedResult<Member> pagedResult = _fixture.Create<PagedResult<Member>>();
             _memberRepositoryMock.Setup(r => r.GetListAsync(filter)).ReturnsAsync(pagedResult);
 
             // Act
-            var result = await _memberService.GetListAsync(filter);
+            PagedResult<Member> result = await _memberService.GetListAsync(filter);
 
             // Assert
             Assert.Equal(pagedResult, result);
@@ -174,11 +174,11 @@ namespace Application.Services.Tests
         public async Task GetItemAsyncWhenItemDoesNotExist()
         {
             // Arrange
-            var id = _fixture.Create<int>();
+            int id = _fixture.Create<int>();
             _memberRepositoryMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync((Member?)null);
 
             // Act
-            var result = await _memberService.GetItemAsync(id);
+            OperationResult result = await _memberService.GetItemAsync(id);
 
             // Assert
             Assert.Equal(OperationStatus.NotFound, result.Status);
@@ -188,11 +188,11 @@ namespace Application.Services.Tests
         public async Task GetItemAsyncWhenItemExists()
         {
             // Arrange
-            var member = _fixture.Create<Member>();
+            Member member = _fixture.Create<Member>();
             _memberRepositoryMock.Setup(r => r.GetByIdAsync(member.Id)).ReturnsAsync(member);
 
             // Act
-            var result = await _memberService.GetItemAsync(member.Id);
+            OperationResult result = await _memberService.GetItemAsync(member.Id);
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
@@ -202,14 +202,14 @@ namespace Application.Services.Tests
         public async Task UpdateAsyncWhenValidationFails()
         {
             // Arrange
-            var member = _fixture.Build<Member>()
+            Member member = _fixture.Build<Member>()
                                  .With(m => m.Name, string.Empty)
                                  .With(m => m.Email, string.Empty)
                                  .Create();
             _memberRepositoryMock.Setup(r => r.GetByIdAsync(member.Id)).ReturnsAsync(member);
 
             // Act
-            var result = await _memberService.UpdateAsync(member);
+            OperationResult result = await _memberService.UpdateAsync(member);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
@@ -220,8 +220,8 @@ namespace Application.Services.Tests
         public async Task UpdateAsyncShouldReturnNotFoundWhenMemberDoesNotExist()
         {
             // Arrange
-            var memberId = 1;
-            var member = new Member
+            int memberId = 1;
+            Member member = new()
             {
                 Id = memberId,
                 Name = "Test Member",
@@ -233,7 +233,7 @@ namespace Application.Services.Tests
             _memberRepositoryMock.Setup(r => r.GetByIdAsync(memberId)).ReturnsAsync((Member?)null);
 
             // Act
-            var result = await _memberService.UpdateAsync(member);
+            OperationResult result = await _memberService.UpdateAsync(member);
 
             // Assert
             Assert.Equal(OperationStatus.NotFound, result.Status);
@@ -244,18 +244,18 @@ namespace Application.Services.Tests
         public async Task UpdateAsyncWhenEmailAlreadyExists()
         {
             // Arrange
-            var member = _fixture.Build<Member>()
+            Member member = _fixture.Build<Member>()
                                  .With(m => m.Name, "Valid Name")
                                  .With(m => m.Email, "valid.email@example.com")
                                  .Create();
-            var validatorMock = new Mock<IValidator<Member>>();
-            var validationResult = new ValidationResult(); // Certifique-se de que o resultado da validação seja válido
+            Mock<IValidator<Member>> validatorMock = new();
+            ValidationResult validationResult = new(); // Certifique-se de que o resultado da validação seja válido
             validatorMock.Setup(v => v.ValidateAsync(member, default)).ReturnsAsync(validationResult);
             _memberRepositoryMock.Setup(r => r.IsEmailUnique(member.Email)).ReturnsAsync(false);
             _memberRepositoryMock.Setup(r => r.GetByIdAsync(member.Id)).ReturnsAsync(member);
 
             // Act
-            var result = await _memberService.UpdateAsync(member);
+            OperationResult result = await _memberService.UpdateAsync(member);
 
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
@@ -265,21 +265,21 @@ namespace Application.Services.Tests
         public async Task UpdateAsyncWhenSuccessful()
         {
             // Arrange
-            var member = _fixture.Build<Member>()
+            Member member = _fixture.Build<Member>()
                                  .With(m => m.Name, "Valid Name")
                                  .With(m => m.Email, "valid.email@example.com")
                                  .Create();
-            var validatorMock = new Mock<IValidator<Member>>();
-            var validationResult = new ValidationResult();
+            Mock<IValidator<Member>> validatorMock = new();
+            ValidationResult validationResult = new();
             validatorMock.Setup(v => v.ValidateAsync(member, default)).ReturnsAsync(validationResult);
             _memberRepositoryMock.Setup(r => r.IsEmailUnique(member.Email)).ReturnsAsync(true);
             _memberRepositoryMock.Setup(r => r.GetByIdAsync(member.Id)).ReturnsAsync(member);
 
             // Act
-            var result = await _memberService.UpdateAsync(member);
+            OperationResult result = await _memberService.UpdateAsync(member);
 
             // Inspecione o resultado da validação
-            foreach (var error in validationResult.Errors)
+            foreach (ValidationFailure? error in validationResult.Errors)
             {
                 Console.WriteLine(error.ErrorMessage);
             }
@@ -292,11 +292,11 @@ namespace Application.Services.Tests
         public async Task DeleteAsyncWhenItemDoesNotExist()
         {
             // Arrange
-            var id = _fixture.Create<int>();
+            int id = _fixture.Create<int>();
             _memberRepositoryMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync((Member?)null);
 
             // Act
-            var result = await _memberService.DeleteAsync(id);
+            OperationResult result = await _memberService.DeleteAsync(id);
 
             // Assert
             Assert.Equal(OperationStatus.NotFound, result.Status);
@@ -306,11 +306,11 @@ namespace Application.Services.Tests
         public async Task DeleteAsyncWhenSuccessful()
         {
             // Arrange
-            var member = _fixture.Create<Member>();
+            Member member = _fixture.Create<Member>();
             _memberRepositoryMock.Setup(r => r.GetByIdAsync(member.Id)).ReturnsAsync(member);
 
             // Act
-            var result = await _memberService.DeleteAsync(member.Id);
+            OperationResult result = await _memberService.DeleteAsync(member.Id);
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);

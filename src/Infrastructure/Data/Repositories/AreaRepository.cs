@@ -10,7 +10,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
     {
         public async Task DeleteAsync(int id, bool saveChanges = true)
         {
-            var entity = await GetByIdAsync(id).ConfigureAwait(false);
+            Area? entity = await GetByIdAsync(id).ConfigureAwait(false);
             if (entity != null)
             {
                 Context.Set<Area>().Remove(entity);
@@ -32,9 +32,14 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             IQueryable<Area> query = Context.Set<Area>();
             if (filter.Id.HasValue)
+            {
                 query = query.Where(a => a.Id == filter.Id);
+            }
+
             if (!string.IsNullOrEmpty(filter.Name))
+            {
                 query = query.Where(a => a.Name.Contains(filter.Name, StringComparison.OrdinalIgnoreCase));
+            }
 
             return await base.GetListAsync(query, sort: filter.Sort, sortDir: filter.SortDir, page: filter.Page, pageSize: filter.PageSize).ConfigureAwait(false);
         }
@@ -46,17 +51,12 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         public async Task<bool> VerifyAplicationsExistsAsync(int id)
         {
-            var area = await Context.Set<Area>()
+            Area? area = await Context.Set<Area>()
                 .Include(a => a.Applications)
                 .FirstOrDefaultAsync(a => a.Id == id)
                 .ConfigureAwait(false);
 
-            if (area == null)
-            {
-                throw new ArgumentException(AreaResources.Undeleted);
-            }
-
-            return area.Applications.Count != 0;
+            return area == null ? throw new ArgumentException(AreaResources.Undeleted) : area.Applications.Count != 0;
         }
     }
 }

@@ -10,7 +10,7 @@ namespace WebApi.Tests.Extensions
         public void RegisterMapperRegisterAutoMapper()
         {
             // Arrange
-            var services = new ServiceCollection();
+            ServiceCollection services = new();
 
             // Act
             services.RegisterMapper();

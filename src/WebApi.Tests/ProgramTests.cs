@@ -6,15 +6,15 @@ namespace WebApi.Tests
     public class ProgramTests
     {
         [Fact]
-        public async Task StartAndTestEndpoint_ReturnSuccess()
+        public async Task StartAndTestEndpointReturnSuccess()
         {
-            WebApplicationFactory<Program> _factory = new();
+            using WebApplicationFactory<Program> _factory = new();
 
             // Arrange
-            var client = _factory.CreateClient();
+            HttpClient client = _factory.CreateClient();
 
             // Act
-            var response = await client.GetAsync("/health");
+            HttpResponseMessage response = await client.GetAsync("/health");
 
             // Assert
             response.EnsureSuccessStatusCode(); // Status Code 200-299

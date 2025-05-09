@@ -5,26 +5,26 @@ namespace Domain.Tests
     public class AreaTests
     {
         [Fact]
-        public void Constructor_ShouldInitializeName()
+        public void ConstructorShouldInitializeName()
         {
             // Arrange
-            var name = "Test Area";
+            string name = "Test Area";
 
             // Act
-            var area = new Area(name);
+            Area area = new(name);
 
             // Assert
             Assert.Equal(name, area.Name);
         }
 
         [Fact]
-        public void Constructor_ShouldInitializeApplications()
+        public void ConstructorShouldInitializeApplications()
         {
             // Arrange
-            var name = "Test Area";
+            string name = "Test Area";
 
             // Act
-            var area = new Area(name);
+            Area area = new(name);
 
             // Assert
             Assert.NotNull(area.Applications);
@@ -32,11 +32,11 @@ namespace Domain.Tests
         }
 
         [Fact]
-        public void SetName_ShouldUpdateName()
+        public void SetNameShouldUpdateName()
         {
             // Arrange
-            var area = new Area("Initial Name");
-            var newName = "Updated Name";
+            Area area = new("Initial Name");
+            string newName = "Updated Name";
 
             // Act
             area.Name = newName;
@@ -46,11 +46,11 @@ namespace Domain.Tests
         }
 
         [Fact]
-        public void AddApplication_ShouldAddApplicationToList()
+        public void AddApplicationShouldAddApplicationToList()
         {
             // Arrange
-            var area = new Area("Test Area");
-            var application = new ApplicationData("Application")
+            Area area = new("Test Area");
+            ApplicationData application = new("Application")
             {
                 ProductOwner = "Owner",
                 ConfigurationItem = "ConfigItem"

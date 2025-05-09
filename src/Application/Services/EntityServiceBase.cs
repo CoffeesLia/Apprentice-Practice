@@ -50,7 +50,10 @@ namespace Stellantis.ProjectName.Application.Services
         {
             var item = await Repository.GetByIdAsync(id).ConfigureAwait(false);
             if (item == null)
+            {
                 return OperationResult.NotFound(Localizer[nameof(ServiceResources.NotFound)]);
+            }
+
             return await DeleteAsync(item).ConfigureAwait(false);
         }
 
@@ -88,7 +91,10 @@ namespace Stellantis.ProjectName.Application.Services
             ArgumentNullException.ThrowIfNull(item);
             var itemOld = await Repository.GetByIdAsync(item.Id).ConfigureAwait(false);
             if (itemOld == null)
+            {
                 return OperationResult.NotFound(Localizer[nameof(ServiceResources.NotFound)]);
+            }
+
             Repository.DetachEntity(itemOld);
             await Repository.UpdateAsync(item).ConfigureAwait(false);
             return OperationResult.Complete(Localizer[ServiceResources.UpdatedSuccessfully]);

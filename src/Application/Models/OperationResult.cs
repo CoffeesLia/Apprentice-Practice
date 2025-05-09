@@ -95,7 +95,7 @@ namespace Stellantis.ProjectName.Application.Models
         /// <returns>An <see cref="OperationResult"/> with invalid data status.</returns>
         public static OperationResult InvalidData(ValidationResult result)
         {
-
+            ArgumentNullException.ThrowIfNull(result);
             return new OperationResult(OperationStatus.InvalidData, "", result.Errors.Select(e => e.ErrorMessage));
 
         }

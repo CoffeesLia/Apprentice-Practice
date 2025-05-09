@@ -3,22 +3,25 @@ using AutoFixture.AutoMoq;
 using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
+using System.Runtime.InteropServices;
 
 namespace Infrastructure.Tests.Data.Repositories
 {
     /// <summary>
     /// Unit tests for BaseRepositoryEntity.
     /// </summary>
-    public class RepositoryEntityBaseTests
+    public class RepositoryEntityBaseTests : IDisposable
     {
         private readonly IFixture _fixture;
         private readonly TestContext _context;
         private readonly TestRepository _repository;
+        private bool isDisposed;
+        private IntPtr nativeResource = Marshal.AllocHGlobal(100);
 
         public RepositoryEntityBaseTests()
         {
             _fixture = new Fixture().Customize(new AutoMoqCustomization());
-            var options = new DbContextOptionsBuilder<TestContext>()
+            DbContextOptions<TestContext> options = new DbContextOptionsBuilder<TestContext>()
                 .UseInMemoryDatabase(databaseName: _fixture.Create<string>())
                 .Options;
             _context = new TestContext(options);
@@ -26,10 +29,10 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
-        public async Task DeleteAsync_ById_ShouldRemoveEntity()
+        public async Task DeleteAsyncByIdShouldRemoveEntity()
         {
             // Arrange
-            var entity = _fixture.Create<TestEntity>();
+            TestEntity entity = _fixture.Create<TestEntity>();
             await _context.Entities.AddAsync(entity);
             await _context.SaveChangesAsync();
 
@@ -37,15 +40,15 @@ namespace Infrastructure.Tests.Data.Repositories
             await _repository.DeleteAsync(entity.Id);
 
             // Assert
-            var result = await _context.Entities.FindAsync(entity.Id);
+            TestEntity? result = await _context.Entities.FindAsync(entity.Id);
             Assert.Null(result);
         }
 
         [Fact]
-        public async Task DeleteAsync_ById_ShouldRemoveEntity_SaveChanges()
+        public async Task DeleteAsyncByIdShouldRemoveEntitySaveChanges()
         {
             // Arrange
-            var entity = _fixture.Create<TestEntity>();
+            TestEntity entity = _fixture.Create<TestEntity>();
             await _context.Entities.AddAsync(entity);
             await _context.SaveChangesAsync();
 
@@ -53,15 +56,15 @@ namespace Infrastructure.Tests.Data.Repositories
             await _repository.DeleteAsync(entity.Id, true);
 
             // Assert
-            var result = await _context.Entities.FindAsync(entity.Id);
+            TestEntity? result = await _context.Entities.FindAsync(entity.Id);
             Assert.Null(result);
         }
 
         [Fact]
-        public async Task DeleteAsync_ById_ShouldRemoveEntity_WithoutSaveChanges()
+        public async Task DeleteAsyncByIdShouldRemoveEntityWithoutSaveChanges()
         {
             // Arrange
-            var entity = _fixture.Create<TestEntity>();
+            TestEntity entity = _fixture.Create<TestEntity>();
             await _context.Entities.AddAsync(entity);
             await _context.SaveChangesAsync();
 
@@ -69,116 +72,116 @@ namespace Infrastructure.Tests.Data.Repositories
             await _repository.DeleteAsync(entity.Id, false);
 
             // Assert
-            var result = await _context.Entities.FindAsync(entity.Id);
+            TestEntity? result = await _context.Entities.FindAsync(entity.Id);
             Assert.NotNull(result);
         }
 
         [Fact]
-        public async Task DeleteAsync_ByIds_ShouldRemoveEntities()
+        public async Task DeleteAsyncByIdsShouldRemoveEntities()
         {
             // Arrange
-            var entities = _fixture.CreateMany<TestEntity>(5).ToList();
+            List<TestEntity> entities = [.. _fixture.CreateMany<TestEntity>(5)];
             await _context.Entities.AddRangeAsync(entities);
             await _context.SaveChangesAsync();
-            var ids = entities.Select(e => e.Id).ToList();
+            List<int> ids = [.. entities.Select(e => e.Id)];
 
             // Act
             await _repository.DeleteAsync(ids);
 
             // Assert
-            var result = await _context.Entities.ToListAsync();
+            List<TestEntity> result = await _context.Entities.ToListAsync();
             Assert.Empty(result);
         }
 
         [Fact]
-        public async Task DeleteAsync_ByIds_ShouldRemoveEntities_SaveChanges()
+        public async Task DeleteAsyncByIdsShouldRemoveEntitiesSaveChanges()
         {
             // Arrange
-            var entities = _fixture.CreateMany<TestEntity>(5).ToList();
+            List<TestEntity> entities = [.. _fixture.CreateMany<TestEntity>(5)];
             await _context.Entities.AddRangeAsync(entities);
             await _context.SaveChangesAsync();
-            var ids = entities.Select(e => e.Id).ToList();
+            List<int> ids = [.. entities.Select(e => e.Id)];
 
             // Act
             await _repository.DeleteAsync(ids, true);
 
             // Assert
-            var result = await _context.Entities.ToListAsync();
+            List<TestEntity> result = await _context.Entities.ToListAsync();
             Assert.Empty(result);
         }
 
         [Fact]
-        public async Task DeleteAsync_ByIds_ShouldRemoveEntities_WithoutSaveChanges()
+        public async Task DeleteAsyncByIdsShouldRemoveEntitiesWithoutSaveChanges()
         {
             // Arrange
-            var entities = _fixture.CreateMany<TestEntity>(5).ToList();
+            List<TestEntity> entities = [.. _fixture.CreateMany<TestEntity>(5)];
             await _context.Entities.AddRangeAsync(entities);
             await _context.SaveChangesAsync();
-            var ids = entities.Select(e => e.Id).ToList();
+            List<int> ids = [.. entities.Select(e => e.Id)];
 
             // Act
             await _repository.DeleteAsync(ids, false);
 
             // Assert
-            var result = await _context.Entities.ToListAsync();
+            List<TestEntity> result = await _context.Entities.ToListAsync();
             Assert.NotEmpty(result);
         }
 
         [Fact]
-        public async Task GetByIdAsync_ReturnEntity()
+        public async Task GetByIdAsyncReturnEntity()
         {
             // Arrange
-            var entity = _fixture.Create<TestEntity>();
+            TestEntity entity = _fixture.Create<TestEntity>();
             await _context.Entities.AddAsync(entity);
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _repository.GetByIdAsync(entity.Id);
+            TestEntity? result = await _repository.GetByIdAsync(entity.Id);
 
             // Assert
             Assert.Equal(entity, result);
         }
 
         [Fact]
-        public async Task GetByIdWithIncludeAsync_ReturnEntity()
+        public async Task GetByIdWithIncludeAsyncReturnEntity()
         {
             // Arrange
-            var entity = _fixture.Create<TestEntity>();
+            TestEntity entity = _fixture.Create<TestEntity>();
             await _context.Entities.AddAsync(entity);
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _repository.GetByIdWithIncludeAsync(entity.Id);
+            TestEntity? result = await _repository.GetByIdWithIncludeAsync(entity.Id);
 
             // Assert
             Assert.Equal(entity, result);
         }
 
         [Fact]
-        public async Task GetByIdWithIncludeAsync_ReturnEntity_WithIncludeProperties()
+        public async Task GetByIdWithIncludeAsyncReturnEntityWithIncludeProperties()
         {
             // Arrange
-            var entity = _fixture.Create<TestEntity>();
+            TestEntity entity = _fixture.Create<TestEntity>();
             await _context.Entities.AddAsync(entity);
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _repository.GetByIdWithIncludeAsync(entity.Id, e => e.RelatedEntities);
+            TestEntity? result = await _repository.GetByIdWithIncludeAsync(entity.Id, e => e.RelatedEntities);
 
             // Assert
             Assert.Equal(entity, result);
         }
 
         [Fact]
-        public async Task GetByIdWithIncludeAsync_ReturnEntity_WithNoTracking()
+        public async Task GetByIdWithIncludeAsyncReturnEntityWithNoTracking()
         {
             // Arrange
-            var entity = _fixture.Create<TestEntity>();
+            TestEntity entity = _fixture.Create<TestEntity>();
             await _context.Entities.AddAsync(entity);
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _repository.GetByIdWithIncludeAsync(entity.Id, true, x => x.RelatedEntities);
+            TestEntity? result = await _repository.GetByIdWithIncludeAsync(entity.Id, true, x => x.RelatedEntities);
 
             // Assert
             Assert.NotNull(result);
@@ -195,7 +198,7 @@ namespace Infrastructure.Tests.Data.Repositories
             public ICollection<TestEntityChildren> RelatedEntities { get; set; } = [];
         }
 
-        public class TestEntityChildren(string name) : EntityBase
+        internal class TestEntityChildren(string name) : EntityBase
         {
             public string Name { get; set; } = name;
         }
@@ -203,6 +206,35 @@ namespace Infrastructure.Tests.Data.Repositories
         private class TestContext(DbContextOptions<TestContext> options) : DbContext(options)
         {
             public DbSet<TestEntity> Entities { get; set; } = default!;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (isDisposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                // free managed resources
+                _context?.Dispose();
+            }
+
+            // free native resources if there are any.
+            if (nativeResource != IntPtr.Zero)
+            {
+                Marshal.FreeHGlobal(nativeResource);
+                nativeResource = IntPtr.Zero;
+            }
+
+            isDisposed = true;
         }
     }
 }

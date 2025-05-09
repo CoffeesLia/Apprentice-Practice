@@ -11,7 +11,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
             ArgumentNullException.ThrowIfNull(builder);
 
             builder.ToTable("ApplicationData");
-           
+
             builder.HasKey(ad => ad.Id);
 
             builder.Property(ad => ad.Name)

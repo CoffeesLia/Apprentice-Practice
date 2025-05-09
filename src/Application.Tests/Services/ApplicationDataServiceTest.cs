@@ -27,8 +27,8 @@ namespace Application.Tests.Services
             CultureInfo.CurrentUICulture = new CultureInfo("en-US");
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _applicationDataRepositoryMock = new Mock<IApplicationDataRepository>();
-            var localizer = Helpers.LocalizerFactorHelper.Create();
-            var applicationDataValidator = new ApplicationDataValidator(localizer);
+            Microsoft.Extensions.Localization.IStringLocalizerFactory localizer = Helpers.LocalizerFactorHelper.Create();
+            ApplicationDataValidator applicationDataValidator = new(localizer);
 
             _unitOfWorkMock.Setup(u => u.ApplicationDataRepository).Returns(_applicationDataRepositoryMock.Object);
 
@@ -40,14 +40,14 @@ namespace Application.Tests.Services
         public async Task CreateAsyncShouldReturnInvalidDataNameVali()
         {
             // Arrange
-            var applicationData = new ApplicationData("u")
+            ApplicationData applicationData = new("u")
             {
                 ProductOwner = "TestOwner",
                 ConfigurationItem = "TestConfig"
             };
 
             // Act
-            var result = await _applicationDataService.CreateAsync(applicationData);
+            OperationResult result = await _applicationDataService.CreateAsync(applicationData);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
@@ -58,14 +58,14 @@ namespace Application.Tests.Services
         public async Task CreateAsyncShouldReturnInvalidDataWhenNameIsRequired()
         {
             // Arrange
-            var applicationData = new ApplicationData(string.Empty)
+            ApplicationData applicationData = new(string.Empty)
             {
                 ProductOwner = "TestOwner",
                 ConfigurationItem = "TestConfig"
             };
 
             // Act
-            var result = await _applicationDataService.CreateAsync(applicationData);
+            OperationResult result = await _applicationDataService.CreateAsync(applicationData);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
@@ -78,7 +78,7 @@ namespace Application.Tests.Services
         public async Task CreateAsyncShouldReturnInvalidDataWhenConfigurationItemIsRequired()
         {
             // Arrange
-            var applicationData = new ApplicationData("NameValid")
+            ApplicationData applicationData = new("NameValid")
             {
                 ProductOwner = "TestOwner",
                 ConfigurationItem = string.Empty
@@ -86,7 +86,7 @@ namespace Application.Tests.Services
 
 
             // Act
-            var result = await _applicationDataService.CreateAsync(applicationData);
+            OperationResult result = await _applicationDataService.CreateAsync(applicationData);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
@@ -98,7 +98,7 @@ namespace Application.Tests.Services
         public async Task CreateAsyncShouldReturnInvalidDataWhenProductOwerIsRequired()
         {
             // Arrange
-            var applicationData = new ApplicationData("NameValid")
+            ApplicationData applicationData = new("NameValid")
             {
                 ProductOwner = string.Empty,
                 ConfigurationItem = "TestConfig"
@@ -106,7 +106,7 @@ namespace Application.Tests.Services
 
 
             // Act
-            var result = await _applicationDataService.CreateAsync(applicationData);
+            OperationResult result = await _applicationDataService.CreateAsync(applicationData);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
@@ -124,7 +124,7 @@ namespace Application.Tests.Services
                 .ReturnsAsync((ApplicationData?)null);
 
             // Act
-            var result = await _applicationDataService.GetItemAsync(1);
+            OperationResult result = await _applicationDataService.GetItemAsync(1);
 
             // Assert
             Assert.Equal(OperationStatus.NotFound, result.Status);
@@ -138,19 +138,19 @@ namespace Application.Tests.Services
         public async Task CreateAsyncShouldReturnInvalidDataWhenValidationFails()
         {
             // Arrange
-            var applicationData = new ApplicationData("TestApp")
+            ApplicationData applicationData = new("TestApp")
             {
                 ProductOwner = "TestOwner",
                 ConfigurationItem = "TestConfig"
             };
-            var validationResult = new ValidationResult(new[] { new ValidationFailure("Name", "Name is required") });
-            var validatorMock = new Mock<IValidator<ApplicationData>>();
+            ValidationResult validationResult = new([new ValidationFailure("Name", "Name is required")]);
+            Mock<IValidator<ApplicationData>> validatorMock = new();
             validatorMock.Setup(v => v.ValidateAsync(applicationData, default)).ReturnsAsync(validationResult);
 
-            var service = new ApplicationDataService(_unitOfWorkMock.Object, Helpers.LocalizerFactorHelper.Create(), validatorMock.Object);
+            ApplicationDataService service = new(_unitOfWorkMock.Object, Helpers.LocalizerFactorHelper.Create(), validatorMock.Object);
 
             // Act
-            var result = await service.CreateAsync(applicationData);
+            OperationResult result = await service.CreateAsync(applicationData);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
@@ -160,191 +160,7 @@ namespace Application.Tests.Services
         public async Task CreateAsyncShouldReturnConflictdWhenResponsibleIsNotFromArea()
         {
             // Arrange
-            var applicationData = new ApplicationData("TestApp")
-            {
-                ResponsibleId = 1,
-                AreaId = 1,
-                ProductOwner = "TestOwner",
-                ConfigurationItem = "TestConfig"
-            };
-
-            _applicationDataRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<ApplicationFilter>())).ReturnsAsync(new PagedResult<ApplicationData> { Result = new List<ApplicationData>() });
-            _unitOfWorkMock.Setup(u => u.ResponsibleRepository.GetByIdAsync(applicationData.ResponsibleId)).ReturnsAsync((Responsible?)null);
-
-            // Act
-            var result = await _applicationDataService.CreateAsync(applicationData);
-
-            // Assert
-            Assert.Equal(OperationStatus.Conflict, result.Status);
-            Assert.Equal(ApplicationDataResources.NotFound, result.Message);
-        }
-
-        [Fact]
-        public async Task CreateAsyncShouldReturnConflictWhenNameIsNotUnique()
-        {
-            // Arrange
-            var applicationData = new ApplicationData("TestApp")
-            {
-                ProductOwner = "TestOwner",
-                ConfigurationItem = "TestConfig"
-            };
-
-            var existingItems = new List<ApplicationData>
-                {
-                    new ApplicationData("TestApp")
-                    {
-                        Id = 1,
-                        ProductOwner = "TestOwner",
-                        ConfigurationItem = "TestConfig"
-                    }
-                };
-
-            _applicationDataRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<ApplicationFilter>()))
-                .ReturnsAsync(new PagedResult<ApplicationData> { Result = existingItems });
-
-            // Act
-            var result = await _applicationDataService.CreateAsync(applicationData);
-
-            // Assert
-            Assert.Equal(OperationStatus.Conflict, result.Status);
-            Assert.Equal(ApplicationDataResources.AlreadyExists, result.Message);
-
-        }
-
-        [Fact]
-        public async Task CreateAsyncShouldReturnSuccessWhenApplicationDataIsValid()
-        {
-            // Arrange
-            var applicationData = new ApplicationData("TestApp")
-            {
-                ResponsibleId = 1,
-                AreaId = 1,
-                ProductOwner = "TestOwner",
-                ConfigurationItem = "TestConfig",
-                External = true
-            };
-
-            var responsible = new Responsible
-            {
-                Id = 1,
-                AreaId = 1,
-                Name = "Test Responsible",
-                Email = "test@example.com",
-                Area = new Area("TestArea")
-            };
-
-            _applicationDataRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<ApplicationFilter>())).ReturnsAsync(new PagedResult<ApplicationData> { Result = new List<ApplicationData>() });
-            _unitOfWorkMock.Setup(u => u.ResponsibleRepository.GetByIdAsync(applicationData.ResponsibleId)).ReturnsAsync(responsible);
-
-            // Act
-            var result = await _applicationDataService.CreateAsync(applicationData);
-
-            // Assert
-            Assert.Equal(OperationStatus.Success, result.Status);
-        }
-
-        [Fact]
-        public async Task GetItemAsyncShouldReturnCompleteWhenItemIsFound()
-        {
-            // Arrange
-            var applicationData = new ApplicationData("TestApp")
-            {
-                ProductOwner = "TestOwner",
-                ConfigurationItem = "TestConfig"
-            };
-
-            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(applicationData.Id))
-                .ReturnsAsync(applicationData);
-
-            // Act
-            var result = await _applicationDataService.GetItemAsync(applicationData.Id);
-
-            // Assert
-            Assert.Equal(OperationStatus.Success, result.Status);
-        }
-
-        [Fact]
-        public async Task GetItemAsyncShouldReturnNotFoundWhenItemIsNotFound()
-        {
-            // Arrange
-            var applicationId = 1;
-
-            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(applicationId))
-                .ReturnsAsync((ApplicationData?)null);
-
-            // Act
-            var result = await _applicationDataService.GetItemAsync(applicationId);
-
-            // Assert
-            Assert.Equal(OperationStatus.NotFound, result.Status);
-
-        }
-
-        [Fact]
-        public async Task UpdateAsyncShouldReturnInvalidDataWhenValidationFails()
-        {
-            // Arrange
-            var applicationData = new ApplicationData("TestApp")
-            {
-                Id = 1,
-                AreaId = 1,
-                ResponsibleId = 1,
-                ProductOwner = "TestOwner",
-                ConfigurationItem = "TestConfig"
-            };
-
-            var validationResult = new ValidationResult([new ValidationFailure("Name", "Name is required")]);
-            var validatorMock = new Mock<IValidator<ApplicationData>>();
-            validatorMock.Setup(v => v.ValidateAsync(applicationData, default)).ReturnsAsync(validationResult);
-
-            var service = new ApplicationDataService(_unitOfWorkMock.Object, Helpers.LocalizerFactorHelper.Create(), validatorMock.Object);
-
-            // Act
-            var result = await service.UpdateAsync(applicationData);
-
-            // Assert
-            Assert.Equal(OperationStatus.InvalidData, result.Status);
-        }
-
-
-        [Fact]
-        public async Task UpdateAsyncShouldReturnConflictWhenNameIsNotUnique()
-        {
-            // Arrange
-            var applicationData = new ApplicationData("TestApp")
-            {
-                Id = 1,
-                AreaId = 1,
-                ResponsibleId = 1,
-                ProductOwner = "TestOwner",
-                ConfigurationItem = "TestConfig"
-            };
-
-            var existingItems = new List<ApplicationData>
-                {
-                    new ApplicationData("TestApp")
-                    {
-                        Id = 2,
-                        ProductOwner = "TestOwner",
-                        ConfigurationItem = "TestConfig"
-                    }
-                };
-
-            _applicationDataRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<ApplicationFilter>()))
-                .ReturnsAsync(new PagedResult<ApplicationData> { Result = existingItems });
-
-            // Act
-            var result = await _applicationDataService.UpdateAsync(applicationData);
-
-            // Assert
-            Assert.Equal(OperationStatus.Conflict, result.Status);
-        }
-
-        [Fact]
-        public async Task UpdateAsyncShouldReturnConflictdWhenResponsibleIsNotFromArea()
-        {
-            // Arrange
-            var applicationData = new ApplicationData("TestApp")
+            ApplicationData applicationData = new("TestApp")
             {
                 ResponsibleId = 1,
                 AreaId = 1,
@@ -356,7 +172,191 @@ namespace Application.Tests.Services
             _unitOfWorkMock.Setup(u => u.ResponsibleRepository.GetByIdAsync(applicationData.ResponsibleId)).ReturnsAsync((Responsible?)null);
 
             // Act
-            var result = await _applicationDataService.UpdateAsync(applicationData);
+            OperationResult result = await _applicationDataService.CreateAsync(applicationData);
+
+            // Assert
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal(ApplicationDataResources.NotFound, result.Message);
+        }
+
+        [Fact]
+        public async Task CreateAsyncShouldReturnConflictWhenNameIsNotUnique()
+        {
+            // Arrange
+            ApplicationData applicationData = new("TestApp")
+            {
+                ProductOwner = "TestOwner",
+                ConfigurationItem = "TestConfig"
+            };
+
+            List<ApplicationData> existingItems =
+            [
+                    new("TestApp")
+                    {
+                        Id = 1,
+                        ProductOwner = "TestOwner",
+                        ConfigurationItem = "TestConfig"
+                    }
+                ];
+
+            _applicationDataRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<ApplicationFilter>()))
+                .ReturnsAsync(new PagedResult<ApplicationData> { Result = existingItems });
+
+            // Act
+            OperationResult result = await _applicationDataService.CreateAsync(applicationData);
+
+            // Assert
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal(ApplicationDataResources.AlreadyExists, result.Message);
+
+        }
+
+        [Fact]
+        public async Task CreateAsyncShouldReturnSuccessWhenApplicationDataIsValid()
+        {
+            // Arrange
+            ApplicationData applicationData = new("TestApp")
+            {
+                ResponsibleId = 1,
+                AreaId = 1,
+                ProductOwner = "TestOwner",
+                ConfigurationItem = "TestConfig",
+                External = true
+            };
+
+            Responsible responsible = new()
+            {
+                Id = 1,
+                AreaId = 1,
+                Name = "Test Responsible",
+                Email = "test@example.com",
+                Area = new Area("TestArea")
+            };
+
+            _applicationDataRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<ApplicationFilter>())).ReturnsAsync(new PagedResult<ApplicationData> { Result = [] });
+            _unitOfWorkMock.Setup(u => u.ResponsibleRepository.GetByIdAsync(applicationData.ResponsibleId)).ReturnsAsync(responsible);
+
+            // Act
+            OperationResult result = await _applicationDataService.CreateAsync(applicationData);
+
+            // Assert
+            Assert.Equal(OperationStatus.Success, result.Status);
+        }
+
+        [Fact]
+        public async Task GetItemAsyncShouldReturnCompleteWhenItemIsFound()
+        {
+            // Arrange
+            ApplicationData applicationData = new("TestApp")
+            {
+                ProductOwner = "TestOwner",
+                ConfigurationItem = "TestConfig"
+            };
+
+            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(applicationData.Id))
+                .ReturnsAsync(applicationData);
+
+            // Act
+            OperationResult result = await _applicationDataService.GetItemAsync(applicationData.Id);
+
+            // Assert
+            Assert.Equal(OperationStatus.Success, result.Status);
+        }
+
+        [Fact]
+        public async Task GetItemAsyncShouldReturnNotFoundWhenItemIsNotFound()
+        {
+            // Arrange
+            int applicationId = 1;
+
+            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(applicationId))
+                .ReturnsAsync((ApplicationData?)null);
+
+            // Act
+            OperationResult result = await _applicationDataService.GetItemAsync(applicationId);
+
+            // Assert
+            Assert.Equal(OperationStatus.NotFound, result.Status);
+
+        }
+
+        [Fact]
+        public async Task UpdateAsyncShouldReturnInvalidDataWhenValidationFails()
+        {
+            // Arrange
+            ApplicationData applicationData = new("TestApp")
+            {
+                Id = 1,
+                AreaId = 1,
+                ResponsibleId = 1,
+                ProductOwner = "TestOwner",
+                ConfigurationItem = "TestConfig"
+            };
+
+            ValidationResult validationResult = new([new ValidationFailure("Name", "Name is required")]);
+            Mock<IValidator<ApplicationData>> validatorMock = new();
+            validatorMock.Setup(v => v.ValidateAsync(applicationData, default)).ReturnsAsync(validationResult);
+
+            ApplicationDataService service = new(_unitOfWorkMock.Object, Helpers.LocalizerFactorHelper.Create(), validatorMock.Object);
+
+            // Act
+            OperationResult result = await service.UpdateAsync(applicationData);
+
+            // Assert
+            Assert.Equal(OperationStatus.InvalidData, result.Status);
+        }
+
+
+        [Fact]
+        public async Task UpdateAsyncShouldReturnConflictWhenNameIsNotUnique()
+        {
+            // Arrange
+            ApplicationData applicationData = new("TestApp")
+            {
+                Id = 1,
+                AreaId = 1,
+                ResponsibleId = 1,
+                ProductOwner = "TestOwner",
+                ConfigurationItem = "TestConfig"
+            };
+
+            List<ApplicationData> existingItems =
+            [
+                    new("TestApp")
+                    {
+                        Id = 2,
+                        ProductOwner = "TestOwner",
+                        ConfigurationItem = "TestConfig"
+                    }
+                ];
+
+            _applicationDataRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<ApplicationFilter>()))
+                .ReturnsAsync(new PagedResult<ApplicationData> { Result = existingItems });
+
+            // Act
+            OperationResult result = await _applicationDataService.UpdateAsync(applicationData);
+
+            // Assert
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+        }
+
+        [Fact]
+        public async Task UpdateAsyncShouldReturnConflictdWhenResponsibleIsNotFromArea()
+        {
+            // Arrange
+            ApplicationData applicationData = new("TestApp")
+            {
+                ResponsibleId = 1,
+                AreaId = 1,
+                ProductOwner = "TestOwner",
+                ConfigurationItem = "TestConfig"
+            };
+
+            _applicationDataRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<ApplicationFilter>())).ReturnsAsync(new PagedResult<ApplicationData> { Result = [] });
+            _unitOfWorkMock.Setup(u => u.ResponsibleRepository.GetByIdAsync(applicationData.ResponsibleId)).ReturnsAsync((Responsible?)null);
+
+            // Act
+            OperationResult result = await _applicationDataService.UpdateAsync(applicationData);
 
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
@@ -368,7 +368,7 @@ namespace Application.Tests.Services
         public async Task UpdateAsyncShouldReturnSuccessWhenApplicationDataIsValid()
         {
             // Arrange
-            var applicationData = new ApplicationData("Valido")
+            ApplicationData applicationData = new("Valido")
             {
                 Id = 1,
                 AreaId = 1,
@@ -377,7 +377,7 @@ namespace Application.Tests.Services
                 ConfigurationItem = "TestConfig"
             };
 
-            var responsible = new Responsible
+            Responsible responsible = new()
             {
                 Id = 1,
                 AreaId = 1,
@@ -394,10 +394,10 @@ namespace Application.Tests.Services
                 .ReturnsAsync(applicationData);
 
             _applicationDataRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<ApplicationFilter>()))
-                .ReturnsAsync(new PagedResult<ApplicationData> { Result = new List<ApplicationData> { applicationData } });
+                .ReturnsAsync(new PagedResult<ApplicationData> { Result = [applicationData] });
 
             // Act
-            var result = await _applicationDataService.UpdateAsync(applicationData);
+            OperationResult result = await _applicationDataService.UpdateAsync(applicationData);
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
@@ -408,13 +408,13 @@ namespace Application.Tests.Services
         public async Task GetListAsyncShouldReturnPagedResult()
         {
             // Arrange
-            var applicationFilter = new ApplicationFilter { Name = "TestApp" };
-            var applicationDataList = new List<ApplicationData>
-            {
-                new ApplicationData("TestApp1") { Id = 1, AreaId = 1, ProductOwner = "Owner1", ConfigurationItem = "Config1" },
-                new ApplicationData("TestApp2") { Id = 2, AreaId = 2, ProductOwner = "Owner2", ConfigurationItem = "Config2" }
-            };
-            var pagedResult = new PagedResult<ApplicationData>
+            ApplicationFilter applicationFilter = new() { Name = "TestApp" };
+            List<ApplicationData> applicationDataList =
+            [
+                new("TestApp1") { Id = 1, AreaId = 1, ProductOwner = "Owner1", ConfigurationItem = "Config1" },
+                new("TestApp2") { Id = 2, AreaId = 2, ProductOwner = "Owner2", ConfigurationItem = "Config2" }
+            ];
+            PagedResult<ApplicationData> pagedResult = new()
             {
                 Result = applicationDataList,
                 Page = 1,
@@ -425,7 +425,7 @@ namespace Application.Tests.Services
             _applicationDataRepositoryMock.Setup(r => r.GetListAsync(applicationFilter)).ReturnsAsync(pagedResult);
 
             // Act
-            var result = await _applicationDataService.GetListAsync(applicationFilter);
+            PagedResult<ApplicationData> result = await _applicationDataService.GetListAsync(applicationFilter);
 
             // Assert
             Assert.NotNull(result);
@@ -437,11 +437,11 @@ namespace Application.Tests.Services
         public async Task DeleteAsyncShouldReturnNotFoundWhenItemDoesNotExist()
         {
             // Arrange
-            var applicationId = 1;
+            int applicationId = 1;
             _applicationDataRepositoryMock.Setup(r => r.GetFullByIdAsync(applicationId)).ReturnsAsync((ApplicationData?)null);
 
             // Act
-            var result = await _applicationDataService.DeleteAsync(applicationId);
+            OperationResult result = await _applicationDataService.DeleteAsync(applicationId);
 
             // Assert
             Assert.Equal(OperationStatus.NotFound, result.Status);
@@ -451,7 +451,7 @@ namespace Application.Tests.Services
         public async Task DeleteAsyncShouldReturnSuccessWhenItemIsDeleted()
         {
             // Arrange
-            var applicationData = new ApplicationData("TestApp")
+            ApplicationData applicationData = new("TestApp")
             {
                 Id = 1,
                 AreaId = 1,
@@ -463,7 +463,7 @@ namespace Application.Tests.Services
             _applicationDataRepositoryMock.Setup(r => r.DeleteAsync(applicationData.Id, true)).Returns(Task.CompletedTask);
 
             // Act
-            var result = await _applicationDataService.DeleteAsync(applicationData.Id);
+            OperationResult result = await _applicationDataService.DeleteAsync(applicationData.Id);
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
@@ -473,10 +473,10 @@ namespace Application.Tests.Services
         public async Task IsApplicationNameUniqueAsyncShouldReturnFalseWhenNameIsNullOrWhiteSpace()
         {
             // Arrange
-            var service = new ApplicationDataService(_unitOfWorkMock.Object, Helpers.LocalizerFactorHelper.Create(), new Mock<IValidator<ApplicationData>>().Object);
+            ApplicationDataService service = new(_unitOfWorkMock.Object, Helpers.LocalizerFactorHelper.Create(), new Mock<IValidator<ApplicationData>>().Object);
 
             // Act
-            var result = await service.IsApplicationNameUniqueAsync(string.Empty);
+            bool result = await service.IsApplicationNameUniqueAsync(string.Empty);
 
             // Assert
             Assert.False(result);
@@ -487,10 +487,10 @@ namespace Application.Tests.Services
         {
             // Arrange
 
-            var service = new ApplicationDataService(_unitOfWorkMock.Object, Helpers.LocalizerFactorHelper.Create(), new Mock<IValidator<ApplicationData>>().Object);
+            ApplicationDataService service = new(_unitOfWorkMock.Object, Helpers.LocalizerFactorHelper.Create(), new Mock<IValidator<ApplicationData>>().Object);
 
             // Act
-            var result = await service.IsApplicationNameUniqueAsync("TestApp");
+            bool result = await service.IsApplicationNameUniqueAsync("TestApp");
 
             // Assert
             Assert.True(result);
@@ -500,7 +500,7 @@ namespace Application.Tests.Services
         public async Task CreateAsyncShouldReturnInvalidDataWhenDescriptionExceedsMaxLength()
         {
             // Arrange
-            var applicationData = new ApplicationData("ValidName")
+            ApplicationData applicationData = new("ValidName")
             {
                 ProductOwner = "TestOwner",
                 ConfigurationItem = "TestConfig",
@@ -510,7 +510,7 @@ namespace Application.Tests.Services
             };
 
             // Act
-            var result = await _applicationDataService.CreateAsync(applicationData);
+            OperationResult result = await _applicationDataService.CreateAsync(applicationData);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);

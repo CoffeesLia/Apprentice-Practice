@@ -37,11 +37,17 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             IQueryable<TEntity> query = Context.Set<TEntity>();
 
             if (filter != null)
+            {
                 query = query.Where(filter);
+            }
 
             if (!string.IsNullOrWhiteSpace(includeProperties))
-                foreach (var includeProperty in includeProperties.Split(Separator, StringSplitOptions.RemoveEmptyEntries))
+            {
+                foreach (string includeProperty in includeProperties.Split(Separator, StringSplitOptions.RemoveEmptyEntries))
+                {
                     query = query.Include(includeProperty);
+                }
+            }
 
             return query;
         }
@@ -60,7 +66,9 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             await Context.Set<TEntity>().AddAsync(entity).ConfigureAwait(false);
 
             if (saveChanges)
+            {
                 await Context.SaveChangesAsync().ConfigureAwait(false);
+            }
         }
 
         /// <summary>
@@ -77,7 +85,9 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             await Context.Set<TEntity>().AddRangeAsync(entities).ConfigureAwait(false);
 
             if (saveChanges)
+            {
                 await Context.SaveChangesAsync().ConfigureAwait(false);
+            }
         }
 
         /// <summary>
@@ -94,7 +104,9 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             Context.Set<TEntity>().Remove(entity);
 
             if (saveChanges)
+            {
                 await Context.SaveChangesAsync().ConfigureAwait(false);
+            }
         }
 
         /// <summary>
@@ -111,7 +123,9 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             Context.Set<TEntity>().RemoveRange(entities);
 
             if (saveChanges)
+            {
                 await Context.SaveChangesAsync().ConfigureAwait(false);
+            }
         }
 
         /// <summary>
@@ -148,14 +162,10 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         {
             ArgumentNullException.ThrowIfNull(keyValues);
 
-            var entity = Context.Find<TEntity>(keyValues);
+            TEntity? entity = Context.Find<TEntity>(keyValues);
 
             // If the entity is in the Added state, it is not in the repository (Source of Truth).
-            if (entity != null && Context.Entry(entity).State == EntityState.Added)
-            {
-                return null;
-            }
-            return entity;
+            return entity != null && Context.Entry(entity).State == EntityState.Added ? null : entity;
         }
 
         /// <summary>
@@ -168,14 +178,10 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         {
             ArgumentNullException.ThrowIfNull(keyValues);
 
-            var entity = await Context.FindAsync<TEntity>(keyValues).ConfigureAwait(false);
+            TEntity? entity = await Context.FindAsync<TEntity>(keyValues).ConfigureAwait(false);
 
             // If the entity is in the Added state, it is not in the repository (Source of Truth).
-            if (entity != null && Context.Entry(entity).State == EntityState.Added)
-            {
-                return null;
-            }
-            return entity;
+            return entity != null && Context.Entry(entity).State == EntityState.Added ? null : entity;
         }
 
         /// <summary>
@@ -210,17 +216,19 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             ArgumentNullException.ThrowIfNull(query);
             ValidatePaginationParameters(page, pageSize);
 
-            var list = await query
+            List<TEntity> list = await query
                 .OrderBy(sort, sortDir)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync()
                 .ConfigureAwait(false);
-            var total = await query.CountAsync().ConfigureAwait(false);
+            int total = await query.CountAsync().ConfigureAwait(false);
 
             int totalPages = (int)Math.Ceiling((double)total / pageSize);
-            if (total == 0 && page != 1 || total > 0 && (page < 1 || page > totalPages))
+            if ((total == 0 && page != 1) || (total > 0 && (page < 1 || page > totalPages)))
+            {
                 page = totalPages;
+            }
 
             return new PagedResult<TEntity>()
             {
@@ -254,7 +262,9 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             Context.Set<TEntity>().Update(entity);
 
             if (saveChanges)
+            {
                 await Context.SaveChangesAsync().ConfigureAwait(false);
+            }
         }
 
         /// <summary>
@@ -271,7 +281,9 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             Context.Set<TEntity>().UpdateRange(entities);
 
             if (saveChanges)
+            {
                 await Context.SaveChangesAsync().ConfigureAwait(false);
+            }
         }
 
         /// <summary>
@@ -283,9 +295,14 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         protected static void ValidatePaginationParameters(int page, int pageSize)
         {
             if (page < 1)
+            {
                 throw new ArgumentOutOfRangeException(nameof(page), "Page number must be greater than 0.");
+            }
+
             if (pageSize < 1)
+            {
                 throw new ArgumentOutOfRangeException(nameof(pageSize), "Page size must be greater than 0.");
+            }
         }
     }
 }

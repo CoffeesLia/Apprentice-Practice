@@ -29,7 +29,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         public new async Task DeleteAsync(int id, bool saveChanges = true)
         {
-            var squad = await Context.Squads.FindAsync(id).ConfigureAwait(false);
+            Squad? squad = await Context.Squads.FindAsync(id).ConfigureAwait(false);
             if (squad != null)
             {
                 Context.Squads.Remove(squad);
@@ -53,7 +53,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             // Garante que o valor de Page seja pelo menos 1
             squadFilter.Page = squadFilter.Page <= 0 ? 1 : squadFilter.Page;
 
-            var query = Context.Squads.AsQueryable();
+            IQueryable<Squad> query = Context.Squads.AsQueryable();
 
             if (!string.IsNullOrEmpty(squadFilter.Name))
             {

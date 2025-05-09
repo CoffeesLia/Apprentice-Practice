@@ -32,9 +32,9 @@ namespace Infrastructure.Tests.Data.Repositories
         [Fact]
         public async Task CreateAsyncShouldReturnSuccessWhenRepoIsValid()
         {
-            var repo = _fixture.Create<GitRepo>();
+            GitRepo repo = _fixture.Create<GitRepo>();
 
-            var result = await _repository.CreateAsync(repo);
+            OperationResult result = await _repository.CreateAsync(repo);
 
             Assert.Equal(OperationStatus.Success, result.Status);
         }
@@ -42,13 +42,13 @@ namespace Infrastructure.Tests.Data.Repositories
         [Fact]
         public async Task CreateAsyncShouldReturnConflictWhenDbUpdateExceptionIsThrown()
         {
-            var repo = _fixture.Create<GitRepo>();
-            var contextMock = new Mock<Context>(_options);
+            GitRepo repo = _fixture.Create<GitRepo>();
+            Mock<Context> contextMock = new(_options);
             contextMock.Setup(c => c.Set<GitRepo>().AddAsync(It.IsAny<GitRepo>(), default))
                        .ThrowsAsync(new DbUpdateException("DB error"));
-            var repoMock = new GitRepoRepository(contextMock.Object);
+            GitRepoRepository repoMock = new(contextMock.Object);
 
-            var result = await repoMock.CreateAsync(repo);
+            OperationResult result = await repoMock.CreateAsync(repo);
 
             Assert.Equal(OperationStatus.Conflict, result.Status);
         }
@@ -56,13 +56,13 @@ namespace Infrastructure.Tests.Data.Repositories
         [Fact]
         public async Task CreateAsyncShouldReturnConflictWhenArgumentExceptionIsThrown()
         {
-            var repo = _fixture.Create<GitRepo>();
-            var contextMock = new Mock<Context>(_options);
+            GitRepo repo = _fixture.Create<GitRepo>();
+            Mock<Context> contextMock = new(_options);
             contextMock.Setup(c => c.Set<GitRepo>().AddAsync(It.IsAny<GitRepo>(), default))
                        .ThrowsAsync(new ArgumentException("Invalid argument"));
-            var repoMock = new GitRepoRepository(contextMock.Object);
+            GitRepoRepository repoMock = new(contextMock.Object);
 
-            var result = await repoMock.CreateAsync(repo);
+            OperationResult result = await repoMock.CreateAsync(repo);
 
             Assert.Equal(OperationStatus.Conflict, result.Status);
         }
@@ -72,15 +72,15 @@ namespace Infrastructure.Tests.Data.Repositories
         [InlineData(typeof(NotSupportedException))]
         public async Task CreateAsyncShouldReturnNotFoundWhenExpectedExceptionIsThrown(Type exceptionType)
         {
-            var repo = _fixture.Create<GitRepo>();
-            var contextMock = new Mock<Context>(_options);
-            var exception = (Exception)Activator.CreateInstance(exceptionType)!;
+            GitRepo repo = _fixture.Create<GitRepo>();
+            Mock<Context> contextMock = new(_options);
+            Exception exception = (Exception)Activator.CreateInstance(exceptionType)!;
 
             contextMock.Setup(c => c.Set<GitRepo>().AddAsync(It.IsAny<GitRepo>(), default))
                        .ThrowsAsync(exception);
-            var repoMock = new GitRepoRepository(contextMock.Object);
+            GitRepoRepository repoMock = new(contextMock.Object);
 
-            var result = await repoMock.CreateAsync(repo);
+            OperationResult result = await repoMock.CreateAsync(repo);
 
             Assert.Equal(OperationStatus.NotFound, result.Status);
         }
@@ -88,11 +88,11 @@ namespace Infrastructure.Tests.Data.Repositories
         [Fact]
         public async Task GetRepositoryDetailsAsyncShouldReturnRepoWhenExists()
         {
-            var repo = _fixture.Create<GitRepo>();
+            GitRepo repo = _fixture.Create<GitRepo>();
             await _context.Repositories.AddAsync(repo);
             await _context.SaveChangesAsync();
 
-            var result = await _repository.GetRepositoryDetailsAsync(repo.Id);
+            GitRepo? result = await _repository.GetRepositoryDetailsAsync(repo.Id);
 
             Assert.NotNull(result);
             Assert.Equal(repo.Id, result!.Id);
@@ -103,11 +103,11 @@ namespace Infrastructure.Tests.Data.Repositories
         [Fact]
         public async Task GetByIdAsyncShouldReturnCorrectRepo()
         {
-            var repo = _fixture.Create<GitRepo>();
+            GitRepo repo = _fixture.Create<GitRepo>();
             await _context.Set<GitRepo>().AddAsync(repo);
             await _context.SaveChangesAsync();
 
-            var result = await _repository.GetByIdAsync(repo.Id);
+            GitRepo? result = await _repository.GetByIdAsync(repo.Id);
 
             Assert.NotNull(result);
             Assert.Equal(repo.Id, result!.Id);
@@ -116,34 +116,34 @@ namespace Infrastructure.Tests.Data.Repositories
         [Fact]
         public async Task DeleteAsyncWithSaveChangesShouldDeleteRepo()
         {
-            var repo = _fixture.Create<GitRepo>();
+            GitRepo repo = _fixture.Create<GitRepo>();
             await _context.Set<GitRepo>().AddAsync(repo);
             await _context.SaveChangesAsync();
 
             await _repository.DeleteAsync(repo.Id, true);
 
-            var result = await _context.Set<GitRepo>().FindAsync(repo.Id);
+            GitRepo? result = await _context.Set<GitRepo>().FindAsync(repo.Id);
             Assert.Null(result);
         }
 
         [Fact]
         public async Task DeleteAsyncShouldDeleteRepoAndReturnTrue()
         {
-            var repo = _fixture.Create<GitRepo>();
+            GitRepo repo = _fixture.Create<GitRepo>();
             await _context.Repositories.AddAsync(repo);
             await _context.SaveChangesAsync();
 
-            var deleted = await _repository.DeleteAsync(repo.Id);
+            bool deleted = await _repository.DeleteAsync(repo.Id);
 
             Assert.True(deleted);
-            var result = await _context.Repositories.FindAsync(repo.Id);
+            GitRepo? result = await _context.Repositories.FindAsync(repo.Id);
             Assert.Null(result);
         }
 
         [Fact]
         public async Task DeleteAsyncShouldReturnFalseWhenRepoDoesNotExist()
         {
-            var result = await _repository.DeleteAsync(9999);
+            bool result = await _repository.DeleteAsync(9999);
             Assert.False(result);
         }
 
@@ -151,7 +151,7 @@ namespace Infrastructure.Tests.Data.Repositories
         [Fact]
         public async Task IsApplicationDataShouldReturnTrueWhenMatchExists()
         {
-            var appData = new ApplicationData("Test")
+            ApplicationData appData = new("Test")
             {
                 AreaId = 1,
                 ResponsibleId = 2,
@@ -161,7 +161,7 @@ namespace Infrastructure.Tests.Data.Repositories
             await _context.Applications.AddAsync(appData);
             await _context.SaveChangesAsync();
 
-            var result = await _repository.IsApplicationDataFrom(appData.Id, 1);
+            bool result = await _repository.IsApplicationDataFrom(appData.Id, 1);
 
             Assert.True(result);
         }
@@ -169,27 +169,27 @@ namespace Infrastructure.Tests.Data.Repositories
         [Fact]
         public async Task IRepositoryEntityBaseDeleteAsyncShouldWork()
         {
-            var repo = _fixture.Create<GitRepo>();
+            GitRepo repo = _fixture.Create<GitRepo>();
             await _context.Repositories.AddAsync(repo);
             await _context.SaveChangesAsync();
 
-            var interfaceRepo = (IRepositoryEntityBase<GitRepo>)_repository;
+            IRepositoryEntityBase<GitRepo> interfaceRepo = _repository;
             await interfaceRepo.DeleteAsync(repo.Id, true);
 
-            var result = await _context.Repositories.FindAsync(repo.Id);
+            GitRepo? result = await _context.Repositories.FindAsync(repo.Id);
             Assert.Null(result);
         }
 
         [Fact]
         public async Task VerifyUrlAlreadyExistsAsyncShouldReturnTrueWhenUrlExists()
         {
-            var repo = _fixture.Build<GitRepo>()
+            GitRepo repo = _fixture.Build<GitRepo>()
                 .With(r => r.Url, new Uri("https://test.com"))
                 .Create();
             await _context.Set<GitRepo>().AddAsync(repo);
             await _context.SaveChangesAsync();
 
-            var exists = await _repository.VerifyUrlAlreadyExistsAsync(new Uri("https://test.com"));
+            bool exists = await _repository.VerifyUrlAlreadyExistsAsync(new Uri("https://test.com"));
 
             Assert.True(exists);
         }
@@ -197,11 +197,11 @@ namespace Infrastructure.Tests.Data.Repositories
         [Fact]
         public async Task VerifyAplicationsExistsAsyncShouldReturnTrueWhenApplicationIdExists()
         {
-            var repo = _fixture.Create<GitRepo>();
+            GitRepo repo = _fixture.Create<GitRepo>();
             await _context.Set<GitRepo>().AddAsync(repo);
             await _context.SaveChangesAsync();
 
-            var exists = await _repository.VerifyNameExistsAsync(repo.ApplicationId);
+            bool exists = await _repository.VerifyNameExistsAsync(repo.ApplicationId);
 
             Assert.True(exists);
         }
@@ -210,12 +210,12 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task VerifyDescriptionExistsAsyncShouldReturnTrueWhenDescriptionExists()
         {
             // Arrange  
-            var repo = _fixture.Create<GitRepo>();
+            GitRepo repo = _fixture.Create<GitRepo>();
             await _context.Set<GitRepo>().AddAsync(repo);
             await _context.SaveChangesAsync();
 
             // Act  
-            var result = await _repository.VerifyDescriptionExistsAsync(repo.Description);
+            bool result = await _repository.VerifyDescriptionExistsAsync(repo.Description);
 
             // Assert  
             Assert.True(result);
@@ -225,12 +225,12 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task VerifyNameExistsAsyncShouldReturnTrueWhenNameExists()
         {
             // Arrange  
-            var repo = _fixture.Create<GitRepo>();
+            GitRepo repo = _fixture.Create<GitRepo>();
             await _context.Set<GitRepo>().AddAsync(repo);
             await _context.SaveChangesAsync();
 
             // Act  
-            var result = await _repository.VerifyNameExistsAsync(repo.Name);
+            bool result = await _repository.VerifyNameExistsAsync(repo.Name);
 
             // Assert  
             Assert.True(result);
@@ -240,12 +240,12 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task VerifyApplicationIdExistsAsyncShouldReturnTrueWhenApplicationIdExists()
         {
             // Arrange  
-            var repo = _fixture.Create<GitRepo>();
+            GitRepo repo = _fixture.Create<GitRepo>();
             await _context.Set<GitRepo>().AddAsync(repo);
             await _context.SaveChangesAsync();
 
             // Act  
-            var result = await _repository.VerifyApplicationIdExistsAsync(repo.ApplicationId);
+            bool result = await _repository.VerifyApplicationIdExistsAsync(repo.ApplicationId);
 
             // Assert  
             Assert.True(result);
@@ -254,7 +254,7 @@ namespace Infrastructure.Tests.Data.Repositories
         [Fact]
         public async Task GetListAsyncShouldApplyMultipleFiltersCorrectly()
         {
-            var repo = _fixture.Build<GitRepo>()
+            GitRepo repo = _fixture.Build<GitRepo>()
                 .With(r => r.Name, "SuperRepo")
                 .With(r => r.Description, "Descrição bacana")
                 .With(r => r.Url, new Uri("https://meurepo.com"))
@@ -263,14 +263,14 @@ namespace Infrastructure.Tests.Data.Repositories
             await _context.Set<GitRepo>().AddAsync(repo);
             await _context.SaveChangesAsync();
 
-            var filter = new GitRepoFilter
+            GitRepoFilter filter = new()
             {
                 Name = "SuperRepo",
                 Description = "Descrição bacana",
                 Url = new Uri("https://meurepo.com")
             };
 
-            var result = await _repository.GetListAsync(filter);
+            PagedResult<GitRepo> result = await _repository.GetListAsync(filter);
 
             Assert.Single(result.Result);
             Assert.Equal("SuperRepo", result.Result.First().Name);
@@ -288,22 +288,22 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task ListRepositoriesShouldReturnAllRepositories()
         {
             // Arrange
-            var repos = _fixture.CreateMany<GitRepo>(3).ToList();
+            List<GitRepo> repos = [.. _fixture.CreateMany<GitRepo>(3)];
             await _context.Set<GitRepo>().AddRangeAsync(repos);
             await _context.SaveChangesAsync();
 
             // Act
-            var result = _repository.ListRepositories();
+            IAsyncEnumerable<GitRepo> result = _repository.ListRepositories();
 
-            var resultList = new List<GitRepo>();
-            await foreach (var repo in result.ConfigureAwait(false))
+            List<GitRepo> resultList = [];
+            await foreach (GitRepo? repo in result.ConfigureAwait(false))
             {
                 resultList.Add(repo);
             }
 
             // Assert
             Assert.Equal(3, resultList.Count);
-            foreach (var repo in repos)
+            foreach (GitRepo? repo in repos)
             {
                 Assert.Contains(resultList, r => r.Id == repo.Id);
             }
@@ -313,10 +313,10 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task ListRepositoriesShouldReturnEmptyWhenNoData()
         {
             // Act
-            var result = _repository.ListRepositories();
-            var resultList = new List<GitRepo>();
+            IAsyncEnumerable<GitRepo> result = _repository.ListRepositories();
+            List<GitRepo> resultList = [];
 
-            await foreach (var repo in result.ConfigureAwait(false))
+            await foreach (GitRepo? repo in result.ConfigureAwait(false))
             {
                 resultList.Add(repo);
             }
@@ -340,7 +340,7 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task ListRepositoriesShouldPreserveDataIntegrity()
         {
             // Arrange
-            var repo = _fixture.Build<GitRepo>()
+            GitRepo repo = _fixture.Build<GitRepo>()
                 .With(r => r.Url, new Uri("https://github.com/example"))
                 .With(r => r.ApplicationId, 42)
                 .Create();
@@ -349,7 +349,7 @@ namespace Infrastructure.Tests.Data.Repositories
             await _context.SaveChangesAsync();
 
             // Act
-            var result = _repository.ListRepositories().GetAsyncEnumerator();
+            IAsyncEnumerator<GitRepo> result = _repository.ListRepositories().GetAsyncEnumerator();
             GitRepo? retrievedRepo = null;
 
             if (await result.MoveNextAsync())

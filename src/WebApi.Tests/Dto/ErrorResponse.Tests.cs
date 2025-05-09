@@ -5,14 +5,14 @@ namespace WebApi.Tests.Dto
     public class ErrorResponseTests
     {
         [Fact]
-        public void Constructor_InitializeProperties()
+        public void ConstructorInitializeProperties()
         {
             // Arrange
-            var error = "Test Error";
-            var message = "Test Message";
+            string error = "Test Error";
+            string message = "Test Message";
 
             // Act
-            var errorResponse = new ErrorResponse(error, message);
+            ErrorResponse errorResponse = new(error, message);
 
             // Assert
             Assert.Equal(error, errorResponse.Error);
@@ -20,13 +20,13 @@ namespace WebApi.Tests.Dto
         }
 
         [Fact]
-        public void BadRequest_ReturnErrorResponseWithBadRequestError()
+        public void BadRequestReturnErrorResponseWithBadRequestError()
         {
             // Arrange
-            var message = "Test Message";
+            string message = "Test Message";
 
             // Act
-            var errorResponse = ErrorResponse.BadRequest(message);
+            ErrorResponse errorResponse = ErrorResponse.BadRequest(message);
 
             // Assert
             Assert.Equal("Bad Request", errorResponse.Error);
@@ -34,76 +34,76 @@ namespace WebApi.Tests.Dto
         }
 
         [Fact]
-        public void Equals_ReturnTrueForEqualObjects()
+        public void EqualsReturnTrueForEqualObjects()
         {
             // Arrange
-            var error = "Test Error";
-            var message = "Test Message";
-            var errorResponse1 = new ErrorResponse(error, message);
-            var errorResponse2 = new ErrorResponse(error, message);
+            string error = "Test Error";
+            string message = "Test Message";
+            ErrorResponse errorResponse1 = new(error, message);
+            ErrorResponse errorResponse2 = new(error, message);
 
             // Act
-            var result = errorResponse1.Equals(errorResponse2);
+            bool result = errorResponse1.Equals(errorResponse2);
 
             // Assert
             Assert.True(result);
         }
 
         [Fact]
-        public void Equals_ReturnFalseForDifferentValues()
+        public void EqualsReturnFalseForDifferentValues()
         {
             // Arrange
-            var errorResponse1 = new ErrorResponse("Error 1", "Message 1");
-            var errorResponse2 = new ErrorResponse("Error 2", "Message 2");
+            ErrorResponse errorResponse1 = new("Error 1", "Message 1");
+            ErrorResponse errorResponse2 = new("Error 2", "Message 2");
 
             // Act
-            var result = errorResponse1.Equals(errorResponse2);
+            bool result = errorResponse1.Equals(errorResponse2);
 
             // Assert
             Assert.False(result);
         }
 
         [Fact]
-        public void Equals_ReturnFalseForDifferentObjects()
+        public void EqualsReturnFalseForDifferentObjects()
         {
             // Arrange
             var item = new { Error = "Error", Message = "Message 2" };
-            var errorResponse = new ErrorResponse("Error", "Message");
+            ErrorResponse errorResponse = new("Error", "Message");
 
             // Act
-            var result = errorResponse.Equals(item);
+            bool result = errorResponse.Equals(item);
 
             // Assert
             Assert.False(result);
         }
 
         [Fact]
-        public void GetHashCode_ReturnSameHashCodeForEqualObjects()
+        public void GetHashCodeReturnSameHashCodeForEqualObjects()
         {
             // Arrange
-            var error = "Test Error";
-            var message = "Test Message";
-            var errorResponse1 = new ErrorResponse(error, message);
-            var errorResponse2 = new ErrorResponse(error, message);
+            string error = "Test Error";
+            string message = "Test Message";
+            ErrorResponse errorResponse1 = new(error, message);
+            ErrorResponse errorResponse2 = new(error, message);
 
             // Act
-            var hashCode1 = errorResponse1.GetHashCode();
-            var hashCode2 = errorResponse2.GetHashCode();
+            int hashCode1 = errorResponse1.GetHashCode();
+            int hashCode2 = errorResponse2.GetHashCode();
 
             // Assert
             Assert.Equal(hashCode1, hashCode2);
         }
 
         [Fact]
-        public void GetHashCode_ReturnDifferentHashCodeForDifferentObjects()
+        public void GetHashCodeReturnDifferentHashCodeForDifferentObjects()
         {
             // Arrange
-            var errorResponse1 = new ErrorResponse("Error 1", "Message 1");
-            var errorResponse2 = new ErrorResponse("Error 2", "Message 2");
+            ErrorResponse errorResponse1 = new("Error 1", "Message 1");
+            ErrorResponse errorResponse2 = new("Error 2", "Message 2");
 
             // Act
-            var hashCode1 = errorResponse1.GetHashCode();
-            var hashCode2 = errorResponse2.GetHashCode();
+            int hashCode1 = errorResponse1.GetHashCode();
+            int hashCode2 = errorResponse2.GetHashCode();
 
             // Assert
             Assert.NotEqual(hashCode1, hashCode2);

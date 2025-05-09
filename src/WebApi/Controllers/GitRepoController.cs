@@ -37,9 +37,9 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetListAsync([FromQuery] GitRepoFilterDto filterDto)
         {
-            var filter = Mapper.Map<GitRepoFilter>(filterDto);
-            var pagedResult = await Service.GetListAsync(filter!).ConfigureAwait(false);
-            var result = Mapper.Map<PagedResult<GitRepoVm>>(pagedResult);
+            GitRepoFilter filter = Mapper.Map<GitRepoFilter>(filterDto);
+            PagedResult<GitRepo> pagedResult = await Service.GetListAsync(filter!).ConfigureAwait(false);
+            PagedResult<GitRepoVm> result = Mapper.Map<PagedResult<GitRepoVm>>(pagedResult);
             return Ok(result);
         }
     }

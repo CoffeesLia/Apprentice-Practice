@@ -12,18 +12,19 @@ namespace WebApi.Tests.Dto.Validators
 
         public FilterDtoValidatorTests()
         {
+            CultureInfo.CurrentCulture = new CultureInfo("en-US");
+            CultureInfo.CurrentUICulture = new CultureInfo("en-US");
             _validator = new FilterDtoValidator<FilterDto>();
-            CultureInfo.CurrentUICulture = new CultureInfo("pt-BR");
         }
 
         [Fact]
         public void ShouldHaveErrorWhenPageIsLessThanOne()
         {
             // Arrange
-            var model = new FilterDto { Page = 0, PageSize = 10 };
+            FilterDto model = new() { Page = 0, PageSize = 10 };
 
             // Act & Assertdd
-            var result = _validator.TestValidate(model);
+            TestValidationResult<FilterDto> result = _validator.TestValidate(model);
             result.ShouldHaveValidationErrorFor(x => x.Page)
                 .WithErrorMessage(FilterResources.PageGreaterThanZero);
         }
@@ -32,10 +33,10 @@ namespace WebApi.Tests.Dto.Validators
         public void ShouldNotHaveErrorWhenPageIsGreaterThanZero()
         {
             // Arrange
-            var model = new FilterDto { Page = 1, PageSize = 10 };
+            FilterDto model = new() { Page = 1, PageSize = 10 };
 
             // Act & Assert
-            var result = _validator.TestValidate(model);
+            TestValidationResult<FilterDto> result = _validator.TestValidate(model);
             result.ShouldNotHaveValidationErrorFor(x => x.Page);
         }
     }

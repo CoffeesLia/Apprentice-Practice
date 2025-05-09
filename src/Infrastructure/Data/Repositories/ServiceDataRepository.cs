@@ -43,8 +43,8 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         private static async Task<PagedResult<ServiceData>> GetPagedResultAsync(IQueryable<ServiceData> query, int page, int pageSize)
         {
-            var total = await query.CountAsync().ConfigureAwait(false);
-            var result = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync().ConfigureAwait(false);
+            int total = await query.CountAsync().ConfigureAwait(false);
+            List<ServiceData> result = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync().ConfigureAwait(false);
 
             return new PagedResult<ServiceData>
             {
@@ -57,7 +57,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         public async Task DeleteAsync(int id, bool saveChanges = true)
         {
-            var entity = await GetByIdAsync(id).ConfigureAwait(false);
+            ServiceData? entity = await GetByIdAsync(id).ConfigureAwait(false);
             if (entity != null)
             {
                 Context.Set<ServiceData>().Remove(entity);
@@ -70,7 +70,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         public async Task<bool> VerifyServiceExistsAsync(int id)
         {
-            var service = await Context.Set<ServiceData>().FirstOrDefaultAsync(a => a.Id == id).ConfigureAwait(false);
+            ServiceData? service = await Context.Set<ServiceData>().FirstOrDefaultAsync(a => a.Id == id).ConfigureAwait(false);
 
             return service != null && service.Id > 0;
         }

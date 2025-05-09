@@ -25,9 +25,9 @@ namespace WebApi.Tests.Controllers
         public ApplicationDataControllerTest()
         {
             _serviceMock = new Mock<IApplicationDataService>();
-            var mapperConfiguration = new MapperConfiguration(x => { x.AddProfile<AutoMapperProfile>(); });
-            var mapper = mapperConfiguration.CreateMapper();
-            var localizerFactor = LocalizerFactorHelper.Create();
+            MapperConfiguration mapperConfiguration = new(x => { x.AddProfile<AutoMapperProfile>(); });
+            IMapper mapper = mapperConfiguration.CreateMapper();
+            Microsoft.Extensions.Localization.IStringLocalizerFactory localizerFactor = LocalizerFactorHelper.Create();
             _controller = new ApplicationDataController(_serviceMock.Object, mapper, localizerFactor);
         }
 
@@ -35,15 +35,15 @@ namespace WebApi.Tests.Controllers
         public async Task GetListAsyncShouldReturnPagedResultVm()
         {
             // Arrange
-            var filterDto = _fixture.Create<ApplicationDataFilterDto>();
-            var pagedResult = _fixture.Create<PagedResult<ApplicationData>>();
+            ApplicationDataFilterDto filterDto = _fixture.Create<ApplicationDataFilterDto>();
+            PagedResult<ApplicationData> pagedResult = _fixture.Create<PagedResult<ApplicationData>>();
             _serviceMock.Setup(s => s.GetListAsync(It.IsAny<ApplicationFilter>())).ReturnsAsync(pagedResult);
 
             // Act
-            var result = await _controller.GetListAsync(filterDto);
+            IActionResult result = await _controller.GetListAsync(filterDto);
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
+            OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
             Assert.IsType<PagedResultVm<ApplicationVm>>(okResult.Value);
         }
 
@@ -51,7 +51,7 @@ namespace WebApi.Tests.Controllers
         public async Task CreateAsyncShouldReturnCreatedAtActionResultWhenApplicationDataIsValid()
         {
             // Arrange
-            var applicationDataDto = new ApplicationDataDto
+            ApplicationDataDto applicationDataDto = new()
             {
                 Name = "Valid Name",
                 AreaId = 1,
@@ -65,7 +65,7 @@ namespace WebApi.Tests.Controllers
             _serviceMock.Setup(s => s.CreateAsync(It.IsAny<ApplicationData>())).ReturnsAsync(OperationResult.Complete(ServiceResources.RegisteredSuccessfully));
 
             // Act
-            var result = await _controller.CreateAsync(applicationDataDto);
+            IActionResult result = await _controller.CreateAsync(applicationDataDto);
 
             // Assert
             Assert.IsType<CreatedAtActionResult>(result);
@@ -75,29 +75,30 @@ namespace WebApi.Tests.Controllers
         public async Task GetAsyncReturnsApplicationVmWhenIdIsValid()
         {
             // Arrange
-            var applicationData = new ApplicationData("Name")
+            ApplicationData applicationData = new("Name")
             {
                 Id = 1,
                 Name = "Test Application",
                 ProductOwner = "Test Owner",
                 ConfigurationItem = "Test Config"
             };
-            var applicationVm = new ApplicationVm
+            ApplicationVm applicationVm = new()
             {
                 Id = 1,
                 Name = "Test Application",
                 ProductOwner = "Test Owner",
-                ConfigurationItem = "Test Config"
+                ConfigurationItem = "Test Config",
+                Area = new AreaVm()
             };
 
             _serviceMock.Setup(s => s.GetItemAsync(It.IsAny<int>())).ReturnsAsync(applicationData);
 
             // Act
-            var result = await _controller.GetAsync(1);
+            ActionResult<ApplicationVm> result = await _controller.GetAsync(1);
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result.Result);
-            var returnValue = Assert.IsType<ApplicationVm>(okResult.Value);
+            OkObjectResult okResult = Assert.IsType<OkObjectResult>(result.Result);
+            ApplicationVm returnValue = Assert.IsType<ApplicationVm>(okResult.Value);
             Assert.Equal(applicationVm.Id, returnValue.Id);
             Assert.Equal(applicationVm.Name, returnValue.Name);
         }
@@ -109,7 +110,7 @@ namespace WebApi.Tests.Controllers
             _serviceMock.Setup(s => s.GetItemAsync(It.IsAny<int>())).ReturnsAsync((ApplicationData?)null);
 
             // Act
-            var result = await _controller.GetAsync(1);
+            ActionResult<ApplicationVm> result = await _controller.GetAsync(1);
 
             // Assert
             Assert.IsType<NotFoundResult>(result.Result);
@@ -121,7 +122,7 @@ namespace WebApi.Tests.Controllers
         public async Task UpdateAsyncShouldReturnOkResultWhenApplicationDataIsValid()
         {
             // Arrange
-            var applicationDataDto = new ApplicationDataDto
+            ApplicationDataDto applicationDataDto = new()
             {
                 Name = "Valid Name",
                 AreaId = 1,
@@ -135,10 +136,10 @@ namespace WebApi.Tests.Controllers
             _serviceMock.Setup(s => s.UpdateAsync(It.IsAny<ApplicationData>())).ReturnsAsync(OperationResult.Complete(ServiceResources.UpdatedSuccessfully));
 
             // Act
-            var result = await _controller.UpdateAsync(1, applicationDataDto);
+            IActionResult result = await _controller.UpdateAsync(1, applicationDataDto);
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
+            OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(200, okResult.StatusCode);
         }
 
@@ -150,7 +151,7 @@ namespace WebApi.Tests.Controllers
             _serviceMock.Setup(service => service.DeleteAsync(id)).ReturnsAsync(OperationResult.Complete());
 
             // Act
-            var result = await _controller.DeleteAsync(id);
+            IActionResult result = await _controller.DeleteAsync(id);
 
             // Assert
             Assert.IsType<NoContentResult>(result);
@@ -164,7 +165,7 @@ namespace WebApi.Tests.Controllers
             _serviceMock.Setup(service => service.DeleteAsync(id)).ReturnsAsync(OperationResult.NotFound(ServiceResources.NotFound));
 
             // Act
-            var result = await _controller.DeleteAsync(id);
+            IActionResult result = await _controller.DeleteAsync(id);
 
             // Assert
             Assert.IsType<NotFoundResult>(result);

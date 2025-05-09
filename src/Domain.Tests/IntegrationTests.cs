@@ -8,9 +8,9 @@ namespace Domain.Tests
         public void ConstructorShouldInitializeName()
         {
             // Arrange
-            var name = "Test Integration";
+            string name = "Test Integration";
             // Act
-            var integration = new Integration("Test Integration", "Description");
+            Integration integration = new("Test Integration", "Description");
             // Assert
             Assert.Equal(name, integration.Name);
         }
@@ -18,9 +18,9 @@ namespace Domain.Tests
         public void ConstructorShouldInitializeDescription()
         {
             // Arrange
-            var description = "Test Description";
+            string description = "Test Description";
             // Act
-            var integration = new Integration("Name", description);
+            Integration integration = new("Name", description);
             // Assert
             Assert.Equal(description, integration.Description);
         }
@@ -28,13 +28,13 @@ namespace Domain.Tests
         public void ConstructorShouldInitializeApplicationData()
         {
             // Arrange
-            var applicationData = new ApplicationData("Test Application Data")
+            ApplicationData applicationData = new("Test Application Data")
             {
                 ProductOwner = "Test Product Owner",
                 ConfigurationItem = "Test Configuration Item"
             };
             // Act
-            var integration = new Integration("Name", "Description") { ApplicationData = applicationData };
+            Integration integration = new("Name", "Description") { ApplicationData = applicationData };
             // Assert
             Assert.Equal(applicationData, integration.ApplicationData);
         }
@@ -43,8 +43,8 @@ namespace Domain.Tests
         public void AddApplicationShouldAddApplicationToList()
         {
             // Arrange
-            var area = new Area("Test Area");
-            var application = new ApplicationData("Application")
+            Area area = new("Test Area");
+            ApplicationData application = new("Application")
             {
                 ProductOwner = "Test Product Owner",
                 ConfigurationItem = "Test Configuration Item"
@@ -60,12 +60,12 @@ namespace Domain.Tests
         public void AddIntegrationShouldAddIntegrationToList()
         {
             // Arrange
-            var applicationData = new ApplicationData("Test Application Data")
+            ApplicationData applicationData = new("Test Application Data")
             {
                 ProductOwner = "Test Product Owner",
                 ConfigurationItem = "Test Configuration Item"
             };
-            var integration = new Integration("Name", "Description");
+            Integration integration = new("Name", "Description");
             // Act
             applicationData.Integration.Add(integration);
             // Assert
@@ -75,12 +75,12 @@ namespace Domain.Tests
         public void AddIntegrationShouldAddIntegrationToApplicationData()
         {
             // Arrange
-            var applicationData = new ApplicationData("Test Application Data")
+            ApplicationData applicationData = new("Test Application Data")
             {
                 ProductOwner = "Test Product Owner",
                 ConfigurationItem = "Test Configuration Item"
             };
-            var integration = new Integration("Name", "Description") { ApplicationData = applicationData };
+            Integration integration = new("Name", "Description") { ApplicationData = applicationData };
             // Act
             applicationData.Integration.Add(integration);
             // Assert

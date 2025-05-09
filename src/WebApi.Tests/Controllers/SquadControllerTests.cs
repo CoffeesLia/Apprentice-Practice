@@ -26,10 +26,10 @@ namespace WebApi.Tests.Controllers
         private readonly Mock<IMapper> _mapperMock; // Add this line
         public SquadControllerTests()
         {
-            var mapperConfiguration = new MapperConfiguration(x => { x.AddProfile<AutoMapperProfile>(); });
+            MapperConfiguration mapperConfiguration = new(x => { x.AddProfile<AutoMapperProfile>(); });
             _squadServiceMock = new Mock<ISquadService>();
-            var mapper = mapperConfiguration.CreateMapper();
-            var localizerFactory = LocalizerFactorHelper.Create();
+            IMapper mapper = mapperConfiguration.CreateMapper();
+            IStringLocalizerFactory localizerFactory = LocalizerFactorHelper.Create();
             _controller = new SquadController(_squadServiceMock.Object, mapper, localizerFactory);
             _mapperMock = new Mock<IMapper>(); // Add this line
         }
@@ -38,8 +38,8 @@ namespace WebApi.Tests.Controllers
         public async Task CreateAsyncShouldReturnCreatedWhenOperationSuccess()
         {
             // Arrange
-            var squadDto = _fixture.Create<SquadDto>();
-            var operationResult = OperationResult.Complete(); // Add this line
+            SquadDto squadDto = _fixture.Create<SquadDto>();
+            OperationResult operationResult = OperationResult.Complete(); // Add this line
             _squadServiceMock.Setup(s => s.CreateAsync(It.IsAny<Squad>())).ReturnsAsync(operationResult);
 
             _mapperMock.Setup(m => m.Map<Squad>(It.IsAny<SquadDto>()))
@@ -48,10 +48,10 @@ namespace WebApi.Tests.Controllers
                 .ReturnsAsync(operationResult);
 
             // Act
-            var result = await _controller.CreateAsync(squadDto);
+            IActionResult result = await _controller.CreateAsync(squadDto);
 
             // Assert
-            var createdResult = Assert.IsType<CreatedAtActionResult>(result);
+            CreatedAtActionResult createdResult = Assert.IsType<CreatedAtActionResult>(result);
             Assert.IsType<SquadVm>(createdResult.Value);
         }
 
@@ -63,7 +63,7 @@ namespace WebApi.Tests.Controllers
             Type expectedResultType)
         {
             // Arrange
-            var squadDto = _fixture.Create<SquadDto>();
+            SquadDto squadDto = _fixture.Create<SquadDto>();
 
             OperationResult operationResult = status switch
             {
@@ -76,7 +76,7 @@ namespace WebApi.Tests.Controllers
             _squadServiceMock.Setup(s => s.CreateAsync(It.IsAny<Squad>())).ReturnsAsync(operationResult);
 
             // Act
-            var result = await _controller.CreateAsync(squadDto);
+            IActionResult result = await _controller.CreateAsync(squadDto);
 
             // Assert
             Assert.IsType(expectedResultType, result);
@@ -92,8 +92,8 @@ namespace WebApi.Tests.Controllers
      Type expectedResultType)
         {
             // Arrange
-            var squadId = _fixture.Create<int>(); // Gere o ID separadamente
-            var squadDto = _fixture.Create<SquadDto>();
+            int squadId = _fixture.Create<int>(); // Gere o ID separadamente
+            SquadDto squadDto = _fixture.Create<SquadDto>();
 
             OperationResult operationResult = status switch
             {
@@ -107,7 +107,7 @@ namespace WebApi.Tests.Controllers
             _squadServiceMock.Setup(s => s.UpdateAsync(It.IsAny<Squad>())).ReturnsAsync(operationResult);
 
             // Act
-            var result = await _controller.UpdateAsync(squadId, squadDto); // Passe o ID diretamente
+            IActionResult result = await _controller.UpdateAsync(squadId, squadDto); // Passe o ID diretamente
 
             // Assert
             Assert.IsType(expectedResultType, result);
@@ -118,17 +118,17 @@ namespace WebApi.Tests.Controllers
         public async Task GetAsyncShouldReturnOkWhenSquadExists()
         {
             // Arrange
-            var squad = _fixture.Create<Squad>();
-            var squadVm = _fixture.Build<SquadVm>().With(s => s.Id, squad.Id).With(s => s.Name, squad.Name).Create();
+            Squad squad = _fixture.Create<Squad>();
+            SquadVm squadVm = _fixture.Build<SquadVm>().With(s => s.Id, squad.Id).With(s => s.Name, squad.Name).Create();
 
             _squadServiceMock.Setup(s => s.GetItemAsync(squad.Id)).ReturnsAsync(squad);
 
             // Act
-            var result = await _controller.GetAsync(squad.Id);
+            ActionResult<SquadVm> result = await _controller.GetAsync(squad.Id);
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result.Result);
-            var returnedSquadVm = Assert.IsType<SquadVm>(okResult.Value);
+            OkObjectResult okResult = Assert.IsType<OkObjectResult>(result.Result);
+            SquadVm returnedSquadVm = Assert.IsType<SquadVm>(okResult.Value);
             Assert.Equal(squadVm.Id, returnedSquadVm.Id);
             Assert.Equal(squadVm.Name, returnedSquadVm.Name);
         }
@@ -137,12 +137,12 @@ namespace WebApi.Tests.Controllers
         public async Task GetAsyncShouldReturnNotFoundWhenSquadNotExists()
         {
             // Arrange
-            var squadId = _fixture.Create<int>();
+            int squadId = _fixture.Create<int>();
 
             _squadServiceMock.Setup(s => s.GetItemAsync(squadId)).ReturnsAsync((Squad?)null);
 
             // Act
-            var result = await _controller.GetAsync(squadId);
+            ActionResult<SquadVm> result = await _controller.GetAsync(squadId);
 
             // Assert
             Assert.IsType<NotFoundResult>(result.Result);
@@ -151,10 +151,10 @@ namespace WebApi.Tests.Controllers
         public async Task GetListAsyncShouldReturnPagedResult()
         {
             // Arrange
-            var filterDto = _fixture.Create<SquadFilterDto>();
-            var squads = _fixture.CreateMany<Squad>(2).ToList();
-            var squadVms = squads.Select(s => new SquadVm { Id = s.Id, Name = s.Name, Description = s.Description }).ToList();
-            var pagedResult = new PagedResult<Squad>
+            SquadFilterDto filterDto = _fixture.Create<SquadFilterDto>();
+            List<Squad> squads = [.. _fixture.CreateMany<Squad>(2)];
+            List<SquadVm> squadVms = [.. squads.Select(s => new SquadVm { Id = s.Id, Name = s.Name, Description = s.Description })];
+            PagedResult<Squad> pagedResult = new()
             {
                 Result = squads,
                 Page = 1,
@@ -166,11 +166,11 @@ namespace WebApi.Tests.Controllers
             _mapperMock.Setup(m => m.Map<IEnumerable<SquadVm>>(squads)).Returns(squadVms);
 
             // Act
-            var result = await _controller.GetListAsync(filterDto);
+            IActionResult result = await _controller.GetListAsync(filterDto);
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedPagedResultVm = Assert.IsType<PagedResultVm<SquadVm>>(okResult.Value);
+            OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
+            PagedResultVm<SquadVm> returnedPagedResultVm = Assert.IsType<PagedResultVm<SquadVm>>(okResult.Value);
             Assert.Equal(pagedResult.Page, returnedPagedResultVm.Page);
             Assert.Equal(pagedResult.PageSize, returnedPagedResultVm.PageSize);
             Assert.Equal(pagedResult.Total, returnedPagedResultVm.Total);
@@ -184,14 +184,14 @@ namespace WebApi.Tests.Controllers
         public async Task DeleteAsyncShouldReturnNoContentWhenOperationSuccess()
         {
             // Arrange
-            var squadId = _fixture.Create<int>();
+            int squadId = _fixture.Create<int>();
             _squadServiceMock.Setup(s => s.DeleteAsync(squadId)).ReturnsAsync(OperationResult.Complete(SquadResources.SquadSuccessfullyDeleted));
 
             // Act
-            var result = await _controller.DeleteAsync(squadId);
+            IActionResult result = await _controller.DeleteAsync(squadId);
 
             // Assert
-            var noContentResult = Assert.IsType<NoContentResult>(result);
+            NoContentResult noContentResult = Assert.IsType<NoContentResult>(result);
             Assert.Equal(204, noContentResult.StatusCode);
         }
 
@@ -203,7 +203,7 @@ namespace WebApi.Tests.Controllers
             Type expectedResultType)
         {
             // Arrange
-            var squadId = _fixture.Create<int>();
+            int squadId = _fixture.Create<int>();
 
             OperationResult operationResult = status switch
             {
@@ -215,7 +215,7 @@ namespace WebApi.Tests.Controllers
             _squadServiceMock.Setup(s => s.DeleteAsync(squadId)).ReturnsAsync(operationResult);
 
             // Act
-            var result = await _controller.DeleteAsync(squadId);
+            IActionResult result = await _controller.DeleteAsync(squadId);
 
             // Assert
             Assert.IsType(expectedResultType, result);
@@ -224,7 +224,7 @@ namespace WebApi.Tests.Controllers
         public void SquadVmShouldHaveNameProperty()
         {
             // Arrange
-            var squadVm = new SquadVm
+            SquadVm squadVm = new()
             {
                 // Act
                 Name = "Test Squad"
@@ -238,9 +238,9 @@ namespace WebApi.Tests.Controllers
         public void SquadDtoShouldSetAndGetPropertiesCorrectly()
         {
             // Arrange
-            var squadDto = new SquadDto();
-            var expectedName = "Test Squad";
-            var expectedDescription = "Test Description";
+            SquadDto squadDto = new();
+            string expectedName = "Test Squad";
+            string expectedDescription = "Test Description";
 
             // Act
 
@@ -255,16 +255,16 @@ namespace WebApi.Tests.Controllers
         public async Task CreateAsyncReturnsBadRequestWhenSquadDtoIsNull()
         {
             // Arrange
-            var squadServiceMock = new Mock<ISquadService>();
-            var mapperMock = new Mock<IMapper>();
-            var localizerFactoryMock = new Mock<IStringLocalizerFactory>();
-            var controller = new SquadController(squadServiceMock.Object, mapperMock.Object, localizerFactoryMock.Object);
+            Mock<ISquadService> squadServiceMock = new();
+            Mock<IMapper> mapperMock = new();
+            Mock<IStringLocalizerFactory> localizerFactoryMock = new();
+            SquadController controller = new(squadServiceMock.Object, mapperMock.Object, localizerFactoryMock.Object);
 
             // Act
-            var result = await controller.CreateAsync(null!);
+            IActionResult result = await controller.CreateAsync(null!);
 
             // Assert
-            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            BadRequestObjectResult badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
             Assert.Equal("O objeto SquadDto não pode ser nulo.", badRequestResult.Value);
         }
 
@@ -272,16 +272,16 @@ namespace WebApi.Tests.Controllers
         public async Task UpdateAsyncReturnsBadRequestWhenSquadDtoIsNull()
         {
             // Arrange
-            var squadServiceMock = new Mock<ISquadService>();
-            var mapperMock = new Mock<IMapper>();
-            var localizerFactoryMock = new Mock<IStringLocalizerFactory>();
-            var controller = new SquadController(squadServiceMock.Object, mapperMock.Object, localizerFactoryMock.Object);
+            Mock<ISquadService> squadServiceMock = new();
+            Mock<IMapper> mapperMock = new();
+            Mock<IStringLocalizerFactory> localizerFactoryMock = new();
+            SquadController controller = new(squadServiceMock.Object, mapperMock.Object, localizerFactoryMock.Object);
 
             // Act
-            var result = await controller.UpdateAsync(1, null!);
+            IActionResult result = await controller.UpdateAsync(1, null!);
 
             // Assert
-            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            BadRequestObjectResult badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
             Assert.Equal("O objeto SquadDto não pode ser nulo.", badRequestResult.Value);
         }
 

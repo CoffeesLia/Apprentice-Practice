@@ -11,10 +11,10 @@ namespace Stellantis.ProjectName.WebApi
     {
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            var claims = Array.Empty<Claim>();
-            var identity = new ClaimsIdentity(claims, Scheme.Name);
-            var principal = new ClaimsPrincipal(identity);
-            var ticket = new AuthenticationTicket(principal, Scheme.Name);
+            Claim[] claims = [];
+            ClaimsIdentity identity = new(claims, Scheme.Name);
+            ClaimsPrincipal principal = new(identity);
+            AuthenticationTicket ticket = new(principal, Scheme.Name);
             return Task.FromResult(AuthenticateResult.Success(ticket));
         }
     }

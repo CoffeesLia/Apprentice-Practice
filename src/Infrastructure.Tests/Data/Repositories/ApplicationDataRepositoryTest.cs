@@ -17,7 +17,7 @@ namespace Infrastructure.Tests.Data.Repositories
 
         public ApplicationDataRepositoryTest()
         {
-            var options = new DbContextOptionsBuilder<Context>()
+            DbContextOptions<Context> options = new DbContextOptionsBuilder<Context>()
               .UseInMemoryDatabase(databaseName: _fixture.Create<string>())
              .Options;
             _context = new Context(options);
@@ -28,7 +28,7 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task GetListAsyncByAreaId()
         {
             // Arrange
-            var filter = new ApplicationFilter
+            ApplicationFilter filter = new()
             {
                 Page = 1,
                 PageSize = 10,
@@ -37,21 +37,21 @@ namespace Infrastructure.Tests.Data.Repositories
                 ConfigurationItem = "DefaultConfigItem"
             };
             const int Count = 10;
-            var applicationDataList = Enumerable.Range(1, Count).Select(i => new ApplicationData($"Name {i}")
+            List<ApplicationData> applicationDataList = [.. Enumerable.Range(1, Count).Select(i => new ApplicationData($"Name {i}")
             {
                 AreaId = filter.AreaId,
                 ProductOwner = "DefaultOwner",
                 ConfigurationItem = "DefaultConfigItem"
-            }).ToList();
+            })];
 
             await _context.Set<ApplicationData>().AddRangeAsync(applicationDataList);
             await _context.SaveChangesAsync();
 
-            var addedData = await _context.Set<ApplicationData>().Where(x => x.AreaId == filter.AreaId).ToListAsync();
+            List<ApplicationData> addedData = await _context.Set<ApplicationData>().Where(x => x.AreaId == filter.AreaId).ToListAsync();
             Assert.Equal(Count, addedData.Count);
 
             // Act
-            var list = await _repository.GetListAsync(filter);
+            PagedResult<ApplicationData> list = await _repository.GetListAsync(filter);
 
             // Assert
             Assert.Equal(Count, list.Total);
@@ -62,7 +62,7 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task GetListAsyncByName()
         {
             // Arrange
-            var filter = new ApplicationFilter
+            ApplicationFilter filter = new()
             {
                 Page = 1,
                 Name = _fixture.Create<string>(),
@@ -70,7 +70,7 @@ namespace Infrastructure.Tests.Data.Repositories
                 ConfigurationItem = "DefaultConfigItem"
             };
             const int Count = 10;
-            var applicationDataList = _fixture
+            IEnumerable<ApplicationData> applicationDataList = _fixture
                 .Build<ApplicationData>()
                 .With(x => x.Name, filter.Name)
                 .With(x => x.ProductOwner, filter.ProductOwner)
@@ -88,7 +88,7 @@ namespace Infrastructure.Tests.Data.Repositories
             await _context.SaveChangesAsync();
 
             // Act
-            var list = await _repository.GetListAsync(filter);
+            PagedResult<ApplicationData> list = await _repository.GetListAsync(filter);
 
             // Assert
             Assert.Equal(Count, list.Total);
@@ -98,12 +98,12 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task GetByIdAsyncShouldReturnEntity()
         {
             // Arrange
-            var entity = _fixture.Create<ApplicationData>();
+            ApplicationData entity = _fixture.Create<ApplicationData>();
             await _context.Set<ApplicationData>().AddAsync(entity);
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _repository.GetByIdAsync(entity.Id);
+            ApplicationData? result = await _repository.GetByIdAsync(entity.Id);
 
             // Assert
             Assert.NotNull(result);
@@ -114,7 +114,7 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task DeleteAsyncShouldRemoveEntity()
         {
             // Arrange
-            var entity = _fixture.Create<ApplicationData>();
+            ApplicationData entity = _fixture.Create<ApplicationData>();
             await _context.Set<ApplicationData>().AddAsync(entity);
             await _context.SaveChangesAsync();
 
@@ -123,7 +123,7 @@ namespace Infrastructure.Tests.Data.Repositories
             await _context.SaveChangesAsync();
 
             // Assert
-            var result = await _context.Set<ApplicationData>().FindAsync(entity.Id);
+            ApplicationData? result = await _context.Set<ApplicationData>().FindAsync(entity.Id);
             Assert.Null(result);
         }
 
@@ -131,12 +131,12 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task IsApplicationNameUniqueAsyncShouldReturnFalseIfNameExists()
         {
             // Arrange
-            var entity = _fixture.Create<ApplicationData>();
+            ApplicationData entity = _fixture.Create<ApplicationData>();
             await _context.Set<ApplicationData>().AddAsync(entity);
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _repository.IsApplicationNameUniqueAsync(entity.Name ?? string.Empty);
+            bool result = await _repository.IsApplicationNameUniqueAsync(entity.Name ?? string.Empty);
 
 
             // Assert
@@ -147,12 +147,12 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task GetFullByIdAsyncShouldReturnEntityWithIncludes()
         {
             // Arrange
-            var entity = _fixture.Create<ApplicationData>();
+            ApplicationData entity = _fixture.Create<ApplicationData>();
             await _context.Set<ApplicationData>().AddAsync(entity);
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _repository.GetFullByIdAsync(entity.Id);
+            ApplicationData? result = await _repository.GetFullByIdAsync(entity.Id);
 
             // Assert
             Assert.NotNull(result);
@@ -164,7 +164,7 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task GetListAsyncByAllCriteria()
         {
             // Arrange
-            var filter = new ApplicationFilter
+            ApplicationFilter filter = new()
             {
                 Page = 1,
                 PageSize = 10,
@@ -173,19 +173,19 @@ namespace Infrastructure.Tests.Data.Repositories
                 External = true
             };
             const int Count = 10;
-            var applicationDataList = Enumerable.Range(1, Count).Select(i => new ApplicationData($"Name {i}")
+            List<ApplicationData> applicationDataList = [.. Enumerable.Range(1, Count).Select(i => new ApplicationData($"Name {i}")
             {
                 AreaId = 1,
                 ProductOwner = filter.ProductOwner,
                 ConfigurationItem = filter.ConfigurationItem,
                 External = filter.External.Value
-            }).ToList();
+            })];
 
             await _context.Set<ApplicationData>().AddRangeAsync(applicationDataList);
             await _context.SaveChangesAsync();
 
             // Act
-            var list = await _repository.GetListAsync(filter);
+            PagedResult<ApplicationData> list = await _repository.GetListAsync(filter);
 
             // Assert
             Assert.Equal(Count, list.Total);
@@ -201,9 +201,9 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task IsResponsibleFromAreaShouldReturnTrueWhenResponsibleExistsInArea()
         {
             // Arrange
-            var areaId = 1;
-            var responsibleId = 1;
-            var responsible = new Responsible
+            int areaId = 1;
+            int responsibleId = 1;
+            Responsible responsible = new()
             {
                 Id = responsibleId,
                 AreaId = areaId,
@@ -216,7 +216,7 @@ namespace Infrastructure.Tests.Data.Repositories
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _repository.IsResponsibleFromArea(areaId, responsibleId);
+            bool result = await _repository.IsResponsibleFromArea(areaId, responsibleId);
 
             // Assert
             Assert.True(result);
@@ -227,11 +227,11 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task IsResponsibleFromAreaShouldReturnFalseWhenResponsibleDoesNotExist()
         {
             // Arrange
-            var areaId = 1;
-            var responsibleId = 1;
+            int areaId = 1;
+            int responsibleId = 1;
 
             // Act
-            var result = await _repository.IsResponsibleFromArea(areaId, responsibleId);
+            bool result = await _repository.IsResponsibleFromArea(areaId, responsibleId);
 
             // Assert
             Assert.False(result);

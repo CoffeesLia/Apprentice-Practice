@@ -16,7 +16,7 @@ namespace Infrastructure.Tests.Data.Repositories
 
         public IntegrationRepositoryTests()
         {
-            var options = new DbContextOptionsBuilder<Context>()
+            DbContextOptions<Context> options = new DbContextOptionsBuilder<Context>()
                 .UseInMemoryDatabase(databaseName: _fixture.Create<string>())
                 .Options;
             _context = new Context(options);
@@ -28,11 +28,11 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task GetByIdAsyncWhenIdExists()
         {
             // Arrange
-            var integration = _fixture.Create<Integration>();
+            Integration integration = _fixture.Create<Integration>();
             await _context.Set<Integration>().AddAsync(integration);
             await _context.SaveChangesAsync();
             // Act
-            var result = await _repository.GetByIdAsync(integration.Id);
+            Integration? result = await _repository.GetByIdAsync(integration.Id);
             // Assert
             Assert.NotNull(result);
             Assert.Equal(integration.Id, result.Id);
@@ -42,9 +42,9 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task GetByIdAsyncWhenIdDoesNotExist()
         {
             // Arrange
-            var id = _fixture.Create<int>();
+            int id = _fixture.Create<int>();
             // Act
-            var result = await _repository.GetByIdAsync(id);
+            Integration? result = await _repository.GetByIdAsync(id);
             // Assert
             Assert.Null(result);
         }
@@ -53,13 +53,13 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task DeleteAsyncWhenCalled()
         {
             // Arrange
-            var integration = _fixture.Create<Integration>();
+            Integration integration = _fixture.Create<Integration>();
             await _context.Set<Integration>().AddAsync(integration);
             await _context.SaveChangesAsync();
             // Act
             await _repository.DeleteAsync(integration.Id);
             // Assert
-            var result = await _context.Set<Integration>().FindAsync(integration.Id);
+            Integration? result = await _context.Set<Integration>().FindAsync(integration.Id);
             Assert.Null(result);
         }
 
@@ -67,11 +67,11 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task CreateAsyncWhenCalled()
         {
             // Arrange
-            var integration = _fixture.Create<Integration>();
+            Integration integration = _fixture.Create<Integration>();
             // Act
             await _repository.CreateAsync(integration);
             // Assert
-            var result = await _context.Set<Integration>().FindAsync(integration.Id);
+            Integration? result = await _context.Set<Integration>().FindAsync(integration.Id);
             Assert.NotNull(result);
             Assert.Equal(integration.Name, result.Name);
         }
@@ -79,12 +79,12 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task GetListAsyncReturnFilterName()
         {
             // Arrange
-            var integration = _fixture.Create<Integration>();
+            Integration integration = _fixture.Create<Integration>();
             await _context.Set<Integration>().AddAsync(integration);
             await _context.SaveChangesAsync();
-            var filter = new IntegrationFilter { Name = integration.Name, Page = 1, PageSize = 10, ApplicationData = integration.ApplicationData };
+            IntegrationFilter filter = new() { Name = integration.Name, Page = 1, PageSize = 10, ApplicationData = integration.ApplicationData };
             // Act
-            var result = await _repository.GetListAsync(filter);
+            PagedResult<Integration> result = await _repository.GetListAsync(filter);
             // Assert
             Assert.NotNull(result);
             Assert.NotEmpty(result.Result);
@@ -93,12 +93,12 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task GetListAsyncWhenCalled()
         {
             // Arrange
-            var integration = _fixture.Create<Integration>();
+            Integration integration = _fixture.Create<Integration>();
             await _context.Set<Integration>().AddAsync(integration);
             await _context.SaveChangesAsync();
-            var filter = new IntegrationFilter { Page = 1, PageSize = 10, Name = null, ApplicationData = null! };
+            IntegrationFilter filter = new() { Page = 1, PageSize = 10, Name = null, ApplicationData = null! };
             // Act
-            var result = await _repository.GetListAsync(filter);
+            PagedResult<Integration> result = await _repository.GetListAsync(filter);
             // Assert
             Assert.NotNull(result);
             Assert.NotEmpty(result.Result);
@@ -108,14 +108,14 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task UpdateAsyncWhenCalled()
         {
             // Arrange
-            var integration = _fixture.Create<Integration>();
+            Integration integration = _fixture.Create<Integration>();
             await _context.Set<Integration>().AddAsync(integration);
             await _context.SaveChangesAsync();
             integration.Name = "Updated Name";
             // Act
             await _repository.UpdateAsync(integration);
             // Assert
-            var result = await _context.Set<Integration>().FindAsync(integration.Id);
+            Integration? result = await _context.Set<Integration>().FindAsync(integration.Id);
             Assert.NotNull(result);
             Assert.Equal("Updated Name", result.Name);
         }

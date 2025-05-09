@@ -150,17 +150,17 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task VerifyServiceExistsAsyncShouldReturnTrueWhenServiceExistsWithValidId()
         {
             // Arrange
-            var Id = 1;
+            var id = 1;
             var servicesData = new List<ServiceData>
             {
-                new() { Id = Id = 1, Name = "Test Service" }
+                new() { Id = id, Name = "Test Service" }
             };
 
             var dbSetMock = CreateMockDbSet(servicesData);
             _contextMock.Setup(c => c.Set<ServiceData>()).Returns(dbSetMock.Object);
 
             // Act
-            var result = await _repository.VerifyServiceExistsAsync(Id);
+            var result = await _repository.VerifyServiceExistsAsync(id);
 
             // Assert
             Assert.True(result);

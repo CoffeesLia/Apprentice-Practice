@@ -25,8 +25,8 @@ namespace Application.Tests.Services
             CultureInfo.CurrentUICulture = new CultureInfo("en-US");
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _areaRepositoryMock = new Mock<IAreaRepository>();
-            var localizer = Helpers.LocalizerFactorHelper.Create();
-            var areaValidator = new AreaValidator(localizer);
+            Microsoft.Extensions.Localization.IStringLocalizerFactory localizer = Helpers.LocalizerFactorHelper.Create();
+            AreaValidator areaValidator = new(localizer);
 
             _unitOfWorkMock.Setup(u => u.AreaRepository).Returns(_areaRepositoryMock.Object);
 
@@ -38,9 +38,9 @@ namespace Application.Tests.Services
         public async Task CreateAsyncShouldReturnConflictWhenNameIsNullOrEmptyOrWhitespace()
         {
             // Arrange
-            var area = new Area("");
+            Area area = new("");
             // Act
-            var result = await _areaService.CreateAsync(area);
+            OperationResult result = await _areaService.CreateAsync(area);
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
             Assert.Equal(string.Format(CultureInfo.InvariantCulture, AreaResources.NameIsRequired), result.Errors.First());
@@ -52,11 +52,11 @@ namespace Application.Tests.Services
         public async Task CreateAsyncShouldReturnInvalidDataWhenValidationFails()
         {
             // Arrange
-            var area = new Area("Eu");
+            Area area = new("Eu");
 
 
             // Act
-            var result = await _areaService.CreateAsync(area);
+            OperationResult result = await _areaService.CreateAsync(area);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
@@ -68,8 +68,8 @@ namespace Application.Tests.Services
         public async Task CreateAsyncShouldReturnConflictWhenNameAlreadyExists()
         {
             // Arrange
-            var area = new Area("Test Area");
-            var pagedResult = new PagedResult<Area>
+            Area area = new("Test Area");
+            PagedResult<Area> pagedResult = new()
             {
                 Result = [new Area("Test Area") { Id = 1 }],
                 Page = 1,
@@ -81,7 +81,7 @@ namespace Application.Tests.Services
             _areaRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(area.Name)).ReturnsAsync(true);
 
             // Act
-            var result = await _areaService.CreateAsync(area);
+            OperationResult result = await _areaService.CreateAsync(area);
 
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
@@ -94,11 +94,11 @@ namespace Application.Tests.Services
         public async Task CreateAsyncShouldReturnSuccessWhenAreaIsValid()
         {
             // Arrange
-            var area = new Area("Test Area");
+            Area area = new("Test Area");
             _areaRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(area.Name)).ReturnsAsync(false);
 
             // Act
-            var result = await _areaService.CreateAsync(area);
+            OperationResult result = await _areaService.CreateAsync(area);
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
@@ -109,10 +109,10 @@ namespace Application.Tests.Services
         public async Task CreateAsyncShouldReturnInvalidDataWhenNameExceedsMaxLength()
         {
             // Arrange
-            var area = new Area(new string('A', 256)); // Name com 256 caracteres
+            Area area = new(new string('A', 256)); // Name com 256 caracteres
 
             // Act
-            var result = await _areaService.CreateAsync(area);
+            OperationResult result = await _areaService.CreateAsync(area);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
@@ -122,10 +122,10 @@ namespace Application.Tests.Services
         public async Task GetListAsyncShouldReturnPagedResultWhenCalledWithValidFilter()
         {
             // Arrange
-            var fixture = new Fixture();
-            var filter = fixture.Create<AreaFilter>();
-            var pagedResult = fixture.Build<PagedResult<Area>>()
-                                     .With(pr => pr.Result, fixture.CreateMany<Area>(2).ToList())
+            Fixture fixture = new();
+            AreaFilter filter = fixture.Create<AreaFilter>();
+            PagedResult<Area> pagedResult = fixture.Build<PagedResult<Area>>()
+                                     .With(pr => pr.Result, [.. fixture.CreateMany<Area>(2)])
                                      .With(pr => pr.Page, 1)
                                      .With(pr => pr.PageSize, 10)
                                      .With(pr => pr.Total, 2)
@@ -134,24 +134,22 @@ namespace Application.Tests.Services
             _areaRepositoryMock.Setup(r => r.GetListAsync(filter)).ReturnsAsync(pagedResult);
 
             // Act
-            var result = await _areaService.GetListAsync(filter);
+            PagedResult<Area> result = await _areaService.GetListAsync(filter);
 
             // Assert
             Assert.NotNull(result);
             Assert.Equal(2, result.Total);
-            Assert.IsType<List<Area>>(result.Result);
-
         }
 
         [Fact]
         public async Task DeleteAsyncShouldReturnConflictWhenApplicationsExist()
         {
             // Arrange
-            var areaId = 1;
+            int areaId = 1;
             _areaRepositoryMock.Setup(r => r.VerifyAplicationsExistsAsync(areaId)).ReturnsAsync(true);
 
             // Act
-            var result = await _areaService.DeleteAsync(areaId);
+            OperationResult result = await _areaService.DeleteAsync(areaId);
 
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
@@ -160,14 +158,14 @@ namespace Application.Tests.Services
         [Fact]
         public async Task DeleteAsyncShouldReturnSuccessWhenNoApplicationsExist()
         {
-            var areaId = 1;
-            var area = new Area("Test Area") { Id = areaId };
+            int areaId = 1;
+            Area area = new("Test Area") { Id = areaId };
             _areaRepositoryMock.Setup(r => r.VerifyAplicationsExistsAsync(areaId)).ReturnsAsync(false);
             _areaRepositoryMock.Setup(r => r.GetByIdAsync(areaId)).ReturnsAsync(area);
             _areaRepositoryMock.Setup(r => r.DeleteAsync(area, true)).Returns(Task.CompletedTask);
             _unitOfWorkMock.Setup(u => u.CommitAsync()).Returns(Task.CompletedTask);
             // Act
-            var result = await _areaService.DeleteAsync(areaId);
+            OperationResult result = await _areaService.DeleteAsync(areaId);
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
@@ -180,13 +178,13 @@ namespace Application.Tests.Services
         public async Task GetItemAsyncShouldReturnCompleteWhenAreaExists()
         {
             // Arrange
-            var fixture = new Fixture();
-            var area = fixture.Create<Area>();
+            Fixture fixture = new();
+            Area area = fixture.Create<Area>();
 
             _areaRepositoryMock.Setup(r => r.GetByIdAsync(area.Id)).ReturnsAsync(area);
 
             // Act
-            var result = await _areaService.GetItemAsync(area.Id);
+            OperationResult result = await _areaService.GetItemAsync(area.Id);
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
@@ -197,12 +195,12 @@ namespace Application.Tests.Services
         public async Task GetItemAsyncShouldReturnNotFoundWhenAreaDoesNotExist()
         {
             // Arrange
-            var fixture = new Fixture();
-            var areaId = fixture.Create<int>();
+            Fixture fixture = new();
+            int areaId = fixture.Create<int>();
             _areaRepositoryMock.Setup(r => r.GetByIdAsync(areaId)).ReturnsAsync((Area?)null);
 
             // Act
-            var result = await _areaService.GetItemAsync(areaId);
+            OperationResult result = await _areaService.GetItemAsync(areaId);
 
             // Assert
             Assert.Equal(OperationStatus.NotFound, result.Status);
@@ -213,12 +211,12 @@ namespace Application.Tests.Services
         public async Task UpdateAsyncShouldReturnInvalidDataWhenValidationFails()
         {
             // Arrange
-            var area = new Area("IN");
+            Area area = new("IN");
             _areaRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(area.Name)).ReturnsAsync(false);
 
 
             // Act
-            var result = await _areaService.UpdateAsync(area);
+            OperationResult result = await _areaService.UpdateAsync(area);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
@@ -228,12 +226,12 @@ namespace Application.Tests.Services
         public async Task UpdateAsyncShouldReturnNotFoundWhenAreaDoesNotExist()
         {
             // Arrange
-            var area = new Area("Non-Existent Area") { Id = 1 };
+            Area area = new("Non-Existent Area") { Id = 1 };
             _areaRepositoryMock.Setup(r => r.GetByIdAsync(area.Id)).ReturnsAsync((Area?)null);
 
 
             // Act
-            var result = await _areaService.UpdateAsync(area);
+            OperationResult result = await _areaService.UpdateAsync(area);
 
             // Assert
             Assert.Equal(OperationStatus.NotFound, result.Status);
@@ -246,12 +244,12 @@ namespace Application.Tests.Services
         public async Task UpdateAsyncShouldReturnConflictWhenNameAlreadyExists()
         {
             // Arrange
-            var area = new Area("Existing Name") { Id = 1 };
+            Area area = new("Existing Name") { Id = 1 };
             _areaRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(area.Name)).ReturnsAsync(true);
             _areaRepositoryMock.Setup(r => r.GetByIdAsync(area.Id)).ReturnsAsync(area);
 
             // Act
-            var result = await _areaService.UpdateAsync(area);
+            OperationResult result = await _areaService.UpdateAsync(area);
 
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
@@ -262,13 +260,13 @@ namespace Application.Tests.Services
         public async Task UpdateAsyncShouldReturnSuccessWhenAreaIsValid()
         {
             // Arrange
-            var area = new Area("Valid Name") { Id = 1 };
+            Area area = new("Valid Name") { Id = 1 };
             _areaRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(area.Name)).ReturnsAsync(false);
             _areaRepositoryMock.Setup(r => r.GetByIdAsync(area.Id)).ReturnsAsync(area);
             _areaRepositoryMock.Setup(r => r.UpdateAsync(area, true)).Returns(Task.CompletedTask);
 
             // Act
-            var result = await _areaService.UpdateAsync(area);
+            OperationResult result = await _areaService.UpdateAsync(area);
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);

@@ -12,9 +12,7 @@
 
         public override bool Equals(object? obj)
         {
-            if (obj is ErrorResponse errorResponse)
-                return Error == errorResponse.Error && Message == errorResponse.Message;
-            return false;
+            return obj is ErrorResponse errorResponse && Error == errorResponse.Error && Message == errorResponse.Message;
         }
 
         public override int GetHashCode()

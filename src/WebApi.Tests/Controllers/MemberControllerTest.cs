@@ -7,7 +7,6 @@ using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Controllers;
 using Stellantis.ProjectName.WebApi.Dto;
-using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.Mapper;
 using Stellantis.ProjectName.WebApi.ViewModels;
 using WebApi.Tests.Helpers;
@@ -22,9 +21,9 @@ namespace WebApi.Tests.Controllers
         public MemberControllerTest()
         {
             _serviceMock = new Mock<IMemberService>();
-            var mapperConfiguration = new MapperConfiguration(x => { x.AddProfile<AutoMapperProfile>(); });
-            var mapper = mapperConfiguration.CreateMapper();
-            var localizerFactor = LocalizerFactorHelper.Create();
+            MapperConfiguration mapperConfiguration = new(x => { x.AddProfile<AutoMapperProfile>(); });
+            IMapper mapper = mapperConfiguration.CreateMapper();
+            Microsoft.Extensions.Localization.IStringLocalizerFactory localizerFactor = LocalizerFactorHelper.Create();
             _controller = new MemberController(_serviceMock.Object, mapper, localizerFactor);
         }
 
@@ -32,36 +31,18 @@ namespace WebApi.Tests.Controllers
         public async Task CreateAsyncShouldReturnCreatedAtActionResultWhenMemberIsValid()
         {
             // Arrange
-            var memberDto = new MemberDto
+            MemberDto memberDto = new()
             {
                 Name = "Valid Name",
                 Role = "Valid Role",
                 Email = "valid@example.com",
                 Cost = 100
             };
-            var member = new Member
-            {
-                Name = "Valid Name",
-                Role = "Valid Role",
-                Email = "valid@example.com",
-                Cost = 100
 
-            };
-            var memberVm = new MemberVm
-            {
-                Name = "Valid Name",
-                Role = "Valid Role",
-                Email = "valid@example.com",
-                Cost = 100
-
-            };
-
-            var mapperConfiguration = new MapperConfiguration(x => { x.AddProfile<AutoMapperProfile>(); });
-            var mapper = mapperConfiguration.CreateMapper();
             _serviceMock.Setup(s => s.CreateAsync(It.IsAny<Member>())).ReturnsAsync(OperationResult.Complete());
 
             // Act
-            var result = await _controller.CreateAsync(memberDto);
+            IActionResult result = await _controller.CreateAsync(memberDto);
 
             // Assert
             Assert.IsType<CreatedAtActionResult>(result);
@@ -71,8 +52,8 @@ namespace WebApi.Tests.Controllers
         public async Task GetAsyncShouldReturnMemberVmWhenMemberExists()
         {
             // Arrange
-            var memberId = 1;
-            var member = new Member
+            int memberId = 1;
+            Member member = new()
             {
                 Id = memberId,
                 Name = "Test Member",
@@ -80,7 +61,7 @@ namespace WebApi.Tests.Controllers
                 Email = "test@example.com",
                 Cost = 100
             };
-            var memberVm = new MemberVm
+            MemberVm memberVm = new()
             {
                 Id = memberId,
                 Name = "Test Member",
@@ -91,18 +72,16 @@ namespace WebApi.Tests.Controllers
             };
 
             _serviceMock.Setup(s => s.GetItemAsync(memberId)).ReturnsAsync(member);
-            var mapperConfiguration = new MapperConfiguration(x => { x.AddProfile<AutoMapperProfile>(); });
-            var mapper = mapperConfiguration.CreateMapper();
 
             // Act
-            var result = await _controller.GetAsync(memberId);
+            ActionResult<MemberVm> result = await _controller.GetAsync(memberId);
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            OkObjectResult okResult = Assert.IsType<OkObjectResult>(result.Result);
             Assert.Equal(200, okResult.StatusCode);
 
             // comporação
-            var actualMemberVm = Assert.IsType<MemberVm>(okResult.Value);
+            MemberVm actualMemberVm = Assert.IsType<MemberVm>(okResult.Value);
             Assert.Equal(memberVm.Id, actualMemberVm.Id);
             Assert.Equal(memberVm.Name, actualMemberVm.Name);
             Assert.Equal(memberVm.Role, actualMemberVm.Role);
@@ -114,31 +93,22 @@ namespace WebApi.Tests.Controllers
         public async Task GetAsyncShouldReturnNotFoundWhenMemberDoesNotExist()
         {
             // Arrange
-            var memberId = 1;
+            int memberId = 1;
 
             _serviceMock.Setup(s => s.GetItemAsync(memberId)).ReturnsAsync((Member?)null);
 
             // Act
-            var result = await _controller.GetAsync(memberId);
+            ActionResult<MemberVm> result = await _controller.GetAsync(memberId);
 
             // Assert
             Assert.IsType<NotFoundResult>(result.Result);
         }
 
         [Fact]
-        public async Task GetListAsyncShouldReturnPagedResultWhenCalledWithValidFilter()
+        public void GetListAsyncShouldReturnPagedResultWhenCalledWithValidFilter()
         {
             // Arrange
-            var filterDto = new MemberFilterDto
-            {
-                Name = "Test Name",
-                Role = "Test Role",
-                Email = "test@example.com",
-                Cost = 100,
-                Page = 1,
-                PageSize = 10
-            };
-            var filter = new MemberFilter
+            MemberFilter filter = new()
             {
                 Name = "Test Name",
                 Role = "Test Role",
@@ -146,7 +116,7 @@ namespace WebApi.Tests.Controllers
                 Cost = 100
 
             };
-            var pagedResult = new PagedResult<Member>
+            PagedResult<Member> pagedResult = new()
             {
                 Result =
                 [
@@ -162,30 +132,12 @@ namespace WebApi.Tests.Controllers
                 PageSize = 10,
                 Total = 1
             };
-            var pagedVmResult = new PagedResultVm<MemberVm>
-            {
-                Result =
-                [
-                    new MemberVm
-                    {
-                        Name = "Test Name",
-                        Role = "Test Role",
-                        Email = "test@example.com",
-                        Cost = 100
-
-                    }
-                ],
-                Page = 1,
-                PageSize = 10,
-                Total = 1
-            };
-
             _serviceMock.Setup(s => s.GetListAsync(filter)).ReturnsAsync(pagedResult);
-            var config = new MapperConfiguration(cfg => cfg.AddProfile<AutoMapperProfile>());
-            var mapper = config.CreateMapper();
+            MapperConfiguration config = new(cfg => cfg.AddProfile<AutoMapperProfile>());
+            IMapper mapper = config.CreateMapper();
 
             // Act
-            var mappedResult = mapper.Map<PagedResultVm<MemberVm>>(pagedResult);
+            PagedResultVm<MemberVm> mappedResult = mapper.Map<PagedResultVm<MemberVm>>(pagedResult);
 
             // Assert
             Assert.NotNull(mappedResult);
@@ -201,41 +153,20 @@ namespace WebApi.Tests.Controllers
         public async Task UpdateAsyncShouldReturnOkResultWhenMemberIsValid()
         {
             // Arrange
-            var memberDto = new MemberDto
+            MemberDto memberDto = new()
             {
                 Name = "Valid Name",
                 Role = "Valid Role",
                 Email = "valid@example.com",
                 Cost = 100
             };
-            var memberVm = new MemberVm
-            {
-                Id = 1,
-                Name = "Valid Name",
-                Role = "Valid Role",
-                Email = "valid@example.com",
-                Cost = 100
-            };
-
-            var member = new Member
-            {
-                Id = 1,
-                Name = "Valid Name",
-                Role = "Valid Role",
-                Email = "valid@example.com",
-                Cost = 100
-            };
-
-            var mapperConfiguration = new MapperConfiguration(cfg => { cfg.AddProfile<AutoMapperProfile>(); });
-            var mapper = mapperConfiguration.CreateMapper();
-
             _serviceMock.Setup(s => s.UpdateAsync(It.IsAny<Member>())).ReturnsAsync(OperationResult.Complete());
 
             // Act
-            var result = await _controller.UpdateAsync(1, memberDto);
+            IActionResult result = await _controller.UpdateAsync(1, memberDto);
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
+            OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(200, okResult.StatusCode);
         }
 
@@ -247,7 +178,7 @@ namespace WebApi.Tests.Controllers
             _serviceMock.Setup(service => service.DeleteAsync(memberId)).ReturnsAsync(OperationResult.Complete());
 
             // Act
-            var result = await _controller.DeleteAsync(memberId);
+            IActionResult result = await _controller.DeleteAsync(memberId);
 
             // Assert
             Assert.IsType<NoContentResult>(result);

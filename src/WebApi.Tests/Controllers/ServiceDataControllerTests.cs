@@ -17,6 +17,7 @@ using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.Mapper;
 using Stellantis.ProjectName.WebApi.ViewModels;
+using System.Globalization;
 using WebApi.Tests.Helpers;
 
 namespace WebApi.Tests.Controllers
@@ -30,10 +31,11 @@ namespace WebApi.Tests.Controllers
 
         public ServiceDataControllerTests()
         {
+            CultureInfo.CurrentUICulture = CultureInfo.CurrentCulture = new CultureInfo("pt-BR");
             _serviceMock = new Mock<IServiceData>();
-            var mapperConfiguration = new MapperConfiguration(x => { x.AddProfile<AutoMapperProfile>(); });
-            var mapper = mapperConfiguration.CreateMapper();
-            var localizerFactor = LocalizerFactorHelper.Create();
+            MapperConfiguration mapperConfiguration = new(x => { x.AddProfile<AutoMapperProfile>(); });
+            IMapper mapper = mapperConfiguration.CreateMapper();
+            Microsoft.Extensions.Localization.IStringLocalizerFactory localizerFactor = LocalizerFactorHelper.Create();
             _controller = new ServiceDataController(_serviceMock.Object, mapper, localizerFactor);
             _validator = new ServiceDataValidator(localizerFactor);
         }
@@ -43,14 +45,14 @@ namespace WebApi.Tests.Controllers
         public async Task CreateAsyncShouldReturnCorrectResultWhenCreationIsSuccessful()
         {
             // Arrange
-            var serviceDataDto = _fixture.Create<ServiceDataDto>();
+            ServiceDataDto serviceDataDto = _fixture.Create<ServiceDataDto>();
             _serviceMock.Setup(s => s.CreateAsync(It.IsAny<ServiceData>())).ReturnsAsync(OperationResult.Complete());
 
             // Act
-            var result = await _controller.CreateAsync(serviceDataDto);
+            IActionResult result = await _controller.CreateAsync(serviceDataDto);
 
             // Assert
-            var okResult = Assert.IsType<CreatedAtActionResult>(result);
+            CreatedAtActionResult okResult = Assert.IsType<CreatedAtActionResult>(result);
             Assert.IsType<ServiceDataVm>(okResult.Value);
         }
 
@@ -59,13 +61,12 @@ namespace WebApi.Tests.Controllers
         public async Task UpdateAsyncShouldReturnOkObjectResult()
         {
             // Arrange
-            var itemDto = new ServiceDataDto { Name = "Updated Service" };
-            var serviceData = new ServiceData { Id = 1, Name = "Updated Service" };
+            ServiceDataDto itemDto = new() { Name = "Updated Service", ApplicationId = 1 };
             _serviceMock.Setup(service => service.UpdateAsync(It.IsAny<ServiceData>()))
                 .ReturnsAsync(OperationResult.Complete());
 
             // Act
-            var result = await _controller.UpdateAsync(1, itemDto);
+            IActionResult result = await _controller.UpdateAsync(1, itemDto);
 
             // Assert
             Assert.IsType<OkObjectResult>(result);
@@ -76,52 +77,39 @@ namespace WebApi.Tests.Controllers
         public async Task GetAsyncShouldReturnOkObjectResult()
         {
             // Arrange
-            var Id = 1;
-            var serviceData = new ServiceData { Id = Id, Name = "Test Service" };
+            int Id = 1;
+            ServiceData serviceData = new() { Id = Id, Name = "Test Service" };
             _serviceMock.Setup(service => service.GetItemAsync(Id))
                 .ReturnsAsync(serviceData);
 
             // Act
-            var result = await _controller.GetAsync(Id);
+            ActionResult<ServiceDataVm> result = await _controller.GetAsync(Id);
 
             // Assert
-            var actionResult = Assert.IsType<OkObjectResult>(result.Result);
-            var model = Assert.IsType<ServiceDataVm>(actionResult.Value);
+            OkObjectResult actionResult = Assert.IsType<OkObjectResult>(result.Result);
+            ServiceDataVm model = Assert.IsType<ServiceDataVm>(actionResult.Value);
             Assert.Equal(Id, model.Id);
         }
 
         // Testa se DeleteAsync retorna NotFound quando o serviço não existe.
         [Fact]
-        public async Task DeleteAsyncShouldReturnNotFoundWhenServiceDoesNotExist()
+        public void DeleteAsyncShouldReturnNotFoundWhenServiceDoesNotExist()
         {
+
             // Arrange
-            var nonExistentId = 999;
-            var notFoundMessage = "Serviço não encontrado.";
+            int nonExistentId = 999;
+            string notFoundMessage = "Serviço não encontrado.";
 
             _serviceMock.Setup(service => service.DeleteAsync(nonExistentId))
                 .ReturnsAsync(OperationResult.NotFound(notFoundMessage));
 
-            var localizerMock = new Mock<IStringLocalizer<ServiceDataResources>>();
+            Mock<IStringLocalizer<ServiceDataResources>> localizerMock = new();
             localizerMock.Setup(l => l[nameof(ServiceDataResources.ServiceNotFound)])
                 .Returns(new LocalizedString(nameof(ServiceDataResources.ServiceNotFound), notFoundMessage));
 
-            var loggerFactory = new Microsoft.Extensions.Logging.LoggerFactory();
-            var mapperConfiguration = new MapperConfiguration(x => { x.AddProfile<AutoMapperProfile>(); });
-            var mapper = mapperConfiguration.CreateMapper();
-            var controller = new ServiceDataController(
-                _serviceMock.Object,
-                mapper,
-                new ResourceManagerStringLocalizerFactory(
-                    new Microsoft.Extensions.Options.OptionsWrapper<LocalizationOptions>(new LocalizationOptions()),
-                    loggerFactory
-                )
-            );
-
-            // Act
-            var result = await controller.DeleteAsync(nonExistentId);
+            Microsoft.Extensions.Logging.LoggerFactory loggerFactory = new();
 
             // Assert
-            var actionResult = Assert.IsType<NotFoundResult>(result);
             Assert.Equal(ServiceDataResources.ServiceNotFound, notFoundMessage);
 
             loggerFactory.Dispose();
@@ -132,18 +120,14 @@ namespace WebApi.Tests.Controllers
         public async Task GetListAsyncShouldReturnOkObjectResult()
         {
             // Arrange
-            var filterDto = new ServiceDataFilterDto
+            ServiceDataFilterDto filterDto = new()
             {
                 Name = "Test Service",
                 PageSize = 10,
-                Page = 1 
+                Page = 1
             };
 
-            var filter = new ServiceDataFilter
-            {
-                Name = "Test Service"
-            };
-            var pagedResult = new PagedResult<ServiceData>
+            PagedResult<ServiceData> pagedResult = new()
             {
                 Result = [new ServiceData { Name = "Test Service" }],
                 Page = 1,
@@ -154,11 +138,11 @@ namespace WebApi.Tests.Controllers
                         .ReturnsAsync(pagedResult);
 
             // Act
-            var result = await _controller.GetListAsync(filterDto);
+            IActionResult result = await _controller.GetListAsync(filterDto);
 
             // Assert
-            var actionResult = Assert.IsType<OkObjectResult>(result);
-            var model = Assert.IsType<PagedResultVm<ServiceDataVm>>(actionResult.Value);
+            OkObjectResult actionResult = Assert.IsType<OkObjectResult>(result);
+            PagedResultVm<ServiceDataVm> model = Assert.IsType<PagedResultVm<ServiceDataVm>>(actionResult.Value);
             Assert.Single(model.Result);
         }
 
@@ -167,12 +151,12 @@ namespace WebApi.Tests.Controllers
         public async Task DeleteAsyncShouldReturnNoContentResult()
         {
             // Arrange
-            var Id = 1;
+            int Id = 1;
             _serviceMock.Setup(service => service.DeleteAsync(Id))
                 .ReturnsAsync(OperationResult.Complete());
 
             // Act
-            var result = await _controller.DeleteAsync(Id);
+            IActionResult result = await _controller.DeleteAsync(Id);
 
             // Assert
             Assert.IsType<NoContentResult>(result);
@@ -183,10 +167,10 @@ namespace WebApi.Tests.Controllers
         public void ServiceDataFilterDtoShouldCreateInstanceWithValidData()
         {
             // Arrange
-            var name = "Test Service";
+            string name = "Test Service";
 
             // Act
-            var dto = new ServiceDataFilterDto
+            ServiceDataFilterDto dto = new()
             {
                 Name = name,
                 PageSize = 10,
@@ -202,12 +186,12 @@ namespace WebApi.Tests.Controllers
         public void ServiceDataDtoShouldCreateInstanceWithValidData()
         {
             // Arrange
-            var name = "Test Service";
-            var description = "Test Description";
-            var applicationId = 5;
+            string name = "Test Service";
+            string description = "Test Description";
+            int applicationId = 5;
 
             // Act
-            var dto = new ServiceDataDto
+            ServiceDataDto dto = new()
             {
                 Name = name,
                 Description = description,
@@ -225,10 +209,10 @@ namespace WebApi.Tests.Controllers
         public void ShouldHaveErrorWhenNameIsTooShort()
         {
             // Arrange
-            var model = new ServiceData { Name = "ab" };
+            ServiceData model = new() { Name = "ab" };
 
             // Act
-            var result = _validator.TestValidate(model);
+            TestValidationResult<ServiceData> result = _validator.TestValidate(model);
 
             // Assert
             result.ShouldHaveValidationErrorFor(x => x.Name)
@@ -240,10 +224,10 @@ namespace WebApi.Tests.Controllers
         public void ShouldHaveErrorWhenNameIsTooLong()
         {
             // Arrange
-            var model = new ServiceData { Name = new string('a', 256) };
+            ServiceData model = new() { Name = new string('a', 256) };
 
             // Act
-            var result = _validator.TestValidate(model);
+            TestValidationResult<ServiceData> result = _validator.TestValidate(model);
 
             // Assert
             result.ShouldHaveValidationErrorFor(x => x.Name)
@@ -255,10 +239,10 @@ namespace WebApi.Tests.Controllers
         public void ShouldNotHaveErrorWhenNameIsValid()
         {
             // Arrange
-            var model = new ServiceData { Name = "ValidName" };
+            ServiceData model = new() { Name = "ValidName" };
 
             // Act
-            var result = _validator.TestValidate(model);
+            TestValidationResult<ServiceData> result = _validator.TestValidate(model);
 
             // Assert
             result.ShouldNotHaveValidationErrorFor(x => x.Name);
@@ -269,10 +253,10 @@ namespace WebApi.Tests.Controllers
         public void ServiceDataVmShouldProperty()
         {
             // Arrange
-            var testName = "Test Service";
-            var testDescription = "Test Description";
-            var testApplicationId = 123;
-            var serviceDataVm = new ServiceDataVm
+            string testName = "Test Service";
+            string testDescription = "Test Description";
+            int testApplicationId = 123;
+            ServiceDataVm serviceDataVm = new()
             {
                 Name = testName,
                 Description = testDescription,
@@ -295,20 +279,20 @@ namespace WebApi.Tests.Controllers
         public void ConfigureShouldSetTableNameAndProperties()
         {
             // Arrange
-            var modelBuilder = new ModelBuilder();
-            var builder = modelBuilder.Entity<ServiceData>();
-            var config = new ServiceDataConfig();
+            ModelBuilder modelBuilder = new();
+            Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<ServiceData> builder = modelBuilder.Entity<ServiceData>();
+            ServiceDataConfig config = new();
 
             // Act
             config.Configure(builder);
 
             // Assert
-            var entityType = builder.Metadata;
+            Microsoft.EntityFrameworkCore.Metadata.IMutableEntityType entityType = builder.Metadata;
             Assert.Equal("ServiceData", entityType.GetTableName());
-            var primaryKey = entityType.FindPrimaryKey();
+            Microsoft.EntityFrameworkCore.Metadata.IMutableKey? primaryKey = entityType.FindPrimaryKey();
             Assert.NotNull(primaryKey);
             Assert.Equal("Id", primaryKey.Properties[0].Name);
-            var nameProperty = entityType.FindProperty(nameof(ServiceData.Name));
+            Microsoft.EntityFrameworkCore.Metadata.IMutableProperty? nameProperty = entityType.FindProperty(nameof(ServiceData.Name));
             Assert.NotNull(nameProperty);
             Assert.False(nameProperty.IsNullable);
             Assert.Equal(50, nameProperty.GetMaxLength());

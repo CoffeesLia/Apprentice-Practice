@@ -1,5 +1,4 @@
-﻿using LinqKit;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
@@ -37,8 +36,8 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         private static async Task<PagedResult<Member>> GetPagedResultAsync(IQueryable<Member> query, int page, int pageSize)
         {
-            var total = await query.CountAsync().ConfigureAwait(false);
-            var result = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync().ConfigureAwait(false);
+            int total = await query.CountAsync().ConfigureAwait(false);
+            List<Member> result = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync().ConfigureAwait(false);
 
             return new PagedResult<Member>
             {
@@ -56,7 +55,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         public async Task DeleteAsync(int id, bool saveChanges = true)
         {
-            var entity = await GetByIdAsync(id).ConfigureAwait(false);
+            Member? entity = await GetByIdAsync(id).ConfigureAwait(false);
             if (entity != null)
             {
                 Context.Set<Member>().Remove(entity);

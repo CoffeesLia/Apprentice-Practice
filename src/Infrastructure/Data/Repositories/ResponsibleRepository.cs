@@ -6,29 +6,34 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
-    public class ResponsibleRepository : RepositoryBase<Responsible, Context>, IResponsibleRepository
+    public class ResponsibleRepository(Context context) : RepositoryBase<Responsible, Context>(context), IResponsibleRepository
     {
-        public ResponsibleRepository(Context context) : base(context)
+        public async Task<PagedResult<Responsible>> GetListAsync(ResponsibleFilter filter)
         {
-        }
-        public async Task<PagedResult<Responsible>> GetListAsync(ResponsibleFilter responsibleFilter)
-        {
-            ArgumentNullException.ThrowIfNull(responsibleFilter);
+            ArgumentNullException.ThrowIfNull(filter);
 
-            var filters = PredicateBuilder.New<Responsible>(true);
-            responsibleFilter.Page = responsibleFilter.Page <= 0 ? 1 : responsibleFilter.Page;
+            ExpressionStarter<Responsible> filters = PredicateBuilder.New<Responsible>(true);
+            filter.Page = filter.Page <= 0 ? 1 : filter.Page;
 
-            if (!string.IsNullOrWhiteSpace(responsibleFilter.Email))
-                filters = filters.And(x => x.Email.Contains(responsibleFilter.Email));
-            if (!string.IsNullOrWhiteSpace(responsibleFilter.Name))
-                filters = filters.And(x => x.Name.Contains(responsibleFilter.Name));
-            if (responsibleFilter.AreaId != 0)
-                filters = filters.And(x => x.AreaId == responsibleFilter.AreaId);
+            if (!string.IsNullOrWhiteSpace(filter.Email))
+            {
+                filters = filters.And(x => x.Email.Contains(filter.Email));
+            }
+
+            if (!string.IsNullOrWhiteSpace(filter.Name))
+            {
+                filters = filters.And(x => x.Name.Contains(filter.Name));
+            }
+
+            if (filter.AreaId != 0)
+            {
+                filters = filters.And(x => x.AreaId == filter.AreaId);
+            }
 
             return await GetListAsync(filter: filters,
-                page: responsibleFilter.Page, 
-                sort: responsibleFilter.Sort, 
-                sortDir: responsibleFilter.SortDir,
+                page: filter.Page,
+                sort: filter.Sort,
+                sortDir: filter.SortDir,
                 includeProperties: nameof(Responsible.Area)
                 ).ConfigureAwait(false);
         }
@@ -40,7 +45,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         public async Task DeleteAsync(int id, bool saveChanges = true)
         {
-            var entity = await GetByIdAsync(id).ConfigureAwait(false);
+            Responsible? entity = await GetByIdAsync(id).ConfigureAwait(false);
             if (entity != null)
             {
                 Context.Set<Responsible>().Remove(entity);

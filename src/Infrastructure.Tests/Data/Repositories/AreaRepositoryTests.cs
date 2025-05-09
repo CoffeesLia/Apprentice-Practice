@@ -5,19 +5,21 @@ using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
+using System.Runtime.InteropServices;
 
-namespace Stellantis.ProjectName.Tests.Data.Repositories
+namespace Infrastructure.Tests.Data.Repositories
 {
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1001:Tipos que têm campos descartáveis devem ser descartáveis", Justification = "<Pendente>")]
-    public class AreaRepositoryTests
+    public class AreaRepositoryTests : IDisposable
     {
         private readonly Context _context;
         private readonly AreaRepository _repository;
         private readonly Fixture _fixture = new();
+        private bool isDisposed;
+        private IntPtr nativeResource = Marshal.AllocHGlobal(100);
 
         public AreaRepositoryTests()
         {
-            var options = new DbContextOptionsBuilder<Context>()
+            DbContextOptions<Context> options = new DbContextOptionsBuilder<Context>()
                 .UseInMemoryDatabase(databaseName: _fixture.Create<string>())
                 .Options;
             _context = new Context(options);
@@ -28,12 +30,12 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
         public async Task GetByIdAsyncWhenIdExists()
         {
             // Arrange
-            var area = _fixture.Create<Area>();
+            Area area = _fixture.Create<Area>();
             await _context.Set<Area>().AddAsync(area);
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _repository.GetByIdAsync(area.Id);
+            Area? result = await _repository.GetByIdAsync(area.Id);
 
             // Assert
             Assert.NotNull(result);
@@ -44,10 +46,10 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
         public async Task GetByIdAsyncWhenIdDoesNotExist()
         {
             // Arrange
-            var id = _fixture.Create<int>();
+            int id = _fixture.Create<int>();
 
             // Act
-            var result = await _repository.GetByIdAsync(id);
+            Area? result = await _repository.GetByIdAsync(id);
 
             // Assert
             Assert.Null(result);
@@ -57,23 +59,23 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
         public async Task GetListAsyncWhenCalled()
         {
             // Arrange
-            var filter = new AreaFilter
+            AreaFilter filter = new()
             {
                 Page = 1,
                 PageSize = 10,
                 Name = _fixture.Create<string>()
             };
             const int Count = 10;
-            var areas = _fixture
+            IEnumerable<Area> areas = _fixture
                 .Build<Area>()
                 .With(x => x.Name, filter.Name)
-                .CreateMany<Area>(Count);
+                .CreateMany(Count);
 
             await _context.Set<Area>().AddRangeAsync(areas);
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _repository.GetListAsync(filter);
+            PagedResult<Area> result = await _repository.GetListAsync(filter);
 
             // Assert
             Assert.Equal(Count, result.Total);
@@ -85,13 +87,13 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
         public async Task VerifyNameAlreadyExistsAsyncWhenNameExists()
         {
             // Arrange
-            var name = _fixture.Create<string>();
-            var area = _fixture.Build<Area>().With(x => x.Name, name).Create();
+            string name = _fixture.Create<string>();
+            Area area = _fixture.Build<Area>().With(x => x.Name, name).Create();
             await _context.Set<Area>().AddAsync(area);
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _repository.VerifyNameAlreadyExistsAsync(name);
+            bool result = await _repository.VerifyNameAlreadyExistsAsync(name);
 
             // Assert
             Assert.True(result);
@@ -101,14 +103,14 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
         public async Task DeleteAsyncWhenCalled()
         {
             // Arrange
-            var area = _fixture.Create<Area>();
+            Area area = _fixture.Create<Area>();
             await _context.Set<Area>().AddAsync(area);
             await _context.SaveChangesAsync();
 
             // Act
             await _repository.DeleteAsync(area.Id);
             await _context.SaveChangesAsync(); // Certifique-se de salvar as mudanças após a exclusão
-            var result = await _context.Set<Area>().FindAsync(area.Id);
+            Area? result = await _context.Set<Area>().FindAsync(area.Id);
 
             // Assert
             Assert.Null(result);
@@ -118,8 +120,8 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
         public async Task VerifyAplicationsExistsAsyncWhenApplicationsExist()
         {
             // Arrange
-            var area = _fixture.Create<Area>();
-            var application = _fixture.Build<ApplicationData>()
+            Area area = _fixture.Create<Area>();
+            ApplicationData application = _fixture.Build<ApplicationData>()
                 .Create();
             area.Applications.Add(application);
 
@@ -127,7 +129,7 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _repository.VerifyAplicationsExistsAsync(area.Id);
+            bool result = await _repository.VerifyAplicationsExistsAsync(area.Id);
 
             // Assert
             Assert.True(result);
@@ -137,13 +139,13 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
         public async Task VerifyAplicationsExistsAsyncWhenNoApplicationsExist()
         {
             // Arrange
-            var area = _fixture.Create<Area>();
+            Area area = _fixture.Create<Area>();
 
             await _context.Set<Area>().AddAsync(area);
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _repository.VerifyAplicationsExistsAsync(area.Id);
+            bool result = await _repository.VerifyAplicationsExistsAsync(area.Id);
 
             // Assert
             Assert.False(result);
@@ -153,11 +155,40 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
         public async Task VerifyAplicationsExistsAsyncWhenAreaDoesNotExist()
         {
             // Arrange
-            var id = _fixture.Create<int>();
+            int id = _fixture.Create<int>();
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _repository.VerifyAplicationsExistsAsync(id));
+            ArgumentException exception = await Assert.ThrowsAsync<ArgumentException>(() => _repository.VerifyAplicationsExistsAsync(id));
             Assert.Equal(AreaResources.Undeleted, exception.Message);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (isDisposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                // free managed resources
+                _context?.Dispose();
+            }
+
+            // free native resources if there are any.
+            if (nativeResource != IntPtr.Zero)
+            {
+                Marshal.FreeHGlobal(nativeResource);
+                nativeResource = IntPtr.Zero;
+            }
+
+            isDisposed = true;
         }
     }
 }

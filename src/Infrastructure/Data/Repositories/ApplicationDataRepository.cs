@@ -10,7 +10,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
     {
         public async Task DeleteAsync(int id, bool saveChanges = true)
         {
-            var entity = await GetByIdAsync(id).ConfigureAwait(false);
+            ApplicationData? entity = await GetByIdAsync(id).ConfigureAwait(false);
             if (entity != null)
             {
                 Context.Set<ApplicationData>().Remove(entity);
@@ -30,18 +30,33 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         {
             ArgumentNullException.ThrowIfNull(applicationFilter);
 
-            var filters = PredicateBuilder.New<ApplicationData>(true);
+            ExpressionStarter<ApplicationData> filters = PredicateBuilder.New<ApplicationData>(true);
             applicationFilter.Page = applicationFilter.Page <= 0 ? 1 : applicationFilter.Page;
             if (!string.IsNullOrWhiteSpace(applicationFilter.Name))
+            {
                 filters = filters.And(x => x.Name != null && x.Name.Contains(applicationFilter.Name));
+            }
+
             if (applicationFilter.AreaId > 0)
+            {
                 filters = filters.And(x => x.AreaId == applicationFilter.AreaId);
+            }
+
             if (!string.IsNullOrWhiteSpace(applicationFilter.ProductOwner))
+            {
                 filters = filters.And(x => x.ProductOwner != null && x.ProductOwner.Contains(applicationFilter.ProductOwner));
+            }
+
             if (!string.IsNullOrWhiteSpace(applicationFilter.ConfigurationItem))
+            {
                 filters = filters.And(x => x.ConfigurationItem != null && x.ConfigurationItem.Contains(applicationFilter.ConfigurationItem));
+            }
+
             if (applicationFilter.External.HasValue)
+            {
                 filters = filters.And(x => x.External == applicationFilter.External.Value);
+            }
+
             return await GetListAsync(filter: filters, page: applicationFilter.Page, sort: applicationFilter.Sort, sortDir: applicationFilter.SortDir, includeProperties: nameof(ApplicationData.Area)
 ).ConfigureAwait(false);
 

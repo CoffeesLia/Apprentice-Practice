@@ -4,18 +4,21 @@ using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
+using System.Runtime.InteropServices;
 
-namespace Stellantis.ProjectName.Tests.Data.Repositories
+namespace Infrastructure.Tests.Data.Repositories
 {
-    public class ResponsibleRepositoryTests
+    public class ResponsibleRepositoryTests : IDisposable
     {
         private readonly Context _context;
         private readonly ResponsibleRepository _repository;
         private readonly Fixture _fixture = new();
+        private bool isDisposed;
+        private IntPtr nativeResource = Marshal.AllocHGlobal(100);
 
         public ResponsibleRepositoryTests()
         {
-            var options = new DbContextOptionsBuilder<Context>()
+            DbContextOptions<Context> options = new DbContextOptionsBuilder<Context>()
                 .UseInMemoryDatabase(databaseName: _fixture.Create<string>())
                 .Options;
             _context = new Context(options);
@@ -26,12 +29,12 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
         public async Task GetByIdAsyncWhenIdExists()
         {
             // Arrange
-            var responsible = _fixture.Create<Responsible>();
+            Responsible responsible = _fixture.Create<Responsible>();
             await _context.Set<Responsible>().AddAsync(responsible);
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _repository.GetByIdAsync(responsible.Id);
+            Responsible? result = await _repository.GetByIdAsync(responsible.Id);
 
             // Assert
             Assert.NotNull(result);
@@ -42,10 +45,10 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
         public async Task GetByIdAsyncWhenIdDoesNotExist()
         {
             // Arrange
-            var id = _fixture.Create<int>();
+            int id = _fixture.Create<int>();
 
             // Act
-            var result = await _repository.GetByIdAsync(id);
+            Responsible? result = await _repository.GetByIdAsync(id);
 
             // Assert
             Assert.Null(result);
@@ -55,7 +58,7 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
         public async Task GetListAsyncWhenCalled()
         {
             // Arrange
-            var filter = new ResponsibleFilter
+            ResponsibleFilter filter = new()
             {
                 Page = 1,
                 PageSize = 10,
@@ -64,23 +67,23 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
                 AreaId = _fixture.Create<int>()
             };
             const int Count = 10;
-            var responsibles = _fixture
+            IEnumerable<Responsible> responsibles = _fixture
                 .Build<Responsible>()
                 .With(x => x.Name, filter.Name)
                 .With(x => x.Email, filter.Email)
                 .Without(x => x.Area)
                 .With(x => x.AreaId, filter.AreaId)
-                .CreateMany<Responsible>(Count);
+                .CreateMany(Count);
 
             await _context.Set<Responsible>().AddRangeAsync(responsibles);
             await _context.SaveChangesAsync();
 
             // Verifique se os dados foram salvos corretamente
-            var savedResponsibles = await _context.Set<Responsible>().ToListAsync();
+            List<Responsible> savedResponsibles = await _context.Set<Responsible>().ToListAsync();
             Assert.Equal(Count, savedResponsibles.Count);
 
             // Act
-            var result = await _repository.GetListAsync(filter);
+            PagedResult<Responsible> result = await _repository.GetListAsync(filter);
 
             // Assert
             Assert.Equal(Count, result.Total); // Verifica o total de itens
@@ -92,13 +95,13 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
         public async Task VerifyEmailAlreadyExistsAsyncWhenEmailExists()
         {
             // Arrange
-            var email = _fixture.Create<string>();
-            var responsible = _fixture.Build<Responsible>().With(x => x.Email, email).Create();
+            string email = _fixture.Create<string>();
+            Responsible responsible = _fixture.Build<Responsible>().With(x => x.Email, email).Create();
             await _context.Set<Responsible>().AddAsync(responsible);
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _repository.VerifyEmailAlreadyExistsAsync(email);
+            bool result = await _repository.VerifyEmailAlreadyExistsAsync(email);
 
             // Assert
             Assert.True(result);
@@ -108,10 +111,10 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
         public async Task VerifyEmailAlreadyExistsAsyncWhenEmailDoesNotExist()
         {
             // Arrange
-            var email = _fixture.Create<string>();
+            string email = _fixture.Create<string>();
 
             // Act
-            var result = await _repository.VerifyEmailAlreadyExistsAsync(email);
+            bool result = await _repository.VerifyEmailAlreadyExistsAsync(email);
 
             // Assert
             Assert.False(result);
@@ -121,16 +124,45 @@ namespace Stellantis.ProjectName.Tests.Data.Repositories
         public async Task DeleteAsyncWhenCalled()
         {
             // Arrange
-            var responsible = _fixture.Create<Responsible>();
+            Responsible responsible = _fixture.Create<Responsible>();
             await _context.Set<Responsible>().AddAsync(responsible);
             await _context.SaveChangesAsync();
 
             // Act
             await _repository.DeleteAsync(responsible.Id);
-            var result = await _context.Set<Responsible>().FindAsync(responsible.Id);
+            Responsible? result = await _context.Set<Responsible>().FindAsync(responsible.Id);
 
             // Assert
             Assert.Null(result);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (isDisposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                // free managed resources
+                _context?.Dispose();
+            }
+
+            // free native resources if there are any.
+            if (nativeResource != IntPtr.Zero)
+            {
+                Marshal.FreeHGlobal(nativeResource);
+                nativeResource = IntPtr.Zero;
+            }
+
+            isDisposed = true;
         }
     }
 }

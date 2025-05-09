@@ -14,11 +14,10 @@ namespace Stellantis.ProjectName.WebApi.Filters
             ArgumentNullException.ThrowIfNull(context);
             if (!context.ModelState.IsValid)
             {
-                var errors = context.ModelState.Values
+                string[] errors = [.. context.ModelState.Values
                     .Where(p => p.Errors.Count > 0)
                     .SelectMany(p => p.Errors)
-                    .Select(p => p.ErrorMessage)
-                    .ToArray();
+                    .Select(p => p.ErrorMessage)];
 
                 context.Result = new BadRequestObjectResult(new ErrorResponseVm((int)HttpStatusCode.BadRequest, "", errors));
                 context.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;

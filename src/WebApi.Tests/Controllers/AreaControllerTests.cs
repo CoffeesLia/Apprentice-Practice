@@ -38,20 +38,20 @@ namespace WebApi.Tests.Controllers
         public async Task CreateAsyncShouldReturnCorrectResultWhenCreationIsSuccessful()
         {
             // Arrange
-            var areaDto = _fixture.Create<AreaDto>();
-            var area = _fixture.Build<Area>().With(a => a.Name, areaDto.Name).Create();
-            var areaVm = _fixture.Build<AreaVm>().With(a => a.Name, areaDto.Name).With(a => a.Id, area.Id).Create();
+            AreaDto areaDto = _fixture.Create<AreaDto>();
+            Area area = _fixture.Build<Area>().With(a => a.Name, areaDto.Name).Create();
+            AreaVm areaVm = _fixture.Build<AreaVm>().With(a => a.Name, areaDto.Name).With(a => a.Id, area.Id).Create();
 
             _mapperMock.Setup(m => m.Map<Area>(areaDto)).Returns(area);
             _serviceMock.Setup(s => s.CreateAsync(area)).ReturnsAsync(OperationResult.Complete("Success"));
             _mapperMock.Setup(m => m.Map<AreaVm>(area)).Returns(areaVm);
 
             // Act
-            var result = await _controller.CreateAsync(areaDto);
+            IActionResult result = await _controller.CreateAsync(areaDto);
 
             // Assert
             Assert.IsType<CreatedAtActionResult>(result); // Verifica se o resultado é do tipo CreatedAtActionResult
-            var objectResult = result as CreatedAtActionResult; // Cast para acessar propriedades, se necessário
+            CreatedAtActionResult? objectResult = result as CreatedAtActionResult; // Cast para acessar propriedades, se necessário
             Assert.NotNull(objectResult);
             Assert.Equal(areaVm, objectResult.Value);
         }
@@ -61,18 +61,18 @@ namespace WebApi.Tests.Controllers
         public async Task GetAsyncShouldReturnAreaVm()
         {
             // Arrange
-            var area = _fixture.Create<Area>();
-            var areaVm = _fixture.Build<AreaVm>().With(a => a.Id, area.Id).With(a => a.Name, area.Name).Create();
+            Area area = _fixture.Create<Area>();
+            AreaVm areaVm = _fixture.Build<AreaVm>().With(a => a.Id, area.Id).With(a => a.Name, area.Name).Create();
 
             _serviceMock.Setup(s => s.GetItemAsync(area.Id)).ReturnsAsync(area);
             _mapperMock.Setup(m => m.Map<AreaVm>(area)).Returns(areaVm);
 
             // Act
-            var result = await _controller.GetAsync(area.Id);
+            ActionResult<AreaVm> result = await _controller.GetAsync(area.Id);
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result.Result);
-            var returnedAreaVm = Assert.IsType<AreaVm>(okResult.Value);
+            OkObjectResult okResult = Assert.IsType<OkObjectResult>(result.Result);
+            AreaVm returnedAreaVm = Assert.IsType<AreaVm>(okResult.Value);
             Assert.Equal(areaVm.Id, returnedAreaVm.Id);
             Assert.Equal(areaVm.Name, returnedAreaVm.Name);
         }
@@ -80,15 +80,15 @@ namespace WebApi.Tests.Controllers
         public async Task GetAsyncShouldReturnAreaVmWithApplications()
         {
             // Arrange
-            var area = _fixture.Create<Area>();
-            var applications = new Collection<ApplicationVm>(_fixture.CreateMany<ApplicationVm>().ToList());
-            var areaVm = new AreaVm
+            Area area = _fixture.Create<Area>();
+            Collection<ApplicationVm> applications = new([.. _fixture.CreateMany<ApplicationVm>()]);
+            AreaVm areaVm = new()
             {
                 Id = area.Id,
                 Name = area.Name
             };
 
-            foreach (var app in applications)
+            foreach (ApplicationVm app in applications)
             {
                 areaVm.Applications.Add(app);
             }
@@ -96,11 +96,11 @@ namespace WebApi.Tests.Controllers
             _mapperMock.Setup(m => m.Map<AreaVm>(area)).Returns(areaVm);
 
             // Act
-            var result = await _controller.GetAsync(area.Id);
+            ActionResult<AreaVm> result = await _controller.GetAsync(area.Id);
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result.Result);
-            var returnedAreaVm = Assert.IsType<AreaVm>(okResult.Value);
+            OkObjectResult okResult = Assert.IsType<OkObjectResult>(result.Result);
+            AreaVm returnedAreaVm = Assert.IsType<AreaVm>(okResult.Value);
             Assert.Equal(areaVm.Id, returnedAreaVm.Id);
             Assert.Equal(areaVm.Name, returnedAreaVm.Name);
             Assert.Equal(areaVm.Applications, returnedAreaVm.Applications);
@@ -111,11 +111,11 @@ namespace WebApi.Tests.Controllers
         public async Task UpdateAsyncShouldReturnSuccessWhenUpdateIsSuccessful()
         {
             // Arrange
-            var areaDto = _fixture.Create<AreaDto>();
-            var area = _fixture.Build<Area>()
+            AreaDto areaDto = _fixture.Create<AreaDto>();
+            Area area = _fixture.Build<Area>()
                                .With(a => a.Name, areaDto.Name)
                                .Create();
-            var areaVm = _fixture.Build<AreaVm>()
+            AreaVm areaVm = _fixture.Build<AreaVm>()
                                  .With(a => a.Id, area.Id)
                                  .With(a => a.Name, areaDto.Name)
                                  .Create();
@@ -125,10 +125,10 @@ namespace WebApi.Tests.Controllers
             _serviceMock.Setup(s => s.UpdateAsync(area)).ReturnsAsync(OperationResult.Complete("Success"));
 
             // Act
-            var result = await _controller.UpdateAsync(area.Id, areaDto);
+            IActionResult result = await _controller.UpdateAsync(area.Id, areaDto);
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
+            OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(200, okResult.StatusCode);
             Assert.Equal(areaVm, okResult.Value);
         }
@@ -142,10 +142,10 @@ namespace WebApi.Tests.Controllers
             _serviceMock.Setup(s => s.DeleteAsync(id)).ReturnsAsync(OperationResult.Complete());
 
             // Act
-            var result = await _controller.DeleteAsync(id);
+            IActionResult result = await _controller.DeleteAsync(id);
 
             // Assert
-            var noContentResult = Assert.IsType<NoContentResult>(result);
+            NoContentResult noContentResult = Assert.IsType<NoContentResult>(result);
             Assert.Equal(204, noContentResult.StatusCode);
         }
 
@@ -153,16 +153,16 @@ namespace WebApi.Tests.Controllers
         public async Task GetListAsyncShouldReturnOkResultWithPagedResult()
         {
             // Arrange
-            var filterDto = _fixture.Create<AreaFilterDto>();
-            var filter = _fixture.Create<AreaFilter>();
-            var pagedResult = _fixture.Build<PagedResult<Area>>()
-                                      .With(pr => pr.Result, _fixture.CreateMany<Area>(2).ToList())
+            AreaFilterDto filterDto = _fixture.Create<AreaFilterDto>();
+            AreaFilter filter = _fixture.Create<AreaFilter>();
+            PagedResult<Area> pagedResult = _fixture.Build<PagedResult<Area>>()
+                                      .With(pr => pr.Result, [.. _fixture.CreateMany<Area>(2)])
                                       .With(pr => pr.Page, 1)
                                       .With(pr => pr.PageSize, 10)
                                       .With(pr => pr.Total, 2)
                                       .Create();
-            var pagedResultVm = _fixture.Build<PagedResultVm<AreaVm>>()
-                                        .With(pr => pr.Result, _fixture.CreateMany<AreaVm>(2).ToList())
+            PagedResultVm<AreaVm> pagedResultVm = _fixture.Build<PagedResultVm<AreaVm>>()
+                                        .With(pr => pr.Result, [.. _fixture.CreateMany<AreaVm>(2)])
                                         .With(pr => pr.Page, 1)
                                         .With(pr => pr.PageSize, 10)
                                         .With(pr => pr.Total, 2)
@@ -173,11 +173,11 @@ namespace WebApi.Tests.Controllers
             _mapperMock.Setup(m => m.Map<PagedResultVm<AreaVm>>(pagedResult)).Returns(pagedResultVm);
 
             // Act
-            var result = await _controller.GetListAsync(filterDto);
+            IActionResult result = await _controller.GetListAsync(filterDto);
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedPagedResultVm = Assert.IsType<PagedResultVm<AreaVm>>(okResult.Value);
+            OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
+            PagedResultVm<AreaVm> returnedPagedResultVm = Assert.IsType<PagedResultVm<AreaVm>>(okResult.Value);
             Assert.Equal(pagedResultVm.Page, returnedPagedResultVm.Page);
             Assert.Equal(pagedResultVm.PageSize, returnedPagedResultVm.PageSize);
             Assert.Equal(pagedResultVm.Total, returnedPagedResultVm.Total);
@@ -188,16 +188,16 @@ namespace WebApi.Tests.Controllers
         public async Task GetListAsyncShouldReturnEmptyPagedResultWhenNoAreasFound()
         {
             // Arrange
-            var filterDto = _fixture.Create<AreaFilterDto>();
-            var filter = _fixture.Create<AreaFilter>();
-            var pagedResult = new PagedResult<Area>
+            AreaFilterDto filterDto = _fixture.Create<AreaFilterDto>();
+            AreaFilter filter = _fixture.Create<AreaFilter>();
+            PagedResult<Area> pagedResult = new()
             {
                 Result = [],
                 Page = 1,
                 PageSize = 10,
                 Total = 0
             };
-            var pagedResultVm = new PagedResultVm<AreaVm>
+            PagedResultVm<AreaVm> pagedResultVm = new()
             {
                 Result = [],
                 Page = 1,
@@ -210,11 +210,11 @@ namespace WebApi.Tests.Controllers
             _mapperMock.Setup(m => m.Map<PagedResultVm<AreaVm>>(pagedResult)).Returns(pagedResultVm);
 
             // Act
-            var result = await _controller.GetListAsync(filterDto);
+            IActionResult result = await _controller.GetListAsync(filterDto);
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedPagedResultVm = Assert.IsType<PagedResultVm<AreaVm>>(okResult.Value);
+            OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
+            PagedResultVm<AreaVm> returnedPagedResultVm = Assert.IsType<PagedResultVm<AreaVm>>(okResult.Value);
             Assert.Empty(returnedPagedResultVm.Result);
             Assert.Equal(0, returnedPagedResultVm.Total);
         }
