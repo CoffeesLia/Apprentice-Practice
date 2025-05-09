@@ -9,15 +9,17 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Extensions
         public static IQueryable<TSource> OrderBy<TSource>(this IQueryable<TSource> query, string? keySelector, string? orderDirection = OrderDirection.Ascending)
         {
             if (string.IsNullOrEmpty(keySelector))
+            {
                 return query;
+            }
             else
             {
-                var parameter = Expression.Parameter(typeof(TSource), "x");
+                ParameterExpression parameter = Expression.Parameter(typeof(TSource), "x");
                 MemberExpression member;
                 try
                 {
                     member = Expression.MakeMemberAccess(parameter, typeof(TSource).GetMember(
-                        keySelector, 
+                        keySelector,
                         BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase
                     )[0]);
                 }
@@ -25,8 +27,8 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Extensions
                 {
                     throw new ArgumentException("Invalid propety.", nameof(keySelector), exception);
                 }
-                var convert = Expression.Convert(member, typeof(object));
-                var keySelectorLambda = Expression.Lambda<Func<TSource, object>>(convert, parameter);
+                UnaryExpression convert = Expression.Convert(member, typeof(object));
+                Expression<Func<TSource, object>> keySelectorLambda = Expression.Lambda<Func<TSource, object>>(convert, parameter);
 
                 return orderDirection switch
                 {

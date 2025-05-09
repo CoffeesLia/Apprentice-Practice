@@ -10,7 +10,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
     {
         public async Task DeleteAsync(int id, bool saveChanges = true)
         {
-            var entity = await GetByIdAsync(id).ConfigureAwait(false);
+            Area? entity = await GetByIdAsync(id).ConfigureAwait(false);
             if (entity != null)
             {
                 Context.Set<Area>().Remove(entity);
@@ -26,19 +26,22 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             return await Context.Set<Area>().FindAsync(id).ConfigureAwait(false);
         }
 
-        public async Task<PagedResult<Area>> GetListAsync(AreaFilter areaFilter)
+        public async Task<PagedResult<Area>> GetListAsync(AreaFilter filter)
         {
-            ArgumentNullException.ThrowIfNull(areaFilter);
-            areaFilter.Page = areaFilter.Page <= 0 ? 1 : areaFilter.Page;
+            ArgumentNullException.ThrowIfNull(filter);
+            filter.Page = filter.Page <= 0 ? 1 : filter.Page;
             IQueryable<Area> query = Context.Set<Area>();
-            if (areaFilter.Id.HasValue)
-                query = query.Where(a => a.Id == areaFilter.Id);
-            if (!string.IsNullOrEmpty(areaFilter.Name))
-                query = query.Where(a => a.Name.Contains(areaFilter.Name, StringComparison.OrdinalIgnoreCase));
+            if (filter.Id.HasValue)
+            {
+                query = query.Where(a => a.Id == filter.Id);
+            }
 
-            return await GetListAsync ( page: areaFilter.Page, sort: areaFilter.Sort, sortDir: areaFilter.SortDir
-).ConfigureAwait(false);
+            if (!string.IsNullOrEmpty(filter.Name))
+            {
+                query = query.Where(a => a.Name.Contains(filter.Name, StringComparison.OrdinalIgnoreCase));
+            }
 
+            return await base.GetListAsync(query, sort: filter.Sort, sortDir: filter.SortDir, page: filter.Page, pageSize: filter.PageSize).ConfigureAwait(false);
         }
 
         public async Task<bool> VerifyNameAlreadyExistsAsync(string name)
@@ -48,17 +51,12 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         public async Task<bool> VerifyAplicationsExistsAsync(int id)
         {
-            var area = await Context.Set<Area>()
+            Area? area = await Context.Set<Area>()
                 .Include(a => a.Applications)
                 .FirstOrDefaultAsync(a => a.Id == id)
                 .ConfigureAwait(false);
 
-            if (area == null)
-            {
-                throw new ArgumentException(AreaResources.Undeleted);
-            }
-
-            return area.Applications.Count != 0;
+            return area == null ? throw new ArgumentException(AreaResources.Undeleted) : area.Applications.Count != 0;
         }
     }
 }

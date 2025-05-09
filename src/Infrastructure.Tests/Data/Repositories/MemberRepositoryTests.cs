@@ -17,7 +17,7 @@ namespace Infrastructure.Tests.Data.Repositories
 
         public MemberRepositoryTests()
         {
-            var options = new DbContextOptionsBuilder<Context>()
+            DbContextOptions<Context> options = new DbContextOptionsBuilder<Context>()
                 .UseInMemoryDatabase(databaseName: _fixture.Create<string>())
                 .Options;
             _context = new Context(options);
@@ -28,7 +28,7 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task GetListAsyncShouldApplyFiltersCorrectly()
         {
             // Arrange
-            var members = _fixture.CreateMany<Member>(10).ToList();
+            List<Member> members = [.. _fixture.CreateMany<Member>(10)];
             members[0].Name = "TestName";
             members[0].Role = "Admin";
             members[0].Email = "test@example.com";
@@ -37,7 +37,7 @@ namespace Infrastructure.Tests.Data.Repositories
             _context.Members.AddRange(members);
             await _context.SaveChangesAsync();
 
-            var filter = new MemberFilter
+            MemberFilter filter = new()
             {
                 Name = "TestName",
                 Role = "Admin",
@@ -46,7 +46,7 @@ namespace Infrastructure.Tests.Data.Repositories
             };
 
             // Act
-            var result = await _repository.GetListAsync(filter);
+            PagedResult<Member> result = await _repository.GetListAsync(filter);
 
             // Assert
             Assert.NotNull(result);
@@ -62,14 +62,14 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task CreateAsyncShouldAddMember()
         {
             // Arrange
-            var member = _fixture.Create<Member>();
+            Member member = _fixture.Create<Member>();
 
             // Act
             await _repository.CreateAsync(member);
             await _context.SaveChangesAsync();
 
             // Assert
-            var createdMember = await _context.Set<Member>().FindAsync(member.Id);
+            Member? createdMember = await _context.Set<Member>().FindAsync(member.Id);
             Assert.NotNull(createdMember);
             Assert.Equal(member.Name, createdMember.Name);
         }
@@ -78,12 +78,12 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task GetByIdAsyncShouldReturnMember()
         {
             // Arrange
-            var member = _fixture.Create<Member>();
+            Member member = _fixture.Create<Member>();
             await _repository.CreateAsync(member);
             await _context.SaveChangesAsync();
 
             // Act
-            var retrievedMember = await _repository.GetByIdAsync(member.Id);
+            Member? retrievedMember = await _repository.GetByIdAsync(member.Id);
 
             // Assert
             Assert.NotNull(retrievedMember);
@@ -94,12 +94,12 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task IsEmailUniqueWhenEmailExists()
         {
             // Arrange
-            var member = _fixture.Create<Member>();
+            Member member = _fixture.Create<Member>();
             await _repository.CreateAsync(member);
             await _context.SaveChangesAsync();
 
             // Act
-            var isUnique = await _repository.IsEmailUnique(member.Email);
+            bool isUnique = await _repository.IsEmailUnique(member.Email);
 
             // Assert
             Assert.False(isUnique);
@@ -109,7 +109,7 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task IsEmailUniqueWhenEmailDoesNotExist()
         {
             // Act
-            var isUnique = await _repository.IsEmailUnique("nonexistentemail@example.com");
+            bool isUnique = await _repository.IsEmailUnique("nonexistentemail@example.com");
 
             // Assert
             Assert.True(isUnique);
@@ -119,7 +119,7 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task DeleteAsyncShouldRemoveMember()
         {
             // Arrange
-            var member = _fixture.Create<Member>();
+            Member member = _fixture.Create<Member>();
             await _repository.CreateAsync(member);
             await _context.SaveChangesAsync();
 
@@ -128,7 +128,7 @@ namespace Infrastructure.Tests.Data.Repositories
             await _context.SaveChangesAsync();
 
             // Assert
-            var deletedMember = await _context.Set<Member>().FindAsync(member.Id);
+            Member? deletedMember = await _context.Set<Member>().FindAsync(member.Id);
             Assert.Null(deletedMember);
         }
 

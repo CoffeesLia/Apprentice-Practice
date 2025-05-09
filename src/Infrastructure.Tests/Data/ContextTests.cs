@@ -17,10 +17,10 @@ namespace Infrastructure.Tests.Data
         }
 
         [Fact]
-        public void Context_ShouldCreateDatabase()
+        public void ContextShouldCreateDatabase()
         {
             // Act
-            using var context = new Context(_options);
+            using Context context = new(_options);
 
             // Assert
             Assert.True(context.Database.EnsureCreated());
@@ -28,35 +28,35 @@ namespace Infrastructure.Tests.Data
 
         [Fact]
         [SuppressMessage("Blocker Code Smell", "S2699:Tests should include assertions", Justification = "It's a temporary code.")]
-        public void Context_ShouldHaveDbSetProperties()
+        public void ContextShouldHaveDbSetProperties()
         {
             // Act
-            using var context = new Context(_options);
+            using Context context = new(_options);
         }
 
         [Fact]
-        public void OnModelCreating_ShouldConfigureModel()
+        public void OnModelCreatingShouldConfigureModel()
         {
             // Arrange
-            using var context = new Context(_options);
-            var modelBuilder = new ModelBuilder(new Microsoft.EntityFrameworkCore.Metadata.Conventions.ConventionSet());
+            using Context context = new(_options);
+            ModelBuilder modelBuilder = new(new Microsoft.EntityFrameworkCore.Metadata.Conventions.ConventionSet());
 
             // Act
-            var method = context.GetType()
+            MethodInfo? method = context.GetType()
                 .GetMethod("OnModelCreating", BindingFlags.Instance | BindingFlags.NonPublic);
             Assert.NotNull(method);
             method.Invoke(context, [modelBuilder]);
         }
 
         [Fact]
-        public void OnConfiguring_ShouldEnableSensitiveDataLogging()
+        public void OnConfiguringShouldEnableSensitiveDataLogging()
         {
             // Arrange
-            var optionsBuilder = new DbContextOptionsBuilder<Context>();
+            DbContextOptionsBuilder<Context> optionsBuilder = new();
 
             // Act
-            using var context = new Context(_options);
-            var method = context.GetType()
+            using Context context = new(_options);
+            MethodInfo? method = context.GetType()
                 .GetMethod("OnConfiguring", BindingFlags.Instance | BindingFlags.NonPublic);
             Assert.NotNull(method);
             method.Invoke(context, [optionsBuilder]);

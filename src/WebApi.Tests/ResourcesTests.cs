@@ -11,12 +11,15 @@ namespace WebApi.Tests
         private static readonly string[] SupportedCultures = ["es-AR", "en-US", "fr-FR", "it-IT", "ja-JP", "pt-BR", "zh-CN"];
         private readonly IStringLocalizerFactory LocalizerFactor;
 
-        public ResourcesTests() => LocalizerFactor = LocalizerFactorHelper.Create();
+        public ResourcesTests()
+        {
+            LocalizerFactor = LocalizerFactorHelper.Create();
+        }
 
         [Fact]
         public void ControllerResourcesAllCultures()
         {
-            var resource = new ControllerResources();
+            ControllerResources resource = new();
             Assert.NotNull(resource);
             ControllerResources.Culture = CultureInfo.InvariantCulture;
             Assert.Equal(CultureInfo.InvariantCulture, ControllerResources.Culture);
@@ -25,20 +28,20 @@ namespace WebApi.Tests
 
         private void VerifyAllResources<TResouces>(ResourceManager resourceManager)
         {
-            var localizaer = LocalizerFactor.Create(typeof(TResouces));
-            var resourceKeys = localizaer.GetAllStrings(true).Select(x => x.Name);
+            IStringLocalizer localizaer = LocalizerFactor.Create(typeof(TResouces));
+            IEnumerable<string> resourceKeys = localizaer.GetAllStrings(true).Select(x => x.Name);
 
             // Arrange
-            foreach (var culture in SupportedCultures)
+            foreach (string culture in SupportedCultures)
             {
-                var cultureInfo = new CultureInfo(culture);
-                var cultureResourceSet = resourceManager.GetResourceSet(cultureInfo, true, true);
+                CultureInfo cultureInfo = new(culture);
+                ResourceSet? cultureResourceSet = resourceManager.GetResourceSet(cultureInfo, true, true);
                 Assert.NotNull(cultureResourceSet);
 
                 // Act & Assert
-                foreach (var key in resourceKeys)
+                foreach (string? key in resourceKeys)
                 {
-                    var value = cultureResourceSet.GetString(key!);
+                    string? value = cultureResourceSet.GetString(key!);
                     Assert.False(string.IsNullOrEmpty(value), $"Missing resource for key '{key}' in culture '{culture}'");
                 }
             }

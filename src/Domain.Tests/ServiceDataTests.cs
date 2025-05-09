@@ -9,7 +9,7 @@ namespace Domain.Tests
         public void ServiceDataShouldInitializeWithDefaultValues()
         {
             // Arrange & Act
-            var serviceData = new ServiceData { Name = "Default Name" };
+            ServiceData serviceData = new() { Name = "Default Name" };
 
             // Assert
             Assert.Equal("Default Name", serviceData.Name);
@@ -22,8 +22,8 @@ namespace Domain.Tests
         public void ServiceDataShouldSetNameProperty()
         {
             // Arrange
-            var serviceData = new ServiceData { Name = "Default Name" };
-            var expectedName = "Test Service";
+            ServiceData serviceData = new() { Name = "Default Name" };
+            string expectedName = "Test Service";
 
             // Act
             serviceData.Name = expectedName;
@@ -37,8 +37,8 @@ namespace Domain.Tests
         public void ServiceDataShouldSetDescriptionProperty()
         {
             // Arrange
-            var serviceData = new ServiceData { Name = "Default Name" };
-            var expectedDescription = "This is a test service description.";
+            ServiceData serviceData = new() { Name = "Default Name" };
+            string expectedDescription = "This is a test service description.";
 
             // Act
             serviceData.Description = expectedDescription;
@@ -52,8 +52,8 @@ namespace Domain.Tests
         public void ServiceDataShouldSetApplicationIdProperty()
         {
             // Arrange
-            var serviceData = new ServiceData { Name = "Default Name" };
-            var expectedApplicationId = 456;
+            ServiceData serviceData = new() { Name = "Default Name" };
+            int expectedApplicationId = 456;
 
             // Act
             serviceData.ApplicationId = expectedApplicationId;

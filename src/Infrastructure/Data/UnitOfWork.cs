@@ -5,33 +5,19 @@ using Stellantis.ProjectName.Infrastructure.Data.Repositories;
 
 namespace Stellantis.ProjectName.Infrastructure.Data
 {
-    public class UnitOfWork : IUnitOfWork
+    public class UnitOfWork(Context context) : IUnitOfWork
     {
         private IDbContextTransaction? _transaction;
-        private readonly Context _context;
+        private readonly Context _context = context;
 
-        public IAreaRepository AreaRepository { get; }
-        public IIntegrationRepository IntegrationRepository { get; }
-        public IResponsibleRepository ResponsibleRepository { get; }
-        public IMemberRepository MemberRepository { get; }
-        public IApplicationDataRepository ApplicationDataRepository { get; }
-        public ISquadRepository SquadRepository { get; }
-        public IServiceDataRepository ServiceDataRepository { get; }
-        public IGitRepoRepository GitRepoRepository { get; }
-
-
-        public UnitOfWork(Context context)
-        {
-            _context = context;
-            AreaRepository = new AreaRepository(context);
-            IntegrationRepository = new IntegrationRepository(context);
-            ResponsibleRepository = new ResponsibleRepository(context);
-            MemberRepository = new MemberRepository(context);
-            ApplicationDataRepository = new ApplicationDataRepository(context);
-            SquadRepository = new SquadRepository(context);
-            GitRepoRepository = new GitRepoRepository(context);
-            ServiceDataRepository = new ServiceDataRepository(context);
-        }
+        public IAreaRepository AreaRepository { get; } = new AreaRepository(context);
+        public IIntegrationRepository IntegrationRepository { get; } = new IntegrationRepository(context);
+        public IResponsibleRepository ResponsibleRepository { get; } = new ResponsibleRepository(context);
+        public IMemberRepository MemberRepository { get; } = new MemberRepository(context);
+        public IApplicationDataRepository ApplicationDataRepository { get; } = new ApplicationDataRepository(context);
+        public ISquadRepository SquadRepository { get; } = new SquadRepository(context);
+        public IServiceDataRepository ServiceDataRepository { get; } = new ServiceDataRepository(context);
+        public IGitRepoRepository GitRepoRepository { get; } = new GitRepoRepository(context);
 
         public void BeginTransaction()
         {
@@ -43,12 +29,17 @@ namespace Stellantis.ProjectName.Infrastructure.Data
             try
             {
                 if (_transaction != null)
+                {
                     await _transaction.CommitAsync().ConfigureAwait(false);
+                }
             }
             catch
             {
                 if (_transaction != null)
+                {
                     await _transaction.RollbackAsync().ConfigureAwait(false);
+                }
+
                 throw;
             }
         }

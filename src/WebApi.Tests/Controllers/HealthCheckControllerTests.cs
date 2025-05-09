@@ -6,13 +6,13 @@ namespace WebApi.Tests.Controllers
     public class HealthCheckControllerTests
     {
         [Fact]
-        public void Get_ShouldReturnOk()
+        public void GetShouldReturnOk()
         {
             // Arrange
-            var controller = new HealthCheckController();
+            HealthCheckController controller = new();
 
             // Act
-            var result = controller.HealthCheck();
+            IActionResult result = controller.HealthCheck();
 
             // Assert
             Assert.IsType<OkResult>(result);

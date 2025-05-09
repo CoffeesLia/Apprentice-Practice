@@ -7,10 +7,10 @@ namespace WebApi.Tests.Helpers
     {
         internal static IStringLocalizerFactory Create()
         {
-            var serviceCollection = new ServiceCollection();
+            ServiceCollection serviceCollection = new();
             serviceCollection.AddLogging();
             serviceCollection.AddLocalization();
-            var serviceProvider = serviceCollection.BuildServiceProvider();
+            ServiceProvider serviceProvider = serviceCollection.BuildServiceProvider();
             return serviceProvider.GetRequiredService<IStringLocalizerFactory>();
         }
 

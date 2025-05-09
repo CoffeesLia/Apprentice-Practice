@@ -14,7 +14,7 @@ using Stellantis.ProjectName.Domain.Entities;
 using System.Globalization;
 using Xunit;
 
-namespace Application.Services.Tests
+namespace Application.Tests.Services
 {
     public class ResponsibleServiceTests
     {
@@ -25,11 +25,11 @@ namespace Application.Services.Tests
 
         public ResponsibleServiceTests()
         {
-            CultureInfo.CurrentCulture = new CultureInfo("en-US");
+            CultureInfo.CurrentCulture = CultureInfo.CurrentUICulture = new CultureInfo("pt-BR");
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _responsibleRepositoryMock = new Mock<IResponsibleRepository>();
-            var localizer = LocalizerFactorHelper.Create();
-            var responsibleValidator = new ResponsibleValidator(localizer);
+            Microsoft.Extensions.Localization.IStringLocalizerFactory localizer = LocalizerFactorHelper.Create();
+            ResponsibleValidator responsibleValidator = new(localizer);
 
             _unitOfWorkMock.Setup(u => u.ResponsibleRepository).Returns(_responsibleRepositoryMock.Object);
 
@@ -41,11 +41,11 @@ namespace Application.Services.Tests
         public void CulturePropertyShouldGetAndSetCorrectValue()
         {
             // Arrange
-            var expectedCulture = new CultureInfo("pt-BR");
+            CultureInfo expectedCulture = new("pt-BR");
 
             // Act
             ResponsibleResource.Culture = expectedCulture;
-            var result = ResponsibleResource.Culture;
+            CultureInfo result = ResponsibleResource.Culture;
 
             // Assert
             Assert.Equal(expectedCulture, result);
@@ -55,14 +55,14 @@ namespace Application.Services.Tests
         public async Task CreateAsyncWhenValidationFails()
         {
             // Arrange
-            var responsible = _fixture.Build<Responsible>()
+            Responsible responsible = _fixture.Build<Responsible>()
                                       .With(r => r.Name, string.Empty)
                                       .With(r => r.Email, string.Empty)
                                       .Without(r => r.AreaId)
                                       .Create();
 
             // Act
-            var result = await _responsibleService.CreateAsync(responsible);
+            OperationResult result = await _responsibleService.CreateAsync(responsible);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
@@ -75,13 +75,13 @@ namespace Application.Services.Tests
         public async Task CreateAsyncWhenEmailAlreadyExists()
         {
             // Arrange
-            var responsible = _fixture.Create<Responsible>();
-            var validatorMock = new Mock<IValidator<Responsible>>();
+            Responsible responsible = _fixture.Create<Responsible>();
+            Mock<IValidator<Responsible>> validatorMock = new();
             validatorMock.Setup(v => v.ValidateAsync(responsible, default)).ReturnsAsync(new ValidationResult());
             _responsibleRepositoryMock.Setup(r => r.VerifyEmailAlreadyExistsAsync(responsible.Email)).ReturnsAsync(true);
 
             // Act
-            var result = await _responsibleService.CreateAsync(responsible);
+            OperationResult result = await _responsibleService.CreateAsync(responsible);
 
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
@@ -92,13 +92,13 @@ namespace Application.Services.Tests
         public async Task CreateAsyncWhenSuccessful()
         {
             // Arrange
-            var responsible = _fixture.Create<Responsible>();
-            var validatorMock = new Mock<IValidator<Responsible>>();
+            Responsible responsible = _fixture.Create<Responsible>();
+            Mock<IValidator<Responsible>> validatorMock = new();
             validatorMock.Setup(v => v.ValidateAsync(responsible, default)).ReturnsAsync(new ValidationResult());
             _responsibleRepositoryMock.Setup(r => r.VerifyEmailAlreadyExistsAsync(responsible.Email)).ReturnsAsync(false);
 
             // Act
-            var result = await _responsibleService.CreateAsync(responsible);
+            OperationResult result = await _responsibleService.CreateAsync(responsible);
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
@@ -108,12 +108,12 @@ namespace Application.Services.Tests
         public async Task GetListAsyncShouldReturnPagedResult()
         {
             // Arrange
-            var filter = _fixture.Create<ResponsibleFilter>();
-            var pagedResult = _fixture.Create<PagedResult<Responsible>>();
+            ResponsibleFilter filter = _fixture.Create<ResponsibleFilter>();
+            PagedResult<Responsible> pagedResult = _fixture.Create<PagedResult<Responsible>>();
             _responsibleRepositoryMock.Setup(r => r.GetListAsync(filter)).ReturnsAsync(pagedResult);
 
             // Act
-            var result = await _responsibleService.GetListAsync(filter);
+            PagedResult<Responsible> result = await _responsibleService.GetListAsync(filter);
 
             // Assert
             Assert.Equal(pagedResult, result);
@@ -123,11 +123,11 @@ namespace Application.Services.Tests
         public async Task GetItemAsyncWhenItemDoesNotExist()
         {
             // Arrange
-            var id = _fixture.Create<int>();
+            int id = _fixture.Create<int>();
             _responsibleRepositoryMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync((Responsible?)null);
 
             // Act
-            var result = await _responsibleService.GetItemAsync(id);
+            OperationResult result = await _responsibleService.GetItemAsync(id);
 
             // Assert
             Assert.Equal(OperationStatus.NotFound, result.Status);
@@ -137,11 +137,11 @@ namespace Application.Services.Tests
         public async Task GetItemAsyncWhenItemExists()
         {
             // Arrange
-            var responsible = _fixture.Create<Responsible>();
+            Responsible responsible = _fixture.Create<Responsible>();
             _responsibleRepositoryMock.Setup(r => r.GetByIdAsync(responsible.Id)).ReturnsAsync(responsible);
 
             // Act
-            var result = await _responsibleService.GetItemAsync(responsible.Id);
+            OperationResult result = await _responsibleService.GetItemAsync(responsible.Id);
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
@@ -151,13 +151,13 @@ namespace Application.Services.Tests
         public async Task UpdateAsyncWhenValidationFails()
         {
             // Arrange
-            var responsible = _fixture.Build<Responsible>()
+            Responsible responsible = _fixture.Build<Responsible>()
                                       .With(r => r.Name, string.Empty)
                                       .With(r => r.Email, string.Empty)
                                       .Without(r => r.AreaId)
                                       .Create();
             // Act
-            var result = await _responsibleService.UpdateAsync(responsible);
+            OperationResult result = await _responsibleService.UpdateAsync(responsible);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
@@ -170,13 +170,13 @@ namespace Application.Services.Tests
         public async Task UpdateAsyncWhenEmailAlreadyExists()
         {
             // Arrange
-            var responsible = _fixture.Create<Responsible>();
-            var validatorMock = new Mock<IValidator<Responsible>>();
+            Responsible responsible = _fixture.Create<Responsible>();
+            Mock<IValidator<Responsible>> validatorMock = new();
             validatorMock.Setup(v => v.ValidateAsync(responsible, default)).ReturnsAsync(new ValidationResult());
             _responsibleRepositoryMock.Setup(r => r.VerifyEmailAlreadyExistsAsync(responsible.Email)).ReturnsAsync(true);
 
             // Act
-            var result = await _responsibleService.UpdateAsync(responsible);
+            OperationResult result = await _responsibleService.UpdateAsync(responsible);
 
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
@@ -186,14 +186,14 @@ namespace Application.Services.Tests
         public async Task UpdateAsyncWhenSuccessful()
         {
             // Arrange
-            var responsible = _fixture.Create<Responsible>();
-            var validatorMock = new Mock<IValidator<Responsible>>();
+            Responsible responsible = _fixture.Create<Responsible>();
+            Mock<IValidator<Responsible>> validatorMock = new();
             validatorMock.Setup(v => v.ValidateAsync(responsible, default)).ReturnsAsync(new ValidationResult());
             _responsibleRepositoryMock.Setup(r => r.VerifyEmailAlreadyExistsAsync(responsible.Email)).ReturnsAsync(false);
             _responsibleRepositoryMock.Setup(r => r.GetByIdAsync(responsible.Id)).ReturnsAsync(responsible);
 
             // Act
-            var result = await _responsibleService.UpdateAsync(responsible);
+            OperationResult result = await _responsibleService.UpdateAsync(responsible);
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
@@ -203,11 +203,11 @@ namespace Application.Services.Tests
         public async Task DeleteAsyncWhenItemDoesNotExist()
         {
             // Arrange
-            var id = _fixture.Create<int>();
+            int id = _fixture.Create<int>();
             _responsibleRepositoryMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync((Responsible?)null);
 
             // Act
-            var result = await _responsibleService.DeleteAsync(id);
+            OperationResult result = await _responsibleService.DeleteAsync(id);
 
             // Assert
             Assert.Equal(OperationStatus.NotFound, result.Status);
@@ -217,11 +217,11 @@ namespace Application.Services.Tests
         public async Task DeleteAsyncWhenSuccessful()
         {
             // Arrange
-            var responsible = _fixture.Create<Responsible>();
+            Responsible responsible = _fixture.Create<Responsible>();
             _responsibleRepositoryMock.Setup(r => r.GetByIdAsync(responsible.Id)).ReturnsAsync(responsible);
 
             // Act
-            var result = await _responsibleService.DeleteAsync(responsible.Id);
+            OperationResult result = await _responsibleService.DeleteAsync(responsible.Id);
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);

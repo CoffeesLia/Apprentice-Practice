@@ -12,73 +12,73 @@ namespace WebApi.Tests.Filters
     public class CustomExceptionFilterTests
     {
         [Fact]
-        public void OnException_ReturnInternalServerError_WhenExceptionIsThrown()
+        public void OnExceptionReturnInternalServerErrorWhenExceptionIsThrown()
         {
             // Arrange
-            var exception = new Exception("An error occurred");
+            TestException exception = new("An error occurred");
             HttpContext httpContext = new DefaultHttpContext();
-            var actionContext = new ActionContext(httpContext, new RouteData(), new ActionDescriptor());
-            var context = new ExceptionContext(actionContext, [])
+            ActionContext actionContext = new(httpContext, new RouteData(), new ActionDescriptor());
+            ExceptionContext context = new(actionContext, [])
             {
                 Exception = exception
             };
 
-            var filter = new CustomExceptionFilter();
+            CustomExceptionFilter filter = new();
 
             // Act
             filter.OnException(context);
 
             // Assert
-            var result = Assert.IsType<ObjectResult>(context.Result);
-            var errorResponse = Assert.IsType<ErrorResponseVm>(result.Value);
+            ObjectResult result = Assert.IsType<ObjectResult>(context.Result);
+            ErrorResponseVm errorResponse = Assert.IsType<ErrorResponseVm>(result.Value);
             Assert.Equal((int)HttpStatusCode.InternalServerError, result.StatusCode);
             Assert.Equal("An error occurred", errorResponse.Message);
         }
 
         [Fact]
-        public void OnException_ReturnUnauthorized_WhenUnauthorizedAccessExceptionIsThrown()
+        public void OnExceptionReturnUnauthorizedWhenUnauthorizedAccessExceptionIsThrown()
         {
             // Arrange
-            var exception = new UnauthorizedAccessException("An error occurred");
+            UnauthorizedAccessException exception = new("An error occurred");
             HttpContext httpContext = new DefaultHttpContext();
-            var actionContext = new ActionContext(httpContext, new RouteData(), new ActionDescriptor());
-            var context = new ExceptionContext(actionContext, [])
+            ActionContext actionContext = new(httpContext, new RouteData(), new ActionDescriptor());
+            ExceptionContext context = new(actionContext, [])
             {
                 Exception = exception
             };
 
-            var filter = new CustomExceptionFilter();
+            CustomExceptionFilter filter = new();
 
             // Act
             filter.OnException(context);
 
             // Assert
-            var result = Assert.IsType<ObjectResult>(context.Result);
-            var errorResponse = Assert.IsType<ErrorResponseVm>(result.Value);
+            ObjectResult result = Assert.IsType<ObjectResult>(context.Result);
+            ErrorResponseVm errorResponse = Assert.IsType<ErrorResponseVm>(result.Value);
             Assert.Equal((int)HttpStatusCode.Unauthorized, result.StatusCode);
             Assert.Equal("Usuário sem autorização", errorResponse.Message);
         }
 
         [Fact]
-        public void OnException_ReturnUnsupportedMediaType_WhenFormatExceptionIsThrown()
+        public void OnExceptionReturnUnsupportedMediaTypeWhenFormatExceptionIsThrown()
         {
             // Arrange
-            var exception = new FormatException("An error occurred");
+            FormatException exception = new("An error occurred");
             HttpContext httpContext = new DefaultHttpContext();
-            var actionContext = new ActionContext(httpContext, new RouteData(), new ActionDescriptor());
-            var context = new ExceptionContext(actionContext, [])
+            ActionContext actionContext = new(httpContext, new RouteData(), new ActionDescriptor());
+            ExceptionContext context = new(actionContext, [])
             {
                 Exception = exception
             };
 
-            var filter = new CustomExceptionFilter();
+            CustomExceptionFilter filter = new();
 
             // Act
             filter.OnException(context);
 
             // Assert
-            var result = Assert.IsType<ObjectResult>(context.Result);
-            var errorResponse = Assert.IsType<ErrorResponseVm>(result.Value);
+            ObjectResult result = Assert.IsType<ObjectResult>(context.Result);
+            ErrorResponseVm errorResponse = Assert.IsType<ErrorResponseVm>(result.Value);
             Assert.Equal((int)HttpStatusCode.UnsupportedMediaType, result.StatusCode);
             Assert.Equal("formato incorreto", errorResponse.Message);
         }

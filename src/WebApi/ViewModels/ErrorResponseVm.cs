@@ -4,7 +4,7 @@
     {
         public int Code { get; private set; }
         public string Message { get; private set; }
-        public ICollection<string>? Errors { get { return _Errors; } }
+        public ICollection<string>? Errors => _Errors;
         private readonly List<string> _Errors = [];
 
         public ErrorResponseVm(int code, string message)

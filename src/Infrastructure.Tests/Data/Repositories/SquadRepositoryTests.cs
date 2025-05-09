@@ -20,27 +20,27 @@ namespace Infrastructure.Tests.Data.Repositories
         [Fact]
         public async Task CreateAsyncShouldAddSquad()
         {
-            using var context = new Context(_dbContextOptions);
-            var repository = new SquadRepository(context);
+            using Context context = new(_dbContextOptions);
+            SquadRepository repository = new(context);
 
-            var squad = new Squad { Name = "Test Squad", Description = "Test Description" };
+            Squad squad = new() { Name = "Test Squad", Description = "Test Description" };
             await repository.CreateAsync(squad);
 
-            var createdSquad = await context.Squads.FirstOrDefaultAsync(s => s.Name == "Test Squad");
+            Squad? createdSquad = await context.Squads.FirstOrDefaultAsync(s => s.Name == "Test Squad");
             Assert.NotNull(createdSquad);
         }
 
         [Fact]
         public async Task GetByIdAsyncShouldReturnSquad()
         {
-            using var context = new Context(_dbContextOptions);
-            var repository = new SquadRepository(context);
+            using Context context = new(_dbContextOptions);
+            SquadRepository repository = new(context);
 
-            var squad = new Squad { Name = "Test Squad", Description = "Test Description" };
+            Squad squad = new() { Name = "Test Squad", Description = "Test Description" };
             context.Squads.Add(squad);
             await context.SaveChangesAsync();
 
-            var retrievedSquad = await repository.GetByIdAsync(squad.Id);
+            Squad? retrievedSquad = await repository.GetByIdAsync(squad.Id);
             Assert.NotNull(retrievedSquad);
             Assert.Equal(squad.Name, retrievedSquad?.Name);
         }
@@ -48,10 +48,10 @@ namespace Infrastructure.Tests.Data.Repositories
         [Fact]
         public async Task UpdateAsyncShouldUpdateSquad()
         {
-            using var context = new Context(_dbContextOptions);
-            var repository = new SquadRepository(context);
+            using Context context = new(_dbContextOptions);
+            SquadRepository repository = new(context);
 
-            var squad = new Squad { Name = "Test Squad", Description = "Test Description" };
+            Squad squad = new() { Name = "Test Squad", Description = "Test Description" };
             context.Squads.Add(squad);
             await context.SaveChangesAsync();
 
@@ -66,7 +66,7 @@ namespace Infrastructure.Tests.Data.Repositories
             // Desanexar a entidade para simular uma nova leitura do banco de dados
             context.Entry(squad).State = EntityState.Detached;
 
-            var updatedSquad = await repository.GetByIdAsync(squad.Id); // Use repository to get the updated entity
+            Squad? updatedSquad = await repository.GetByIdAsync(squad.Id); // Use repository to get the updated entity
             Assert.NotNull(updatedSquad);
             Assert.Equal("Updated Squad", updatedSquad?.Name);
         }
@@ -74,22 +74,22 @@ namespace Infrastructure.Tests.Data.Repositories
         [Fact]
         public async Task VerifyNameAlreadyExistsAsyncShouldReturnTrueIfNameExists()
         {
-            using var context = new Context(_dbContextOptions);
-            var repository = new SquadRepository(context);
+            using Context context = new(_dbContextOptions);
+            SquadRepository repository = new(context);
 
-            var squad = new Squad { Name = "Test Squad", Description = "Test Description" };
+            Squad squad = new() { Name = "Test Squad", Description = "Test Description" };
             context.Squads.Add(squad);
             await context.SaveChangesAsync();
 
-            var exists = await repository.VerifyNameAlreadyExistsAsync("Test Squad");
+            bool exists = await repository.VerifyNameAlreadyExistsAsync("Test Squad");
             Assert.True(exists);
         }
 
         [Fact]
         public async Task GetListAsyncShouldReturnFilteredSquads()
         {
-            using var context = new Context(_dbContextOptions);
-            var repository = new SquadRepository(context);
+            using Context context = new(_dbContextOptions);
+            SquadRepository repository = new(context);
 
             context.Squads.AddRange(
                 new Squad { Name = "Squad A", Description = "Description A" },
@@ -97,8 +97,8 @@ namespace Infrastructure.Tests.Data.Repositories
             );
             await context.SaveChangesAsync();
 
-            var filter = new SquadFilter { Name = "Squad A" };
-            var result = await repository.GetListAsync(filter);
+            SquadFilter filter = new() { Name = "Squad A" };
+            PagedResult<Squad> result = await repository.GetListAsync(filter);
 
             Assert.Single(result.Result);
             Assert.Equal("Squad A", result.Result.First().Name);
@@ -107,37 +107,37 @@ namespace Infrastructure.Tests.Data.Repositories
         [Fact]
         public async Task VerifySquadExistsAsyncShouldReturnTrueIfSquadExists()
         {
-            using var context = new Context(_dbContextOptions);
-            var repository = new SquadRepository(context);
+            using Context context = new(_dbContextOptions);
+            SquadRepository repository = new(context);
 
-            var squad = new Squad { Name = "Test Squad", Description = "Test Description" };
+            Squad squad = new() { Name = "Test Squad", Description = "Test Description" };
             context.Squads.Add(squad);
             await context.SaveChangesAsync();
 
-            var exists = await repository.VerifySquadExistsAsync(squad.Id);
+            bool exists = await repository.VerifySquadExistsAsync(squad.Id);
             Assert.True(exists);
         }
 
         [Fact]
         public async Task DeleteAsyncShouldRemoveSquad()
         {
-            using var context = new Context(_dbContextOptions);
-            var repository = new SquadRepository(context);
+            using Context context = new(_dbContextOptions);
+            SquadRepository repository = new(context);
 
-            var squad = new Squad { Name = "Test Squad", Description = "Test Description" };
+            Squad squad = new() { Name = "Test Squad", Description = "Test Description" };
             await repository.CreateAsync(squad);
             await context.SaveChangesAsync();
 
-            var addedSquad = await repository.GetByIdAsync(squad.Id);
+            Squad? addedSquad = await repository.GetByIdAsync(squad.Id);
             Assert.NotNull(addedSquad);
 
             await repository.DeleteAsync(squad.Id);
             await context.SaveChangesAsync();
 
-            var deletedSquad = await repository.GetByIdAsync(squad.Id);
+            Squad? deletedSquad = await repository.GetByIdAsync(squad.Id);
             Assert.Null(deletedSquad);
 
-            var exists = await context.Squads.AnyAsync(s => s.Id == squad.Id);
+            bool exists = await context.Squads.AnyAsync(s => s.Id == squad.Id);
             Assert.False(exists);
         }
     }

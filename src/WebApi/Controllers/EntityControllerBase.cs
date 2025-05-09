@@ -13,38 +13,23 @@ namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [ApiController]
     [Authorize]
-    public abstract class EntityControllerBase<TEntity, TEntityDto> : ControllerBase
+    public abstract class EntityControllerBase<TEntity, TEntityDto>(IEntityServiceBase<TEntity> service, IMapper mapper, IStringLocalizerFactory localizerFactory) : ControllerBase
         where TEntity : EntityBase
         where TEntityDto : class
     {
-        private IIntegrationService integrationService;
-        private IStringLocalizerFactory localizerFactory;
-
-        protected virtual IEntityServiceBase<TEntity> Service { get; }
-        protected IMapper Mapper { get; }
-        protected IStringLocalizer Localizer { get; }
-
-        protected EntityControllerBase(IEntityServiceBase<TEntity> service, IMapper mapper, IStringLocalizerFactory localizerFactory)
-        {
-            Service = service ?? throw new ArgumentNullException(nameof(service));
-            Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            Localizer = localizerFactory.Create(typeof(ControllerResources));
-        }
-
-        protected EntityControllerBase(IIntegrationService integrationService, IMapper mapper, IStringLocalizerFactory localizerFactory)
-        {
-            this.integrationService = integrationService;
-            Mapper = mapper;
-            this.localizerFactory = localizerFactory;
-        }
+        protected virtual IEntityServiceBase<TEntity> Service { get; } = service ?? throw new ArgumentNullException(nameof(service));
+        protected IMapper Mapper { get; } = mapper ?? throw new ArgumentNullException(nameof(mapper));
+        protected IStringLocalizer Localizer { get; } = localizerFactory.Create(typeof(ControllerResources));
 
         protected async Task<IActionResult> CreateBaseAsync<TEntityVm>(TEntityDto itemDto) where TEntityVm : EntityVmBase
         {
             if (itemDto == null)
+            {
                 return BadRequest(ErrorResponse.BadRequest(Localizer[nameof(ControllerResources.CannotBeNull)]));
+            }
 
-            var item = Mapper.Map<TEntity>(itemDto);
-            var result = await Service.CreateAsync(item!);
+            TEntity item = Mapper.Map<TEntity>(itemDto);
+            OperationResult result = await Service.CreateAsync(item!);
 
             return result.Status switch
             {
@@ -58,11 +43,13 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         protected async Task<IActionResult> UpdateBaseAsync<TEntityVm>(int id, TEntityDto itemDto) where TEntityVm : EntityVmBase
         {
             if (itemDto == null)
+            {
                 return BadRequest(ErrorResponse.BadRequest(Localizer[nameof(ControllerResources.CannotBeNull)]));
+            }
 
-            var item = Mapper.Map<TEntity>(itemDto);
+            TEntity item = Mapper.Map<TEntity>(itemDto);
             item!.Id = id;
-            var result = await Service.UpdateAsync(item);
+            OperationResult result = await Service.UpdateAsync(item);
 
             return result.Status switch
             {
@@ -76,19 +63,21 @@ namespace Stellantis.ProjectName.WebApi.Controllers
 
         protected async Task<ActionResult> GetAsync<TEntityVm>(int id) where TEntityVm : EntityVmBase
         {
-            var item = await Service.GetItemAsync(id);
+            TEntity? item = await Service.GetItemAsync(id);
 
             if (item == null)
+            {
                 return NotFound();
+            }
 
-            var result = Mapper.Map<TEntityVm>(item);
+            TEntityVm result = Mapper.Map<TEntityVm>(item);
             return Ok(result);
         }
 
         [HttpDelete("{id}")]
         public virtual async Task<IActionResult> DeleteAsync(int id)
         {
-            var result = await Service.DeleteAsync(id);
+            OperationResult result = await Service.DeleteAsync(id);
             return result.Status switch
             {
                 OperationStatus.Success => NoContent(),

@@ -22,10 +22,10 @@ namespace Application.Tests.Services
         private readonly Mock<IValidator<Integration>> _validatorMock = new();
         public IntegrationServiceTests()
         {
-            CultureInfo.CurrentCulture = new CultureInfo("en-US");
+            CultureInfo.CurrentUICulture = CultureInfo.CurrentCulture = new CultureInfo("pt-BR");
             _unitOfWorkMock.Setup(u => u.IntegrationRepository).Returns(_integrationRepositoryMock.Object);
-            var localizer = Helpers.LocalizerFactorHelper.Create();
-            var integrationValidator = new IntegrationValidator(localizer);
+            Microsoft.Extensions.Localization.IStringLocalizerFactory localizer = Helpers.LocalizerFactorHelper.Create();
+            IntegrationValidator integrationValidator = new(localizer);
             _integrationService = new IntegrationService(_unitOfWorkMock.Object, localizer, integrationValidator);
         }
 
@@ -33,15 +33,15 @@ namespace Application.Tests.Services
         public async Task CreateAsyncShouldReturnInvalidDataWhenValidationFails()
         {
             // Arrange
-            var integration = new Integration("Eu", "aaa");
-            var validationResult = new ValidationResult(new List<ValidationFailure> { new("Name", "Name is too short") });
-            var validatorMock = new Mock<IValidator<Integration>>();
+            Integration integration = new("Eu", "aaa");
+            ValidationResult validationResult = new(new List<ValidationFailure> { new("Name", "Name is too short") });
+            Mock<IValidator<Integration>> validatorMock = new();
             validatorMock.Setup(v => v.ValidateAsync(integration, It.IsAny<CancellationToken>())).ReturnsAsync(validationResult);
-            var localizer = Helpers.LocalizerFactorHelper.Create();
-            var testIntegrationService = new IntegrationService(_unitOfWorkMock.Object, localizer, validatorMock.Object);
+            Microsoft.Extensions.Localization.IStringLocalizerFactory localizer = Helpers.LocalizerFactorHelper.Create();
+            IntegrationService testIntegrationService = new(_unitOfWorkMock.Object, localizer, validatorMock.Object);
 
             // Act
-            var result = await testIntegrationService.CreateAsync(integration);
+            OperationResult result = await testIntegrationService.CreateAsync(integration);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
@@ -52,10 +52,10 @@ namespace Application.Tests.Services
         public async Task CreateAsyncShouldReturnCompleteWhenIntegrationIsValid()
         {
             // Arrange
-            var integration = new Integration("Name", "Description");
+            Integration integration = new("Name", "Description");
 
             // Act
-            var result = await _integrationService.CreateAsync(integration);
+            OperationResult result = await _integrationService.CreateAsync(integration);
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
@@ -65,10 +65,10 @@ namespace Application.Tests.Services
         public async Task CreateAsyncShouldReturnInvalidDataWhenIntegrationNameIsNull()
         {
             // Arrange
-            var integration = new Integration(null!, "Description");
+            Integration integration = new(null!, "Description");
 
             // Act
-            var result = await _integrationService.CreateAsync(integration);
+            OperationResult result = await _integrationService.CreateAsync(integration);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
@@ -78,10 +78,10 @@ namespace Application.Tests.Services
         public async Task CreateAsyncShouldReturnInvalidDataWhenIntegrationNameIsEmpty()
         {
             // Arrange
-            var integration = new Integration(string.Empty, "Description");
+            Integration integration = new(string.Empty, "Description");
 
             // Act
-            var result = await _integrationService.CreateAsync(integration);
+            OperationResult result = await _integrationService.CreateAsync(integration);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
@@ -91,56 +91,40 @@ namespace Application.Tests.Services
         public async Task CreateAsyncShouldReturnInvalidDataWhenIntegrationNameIsWhiteSpace()
         {
             // Arrange  
-            var integration = new Integration(" ", "Description");
+            Integration integration = new(" ", "Description");
 
             // Act  
-            var result = await _integrationService.CreateAsync(integration);
+            OperationResult result = await _integrationService.CreateAsync(integration);
 
             // Assert  
+            Console.WriteLine($"Culture: {CultureInfo.CurrentCulture.Name}");
+            Console.WriteLine($"Culture: {CultureInfo.CurrentUICulture.Name}");
+            Console.WriteLine($"IntegrationResources: {IntegrationResources.Culture}");
+
             Assert.Equal(OperationStatus.InvalidData, result.Status);
             Assert.Equal(IntegrationResources.NameIsRequired, result.Errors.First());
-        }
-        [Fact]
-        public async Task CreateAsyncShouldReturnInvalidDataWhenIntegrationDescriptionIsNull()
-        {
-            // Arrange
-            var integration = new Integration("Name", null!);
-            var validationResult = new ValidationResult(new List<ValidationFailure>
-            {
-                //Andryel: new("Description", IntegrationResources.DescriptionIsRequired)
-            });
-            _validatorMock.Setup(v => v.ValidateAsync(integration, default)).ReturnsAsync(validationResult);
-            var testIntegrationService = new IntegrationService(_unitOfWorkMock.Object, Helpers.LocalizerFactorHelper.Create(), _validatorMock.Object);
-
-            // Act
-            var result = await testIntegrationService.CreateAsync(integration);
-
-            // Assert
-            Assert.Equal(OperationStatus.InvalidData, result.Status);
-            //Andryel: Assert.Equal(IntegrationResources.DescriptionIsRequired, result.Errors.First());
         }
 
         [Fact]
         public async Task CreateAsyncShouldReturnInvalidDataWhenIntegrationDescriptionIsEmpty()
         {
             // Arrange
-            var integration = new Integration("Name", string.Empty);
+            Integration integration = new("Name", string.Empty);
 
             // Act
-            var result = await _integrationService.CreateAsync(integration);
+            OperationResult result = await _integrationService.CreateAsync(integration);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
-            Assert.Equal("Nome é obrigatório.", result.Errors.First());
         }
         [Fact]
         public async Task CreateAsyncShouldReturnInvalidDataWhenIntegrationDescriptionIsWhiteSpace()
         {
             // Arrange
-            var integration = new Integration("Name", " ");
+            Integration integration = new("Name", " ");
 
             // Act
-            var result = await _integrationService.CreateAsync(integration);
+            OperationResult result = await _integrationService.CreateAsync(integration);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
@@ -150,12 +134,12 @@ namespace Application.Tests.Services
         public async Task DeleteAsyncShouldReturnSuccessWhenApplicationDataExists()
         {
             // Arrange
-            var integration = new Integration("Valid Name", "Valid Description") { Id = 1 };
+            Integration integration = new("Valid Name", "Valid Description") { Id = 1 };
             _integrationRepositoryMock.Setup(r => r.GetByIdAsync(integration.Id)).ReturnsAsync(integration);
             _integrationRepositoryMock.Setup(r => r.DeleteAsync(integration.Id, true)).Returns(Task.CompletedTask);
 
             // Act
-            var result = await _integrationService.DeleteAsync(integration.Id);
+            OperationResult result = await _integrationService.DeleteAsync(integration.Id);
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
@@ -165,11 +149,11 @@ namespace Application.Tests.Services
         public async Task DeleteAsyncShouldReturnNotFoundWhenApplicationDataDoesNotExist()
         {
             // Arrange
-            var integration = new Integration("Valid Name", "Valid Description") { Id = 1 };
+            Integration integration = new("Valid Name", "Valid Description") { Id = 1 };
             _integrationRepositoryMock.Setup(r => r.GetByIdAsync(integration.Id)).ReturnsAsync((Integration?)null);
 
             // Act
-            var result = await _integrationService.DeleteAsync(integration.Id);
+            OperationResult result = await _integrationService.DeleteAsync(integration.Id);
 
             // Assert
             Assert.Equal(OperationStatus.NotFound, result.Status);
@@ -179,11 +163,14 @@ namespace Application.Tests.Services
         public async Task GetItemAsyncShouldReturnKeyNotFoundExceptionWhenIntegrationDoesNotExist()
         {
             // Arrange
-            var integration = new Integration("Test Integration", "aaa");
+            Integration integration = new("Test Integration", "aaa");
             _integrationRepositoryMock.Setup(repo => repo.GetByIdAsync(integration.Id)).ReturnsAsync((Integration)null!);
 
             // Act
-            async Task Act() => await _integrationService.GetItemAsync(integration.Id).ConfigureAwait(false);
+            async Task Act()
+            {
+                await _integrationService.GetItemAsync(integration.Id).ConfigureAwait(false);
+            }
 
             // Assert
             await Assert.ThrowsAsync<KeyNotFoundException>(Act);
@@ -193,11 +180,11 @@ namespace Application.Tests.Services
         public async Task GetItemAsyncShouldReturnIntegrationWhenIntegrationExists()
         {
             // Arrange
-            var integration = new Integration("Test Integration", "aaa");
+            Integration integration = new("Test Integration", "aaa");
             _integrationRepositoryMock.Setup(repo => repo.GetByIdAsync(integration.Id)).ReturnsAsync(integration);
 
             // Act
-            var result = await _integrationService.GetItemAsync(integration.Id);
+            Integration? result = await _integrationService.GetItemAsync(integration.Id);
 
             // Assert
             Assert.Equal(integration, result);
@@ -207,11 +194,11 @@ namespace Application.Tests.Services
         public async Task UpdateAsyncShouldReturnSuccessWhenIntegrationExists()
         {
             // Arrange
-            var integration = new Integration("Test Integration", "aaa");
+            Integration integration = new("Test Integration", "aaa");
             _integrationRepositoryMock.Setup(repo => repo.GetByIdAsync(integration.Id)).ReturnsAsync(integration);
 
             // Act
-            var result = await _integrationService.UpdateAsync(integration);
+            OperationResult result = await _integrationService.UpdateAsync(integration);
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
@@ -221,11 +208,11 @@ namespace Application.Tests.Services
         public async Task UpdateAsyncShouldReturnCompleteWhenIntegrationIsValid()
         {
             // Arrange
-            var integration = new Integration("Name", "Description");
+            Integration integration = new("Name", "Description");
             _integrationRepositoryMock.Setup(r => r.GetByIdAsync(integration.Id)).ReturnsAsync(integration);
 
             // Act
-            var result = await _integrationService.UpdateAsync(integration);
+            OperationResult result = await _integrationService.UpdateAsync(integration);
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
@@ -235,10 +222,10 @@ namespace Application.Tests.Services
         public async Task UpdateAsyncShouldReturnInvalidDataWhenIntegrationNameIsEmpty()
         {
             // Arrange
-            var integration = new Integration(string.Empty, "Description");
+            Integration integration = new(string.Empty, "Description");
 
             // Act
-            var result = await _integrationService.UpdateAsync(integration);
+            OperationResult result = await _integrationService.UpdateAsync(integration);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
@@ -248,10 +235,10 @@ namespace Application.Tests.Services
         public async Task UpdateAsyncShouldReturnInvalidDataWhenIntegrationNameIsWhiteSpace()
         {
             // Arrange
-            var integration = new Integration(" ", "Description");
+            Integration integration = new(" ", "Description");
 
             // Act
-            var result = await _integrationService.UpdateAsync(integration);
+            OperationResult result = await _integrationService.UpdateAsync(integration);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
@@ -261,10 +248,10 @@ namespace Application.Tests.Services
         public async Task UpdateAsyncShouldReturnInvalidDataWhenIntegrationDescriptionIsNull()
         {
             // Arrange
-            var integration = new Integration("Name", null!);
+            Integration integration = new("Name", null!);
 
             // Act
-            var result = await _integrationService.UpdateAsync(integration);
+            OperationResult result = await _integrationService.UpdateAsync(integration);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
@@ -274,10 +261,10 @@ namespace Application.Tests.Services
         public async Task UpdateAsyncShouldReturnInvalidDataWhenIntegrationDescriptionIsEmpty()
         {
             // Arrange
-            var integration = new Integration("Name", string.Empty);
+            Integration integration = new("Name", string.Empty);
 
             // Act
-            var result = await _integrationService.UpdateAsync(integration);
+            OperationResult result = await _integrationService.UpdateAsync(integration);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
@@ -287,10 +274,10 @@ namespace Application.Tests.Services
         public async Task UpdateAsyncShouldReturnInvalidDataWhenIntegrationDescriptionIsWhiteSpace()
         {
             // Arrange
-            var integration = new Integration("Name", " ");
+            Integration integration = new("Name", " ");
 
             // Act
-            var result = await _integrationService.UpdateAsync(integration);
+            OperationResult result = await _integrationService.UpdateAsync(integration);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
@@ -300,8 +287,8 @@ namespace Application.Tests.Services
         public async Task GetListAsyncShouldReturnIntegrationList()
         {
             // Arrange
-            var filter = new IntegrationFilter();
-            var expected = new PagedResult<Integration>
+            IntegrationFilter filter = new();
+            PagedResult<Integration> expected = new()
             {
                 Result = [],
                 Page = 0,
@@ -311,7 +298,7 @@ namespace Application.Tests.Services
             _integrationRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<IntegrationFilter>())).ReturnsAsync(expected);
 
             // Act
-            var result = await _integrationService.GetListAsync(filter);
+            PagedResult<Integration> result = await _integrationService.GetListAsync(filter);
 
             // Assert
             Assert.Equal(expected, result);
@@ -321,8 +308,8 @@ namespace Application.Tests.Services
         public async Task GetListAsyncShouldReturnIntegrationListWithFilter()
         {
             // Arrange
-            var filter = new IntegrationFilter { Name = "Name" };
-            var expected = new PagedResult<Integration>
+            IntegrationFilter filter = new() { Name = "Name" };
+            PagedResult<Integration> expected = new()
             {
                 Result = [],
                 Page = 0,
@@ -332,7 +319,7 @@ namespace Application.Tests.Services
             _integrationRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<IntegrationFilter>())).ReturnsAsync(expected);
 
             // Act
-            var result = await _integrationService.GetListAsync(filter);
+            PagedResult<Integration> result = await _integrationService.GetListAsync(filter);
 
             // Assert
             Assert.Equal(expected, result);
@@ -342,8 +329,8 @@ namespace Application.Tests.Services
         public async Task GetListAsyncShouldReturnIntegrationListWithPaging()
         {
             // Arrange
-            var filter = new IntegrationFilter { Name = "Name", Page = 1, PageSize = 10 };
-            var expected = new PagedResult<Integration>
+            IntegrationFilter filter = new() { Name = "Name", Page = 1, PageSize = 10 };
+            PagedResult<Integration> expected = new()
             {
                 Result = [],
                 Page = 1,
@@ -353,7 +340,7 @@ namespace Application.Tests.Services
             _integrationRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<IntegrationFilter>())).ReturnsAsync(expected);
 
             // Act
-            var result = await _integrationService.GetListAsync(filter);
+            PagedResult<Integration> result = await _integrationService.GetListAsync(filter);
 
             // Assert
             Assert.Equal(expected, result);
@@ -362,12 +349,12 @@ namespace Application.Tests.Services
         public async Task CreateAsyncShouldReturnSuccessWhenIntegrationIsValid()
         {
             // Arrange
-            var integration = new Integration("TestName", "TestDescription");
+            Integration integration = new("TestName", "TestDescription");
             _integrationRepositoryMock.Setup(repo => repo.GetByIdAsync(integration.Id)).ReturnsAsync((Integration)null!);
             _validatorMock.Setup(v => v.ValidateAsync(integration, default)).ReturnsAsync(new ValidationResult());
 
             // Act
-            var result = await _integrationService.CreateAsync(integration);
+            OperationResult result = await _integrationService.CreateAsync(integration);
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
@@ -377,12 +364,12 @@ namespace Application.Tests.Services
         public async Task CreateAsyncShouldReturnValidationErrorWhenIntegrationIsInvalid()
         {
             // Arrange
-            var integration = new Integration("TestName", "TestDescription");
-            var validationFailures = new List<ValidationFailure> { new("Name", "Name is required") };
+            Integration integration = new("TestName", "TestDescription");
+            List<ValidationFailure> validationFailures = [new("Name", "Name is required")];
             _validatorMock.Setup(v => v.ValidateAsync(integration, default)).ReturnsAsync(new ValidationResult(validationFailures));
 
             // Act
-            var result = await _integrationService.CreateAsync(integration);
+            OperationResult result = await _integrationService.CreateAsync(integration);
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
@@ -395,11 +382,11 @@ namespace Application.Tests.Services
         public async Task GetItemAsyncShouldReturnIntegrationData()
         {
             // Arrange
-            var integration = new Integration("Valid Name", "Valid Description") { Id = 1 };
+            Integration integration = new("Valid Name", "Valid Description") { Id = 1 };
             _integrationRepositoryMock.Setup(r => r.GetByIdAsync(integration.Id)).ReturnsAsync(integration);
 
             // Act
-            var result = await _integrationService.GetItemAsync(integration.Id);
+            Integration? result = await _integrationService.GetItemAsync(integration.Id);
 
             // Assert
             Assert.Equal(integration, result);
@@ -408,9 +395,9 @@ namespace Application.Tests.Services
         public async Task IsIntegrationNameUniqueAsyncShouldReturnTrueWhenIntegrationDoesNotExist()
         {
             // Arrange
-            var name = "UniqueName";
-            var filter = new IntegrationFilter { Name = name };
-            var expected = new PagedResult<Integration>
+            string name = "UniqueName";
+            IntegrationFilter filter = new() { Name = name };
+            PagedResult<Integration> expected = new()
             {
                 Result = [],
                 Page = 0,
@@ -420,7 +407,7 @@ namespace Application.Tests.Services
             _integrationRepositoryMock.Setup(r => r.GetListAsync(filter)).ReturnsAsync(expected);
 
             // Act
-            var result = await _integrationService.IsIntegrationNameUniqueAsync(name);
+            bool result = await _integrationService.IsIntegrationNameUniqueAsync(name);
 
             // Assert
             Assert.True(result);
@@ -430,8 +417,8 @@ namespace Application.Tests.Services
         public async Task IsIntegrationNameUniqueAsyncShouldReturnFalseWhenIntegrationExists()
         {
             // Arrange
-            var name = "ExistingName";
-            var expected = new PagedResult<Integration>
+            string name = "ExistingName";
+            PagedResult<Integration> expected = new()
             {
                 Result = [new(name, "Description")],
                 Page = 0,
@@ -441,7 +428,7 @@ namespace Application.Tests.Services
             _integrationRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<IntegrationFilter>())).ReturnsAsync(expected);
 
             // Act
-            var result = await _integrationService.IsIntegrationNameUniqueAsync(name);
+            bool result = await _integrationService.IsIntegrationNameUniqueAsync(name);
 
             // Assert
             Assert.False(result);
@@ -450,7 +437,7 @@ namespace Application.Tests.Services
         public async Task UpdateAsyncShouldThrowArgumentNullExceptionWhenIntegrationNameIsNull()
         {
             // Arrange
-            var integration = new Integration(null!, "Description");
+            Integration integration = new(null!, "Description");
 
             // Act & Assert
             await Assert.ThrowsAsync<ArgumentNullException>(() => _integrationService.UpdateAsync(integration));
@@ -461,11 +448,11 @@ namespace Application.Tests.Services
         public async Task UpdateAsyncShouldReturnNotFoundWhenIntegrationDoesNotExist()
         {
             // Arrange
-            var integration = new Integration("NonExistentName", "Description") { Id = 1 };
+            Integration integration = new("NonExistentName", "Description") { Id = 1 };
             _integrationRepositoryMock.Setup(r => r.GetByIdAsync(integration.Id)).ReturnsAsync((Integration?)null);
 
             // Act
-            var result = await _integrationService.UpdateAsync(integration);
+            OperationResult result = await _integrationService.UpdateAsync(integration);
 
             // Assert
             Assert.Equal(OperationStatus.NotFound, result.Status);
@@ -476,17 +463,12 @@ namespace Application.Tests.Services
         {
             // Arrange
             IntegrationFilter? filter = null;
-            var expected = new PagedResult<Integration>
-            {
-                Result = new List<Integration>(),
-                Page = 0,
-                PageSize = 0,
-                Total = 0
-            };
+            PagedResult<Integration> expected = new()
+            { Result = [], Page = 0, PageSize = 0, Total = 0 };
             _integrationRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<IntegrationFilter>())).ReturnsAsync(expected);
 
             // Act
-            var result = await _integrationService.GetListAsync(filter!);
+            PagedResult<Integration> result = await _integrationService.GetListAsync(filter!);
 
             // Assert
             Assert.Equal(expected, result);

@@ -30,8 +30,8 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetListAsync([FromQuery] ApplicationDataFilterDto filterDto)
         {
-            var filter = Mapper.Map<ApplicationFilter>(filterDto);
-            var result = await Service.GetListAsync(filter).ConfigureAwait(false);
+            ApplicationFilter filter = Mapper.Map<ApplicationFilter>(filterDto);
+            PagedResult<ApplicationData> result = await Service.GetListAsync(filter).ConfigureAwait(false);
             return Ok(Mapper.Map<PagedResultVm<ApplicationVm>>(result));
         }
 
@@ -44,7 +44,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         [HttpDelete("{id}")]
         public override async Task<IActionResult> DeleteAsync(int id)
         {
-            var result = await base.DeleteAsync(id).ConfigureAwait(false);
+            IActionResult result = await base.DeleteAsync(id).ConfigureAwait(false);
             return result;
         }
     }

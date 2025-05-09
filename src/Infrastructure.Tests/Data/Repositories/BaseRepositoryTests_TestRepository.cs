@@ -12,7 +12,7 @@ namespace Infrastructure.Tests.Data.Repositories
             /// </summary>
             internal async Task<PagedResult<TestEntity>> CallGetListAsync(IQueryable<TestEntity> query, string? sort = null, string? sortDir = null, int page = 1, int pageSize = 10)
             {
-                return await GetListAsync(query, sort, sortDir, page, pageSize);
+                return await GetListAsync(query, sort, sortDir, page, pageSize).ConfigureAwait(false);
             }
         }
     }

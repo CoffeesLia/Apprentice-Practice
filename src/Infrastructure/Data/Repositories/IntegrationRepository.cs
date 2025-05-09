@@ -9,7 +9,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
     {
         public async Task DeleteAsync(int id, bool saveChanges = true)
         {
-            var integration = await GetByIdAsync(id).ConfigureAwait(false);
+            Integration? integration = await GetByIdAsync(id).ConfigureAwait(false);
             if (integration != null)
             {
                 Context.Set<Integration>().Remove(integration);
@@ -28,12 +28,18 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         {
             ArgumentNullException.ThrowIfNull(filter);
 
-            var filters = PredicateBuilder.New<Integration>(true);
+            ExpressionStarter<Integration> filters = PredicateBuilder.New<Integration>(true);
 
             if (!string.IsNullOrWhiteSpace(filter.Name))
+            {
                 filters = filters.And(x => x.Name != null && x.Name.Contains(filter.Name));
+            }
+
             if (filter.ApplicationData != null)
+            {
                 filters = filters.And(x => x.ApplicationData.Id == filter.ApplicationData.Id);
+            }
+
             return await GetListAsync(filter: filters, page: filter.Page, sort: filter.Sort, sortDir: filter.SortDir).ConfigureAwait(false);
         }
     }

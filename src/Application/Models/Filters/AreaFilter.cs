@@ -1,4 +1,4 @@
-﻿ namespace Stellantis.ProjectName.Application.Models.Filters
+﻿namespace Stellantis.ProjectName.Application.Models.Filters
 {
     public class AreaFilter : Filter
     {

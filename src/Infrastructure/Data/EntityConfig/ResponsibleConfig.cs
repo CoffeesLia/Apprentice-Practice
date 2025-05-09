@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Stellantis.ProjectName.Domain.Entities;
 
-namespace Stellantis.Domain.EntityConfig
+namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
 {
     public class ResponsavelConfig : IEntityTypeConfiguration<Responsible>
     {

@@ -12,13 +12,13 @@ using Stellantis.ProjectName.WebApi.Extensions;
 using Stellantis.ProjectName.WebApi.Filters;
 using System.Globalization;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 ValidatorOptions.Global.LanguageManager.Enabled = false;
 ValidatorOptions.Global.LanguageManager.Culture = new CultureInfo("en-US");
 
-var configuration = new ConfigurationBuilder()
+IConfigurationRoot configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .Build();
@@ -46,7 +46,7 @@ builder.Services.RegisterMapper();
 
 #if DEBUG
 
-var databaseType = configuration["DatabaseType"];
+string? databaseType = configuration["DatabaseType"];
 switch (databaseType)
 {
     case "InMemory":
@@ -63,19 +63,19 @@ switch (databaseType)
 builder.Services.AddDbContext<Context>(options => options.UseSqlServer(configuration["ConnectionString"]));
 #endif
 
-var arrLanguage = new[] { "en-US", "pt-BR", "es-AR", "fr-FR", "it-IT", "nl-NL" };
+string[] arrLanguage = ["en-US", "pt-BR", "es-AR", "fr-FR", "it-IT", "nl-NL"];
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
-    var supportedCultures = arrLanguage;
+    string[] supportedCultures = arrLanguage;
     options
         .SetDefaultCulture(supportedCultures[0])
         .AddSupportedCultures(supportedCultures)
         .AddSupportedUICultures(supportedCultures);
 
-    options.RequestCultureProviders = new List<IRequestCultureProvider>
-    {
+    options.RequestCultureProviders =
+    [
         new AcceptLanguageHeaderRequestCultureProvider()
-    };
+    ];
 });
 
 #if DEBUG
@@ -96,7 +96,7 @@ builder.Services.AddCors(options =>
 
 #endif
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 #if DEBUG
 
@@ -112,7 +112,7 @@ if (app.Environment.IsDevelopment())
 
 #endif
 
-var localizationOptions = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value;
+RequestLocalizationOptions localizationOptions = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value;
 app.UseRequestLocalization(localizationOptions);
 app.UseHttpsRedirection();
 app.UseAuthorization();

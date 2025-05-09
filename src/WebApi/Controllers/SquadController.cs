@@ -21,24 +21,18 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         public async Task<IActionResult> CreateAsync([FromBody] SquadDto itemDto)
         {
             // Validação opcional (se necessário)
-            if (itemDto == null)
-            {
-                return BadRequest("O objeto SquadDto não pode ser nulo.");
-            }
-
-            return await CreateBaseAsync<SquadVm>(itemDto).ConfigureAwait(false);
+            return itemDto == null
+                ? BadRequest("O objeto SquadDto não pode ser nulo.")
+                : await CreateBaseAsync<SquadVm>(itemDto).ConfigureAwait(false);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] SquadDto itemDto)
         {
             // Validação opcional (se necessário)
-            if (itemDto == null)
-            {
-                return BadRequest("O objeto SquadDto não pode ser nulo.");
-            }
-
-            return await UpdateBaseAsync<SquadVm>(id, itemDto).ConfigureAwait(false);
+            return itemDto == null
+                ? BadRequest("O objeto SquadDto não pode ser nulo.")
+                : await UpdateBaseAsync<SquadVm>(id, itemDto).ConfigureAwait(false);
         }
 
         [HttpGet("{id}")]
@@ -51,13 +45,13 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         public async Task<IActionResult> GetListAsync([FromQuery] SquadFilterDto filterDto)
         {
             // Mapeia o DTO de filtro para o modelo de filtro
-            var filter = Mapper.Map<SquadFilter>(filterDto);
+            SquadFilter filter = Mapper.Map<SquadFilter>(filterDto);
 
             // Obtém o resultado paginado do serviço
-            var pagedResult = await _squadService.GetListAsync(filter!).ConfigureAwait(false);
+            PagedResult<Squad> pagedResult = await _squadService.GetListAsync(filter!).ConfigureAwait(false);
 
             // Mapeia o resultado para o ViewModel
-            var result = new PagedResultVm<SquadVm>
+            PagedResultVm<SquadVm> result = new()
             {
                 Result = Mapper.Map<IEnumerable<SquadVm>>(pagedResult.Result),
                 Page = pagedResult.Page,

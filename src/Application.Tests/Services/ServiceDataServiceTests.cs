@@ -2,6 +2,7 @@
 using FluentValidation;
 using FluentValidation.Results;
 using FluentValidation.TestHelper;
+using Microsoft.Extensions.Localization;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
@@ -31,9 +32,8 @@ namespace Application.Tests.Services
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _serviceRepositoryMock = new Mock<IServiceDataRepository>();
 
-            var localizerFactory = LocalizerFactorHelper.Create();
-            var localizer = localizerFactory.Create(typeof(ServiceDataResources));
-            var serviceDataValidator = new ServiceDataValidator(localizerFactory);
+            IStringLocalizerFactory localizerFactory = LocalizerFactorHelper.Create();
+            ServiceDataValidator serviceDataValidator = new(localizerFactory);
 
             _unitOfWorkMock.Setup(u => u.ServiceDataRepository).Returns(_serviceRepositoryMock.Object);
             _serviceData = new ServiceDataService(_unitOfWorkMock.Object, localizerFactory, serviceDataValidator);
@@ -44,14 +44,14 @@ namespace Application.Tests.Services
         public async Task CreateAsyncShouldReturnConflictWhenServiceIsNull()
         {
             // Arrange
-            var localizerFactory = LocalizerFactorHelper.Create();
-            var localizer = localizerFactory.Create(typeof(ServiceDataResources));
-            var serviceDataValidator = new ServiceDataValidator(localizerFactory);
+            IStringLocalizerFactory localizerFactory = LocalizerFactorHelper.Create();
+            IStringLocalizer localizer = localizerFactory.Create(typeof(ServiceDataResources));
+            ServiceDataValidator serviceDataValidator = new(localizerFactory);
 
-            var service = new ServiceDataService(_unitOfWorkMock.Object, localizerFactory, serviceDataValidator);
+            ServiceDataService service = new(_unitOfWorkMock.Object, localizerFactory, serviceDataValidator);
 
             // Act
-            var result = await service.CreateAsync(null!);
+            OperationResult result = await service.CreateAsync(null!);
 
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
@@ -63,16 +63,16 @@ namespace Application.Tests.Services
         public async Task CreateAsyncShouldReturnInvalidDataWhenValidationFails()
         {
             // Arrange
-            var localizerFactory = LocalizerFactorHelper.Create();
-            var localizer = localizerFactory.Create(typeof(ServiceDataResources));
-            var serviceDataValidator = new ServiceDataValidator(localizerFactory);
+            IStringLocalizerFactory localizerFactory = LocalizerFactorHelper.Create();
+            IStringLocalizer localizer = localizerFactory.Create(typeof(ServiceDataResources));
+            ServiceDataValidator serviceDataValidator = new(localizerFactory);
 
-            var service = new ServiceDataService(_unitOfWorkMock.Object, localizerFactory, serviceDataValidator);
+            ServiceDataService service = new(_unitOfWorkMock.Object, localizerFactory, serviceDataValidator);
 
-            var serviceData = new ServiceData { Name = string.Empty, ApplicationId = 1 };
+            ServiceData serviceData = new() { Name = string.Empty, ApplicationId = 1 };
 
             // Act
-            var result = await service.CreateAsync(serviceData);
+            OperationResult result = await service.CreateAsync(serviceData);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
@@ -84,9 +84,8 @@ namespace Application.Tests.Services
         public async Task CreateAsyncShouldCallBaseCreateAsyncWhenAllValidationsPass()
         {
             // Arrange
-            var localizerFactory = LocalizerFactorHelper.Create();
-            var localizer = localizerFactory.Create(typeof(ServiceDataResources));
-            var serviceDataValidator = new ServiceDataValidator(localizerFactory);
+            IStringLocalizerFactory localizerFactory = LocalizerFactorHelper.Create();
+            ServiceDataValidator serviceDataValidator = new(localizerFactory);
 
             _unitOfWorkMock.Setup(uow => uow.ApplicationDataRepository.GetByIdAsync(It.IsAny<int>()))
                 .ReturnsAsync(new ApplicationData("Valid Application Name")
@@ -100,12 +99,12 @@ namespace Application.Tests.Services
                 .Setup(r => r.VerifyNameExistsAsync(It.IsAny<string>()))
                 .ReturnsAsync(false);
 
-            var service = new ServiceDataService(_unitOfWorkMock.Object, localizerFactory, serviceDataValidator);
+            ServiceDataService service = new(_unitOfWorkMock.Object, localizerFactory, serviceDataValidator);
 
-            var serviceData = new ServiceData { Name = "Valid Name", ApplicationId = 1 };
+            ServiceData serviceData = new() { Name = "Valid Name", ApplicationId = 1 };
 
             // Act
-            var result = await service.CreateAsync(serviceData);
+            OperationResult result = await service.CreateAsync(serviceData);
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
@@ -118,14 +117,14 @@ namespace Application.Tests.Services
         public async Task CreateAsyncShouldReturnConflictWhenApplicationIdIsInvalid()
         {
             // Arrange
-            var serviceData = new ServiceData { Name = "Test Service", ApplicationId = -1 };
-            var localizedMessage = ServiceDataResources.ServiceInvalidApplicationId;
+            ServiceData serviceData = new() { Name = "Test Service", ApplicationId = -1 };
+            string localizedMessage = ServiceDataResources.ServiceInvalidApplicationId;
 
             _unitOfWorkMock.Setup(uow => uow.ApplicationDataRepository.GetByIdAsync(serviceData.ApplicationId))
                 .ReturnsAsync((ApplicationData?)null);
 
             // Act
-            var result = await _serviceData.CreateAsync(serviceData);
+            OperationResult result = await _serviceData.CreateAsync(serviceData);
 
             // Assert
             Assert.NotNull(result);
@@ -138,11 +137,11 @@ namespace Application.Tests.Services
         public async Task CreateAsyncShouldReturnConflictWhenNameExists()
         {
             // Arrange
-            var serviceData = new ServiceData { Name = "Existing Service", ApplicationId = 1 };
-            var validationResult = new ValidationResult();
+            ServiceData serviceData = new() { Name = "Existing Service", ApplicationId = 1 };
+            ValidationResult validationResult = new();
 
-            var localizerFactory = LocalizerFactorHelper.Create();
-            var serviceDataValidator = new Mock<IValidator<ServiceData>>();
+            IStringLocalizerFactory localizerFactory = LocalizerFactorHelper.Create();
+            Mock<IValidator<ServiceData>> serviceDataValidator = new();
             serviceDataValidator.Setup(v => v.ValidateAsync(serviceData, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(validationResult);
 
@@ -157,10 +156,10 @@ namespace Application.Tests.Services
             _serviceRepositoryMock.Setup(r => r.VerifyNameExistsAsync(serviceData.Name))
                 .ReturnsAsync(true);
 
-            var serviceDataService = new ServiceDataService(_unitOfWorkMock.Object, localizerFactory, serviceDataValidator.Object);
+            ServiceDataService serviceDataService = new(_unitOfWorkMock.Object, localizerFactory, serviceDataValidator.Object);
 
             // Act
-            var result = await serviceDataService.CreateAsync(serviceData);
+            OperationResult result = await serviceDataService.CreateAsync(serviceData);
 
             // Assert
             Assert.NotNull(result);
@@ -175,13 +174,13 @@ namespace Application.Tests.Services
         public async Task DeleteAsyncShouldReturnNotFoundWhenServiceDoesNotExist()
         {
             // Arrange
-            var serviceId = 1;
+            int serviceId = 1;
 
             _serviceRepositoryMock.Setup(repo => repo.VerifyServiceExistsAsync(serviceId))
                 .ReturnsAsync(false);
 
             // Act
-            var result = await _serviceData.DeleteAsync(serviceId);
+            OperationResult result = await _serviceData.DeleteAsync(serviceId);
 
             // Assert
             Assert.NotNull(result);
@@ -194,8 +193,8 @@ namespace Application.Tests.Services
         public async Task DeleteAsyncShouldCallRepositoryDeleteWhenServiceExists()
         {
             // Arrange
-            var serviceId = 1;
-            var serviceData = new ServiceData { Id = serviceId, Name = "Test Service" };
+            int serviceId = 1;
+            ServiceData serviceData = new() { Id = serviceId, Name = "Test Service" };
 
             _serviceRepositoryMock.Setup(repo => repo.VerifyServiceExistsAsync(serviceId))
                 .ReturnsAsync(true);
@@ -205,7 +204,7 @@ namespace Application.Tests.Services
                 .Returns(Task.CompletedTask);
 
             // Act
-            var result = await _serviceData.DeleteAsync(serviceId);
+            OperationResult result = await _serviceData.DeleteAsync(serviceId);
 
             // Assert
             _serviceRepositoryMock.Verify(repo => repo.DeleteAsync(serviceData, true), Times.Once);
@@ -218,12 +217,12 @@ namespace Application.Tests.Services
         public async Task GetItemAsyncShouldReturnItemWhenItemExists()
         {
             // Arrange
-            var itemId = 1;
-            var expectedItem = new ServiceData { Id = itemId, Name = "Test Service" };
+            int itemId = 1;
+            ServiceData expectedItem = new() { Id = itemId, Name = "Test Service" };
             _serviceRepositoryMock.Setup(repo => repo.GetByIdAsync(itemId)).ReturnsAsync(expectedItem);
 
             // Act
-            var result = await _serviceData.GetItemAsync(itemId);
+            OperationResult result = await _serviceData.GetItemAsync(itemId);
 
             // Assert
             Assert.NotNull(result);
@@ -235,11 +234,11 @@ namespace Application.Tests.Services
         public async Task GetItemAsyncShouldReturnNotFoundWhenItemDoesNotExist()
         {
             // Arrange
-            var itemId = 1;
+            int itemId = 1;
             _serviceRepositoryMock.Setup(repo => repo.GetByIdAsync(itemId)).ReturnsAsync((ServiceData?)null);
 
             // Act
-            var result = await _serviceData.GetItemAsync(itemId);
+            OperationResult result = await _serviceData.GetItemAsync(itemId);
 
             // Assert
             Assert.NotNull(result);
@@ -252,10 +251,7 @@ namespace Application.Tests.Services
         public async Task UpdateAsyncShouldReturnCompleteOperationResult()
         {
             // Arrange
-            var serviceData = new ServiceData { Id = 1, Name = "Updated Service", ApplicationId = 1 };
-            var localizerFactory = LocalizerFactorHelper.Create();
-            var serviceDataValidator = new ServiceDataValidator(localizerFactory);
-            var validationResult = await serviceDataValidator.ValidateAsync(serviceData);
+            ServiceData serviceData = new() { Id = 1, Name = "Updated Service", ApplicationId = 1 };
 
             _serviceRepositoryMock.Setup(repo => repo.GetByIdAsync(serviceData.Id))
                 .ReturnsAsync(serviceData);
@@ -265,7 +261,7 @@ namespace Application.Tests.Services
                 .ReturnsAsync(true);
 
             // Act
-            var result = await _serviceData.UpdateAsync(serviceData);
+            OperationResult result = await _serviceData.UpdateAsync(serviceData);
 
             // Assert
             Assert.NotNull(result);
@@ -277,13 +273,13 @@ namespace Application.Tests.Services
         public async Task UpdateAsyncShouldReturnInvalidDataWhenValidationFails()
         {
             // Arrange
-            var serviceData = new ServiceData { Id = 1, Name = "ab", ApplicationId = 1 };
+            ServiceData serviceData = new() { Id = 1, Name = "ab", ApplicationId = 1 };
 
             _serviceRepositoryMock.Setup(repo => repo.GetByIdAsync(serviceData.Id))
                 .ReturnsAsync(serviceData);
 
             // Act
-            var result = await _serviceData.UpdateAsync(serviceData);
+            OperationResult result = await _serviceData.UpdateAsync(serviceData);
 
             // Assert
             Assert.NotNull(result);
@@ -295,8 +291,8 @@ namespace Application.Tests.Services
         public async Task UpdateAsyncShouldReturnConflictWhenNameExists()
         {
             // Arrange
-            var serviceData = new ServiceData { Id = 1, Name = "Existing Service", ApplicationId = 1 };
-            var localizedMessage = ServiceDataResources.ServiceAlreadyExists;
+            ServiceData serviceData = new() { Id = 1, Name = "Existing Service", ApplicationId = 1 };
+            string localizedMessage = ServiceDataResources.ServiceAlreadyExists;
 
             _serviceRepositoryMock.Setup(repo => repo.GetByIdAsync(serviceData.Id))
                 .ReturnsAsync(serviceData);
@@ -304,7 +300,7 @@ namespace Application.Tests.Services
                 .ReturnsAsync(true);
 
             // Act
-            var result = await _serviceData.UpdateAsync(serviceData);
+            OperationResult result = await _serviceData.UpdateAsync(serviceData);
 
             // Assert
             Assert.NotNull(result);
@@ -317,14 +313,14 @@ namespace Application.Tests.Services
         public async Task UpdateAsyncShouldReturnNotFoundWhenServiceDoesNotExist()
         {
             // Arrange
-            var serviceData = new ServiceData { Id = 1, Name = "Nonexistent Service", ApplicationId = 1 };
-            var localizedMessage = ServiceDataResources.ServiceNotFound;
+            ServiceData serviceData = new() { Id = 1, Name = "Nonexistent Service", ApplicationId = 1 };
+            string localizedMessage = ServiceDataResources.ServiceNotFound;
 
             _serviceRepositoryMock.Setup(repo => repo.GetByIdAsync(serviceData.Id))
                 .ReturnsAsync((ServiceData?)null);
 
             // Act
-            var result = await _serviceData.UpdateAsync(serviceData);
+            OperationResult result = await _serviceData.UpdateAsync(serviceData);
 
             // Assert
             Assert.NotNull(result);
@@ -339,10 +335,10 @@ namespace Application.Tests.Services
         {
             // Arrange
             ServiceData? serviceData = null;
-            var localizedMessage = ServiceDataResources.ServiceCannotBeNull;
+            string localizedMessage = ServiceDataResources.ServiceCannotBeNull;
 
             // Act
-            var result = await _serviceData.UpdateAsync(serviceData!);
+            OperationResult result = await _serviceData.UpdateAsync(serviceData!);
 
             // Assert
             Assert.NotNull(result);
@@ -355,7 +351,7 @@ namespace Application.Tests.Services
         public async Task UpdateAsyncShouldReturnInvalidDataWhenApplicationIdIsInvalid()
         {
             // Arrange
-            var serviceData = new ServiceData { Id = 1, Name = "Updated Service", ApplicationId = -1 };
+            ServiceData serviceData = new() { Id = 1, Name = "Updated Service", ApplicationId = -1 };
 
             _serviceRepositoryMock.Setup(repo => repo.GetByIdAsync(serviceData.Id))
                 .ReturnsAsync(serviceData);
@@ -363,7 +359,7 @@ namespace Application.Tests.Services
                 .ReturnsAsync((ApplicationData?)null);
 
             // Act
-            var result = await _serviceData.UpdateAsync(serviceData);
+            OperationResult result = await _serviceData.UpdateAsync(serviceData);
 
             // Assert
             Assert.NotNull(result);
@@ -375,8 +371,8 @@ namespace Application.Tests.Services
         public async Task GetListAsyncShouldReturnPagedResult()
         {
             // Arrange
-            var filter = new ServiceDataFilter { Name = "Test Service", ApplicationId = 1 };
-            var expectedResult = new PagedResult<ServiceData>
+            ServiceDataFilter filter = new() { Name = "Test Service", ApplicationId = 1 };
+            PagedResult<ServiceData> expectedResult = new()
             {
                 Result = [new() { Name = "Test Service" }],
                 Page = 1,
@@ -389,7 +385,7 @@ namespace Application.Tests.Services
                 .ReturnsAsync(true);
 
             // Act
-            var result = await _serviceData.GetListAsync(filter);
+            PagedResult<ServiceData> result = await _serviceData.GetListAsync(filter);
 
             // Assert
             Assert.NotNull(result);
@@ -405,10 +401,10 @@ namespace Application.Tests.Services
         {
             // Arrange
             string? name = null;
-            var localizedMessage = ServiceDataResources.ServiceCannotBeNull;
+            string localizedMessage = ServiceDataResources.ServiceCannotBeNull;
 
             // Act
-            var result = await _serviceData.VerifyNameExistsAsync(name!);
+            OperationResult result = await _serviceData.VerifyNameExistsAsync(name!);
 
             // Assert
             Assert.NotNull(result);
@@ -421,11 +417,11 @@ namespace Application.Tests.Services
         public async Task VerifyNameAlreadyExistsAsyncShouldReturnFalseWhenNameDoesNotExist()
         {
             // Arrange
-            var name = "Nonexistent Service";
+            string name = "Nonexistent Service";
             _serviceRepositoryMock.Setup(repo => repo.VerifyNameExistsAsync(name)).ReturnsAsync(false);
 
             // Act
-            var result = await _serviceData.VerifyNameExistsAsync(name);
+            OperationResult result = await _serviceData.VerifyNameExistsAsync(name);
 
             // Assert
             Assert.NotNull(result);
@@ -437,12 +433,12 @@ namespace Application.Tests.Services
         public async Task VerifyNameAlreadyExistsAsyncShouldReturnConflictWhenNameExists()
         {
             // Arrange
-            var name = "Existing Service";
-            var localizedMessage = ServiceDataResources.ServiceAlreadyExists;
+            string name = "Existing Service";
+            string localizedMessage = ServiceDataResources.ServiceAlreadyExists;
             _serviceRepositoryMock.Setup(repo => repo.VerifyNameExistsAsync(name)).ReturnsAsync(true);
 
             // Act
-            var result = await _serviceData.VerifyNameExistsAsync(name);
+            OperationResult result = await _serviceData.VerifyNameExistsAsync(name);
 
             // Assert
             Assert.NotNull(result);
@@ -455,11 +451,11 @@ namespace Application.Tests.Services
         public async Task VerifyServiceExistsAsyncShouldReturnFalseWhenServiceDoesNotExist()
         {
             // Arrange
-            var Id = 1;
+            int Id = 1;
             _serviceRepositoryMock.Setup(repo => repo.VerifyServiceExistsAsync(Id)).ReturnsAsync(false);
 
             // Act
-            var result = await _serviceData.VerifyServiceExistsAsync(Id);
+            OperationResult result = await _serviceData.VerifyServiceExistsAsync(Id);
 
             // Assert
             Assert.NotNull(result);
@@ -471,12 +467,12 @@ namespace Application.Tests.Services
         public async Task VerifyServiceExistsAsyncShouldReturnConflictWhenServiceExists()
         {
             // Arrange
-            var Id = 1;
-            var localizedMessage = ServiceDataResources.ServiceAlreadyExists;
+            int Id = 1;
+            string localizedMessage = ServiceDataResources.ServiceAlreadyExists;
             _serviceRepositoryMock.Setup(repo => repo.VerifyServiceExistsAsync(Id)).ReturnsAsync(true);
 
             // Act
-            var result = await _serviceData.VerifyServiceExistsAsync(Id);
+            OperationResult result = await _serviceData.VerifyServiceExistsAsync(Id);
 
             // Assert
             Assert.NotNull(result);
@@ -489,13 +485,13 @@ namespace Application.Tests.Services
         public async Task ShouldHaveErrorWhenServiceDescriptionLengthIsTooLong()
         {
             // Arrange
-            var serviceData = new ServiceData { Name = "Test Service", Description = new string('a', 501) };
+            ServiceData serviceData = new() { Name = "Test Service", Description = new string('a', 501) };
 
-            var localizerFactory = LocalizerFactorHelper.Create();
-            var validator = new ServiceDataValidator(localizerFactory);
+            IStringLocalizerFactory localizerFactory = LocalizerFactorHelper.Create();
+            ServiceDataValidator validator = new(localizerFactory);
 
             // Act
-            var result = await validator.TestValidateAsync(serviceData);
+            TestValidationResult<ServiceData> result = await validator.TestValidateAsync(serviceData);
 
             // Assert
             result.ShouldHaveValidationErrorFor(ds => ds.Description)
@@ -507,13 +503,13 @@ namespace Application.Tests.Services
         public async Task ShouldHaveErrorWhenServiceNameIsRequired()
         {
             // Arrange
-            var serviceData = new ServiceData { Name = string.Empty };
+            ServiceData serviceData = new() { Name = string.Empty };
 
-            var localizerFactory = LocalizerFactorHelper.Create();
-            var validator = new ServiceDataValidator(localizerFactory);
+            IStringLocalizerFactory localizerFactory = LocalizerFactorHelper.Create();
+            ServiceDataValidator validator = new(localizerFactory);
 
             // Act
-            var result = await validator.TestValidateAsync(serviceData);
+            TestValidationResult<ServiceData> result = await validator.TestValidateAsync(serviceData);
 
             // Assert
             result.ShouldHaveValidationErrorFor(ds => ds.Name)
@@ -525,8 +521,8 @@ namespace Application.Tests.Services
         public void ServiceDataShouldSetAndGetDescription()
         {
             // Arrange
-            var description = "Test Description";
-            var serviceData = new ServiceData
+            string description = "Test Description";
+            ServiceData serviceData = new()
             {
                 Name = "Test Service",
                 // Act
@@ -542,11 +538,11 @@ namespace Application.Tests.Services
         public void ServiceDataFilterShouldCreateInstanceWithValidData()
         {
             // Arrange
-            var name = "Test Service";
-            var Id = 1;
+            string name = "Test Service";
+            int Id = 1;
 
             // Act
-            var filter = new ServiceDataFilter
+            ServiceDataFilter filter = new()
             {
                 Name = name,
                 Id = Id
@@ -562,13 +558,13 @@ namespace Application.Tests.Services
         public async Task ShouldHaveErrorWhenNameIsTooShort()
         {
             // Arrange
-            var serviceData = new ServiceData { Name = "ab" };
+            ServiceData serviceData = new() { Name = "ab" };
 
-            var localizerFactory = LocalizerFactorHelper.Create();
-            var validator = new ServiceDataValidator(localizerFactory);
+            IStringLocalizerFactory localizerFactory = LocalizerFactorHelper.Create();
+            ServiceDataValidator validator = new(localizerFactory);
 
             // Act
-            var result = await validator.TestValidateAsync(serviceData);
+            TestValidationResult<ServiceData> result = await validator.TestValidateAsync(serviceData);
 
             // Assert
             result.ShouldHaveValidationErrorFor(ds => ds.Name)

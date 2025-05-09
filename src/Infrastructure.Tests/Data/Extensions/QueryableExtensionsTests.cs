@@ -1,30 +1,35 @@
-﻿using AutoFixture;
+﻿#pragma warning disable IDE0079
+#pragma warning disable CA1812
+#pragma warning disable CA1852
+using AutoFixture;
 using Stellantis.ProjectName.Infrastructure.Data.Extensions;
+using System.ComponentModel;
 
 namespace Infrastructure.Tests.Data.Extensions
 {
     public class QueryableExtensionsTests
     {
-        private class TestEntity
+        private sealed class TestEntity
         {
-            public int Id { get; set; } = 0;
+            [DefaultValue(0)]
+            public int Id { get; set; }
         }
 
         [Theory]
         [InlineData(null)]
         [InlineData(OrderDirection.Ascending)]
         [InlineData(OrderDirection.Descending)]
-        public void OrderBy_ShouldOrderCorrectly(string? orderDirection)
+        public void OrderByShouldOrderCorrectly(string? orderDirection)
         {
             // Arrange
-            var fixture = new Fixture();
-            var data = fixture.CreateMany<TestEntity>(10).AsQueryable();
+            Fixture fixture = new();
+            IQueryable<TestEntity> data = fixture.CreateMany<TestEntity>(10).AsQueryable();
 
             // Act
-            var result = data.OrderBy(nameof(TestEntity.Id), orderDirection);
+            IQueryable<TestEntity> result = data.OrderBy(nameof(TestEntity.Id), orderDirection);
 
             // Assert
-            var expected = orderDirection switch
+            IOrderedQueryable<TestEntity> expected = orderDirection switch
             {
                 null or OrderDirection.Ascending => data.OrderBy(e => e.Id),
                 OrderDirection.Descending => data.OrderByDescending(e => e.Id),
@@ -34,11 +39,11 @@ namespace Infrastructure.Tests.Data.Extensions
         }
 
         [Fact]
-        public void OrderBy_ShouldThrowArgumentException_WhenInvalidOrderDirection()
+        public void OrderByShouldThrowArgumentExceptionWhenInvalidOrderDirection()
         {
             // Arrange
-            var fixture = new Fixture();
-            var data = fixture.CreateMany<TestEntity>(10).AsQueryable();
+            Fixture fixture = new();
+            IQueryable<TestEntity> data = fixture.CreateMany<TestEntity>(10).AsQueryable();
 
             // Act & Assert
             Assert.Throws<ArgumentException>(() => data.OrderBy(nameof(TestEntity.Id), "InvalidDirection"));

@@ -4,6 +4,6 @@
     {
         public required string Name { get; set; }
         public string? Description { get; set; }
-        public int ApplicationId { get; set; }
+        public required int ApplicationId { get; set; }
     }
 }

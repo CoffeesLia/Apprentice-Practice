@@ -13,7 +13,7 @@ namespace Stellantis.ProjectName.WebApi.Filters
 
             ObjectResult objectResult;
 
-            var contextException = context.Exception.InnerException ?? context.Exception;
+            Exception contextException = context.Exception.InnerException ?? context.Exception;
 
             int statusCode = (int)HttpStatusCode.InternalServerError;
             string message = contextException.Message;

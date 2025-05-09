@@ -12,12 +12,15 @@ namespace Application.Tests
         private static readonly string[] SupportedCultures = ["en-US"];
         private readonly IStringLocalizerFactory LocalizerFactor;
 
-        public ResourcesTests() => LocalizerFactor = LocalizerFactorHelper.Create();
+        public ResourcesTests()
+        {
+            LocalizerFactor = LocalizerFactorHelper.Create();
+        }
 
         [Fact]
         public void FilterResourcesAllCultures()
         {
-            var resource = new FilterResources();
+            FilterResources resource = new();
             Assert.NotNull(resource);
             FilterResources.Culture = CultureInfo.InvariantCulture;
             Assert.Equal(CultureInfo.InvariantCulture, FilterResources.Culture);
@@ -27,7 +30,7 @@ namespace Application.Tests
         [Fact]
         public void GeneralResourcesAllCultures()
         {
-            var resource = new ServiceResources();
+            ServiceResources resource = new();
             Assert.NotNull(resource);
             ServiceResources.Culture = CultureInfo.InvariantCulture;
             Assert.Equal(CultureInfo.InvariantCulture, ServiceResources.Culture);
@@ -37,7 +40,7 @@ namespace Application.Tests
         [Fact]
         public void ServiceDataResourcesAllCultures()
         {
-            var resource = new ServiceDataResources();
+            ServiceDataResources resource = new();
             Assert.NotNull(resource);
             ServiceDataResources.Culture = CultureInfo.InvariantCulture;
             Assert.Equal(CultureInfo.InvariantCulture, ServiceDataResources.Culture);
@@ -47,20 +50,20 @@ namespace Application.Tests
 
         private void VerifyAllResources<TResouces>(ResourceManager resourceManager)
         {
-            var localizaer = LocalizerFactor.Create(typeof(TResouces));
-            var resourceKeys = localizaer.GetAllStrings(true).Select(x => x.Name);
+            IStringLocalizer localizaer = LocalizerFactor.Create(typeof(TResouces));
+            IEnumerable<string> resourceKeys = localizaer.GetAllStrings(true).Select(x => x.Name);
 
             // Arrange
-            foreach (var culture in SupportedCultures)
+            foreach (string culture in SupportedCultures)
             {
-                var cultureInfo = new CultureInfo(culture);
-                var cultureResourceSet = resourceManager.GetResourceSet(cultureInfo, true, true);
+                CultureInfo cultureInfo = new(culture);
+                ResourceSet? cultureResourceSet = resourceManager.GetResourceSet(cultureInfo, true, true);
                 Assert.NotNull(cultureResourceSet);
 
                 // Act & Assert
-                foreach (var key in resourceKeys)
+                foreach (string? key in resourceKeys)
                 {
-                    var value = cultureResourceSet.GetString(key!);
+                    string? value = cultureResourceSet.GetString(key!);
                     Assert.False(string.IsNullOrEmpty(value), $"Missing resource for key '{key}' in culture '{culture}'");
                 }
 
@@ -70,7 +73,7 @@ namespace Application.Tests
         [Fact]
         public void ApplicationDataResourcesAllCultures()
         {
-            var resource = new ApplicationDataResources();
+            ApplicationDataResources resource = new();
             Assert.NotNull(resource);
             ServiceResources.Culture = CultureInfo.InvariantCulture;
             Assert.Equal(CultureInfo.InvariantCulture, ServiceResources.Culture);
@@ -80,7 +83,7 @@ namespace Application.Tests
         [Fact]
         public void ResponsibleResourceAllCultures()
         {
-            var resource = new ResponsibleResource();
+            ResponsibleResource resource = new();
             Assert.NotNull(resource);
             ServiceResources.Culture = CultureInfo.InvariantCulture;
             Assert.Equal(CultureInfo.InvariantCulture, ServiceResources.Culture);
@@ -90,7 +93,7 @@ namespace Application.Tests
         [Fact]
         public void GitResourceAllCultures()
         {
-            var resource = new GitResource();
+            GitResource resource = new();
             Assert.NotNull(resource);
             GitResource.Culture = CultureInfo.InvariantCulture;
             Assert.Equal(CultureInfo.InvariantCulture, GitResource.Culture);
@@ -100,7 +103,7 @@ namespace Application.Tests
         [Fact]
         public void IntegrationResourcesAllCultures()
         {
-            var resource = new IntegrationResources();
+            IntegrationResources resource = new();
             Assert.NotNull(resource);
             ServiceResources.Culture = CultureInfo.InvariantCulture;
             Assert.Equal(CultureInfo.InvariantCulture, ServiceResources.Culture);
@@ -110,11 +113,11 @@ namespace Application.Tests
         public void IntegrationResourcesCulturePropertySetAndGetReturnsExpectedCulture()
         {
             // Arrange
-            var expectedCulture = new CultureInfo("pt-BR");
+            CultureInfo expectedCulture = new("pt-BR");
 
             // Act
             IntegrationResources.Culture = expectedCulture;
-            var actualCulture = IntegrationResources.Culture;
+            CultureInfo actualCulture = IntegrationResources.Culture;
 
             // Assert
             Assert.Equal(expectedCulture, actualCulture);

@@ -24,11 +24,13 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task DeleteAsync(int id, bool saveChanges = true)
         {
-            var entity = await GetByIdAsync(id).ConfigureAwait(false);
+            TEntity? entity = await GetByIdAsync(id).ConfigureAwait(false);
             Context.Set<TEntity>().Remove(entity!);
 
             if (saveChanges)
+            {
                 await Context.SaveChangesAsync().ConfigureAwait(false);
+            }
         }
 
         /// <summary>
@@ -41,11 +43,13 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         {
             ArgumentNullException.ThrowIfNull(ids);
 
-            var entities = await Context.Set<TEntity>().Where(p => ids.Contains(p.Id)).ToListAsync().ConfigureAwait(false);
+            List<TEntity> entities = await Context.Set<TEntity>().Where(p => ids.Contains(p.Id)).ToListAsync().ConfigureAwait(false);
             Context.Set<TEntity>().RemoveRange(entities);
 
             if (saveChanges)
+            {
                 await Context.SaveChangesAsync().ConfigureAwait(false);
+            }
         }
 
         /// <summary>
@@ -82,11 +86,18 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             IQueryable<TEntity> query = Context.Set<TEntity>();
 
             if (includeProperties != null)
-                foreach (var includeProperty in includeProperties)
+            {
+                foreach (Expression<Func<TEntity, object>> includeProperty in includeProperties)
+                {
                     query = query.Include(includeProperty);
+                }
+            }
 
             if (noTracking)
+            {
                 query = query.AsNoTracking();
+            }
+
             return await query.SingleOrDefaultAsync(p => p.Id == id).ConfigureAwait(false);
         }
 

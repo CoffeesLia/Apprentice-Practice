@@ -1,5 +1,4 @@
-﻿using System;
-using FluentValidation;
+﻿using FluentValidation;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
@@ -16,19 +15,22 @@ namespace Stellantis.ProjectName.Application.Validators
             ArgumentNullException.ThrowIfNull(localizerFactory);
             var localizer = localizerFactory.Create(typeof(SquadResources));
 
+            
             RuleFor(x => x.Name)
-                .MaximumLength(MaximumLength)
-                .WithMessage(localizer[nameof(SquadResources.NameValidateLength), MinimumLength, MaximumLength])
-                .MinimumLength(MinimumLength)
+                .MaximumLength(55) 
+                .WithMessage(localizer[nameof(SquadResources.NameValidateLength), 3, 55])
+                .MinimumLength(3)
                 .When(x => !string.IsNullOrEmpty(x.Name))
-                .WithMessage(localizer[nameof(SquadResources.NameValidateLength), MinimumLength, MaximumLength]);
+                .WithMessage(localizer[nameof(SquadResources.NameValidateLength), 3, 55]);
 
+            
             RuleFor(x => x.Description)
-                .MaximumLength(MaximumLength)
-                .WithMessage(localizer[nameof(SquadResources.DescriptionValidateLength), MinimumLength, MaximumLength])
-                .MinimumLength(MinimumLength)
+                .MaximumLength(250) 
+                .WithMessage(localizer[nameof(SquadResources.DescriptionValidateLength), 3, 250])
+                .MinimumLength(3)
                 .When(x => !string.IsNullOrEmpty(x.Description))
-                .WithMessage(localizer[nameof(SquadResources.DescriptionValidateLength), MinimumLength, MaximumLength]);
+                .WithMessage(localizer[nameof(SquadResources.DescriptionValidateLength), 3, 250]);
         }
+
     }
 }

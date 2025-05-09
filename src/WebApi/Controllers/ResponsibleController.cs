@@ -30,9 +30,9 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetListAsync([FromQuery] ResponsibleFilterDto filterDto)
         {
-            var filter = Mapper.Map<ResponsibleFilter>(filterDto);
-            var pagedResult = await ((IResponsibleService)Service).GetListAsync(filter!).ConfigureAwait(false);
-            var result = Mapper.Map<PagedResultVm<ResponsibleVm>>(pagedResult);
+            ResponsibleFilter filter = Mapper.Map<ResponsibleFilter>(filterDto);
+            PagedResult<Responsible> pagedResult = await ((IResponsibleService)Service).GetListAsync(filter!).ConfigureAwait(false);
+            PagedResultVm<ResponsibleVm> result = Mapper.Map<PagedResultVm<ResponsibleVm>>(pagedResult);
             return Ok(result);
         }
 

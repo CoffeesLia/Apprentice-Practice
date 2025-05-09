@@ -8,7 +8,7 @@ namespace Stellantis.ProjectName.WebApi.Extensions
     {
         public static IServiceCollection RegisterMapper(this IServiceCollection services)
         {
-            var mappingConfig = new MapperConfiguration(mc =>
+            MapperConfiguration mappingConfig = new(mc =>
             {
                 mc.AddCollectionMappers();
                 mc.AddProfile(new AutoMapperProfile());

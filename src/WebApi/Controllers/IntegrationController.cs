@@ -34,8 +34,8 @@ public sealed class IntegrationController(IIntegrationService service, IMapper m
     [HttpGet]
     public async Task<IActionResult> GetListAsync([FromQuery] IntegrationFilterDto filterDto)
     {
-        var filter = Mapper.Map<IntegrationFilter>(filterDto);
-        var result = await Service.GetListAsync(filter).ConfigureAwait(false);
+        IntegrationFilter filter = Mapper.Map<IntegrationFilter>(filterDto);
+        PagedResult<Integration> result = await Service.GetListAsync(filter).ConfigureAwait(false);
         return Ok(Mapper.Map<PagedResult<IntegrationVm>>(result));
     }
 

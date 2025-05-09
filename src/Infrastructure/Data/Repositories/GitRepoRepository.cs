@@ -14,7 +14,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         public async Task<bool> DeleteAsync(int id)
         {
-            var entity = await GetByIdAsync(id).ConfigureAwait(false);
+            GitRepo? entity = await GetByIdAsync(id).ConfigureAwait(false);
             if (entity != null)
             {
                 _context.Set<GitRepo>().Remove(entity);
@@ -26,7 +26,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         public async Task DeleteAsync(int id, bool saveChanges)
         {
-            var entity = await GetByIdAsync(id).ConfigureAwait(false);
+            GitRepo? entity = await GetByIdAsync(id).ConfigureAwait(false);
             if (entity != null)
             {
                 _context.Set<GitRepo>().Remove(entity);
@@ -49,7 +49,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         public async IAsyncEnumerable<GitRepo> ListRepositories()
         {
-            await foreach (var repo in _context.Set<GitRepo>().AsAsyncEnumerable().ConfigureAwait(false))
+            await foreach (GitRepo? repo in _context.Set<GitRepo>().AsAsyncEnumerable().ConfigureAwait(false))
             {
                 yield return repo;
             }
@@ -71,7 +71,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             {
                 return OperationResult.Conflict(ex.Message); // Usando Conflict em vez de InvalidData
             }
-            catch (Exception ex) when (ex is InvalidOperationException || ex is NotSupportedException)
+            catch (Exception ex) when (ex is InvalidOperationException or NotSupportedException)
             {
                 return OperationResult.NotFound(ex.Message);
             }
@@ -102,14 +102,22 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         {
             ArgumentNullException.ThrowIfNull(filter);
 
-            var filters = PredicateBuilder.New<GitRepo>(true);
+            ExpressionStarter<GitRepo> filters = PredicateBuilder.New<GitRepo>(true);
 
             if (!string.IsNullOrWhiteSpace(filter.Description))
+            {
                 filters = filters.And(x => x.Description.Contains(filter.Description));
+            }
+
             if (!string.IsNullOrWhiteSpace(filter.Name))
+            {
                 filters = filters.And(x => x.Name.Contains(filter.Name));
+            }
+
             if (filter.Url != null)
+            {
                 filters = filters.And(x => x.Url == filter.Url);
+            }
 
             return await GetListAsync(filter: filters, page: filter.Page, sort: filter.Sort, sortDir: filter.SortDir).ConfigureAwait(false);
         }

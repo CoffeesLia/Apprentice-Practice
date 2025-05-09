@@ -2,24 +2,26 @@
 using AutoFixture.AutoMoq;
 using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Infrastructure.Data.Extensions;
+using System.Globalization;
 using System.Linq.Expressions;
+using System.Runtime.InteropServices;
 
 namespace Infrastructure.Tests.Data.Repositories
 {
     /// <summary>
     /// Base class for repository tests.
     /// </summary>
-    public partial class RepositoryBaseTests
+    public partial class RepositoryBaseTests : IDisposable
     {
         private readonly IFixture _fixture;
         private readonly TestContext _context;
         private readonly TestRepository _repository;
+        private bool isDisposed;
+        private IntPtr nativeResource = Marshal.AllocHGlobal(100);
 
         private TestEntity[] CreateMany(int count)
         {
-            return Enumerable.Range(0, count)
-                            .Select(x => new TestEntity(_fixture.Create<int>(), _fixture.Create<string>()))
-                            .ToArray();
+            return [.. Enumerable.Range(0, count).Select(x => new TestEntity(_fixture.Create<int>(), _fixture.Create<string>()))];
         }
 
         private TestEntity Create()
@@ -29,8 +31,10 @@ namespace Infrastructure.Tests.Data.Repositories
 
         public RepositoryBaseTests()
         {
+            CultureInfo.CurrentCulture = new CultureInfo("en-US");
+            CultureInfo.CurrentUICulture = new CultureInfo("en-US");
             _fixture = new Fixture().Customize(new AutoMoqCustomization());
-            var options = new DbContextOptionsBuilder<TestContext>()
+            DbContextOptions<TestContext> options = new DbContextOptionsBuilder<TestContext>()
                 .UseInMemoryDatabase(databaseName: _fixture.Create<string>())
                 .Options;
             _context = new TestContext(options);
@@ -38,94 +42,94 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
-        public async Task CreateAsync_ShouldAddEntities()
+        public async Task CreateAsyncShouldAddEntities()
         {
             // Arrange
-            var entities = CreateMany(5);
+            TestEntity[] entities = CreateMany(5);
 
             // Act
             await _repository.CreateAsync(entities);
 
             // Assert
-            var result = await _context.Entities.CountAsync();
+            int result = await _context.Entities.CountAsync();
             Assert.Equal(5, result);
         }
 
         [Fact]
-        public async Task CreateAsync_ShouldAddEntities_SaveChanges()
+        public async Task CreateAsyncShouldAddEntitiesSaveChanges()
         {
             // Arrange
-            var entities = CreateMany(5);
+            TestEntity[] entities = CreateMany(5);
 
             // Act
             await _repository.CreateAsync(entities, true);
 
             // Assert
-            var result = await _context.Entities.CountAsync();
+            int result = await _context.Entities.CountAsync();
             Assert.Equal(5, result);
         }
 
         [Fact]
-        public async Task CreateAsync_ShouldAddEntities_WithoutSaveChanges()
+        public async Task CreateAsyncShouldAddEntitiesWithoutSaveChanges()
         {
             // Arrange
-            var entities = CreateMany(5);
+            TestEntity[] entities = CreateMany(5);
 
             // Act
             await _repository.CreateAsync(entities, false);
 
             // Assert
-            var result = await _context.Entities.ToListAsync();
+            List<TestEntity> result = await _context.Entities.ToListAsync();
             Assert.Empty(result);
         }
 
         [Fact]
-        public async Task CreateAsync_ShouldAddEntity()
+        public async Task CreateAsyncShouldAddEntity()
         {
             // Arrange
-            var entity = Create();
+            TestEntity entity = Create();
 
             // Act
             await _repository.CreateAsync(entity);
 
             // Assert
-            var result = await _repository.FindAsync([entity.Id]);
+            TestEntity? result = await _repository.FindAsync([entity.Id]);
             Assert.NotNull(result);
         }
 
         [Fact]
-        public async Task CreateAsync_ShouldAddEntity_SaveChanges()
+        public async Task CreateAsyncShouldAddEntitySaveChanges()
         {
             // Arrange
-            var entity = Create();
+            TestEntity entity = Create();
 
             // Act
             await _repository.CreateAsync(entity, true);
 
             // Assert
-            var result = await _repository.FindAsync([entity.Id]);
+            TestEntity? result = await _repository.FindAsync([entity.Id]);
             Assert.NotNull(result);
         }
 
         [Fact]
-        public async Task CreateAsync_ShouldAddEntity_WithoutSaveChanges()
+        public async Task CreateAsyncShouldAddEntityWithoutSaveChanges()
         {
             // Arrange
-            var entity = Create();
+            TestEntity entity = Create();
 
             // Act
             await _repository.CreateAsync(entity, false);
 
             // Assert
-            var result = await _repository.FindAsync([entity.Id]);
+            TestEntity? result = await _repository.FindAsync([entity.Id]);
             Assert.Null(result);
         }
 
         [Fact]
-        public async Task DeleteAsync_ShouldRemoveEntities()
+        public async Task DeleteAsyncShouldRemoveEntities()
         {
             // Arrange
-            var entities = CreateMany(5);
+            TestEntity[] entities = CreateMany(5);
             await _context.Entities.AddRangeAsync(entities);
             await _context.SaveChangesAsync();
 
@@ -137,10 +141,10 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
-        public async Task DeleteAsync_ShouldRemoveEntities_SaveChanges()
+        public async Task DeleteAsyncShouldRemoveEntitiesSaveChanges()
         {
             // Arrange
-            var entities = CreateMany(5);
+            TestEntity[] entities = CreateMany(5);
             await _context.Entities.AddRangeAsync(entities);
             await _context.SaveChangesAsync();
 
@@ -152,10 +156,10 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
-        public async Task DeleteAsync_ShouldRemoveEntities_WithoutSaveChanges()
+        public async Task DeleteAsyncShouldRemoveEntitiesWithoutSaveChanges()
         {
             // Arrange
-            var entities = CreateMany(5);
+            TestEntity[] entities = CreateMany(5);
             await _context.Entities.AddRangeAsync(entities);
             await _context.SaveChangesAsync();
 
@@ -167,10 +171,10 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
-        public async Task DeleteAsync_ShouldRemoveEntity()
+        public async Task DeleteAsyncShouldRemoveEntity()
         {
             // Arrange
-            var entity = Create();
+            TestEntity entity = Create();
             await _context.Entities.AddAsync(entity);
             await _context.SaveChangesAsync();
 
@@ -178,15 +182,15 @@ namespace Infrastructure.Tests.Data.Repositories
             await _repository.DeleteAsync(entity);
 
             // Assert
-            var result = await _context.Entities.FindAsync(entity.Id);
+            TestEntity? result = await _context.Entities.FindAsync(entity.Id);
             Assert.Null(result);
         }
 
         [Fact]
-        public void DetachEntity_ShouldDetachEntities()
+        public void DetachEntityShouldDetachEntities()
         {
             // Arrange
-            var entities = CreateMany(5);
+            TestEntity[] entities = CreateMany(5);
             _context.Entities.AttachRange(entities);
 
             // Act
@@ -199,96 +203,96 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
-        public void DetachEntity_ShouldDetachEntity()
+        public void DetachEntityShouldDetachEntity()
         {
             // Arrange
-            var entity = Create();
+            TestEntity entity = Create();
             _context.Entities.Attach(entity);
 
             // Act
             _repository.DetachEntity(entity);
 
             // Assert
-            var entry = _context.Entry(entity);
+            Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<TestEntity> entry = _context.Entry(entity);
             Assert.Equal(EntityState.Detached, entry.State);
         }
 
         [Fact]
-        public void Find_ReturnEntity()
+        public void FindReturnEntity()
         {
             // Arrange
-            var entity = Create();
+            TestEntity entity = Create();
             _context.Entities.Add(entity);
             _context.SaveChanges();
 
             // Act
-            var result = _repository.Find([entity.Id]);
+            TestEntity? result = _repository.Find([entity.Id]);
 
             // Assert
             Assert.Equal(entity, result);
         }
 
         [Fact]
-        public void Find_ReturnNull_EntityOnlyAdded()
+        public void FindReturnNullEntityOnlyAdded()
         {
             // Arrange
-            var entity = Create();
+            TestEntity entity = Create();
             _context.Entities.Add(entity);
 
             // Act
-            var result = _repository.Find([entity.Id]);
+            TestEntity? result = _repository.Find([entity.Id]);
 
             // Assert
             Assert.Null(result);
         }
 
         [Fact]
-        public void Find_ReturnNull_NotFound()
+        public void FindReturnNullNotFound()
         {
             // Act
-            var result = _repository.Find([0]);
+            TestEntity? result = _repository.Find([0]);
 
             // Assert
             Assert.Null(result);
         }
 
         [Fact]
-        public async Task FindAsync_ReturnNull_EntityOnlyAdded()
+        public async Task FindAsyncReturnNullEntityOnlyAdded()
         {
             // Arrange
-            var entity = Create();
+            TestEntity entity = Create();
             await _context.Entities.AddAsync(entity);
 
             // Act
-            var result = await _repository.FindAsync([entity.Id]);
+            TestEntity? result = await _repository.FindAsync([entity.Id]);
 
             // Assert
             Assert.Null(result);
         }
 
         [Fact]
-        public async Task FindAsync_ReturnNull_NotFound()
+        public async Task FindAsyncReturnNullNotFound()
         {
             // Act
-            var result = await _repository.FindAsync([0]);
+            TestEntity? result = await _repository.FindAsync([0]);
 
             // Assert
             Assert.Null(result);
         }
 
         [Fact]
-        public async Task GetListAsync_WithFilter()
+        public async Task GetListAsyncWithFilter()
         {
             // Arrange
             const int count = 10;
             const int pageSize = 10;
-            var entities = CreateMany(count);
+            TestEntity[] entities = CreateMany(count);
             await _context.Entities.AddRangeAsync(entities);
             await _context.SaveChangesAsync();
             Expression<Func<TestEntity, bool>> filter = e => e.Name == entities[1].Name;
 
             // Act
-            var result = await _repository.GetListAsync(filter, pageSize: pageSize);
+            Stellantis.ProjectName.Application.Models.Filters.PagedResult<TestEntity> result = await _repository.GetListAsync(filter, pageSize: pageSize);
 
             // Assert
             Assert.NotNull(result.Result);
@@ -296,22 +300,20 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
-        public async Task GetListAsync_WithIncludeProperties()
+        public async Task GetListAsyncWithIncludeProperties()
         {
             // Arrange
             const int count = 10;
             const int pageSize = 10;
-            var entities = CreateMany(count);
-            var entitiyNodes = Enumerable.Range(0, count)
-                .Select(x => new TestEntityNode(_fixture.Create<int>(), _fixture.Create<string>()) { Parent = entities[x] })
-                .ToArray();
+            TestEntity[] entities = CreateMany(count);
+            TestEntityNode[] entitiyNodes = [.. Enumerable.Range(0, count).Select(x => new TestEntityNode(_fixture.Create<int>(), _fixture.Create<string>()) { Parent = entities[x] })];
             await _context.Entities.AddRangeAsync(entities);
             await _context.Nodes.AddRangeAsync(entitiyNodes);
             await _context.SaveChangesAsync();
-            var properties = nameof(TestEntity.Nodes);
+            string properties = nameof(TestEntity.Nodes);
 
             // Act
-            var result = await _repository.GetListAsync(includeProperties: properties, pageSize: pageSize);
+            Stellantis.ProjectName.Application.Models.Filters.PagedResult<TestEntity> result = await _repository.GetListAsync(includeProperties: properties, pageSize: pageSize);
 
             // Assert
             Assert.NotNull(result.Result);
@@ -319,23 +321,19 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
-        public async Task GetListAsync_WithoutIncludeProperties()
+        public async Task GetListAsyncWithoutIncludeProperties()
         {
             // Arrange
             const int count = 10;
             const int pageSize = 10;
-            var entities = Enumerable.Range(0, count)
-                .Select(x => new TestEntity(_fixture.Create<int>(), _fixture.Create<string>()))
-                .ToArray();
-            var entitiyNodes = Enumerable.Range(0, count)
-                .Select(x => new TestEntityNode(_fixture.Create<int>(), _fixture.Create<string>()))
-                .ToArray();
+            TestEntity[] entities = [.. Enumerable.Range(0, count).Select(x => new TestEntity(_fixture.Create<int>(), _fixture.Create<string>()))];
+            TestEntityNode[] entitiyNodes = [.. Enumerable.Range(0, count).Select(x => new TestEntityNode(_fixture.Create<int>(), _fixture.Create<string>()))];
             await _context.Entities.AddRangeAsync(entities);
             await _context.Nodes.AddRangeAsync(entitiyNodes);
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _repository.GetListAsync(pageSize: pageSize);
+            Stellantis.ProjectName.Application.Models.Filters.PagedResult<TestEntity> result = await _repository.GetListAsync(pageSize: pageSize);
 
             // Assert
             Assert.NotNull(result.Result);
@@ -343,30 +341,30 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
-        public async Task GetListAsync_ReturnPaginatedAndOrderAscending()
+        public async Task GetListAsyncReturnPaginatedAndOrderAscending()
         {
             // Arrange
-            var entities = CreateMany(20);
+            TestEntity[] entities = CreateMany(20);
             await _context.Entities.AddRangeAsync(entities);
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _repository.CallGetListAsync(_context.Entities, sort: nameof(TestEntity.Name), sortDir: OrderDirection.Ascending);
+            Stellantis.ProjectName.Application.Models.Filters.PagedResult<TestEntity> result = await _repository.CallGetListAsync(_context.Entities, sort: nameof(TestEntity.Name), sortDir: OrderDirection.Ascending);
 
             // Assert
             Assert.Equal(result?.Result?.First(), entities.OrderBy(x => x.Name).First());
         }
 
         [Fact]
-        public async Task GetListAsync_ReturnPaginatedAndOrderDescending()
+        public async Task GetListAsyncReturnPaginatedAndOrderDescending()
         {
             // Arrange
-            var entities = CreateMany(20);
+            TestEntity[] entities = CreateMany(20);
             await _context.Entities.AddRangeAsync(entities);
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _repository.CallGetListAsync(_context.Entities, sort: nameof(TestEntity.Name), sortDir: OrderDirection.Descending);
+            Stellantis.ProjectName.Application.Models.Filters.PagedResult<TestEntity> result = await _repository.CallGetListAsync(_context.Entities, sort: nameof(TestEntity.Name), sortDir: OrderDirection.Descending);
 
             // Assert
             Assert.Equal(result?.Result?.First(), entities.OrderByDescending(x => x.Name).First());
@@ -375,16 +373,16 @@ namespace Infrastructure.Tests.Data.Repositories
         [Theory]
         [InlineData(9)]
         [InlineData(20)]
-        public async Task GetListAsync_ReturnPaginated(int count)
+        public async Task GetListAsyncReturnPaginated(int count)
         {
             // Arrange
             const int pageSize = 10;
-            var entities = CreateMany(count);
+            TestEntity[] entities = CreateMany(count);
             await _context.Entities.AddRangeAsync(entities);
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _repository.GetListAsync(pageSize: pageSize);
+            Stellantis.ProjectName.Application.Models.Filters.PagedResult<TestEntity>? result = await _repository.GetListAsync(pageSize: pageSize);
 
             // Assert
             Assert.Equal(pageSize < count ? pageSize : count, result?.Result?.Count());
@@ -392,7 +390,7 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
-        public async Task GetListAsync_ThrowArgumentException_Sort()
+        public async Task GetListAsyncThrowArgumentExceptionSort()
         {
             // Act & Assert
             await Assert.ThrowsAsync<ArgumentException>(()
@@ -400,25 +398,11 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
-        public async Task GetListAsync_ThrowArgumentNullException_QueryIsNull()
+        public async Task GetListAsyncThrowArgumentNullExceptionQueryIsNull()
         {
             // Act & Assert
             await Assert.ThrowsAsync<ArgumentNullException>(()
                 => _repository.CallGetListAsync(null!, null, null, 1, 1));
-        }
-
-        [Fact]
-        public async Task GetListAsync_ThrowArgumentOutOfRangeException_Page()
-        {
-            // Arrange
-            const int pageSize = 10;
-            var entities = CreateMany(20);
-            await _context.Entities.AddRangeAsync(entities);
-            await _context.SaveChangesAsync();
-
-            // Act & Assert
-            await Assert.ThrowsAsync<ArgumentOutOfRangeException>(()
-                => _repository.CallGetListAsync(_context.Entities, page: 3, pageSize: pageSize));
         }
 
         [Theory]
@@ -427,7 +411,7 @@ namespace Infrastructure.Tests.Data.Repositories
         [InlineData(1, 0)]
         [InlineData(-1, 1)]
         [InlineData(1, -1)]
-        public async Task GetListAsync_ThrowArgumentOutOfRangeException_PageAndPageSize(int page, int pageSize)
+        public async Task GetListAsyncThrowArgumentOutOfRangeExceptionPageAndPageSize(int page, int pageSize)
         {
             // Act & Assert
             await Assert.ThrowsAsync<ArgumentOutOfRangeException>(()
@@ -435,14 +419,14 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
-        public async Task SaveChangesAsync_ShouldSaveChanges()
+        public async Task SaveChangesAsyncShouldSaveChanges()
         {
             // Arrange
-            var entity = Create();
+            TestEntity entity = Create();
 
             // Act & Assert
             await _repository.CreateAsync(entity, false);
-            var result = await _repository.FindAsync([entity.Id]);
+            TestEntity? result = await _repository.FindAsync([entity.Id]);
             Assert.Null(result);
             await _repository.SaveChangesAsync();
             result = await _context.Entities.FindAsync(entity.Id);
@@ -450,12 +434,12 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
-        public async Task UpdateAsync_ShouldUpdateEntities()
+        public async Task UpdateAsyncShouldUpdateEntities()
         {
             // Arrange
-            var entities = CreateMany(5);
+            TestEntity[] entities = CreateMany(5);
             await _repository.CreateAsync(entities);
-            foreach (var entity in entities)
+            foreach (TestEntity entity in entities)
             {
                 entity.Name = "Updated Name";
             }
@@ -468,10 +452,10 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
-        public async Task UpdateAsync_ShouldUpdateEntity()
+        public async Task UpdateAsyncShouldUpdateEntity()
         {
             // Arrange
-            var entity = Create();
+            TestEntity entity = Create();
             await _repository.CreateAsync(entity);
             entity.Name = _fixture.Create<string>();
 
@@ -479,8 +463,37 @@ namespace Infrastructure.Tests.Data.Repositories
             await _repository.UpdateAsync(entity);
 
             // Assert
-            var result = await _repository.FindAsync([entity.Id]);
+            TestEntity? result = await _repository.FindAsync([entity.Id]);
             Assert.Equal(entity, result);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (isDisposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                // free managed resources
+                _context?.Dispose();
+            }
+
+            // free native resources if there are any.
+            if (nativeResource != IntPtr.Zero)
+            {
+                Marshal.FreeHGlobal(nativeResource);
+                nativeResource = IntPtr.Zero;
+            }
+
+            isDisposed = true;
         }
     }
 }

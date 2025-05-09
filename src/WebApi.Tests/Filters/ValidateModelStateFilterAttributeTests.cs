@@ -13,52 +13,52 @@ namespace WebApi.Tests.Filters
     public class ValidateModelStateFilterAttributeTests
     {
         [Fact]
-        public void OnActionExecuting_ReturnBadRequest_WhenModelStateIsInvalid()
+        public void OnActionExecutingReturnBadRequestWhenModelStateIsInvalid()
         {
             // Arrange
-            var modelState = new ModelStateDictionary();
+            ModelStateDictionary modelState = new();
             modelState.AddModelError("Error", "Invalid model state");
             modelState.AddModelError("Error 2", "Invalid model state");
 
-            var actionContext = new ActionContext(new DefaultHttpContext(), new RouteData(), new ActionDescriptor(), modelState);
+            ActionContext actionContext = new(new DefaultHttpContext(), new RouteData(), new ActionDescriptor(), modelState);
 
-            var actionExecutingContext = new ActionExecutingContext(
+            ActionExecutingContext actionExecutingContext = new(
                 actionContext,
                 [],
                 new Dictionary<string, object?>(),
                 new Mock<Controller>().Object
             );
 
-            var filter = new ValidateModelStateFilterAttribute();
+            ValidateModelStateFilterAttribute filter = new();
 
             // Act
             filter.OnActionExecuting(actionExecutingContext);
 
             // Assert
-            var result = Assert.IsType<BadRequestObjectResult>(actionExecutingContext.Result);
-            var valueResult = Assert.IsType<ErrorResponseVm>(result.Value);
+            BadRequestObjectResult result = Assert.IsType<BadRequestObjectResult>(actionExecutingContext.Result);
+            ErrorResponseVm valueResult = Assert.IsType<ErrorResponseVm>(result.Value);
             Assert.Equal(modelState.SelectMany(x => x.Value!.Errors.Select(x => x.ErrorMessage)), valueResult.Errors);
         }
 
         [Fact]
-        public void OnActionExecuting_NotReturnBadRequest_WhenModelStateIsValid()
+        public void OnActionExecutingNotReturnBadRequestWhenModelStateIsValid()
         {
             // Arrange
-            var actionContext = new ActionContext
+            ActionContext actionContext = new()
             {
                 HttpContext = new DefaultHttpContext(),
                 RouteData = new Microsoft.AspNetCore.Routing.RouteData(),
                 ActionDescriptor = new Microsoft.AspNetCore.Mvc.Abstractions.ActionDescriptor()
             };
 
-            var actionExecutingContext = new ActionExecutingContext(
+            ActionExecutingContext actionExecutingContext = new(
                 actionContext,
                 [],
                 new Dictionary<string, object?>(),
                 new Mock<Controller>().Object
             );
 
-            var filter = new ValidateModelStateFilterAttribute();
+            ValidateModelStateFilterAttribute filter = new();
 
             // Act
             filter.OnActionExecuting(actionExecutingContext);
