@@ -11,7 +11,7 @@ variables:
 
 stages:
   - test
-  - quality
+  - security
   - build
 
 before_script:
@@ -36,21 +36,3 @@ test:
     reports:
       junit:
         - ./src/artifacts/*-result.xml
-
-sonarqube:
-  image: 253882794486.dkr.ecr.us-east-1.amazonaws.com/build-tools:latest-devops-master
-  stage: quality
-  script:
-    - apt-get update && apt-get install -y dotnet-sdk-8.0
-    - dotnet tool install --global dotnet-coverage
-    - export PATH="$PATH:/root/.dotnet/tools"
-    - dotnet restore ./src
-    - vault read sonarqube/kv/login >> sonar_url.txt
-    - export SONAR_URL=$(cat sonar_url.txt | jq -r '.data.SONAR_URL')
-    - vault read sonarqube/kv/secret >> sonar_login.txt
-    - export SONAR_LOGIN=$(cat sonar_login.txt | jq -r '.data.SONAR_LOGIN')
-    - export NAMESPACE=$(echo "$CI_PROJECT_NAMESPACE" | jq -Rr 'split("/") | .[1]')
-    - ept/sonar-scanner/sonar-scanner-6.0.0.4432-linux/bin/SonarScanner.MSBuild.exe end /d:k:"com.ste.sa.$NAMESPACE.$CI_PROJECT_NAME" /d:sonar.host.url=$SONAR_URL /d:sonar.login=$SONAR_LOGIN /d:bitegarden.project.tag=South_America
-    - dotnet build ./src
-    - dotnet-coverage collect "dotnet test ./src" -f xml -o "coverage.xml"
-    - mono /opt/sonar-scanner/sonar-scanner-6.0.0.4432-linux/bin/SonarScanner.MSBuild.exe end /d:sonar.login=$SONAR_LOGIN
