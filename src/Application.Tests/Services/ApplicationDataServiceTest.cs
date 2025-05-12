@@ -156,29 +156,7 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.InvalidData, result.Status);
         }
 
-        [Fact]
-        public async Task CreateAsyncShouldReturnConflictdWhenResponsibleIsNotFromArea()
-        {
-            // Arrange
-            ApplicationData applicationData = new("TestApp")
-            {
-                ResponsibleId = 1,
-                AreaId = 1,
-                ProductOwner = "TestOwner",
-                ConfigurationItem = "TestConfig"
-            };
-
-            _applicationDataRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<ApplicationFilter>())).ReturnsAsync(new PagedResult<ApplicationData> { Result = [] });
-            _unitOfWorkMock.Setup(u => u.ResponsibleRepository.GetByIdAsync(applicationData.ResponsibleId)).ReturnsAsync((Responsible?)null);
-
-            // Act
-            OperationResult result = await _applicationDataService.CreateAsync(applicationData);
-
-            // Assert
-            Assert.Equal(OperationStatus.Conflict, result.Status);
-            Assert.Equal(ApplicationDataResources.NotFound, result.Message);
-        }
-
+    
         [Fact]
         public async Task CreateAsyncShouldReturnConflictWhenNameIsNotUnique()
         {
@@ -360,7 +338,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
-            Assert.Equal(ApplicationDataResources.NotFound, result.Message);
+            Assert.Equal(ApplicationDataResources.ResponsibleNotFound, result.Message);
         }
 
 

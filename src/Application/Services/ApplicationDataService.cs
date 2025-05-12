@@ -35,10 +35,6 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.Conflict(_localizer[nameof(ApplicationDataResources.AlreadyExists)]);
             }
 
-            if (!await IsResponsibleFromArea(item.AreaId, item.ResponsibleId).ConfigureAwait(false))
-            {
-                return OperationResult.Conflict(_localizer[nameof(ApplicationDataResources.NotFound)]);
-            }
 
             return await base.CreateAsync(item).ConfigureAwait(false);
         }
@@ -92,7 +88,7 @@ namespace Stellantis.ProjectName.Application.Services
 
             if (!await IsResponsibleFromArea(item.AreaId, item.ResponsibleId).ConfigureAwait(false))
             {
-                return OperationResult.Conflict(_localizer[nameof(ApplicationDataResources.NotFound)]);
+                return OperationResult.Conflict(_localizer[nameof(ApplicationDataResources.ResponsibleNotFound)]);
             }
 
             return await base.UpdateAsync(item).ConfigureAwait(false);
