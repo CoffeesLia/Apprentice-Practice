@@ -148,6 +148,23 @@ namespace Application.Tests.Services
         }
 
         [Fact]
+        public async Task UpdateAsyncWhenSuccessful()
+        {
+            // Arrange
+            Responsible responsible = _fixture.Create<Responsible>();
+            Mock<IValidator<Responsible>> validatorMock = new();
+            validatorMock.Setup(v => v.ValidateAsync(responsible, default)).ReturnsAsync(new ValidationResult());
+            _responsibleRepositoryMock.Setup(r => r.VerifyEmailAlreadyExistsAsync(responsible.Email)).ReturnsAsync(false);
+            _responsibleRepositoryMock.Setup(r => r.GetByIdAsync(responsible.Id)).ReturnsAsync(responsible);
+
+            // Act
+            OperationResult result = await _responsibleService.UpdateAsync(responsible);
+
+            // Assert
+            Assert.Equal(OperationStatus.Success, result.Status);
+        }
+
+        [Fact]
         public async Task UpdateAsyncWhenValidationFails()
         {
             // Arrange
@@ -167,37 +184,50 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task UpdateAsyncWhenEmailAlreadyExists()
+        public async Task UpdateAsyncWhenEmailChangedAndAlreadyExists()
         {
             // Arrange
-            Responsible responsible = _fixture.Create<Responsible>();
-            Mock<IValidator<Responsible>> validatorMock = new();
-            validatorMock.Setup(v => v.ValidateAsync(responsible, default)).ReturnsAsync(new ValidationResult());
-            _responsibleRepositoryMock.Setup(r => r.VerifyEmailAlreadyExistsAsync(responsible.Email)).ReturnsAsync(true);
+            var responsible = _fixture.Create<Responsible>();
+            var existing = _fixture.Build<Responsible>()
+                                   .With(r => r.Id, responsible.Id)
+                                   .With(r => r.Email, "diferente@email.com")
+                                   .Create();
+
+            _responsibleRepositoryMock.Setup(r => r.GetByIdAsync(responsible.Id))
+                                      .ReturnsAsync(existing);
+            _responsibleRepositoryMock.Setup(r => r.VerifyEmailAlreadyExistsAsync(responsible.Email))
+                                      .ReturnsAsync(true);
 
             // Act
-            OperationResult result = await _responsibleService.UpdateAsync(responsible);
+            var result = await _responsibleService.UpdateAsync(responsible);
 
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
         }
 
+      
         [Fact]
-        public async Task UpdateAsyncWhenSuccessful()
+        public async Task UpdateAsyncWhenItemIsNull()
+        {
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentNullException>(() => _responsibleService.UpdateAsync(null!));
+        }
+
+        [Fact]
+        public async Task UpdateAsyncWhenResponsibleNotFound()
         {
             // Arrange
-            Responsible responsible = _fixture.Create<Responsible>();
-            Mock<IValidator<Responsible>> validatorMock = new();
-            validatorMock.Setup(v => v.ValidateAsync(responsible, default)).ReturnsAsync(new ValidationResult());
-            _responsibleRepositoryMock.Setup(r => r.VerifyEmailAlreadyExistsAsync(responsible.Email)).ReturnsAsync(false);
-            _responsibleRepositoryMock.Setup(r => r.GetByIdAsync(responsible.Id)).ReturnsAsync(responsible);
+            var responsible = _fixture.Create<Responsible>();
+            _responsibleRepositoryMock.Setup(r => r.GetByIdAsync(responsible.Id))
+                                      .ReturnsAsync((Responsible?)null);
 
             // Act
-            OperationResult result = await _responsibleService.UpdateAsync(responsible);
+            var result = await _responsibleService.UpdateAsync(responsible);
 
             // Assert
-            Assert.Equal(OperationStatus.Success, result.Status);
+            Assert.Equal(OperationStatus.NotFound, result.Status);
         }
+
 
         [Fact]
         public async Task DeleteAsyncWhenItemDoesNotExist()
