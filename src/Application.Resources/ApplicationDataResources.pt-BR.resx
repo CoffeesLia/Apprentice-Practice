@@ -135,7 +135,7 @@
   <data name="NameValidateLength" xml:space="preserve">
     <value>O nome deve ter entre {0} e {1} caracteres.</value>
   </data>
-  <data name="NotFound" xml:space="preserve">
+  <data name="ResponsibleNotFound" xml:space="preserve">
     <value>Não encontrado.</value>
   </data>
   <data name="ProductOwnerRequired" xml:space="preserve">

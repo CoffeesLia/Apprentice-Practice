@@ -294,10 +294,23 @@ namespace Application.Tests.Services
             ServiceData serviceData = new() { Id = 1, Name = "Existing Service", ApplicationId = 1 };
             string localizedMessage = ServiceDataResources.ServiceAlreadyExists;
 
-            _serviceRepositoryMock.Setup(repo => repo.GetByIdAsync(serviceData.Id))
-                .ReturnsAsync(serviceData);
+            var conflictingService = new ServiceData { Id = 2, Name = "Existing Service", ApplicationId = 1 };
+
+            _serviceRepositoryMock.SetupSequence(repo => repo.GetByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync(serviceData)
+                .ReturnsAsync(new ServiceData { Id = 1, Name = "Valid Application", ApplicationId = 1 });
+
             _serviceRepositoryMock.Setup(repo => repo.VerifyNameExistsAsync(serviceData.Name))
                 .ReturnsAsync(true);
+
+            _serviceRepositoryMock.Setup(repo => repo.GetListAsync(It.Is<ServiceDataFilter>(filter => filter.Name == serviceData.Name)))
+                .ReturnsAsync(new PagedResult<ServiceData>
+                {
+                    Result = new List<ServiceData> { conflictingService },
+                    Page = 1,
+                    PageSize = 10,
+                    Total = 1
+                });
 
             // Act
             OperationResult result = await _serviceData.UpdateAsync(serviceData);
@@ -306,7 +319,48 @@ namespace Application.Tests.Services
             Assert.NotNull(result);
             Assert.Equal(OperationStatus.Conflict, result.Status);
             Assert.Equal(localizedMessage, result.Message);
+
+            _serviceRepositoryMock.Verify(repo => repo.GetByIdAsync(serviceData.Id), Times.Exactly(2)); // Duas chamadas ao GetByIdAsync
+            _serviceRepositoryMock.Verify(repo => repo.VerifyNameExistsAsync(serviceData.Name), Times.Once);
+            _serviceRepositoryMock.Verify(repo => repo.GetListAsync(It.Is<ServiceDataFilter>(filter => filter.Name == serviceData.Name)), Times.Once);
         }
+
+        // Testa se UpdateAsync não retorna conflito quando o nome já existe, mas pertence ao mesmo serviço.
+        [Fact]
+        public async Task UpdateAsyncShouldNotReturnConflictWhenNameExistsButBelongsToSameService()
+        {
+            // Arrange
+            ServiceData serviceData = new() { Id = 1, Name = "Existing Service", ApplicationId = 1 };
+
+            // Simula que o serviço existe
+            _serviceRepositoryMock.Setup(repo => repo.GetByIdAsync(serviceData.Id))
+                .ReturnsAsync(serviceData);
+
+            // Simula que o nome já existe, mas pertence ao mesmo serviço (mesmo ID)
+            _serviceRepositoryMock.Setup(repo => repo.VerifyNameExistsAsync(serviceData.Name))
+                .ReturnsAsync(true);
+
+            _serviceRepositoryMock.Setup(repo => repo.GetListAsync(It.Is<ServiceDataFilter>(filter => filter.Name == serviceData.Name)))
+                .ReturnsAsync(new PagedResult<ServiceData>
+                {
+                    Result = new List<ServiceData> { serviceData }, // O mesmo serviço, sem conflito
+                    Page = 1,
+                    PageSize = 10,
+                    Total = 1
+                });
+
+            // Act
+            OperationResult result = await _serviceData.UpdateAsync(serviceData);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(OperationStatus.Success, result.Status);
+
+            // Verifica se os métodos foram chamados corretamente
+            _serviceRepositoryMock.Verify(repo => repo.VerifyNameExistsAsync(serviceData.Name), Times.Once);
+            _serviceRepositoryMock.Verify(repo => repo.GetListAsync(It.Is<ServiceDataFilter>(filter => filter.Name == serviceData.Name)), Times.Once);
+        }
+
 
         // Testa UpdateAsync retorna NotFound quando o serviço não existe.
         [Fact]
