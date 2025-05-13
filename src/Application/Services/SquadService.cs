@@ -23,18 +23,20 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.Conflict(_localizer[nameof(SquadResources.SquadCannotBeNull)]);
             }
 
+            // Validação com o FluentValidation
             var validationResult = await Validator.ValidateAsync(squad).ConfigureAwait(false);
             if (!validationResult.IsValid)
             {
+                // Retorna os erros de validação
                 return OperationResult.InvalidData(validationResult);
             }
 
-            if (await Repository.VerifyNameAlreadyExistsAsync(squad.Name ?? string.Empty).ConfigureAwait(false))
-            {
-                return OperationResult.Conflict(_localizer[nameof(SquadResources.SquadNameAlreadyExists)]);
-            }
+            // Continua com a criação se a validação passar
             return await base.CreateAsync(squad).ConfigureAwait(false);
         }
+
+
+
         public override async Task<OperationResult> UpdateAsync(Squad squad)
         {
             if (squad == null)
@@ -54,13 +56,11 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.NotFound(_localizer[nameof(SquadResources.SquadNotFound)]);
             }
 
-            if (!string.IsNullOrEmpty(squad.Name) && await Repository.VerifyNameAlreadyExistsAsync(squad.Name).ConfigureAwait(false))
-            {
-                return OperationResult.Conflict(_localizer[nameof(SquadResources.SquadNameAlreadyExists)]);
-            }
-
             return await base.UpdateAsync(squad).ConfigureAwait(false);
         }
+
+
+
 
         public override async Task<OperationResult> DeleteAsync(int id)
         {
