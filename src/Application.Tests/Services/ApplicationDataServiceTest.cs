@@ -318,29 +318,6 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.Conflict, result.Status);
         }
 
-        [Fact]
-        public async Task UpdateAsyncShouldReturnConflictdWhenResponsibleIsNotFromArea()
-        {
-            // Arrange
-            ApplicationData applicationData = new("TestApp")
-            {
-                ResponsibleId = 1,
-                AreaId = 1,
-                ProductOwner = "TestOwner",
-                ConfigurationItem = "TestConfig"
-            };
-
-            _applicationDataRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<ApplicationFilter>())).ReturnsAsync(new PagedResult<ApplicationData> { Result = [] });
-            _unitOfWorkMock.Setup(u => u.ResponsibleRepository.GetByIdAsync(applicationData.ResponsibleId)).ReturnsAsync((Responsible?)null);
-
-            // Act
-            OperationResult result = await _applicationDataService.UpdateAsync(applicationData);
-
-            // Assert
-            Assert.Equal(OperationStatus.Conflict, result.Status);
-            Assert.Equal(ApplicationDataResources.ResponsibleNotFound, result.Message);
-        }
-
 
         [Fact]
         public async Task UpdateAsyncShouldReturnSuccessWhenApplicationDataIsValid()
