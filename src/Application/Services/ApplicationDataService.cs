@@ -86,11 +86,7 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.Conflict(ApplicationDataResources.AlreadyExists);
             }
 
-            if (!await IsResponsibleFromArea(item.AreaId, item.ResponsibleId).ConfigureAwait(false))
-            {
-                return OperationResult.Conflict(_localizer[nameof(ApplicationDataResources.ResponsibleNotFound)]);
-            }
-
+           
             return await base.UpdateAsync(item).ConfigureAwait(false);
         }
 
