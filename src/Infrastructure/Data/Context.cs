@@ -13,6 +13,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data
         public DbSet<ApplicationData> Applications { get; set; }
         public DbSet<GitRepo> Repositories { get; set; }
         public DbSet<ServiceData> Services { get; set; }
+        public DbSet<DocumentData> Documents { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using AutoFixture;
+using FluentValidation;
 using FluentValidation.Results;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces;
@@ -20,6 +21,7 @@ namespace Application.Tests.Services
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private readonly Mock<IApplicationDataRepository> _applicationDataRepositoryMock;
         private readonly ApplicationDataService _applicationDataService;
+        private readonly Fixture _fixture;
 
         public ApplicationDataServiceTest()
         {
