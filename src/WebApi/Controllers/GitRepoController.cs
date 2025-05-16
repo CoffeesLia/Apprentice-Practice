@@ -39,7 +39,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         {
             GitRepoFilter filter = Mapper.Map<GitRepoFilter>(filterDto);
             PagedResult<GitRepo> pagedResult = await Service.GetListAsync(filter!).ConfigureAwait(false);
-            PagedResult<GitRepoVm> result = Mapper.Map<PagedResult<GitRepoVm>>(pagedResult);
+            PagedResultVm<GitRepoVm> result = Mapper.Map<PagedResultVm<GitRepoVm>>(pagedResult);
             return Ok(result);
         }
     }

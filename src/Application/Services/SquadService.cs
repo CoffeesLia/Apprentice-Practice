@@ -31,6 +31,10 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.InvalidData(validationResult);
             }
 
+            if (await Repository.VerifyNameAlreadyExistsAsync(squad.Name!).ConfigureAwait(false))
+            {
+                return OperationResult.Conflict(_localizer[nameof(SquadResources.SquadNameAlreadyExists)]);
+            }
             // Continua com a criação se a validação passar
             return await base.CreateAsync(squad).ConfigureAwait(false);
         }
@@ -54,6 +58,12 @@ namespace Stellantis.ProjectName.Application.Services
             if (existingService == null)
             {
                 return OperationResult.NotFound(_localizer[nameof(SquadResources.SquadNotFound)]);
+            }
+
+
+            if (await Repository.VerifyNameAlreadyExistsAsync(squad.Name!).ConfigureAwait(false))
+            {
+                return OperationResult.Conflict(_localizer[nameof(SquadResources.SquadNameAlreadyExists)]);
             }
 
             return await base.UpdateAsync(squad).ConfigureAwait(false);
