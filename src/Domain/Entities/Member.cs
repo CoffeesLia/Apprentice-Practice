@@ -6,6 +6,8 @@
         public required string Role { get; set; }
         public required decimal Cost { get; set; }
         public required string Email { get; set; }
+        public int SquadId { get; set; }
+        public Squad Squad { get; set; } = null!;
 
     }
 }

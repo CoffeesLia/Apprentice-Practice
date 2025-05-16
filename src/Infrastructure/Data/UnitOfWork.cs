@@ -13,6 +13,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data
         public IAreaRepository AreaRepository { get; } = new AreaRepository(context);
         public IIntegrationRepository IntegrationRepository { get; } = new IntegrationRepository(context);
         public IResponsibleRepository ResponsibleRepository { get; } = new ResponsibleRepository(context);
+        public IIncidentRepository IncidentRepository { get; } = new IncidentRepository(context);
         public IMemberRepository MemberRepository { get; } = new MemberRepository(context);
         public IApplicationDataRepository ApplicationDataRepository { get; } = new ApplicationDataRepository(context);
         public ISquadRepository SquadRepository { get; } = new SquadRepository(context);
