@@ -11,6 +11,8 @@ namespace Stellantis.ProjectName.Domain.Entities
         public required string ProductOwner { get; set; }
         public required string ConfigurationItem { get; set; }
         public bool External { get; set; }
+        public ICollection<DocumentData> Documents { get; } = [];
+
 
     }
 

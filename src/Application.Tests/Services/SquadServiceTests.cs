@@ -161,7 +161,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task UpdateAsyncReturnsConflictWhenNameAlreadyExists()
+       public async Task UpdateAsyncReturnsConflictWhenNameAlreadyExists()
         {
             // Arrange
             Squad squad = new() { Id = 1, Name = "Existing Squad" };

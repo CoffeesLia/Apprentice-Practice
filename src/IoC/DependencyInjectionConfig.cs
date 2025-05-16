@@ -30,6 +30,8 @@ namespace Stellantis.ProjectName.IoC
             services.AddScoped<IValidator<ServiceData>, ServiceDataValidator>();
             services.AddScoped<IValidator<Squad>, SquadValidator>();
             services.AddScoped<IValidator<Member>, MemberValidator>();
+            services.AddScoped<IValidator<DocumentData>, DocumentDataValidator>();
+
         }
 
         private static void Services(IServiceCollection services)
@@ -42,6 +44,9 @@ namespace Stellantis.ProjectName.IoC
             services.AddScoped<IServiceData, ServiceDataService>();
             services.AddScoped<ISquadService, SquadService>();
             services.AddScoped<IMemberService, MemberService>();
+            services.AddScoped<IDocumentService, IDocumentDataService>();
+
+
         }
 
         private static void Repositories(IServiceCollection services)
@@ -54,6 +59,8 @@ namespace Stellantis.ProjectName.IoC
             services.AddScoped<IServiceDataRepository, ServiceDataRepository>();
             services.AddScoped<ISquadRepository, SquadRepository>();
             services.AddScoped<IMemberRepository, MemberRepository>();
+            services.AddScoped<IDocumentRepository, DocumentDataRepository>();
+
             services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
     }
