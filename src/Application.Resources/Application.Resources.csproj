@@ -98,6 +98,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>FilterResources.resx</DependentUpon>
     </Compile>
+    <Compile Update="IncidentResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>IncidentResource.resx</DependentUpon>
+    </Compile>
     <Compile Update="ResponsibleResource.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -162,6 +167,14 @@
     <EmbeddedResource Update="GeneralResources - Copy.zh-CN.resx">
       <DependentUpon>GeneralResources.resx</DependentUpon>
       <Generator></Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="IncidentResource.pt-br.resx">
+      <LastGenOutput>IncidentResource.pt-br.Designer.cs</LastGenOutput>
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="IncidentResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>IncidentResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Messages - Copy %282%29.pt-br.resx">
       <SubType>Designer</SubType>
