@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
-using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Dto;
@@ -12,10 +11,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [ApiController]
     [Route("api/incidents")]
-    public class IncidentsController(
-        IIncidentService service,
-        IMapper mapper,
-        IStringLocalizerFactory localizerFactory)
+    public class IncidentsController(IIncidentService service, IMapper mapper, IStringLocalizerFactory localizerFactory)
         : EntityControllerBase<Incident, IncidentDto>(service, mapper, localizerFactory)
     {
         [HttpPost]
