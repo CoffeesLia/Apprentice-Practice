@@ -101,8 +101,8 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         public async Task<PagedResult<GitRepo>> GetListAsync(GitRepoFilter filter)
         {
             ArgumentNullException.ThrowIfNull(filter);
-
             ExpressionStarter<GitRepo> filters = PredicateBuilder.New<GitRepo>(true);
+            filter.Page = filter.Page <= 0 ? 1 : filter.Page;
 
             if (!string.IsNullOrWhiteSpace(filter.Description))
             {

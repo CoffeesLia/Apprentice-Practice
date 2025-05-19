@@ -15,6 +15,7 @@ namespace Stellantis.ProjectName.WebApi.Mapper
             CreateMap<ApplicationDataDto, ApplicationData>()
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.Area, opt => opt.Ignore())
+                .ForMember(dest => dest.Documents, opt => opt.Ignore())
                 .ForMember(x => x.Integration, opt => opt.Ignore())
                 .ForMember(x => x.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(x => x.ProductOwner, opt => opt.MapFrom(src => src.ProductOwner))
@@ -166,6 +167,20 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
                .ForMember(dest => dest.Cost, opt => opt.MapFrom(src => src.Cost));
             CreateMap<PagedResult<Member>, PagedResultVm<MemberVm>>();
+
+
+            CreateMap<DocumentDto, DocumentData>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore()) // se necessário
+                .ForMember(dest => dest.Application, opt => opt.Ignore())
+                .ForMember(x => x.Url, opt => opt.MapFrom(src => src.Url));
+
+
+            CreateMap<DocumentData, DocumentVm>()
+                .ForMember(dest => dest.Application, opt => opt.Ignore())
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(x => x.Url, opt => opt.MapFrom(src => src.Url));
+
+
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
@@ -31,6 +31,7 @@ namespace Stellantis.ProjectName.IoC
             services.AddScoped<IValidator<Squad>, SquadValidator>();
             services.AddScoped<IValidator<Member>, MemberValidator>();
             services.AddScoped<IValidator<Incident>, IncidentValidator>();
+            services.AddScoped<IValidator<DocumentData>, DocumentDataValidator>();
 
         }
 
@@ -45,6 +46,7 @@ namespace Stellantis.ProjectName.IoC
             services.AddScoped<ISquadService, SquadService>();
             services.AddScoped<IMemberService, MemberService>();
             services.AddScoped<IIncidentService, IncidentService>();
+            services.AddScoped<IDocumentService, IDocumentDataService>();
 
         }
 
@@ -59,6 +61,7 @@ namespace Stellantis.ProjectName.IoC
             services.AddScoped<ISquadRepository, SquadRepository>();
             services.AddScoped<IMemberRepository, MemberRepository>();
             services.AddScoped<IIncidentRepository, IncidentRepository>();
+            services.AddScoped<IDocumentRepository, DocumentDataRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
     }
