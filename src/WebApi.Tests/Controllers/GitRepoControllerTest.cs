@@ -29,6 +29,11 @@ namespace WebApi.Tests.Controllers
 
             Microsoft.Extensions.Localization.IStringLocalizerFactory localizerFactory = LocalizerFactorHelper.Create();
             _controller = new GitRepoController(_serviceMock.Object, mapper, localizerFactory);
+            _fixture.Behaviors
+            .OfType<ThrowingRecursionBehavior>()
+            .ToList()
+            .ForEach(b => _fixture.Behaviors.Remove(b));
+                        _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
         }
 
         // Teste para verificar se CreateAsync retorna CreatedAtActionResult quando criação é bem-sucedida
