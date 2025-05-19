@@ -17,76 +17,113 @@ namespace Stellantis.ProjectName.Application.Services
         protected override IIncidentRepository Repository => UnitOfWork.IncidentRepository;
 
 
-        public override async Task<OperationResult> CreateAsync(Incident incident)
+        public override async Task<OperationResult> CreateAsync(Incident item)
         {
-            ArgumentNullException.ThrowIfNull(incident);
+            ArgumentNullException.ThrowIfNull(item);
 
             // Validação do objeto pelo FluentValidation
-            var validationResult = await Validator.ValidateAsync(incident).ConfigureAwait(false);
+            var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
             if (!validationResult.IsValid)
             {
                 return OperationResult.InvalidData(validationResult);
             }
 
             // Verificar se a aplicação existe
-            var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(incident.ApplicationId);
+            var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(item.ApplicationId).ConfigureAwait(false); ;
             if (application == null)
             {
-                return OperationResult.NotFound(_localizer[nameof(IncidentResource.ApplicationNotFound)]);
+                return OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
             }
 
             // Validar se os membros estão nos squads da aplicação
-            if (incident.Members.Any())
+            if (item.Members.Count > 0)
             {
                 var validMemberIds = application.Squads
                     .SelectMany(s => s.Members)
                     .Select(m => m.Id)
                     .ToHashSet();
 
-                var invalidMemberIds = incident.Members
+                var invalidMemberIds = item.Members
                     .Where(m => !validMemberIds.Contains(m.Id))
                     .Select(m => m.Id)
                     .ToList();
 
-                if (invalidMemberIds.Any())
+                if (invalidMemberIds.Count > 0)
                 {
                     return OperationResult.Conflict(_localizer[nameof(IncidentResource.InvalidMembers)]);
                 }
             }
 
-            incident.CreatedAt = DateTime.UtcNow;
-            incident.Status = IncidentStatus.Aberto;
+            item.CreatedAt = DateTime.UtcNow;
+            item.Status = IncidentStatus.Aberto;
 
-            return await base.CreateAsync(incident).ConfigureAwait(false);
+            return await base.CreateAsync(item).ConfigureAwait(false);
         }
 
-        public override async Task<OperationResult> UpdateAsync(Incident incident)
+        public override async Task<OperationResult> UpdateAsync(Incident item)
         {
-            ArgumentNullException.ThrowIfNull(incident);
+            ArgumentNullException.ThrowIfNull(item);
 
             // Validação do objeto pelo FluentValidation
-            var validationResult = await Validator.ValidateAsync(incident).ConfigureAwait(false);
+            var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
             if (!validationResult.IsValid)
             {
                 return OperationResult.InvalidData(validationResult);
             }
 
             // Verificar se o incidente existe
-            var existingIncident = await Repository.GetByIdAsync(incident.Id).ConfigureAwait(false);
+            var existingIncident = await Repository.GetByIdAsync(item.Id).ConfigureAwait(false);
             if (existingIncident == null)
             {
-                return OperationResult.NotFound(_localizer["IncidentNotFound"]);
+                return OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
             }
 
-            // Atualizar os campos necessários
-            existingIncident.Title = incident.Title;
-            existingIncident.Description = incident.Description;
-            existingIncident.ApplicationId = incident.ApplicationId;
-            existingIncident.Status = incident.Status;
-            existingIncident.ClosedAt = incident.ClosedAt;
+            // Verifica se a aplicação existe
+            var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(item.ApplicationId).ConfigureAwait(false); ;
+            if (application == null)
+            {
+                return OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
+            }
 
-            await Repository.UpdateAsync(existingIncident).ConfigureAwait(false);
-            return OperationResult.Complete("Incident updated successfully.");
+            // Valida membros se existirem
+            if (item.Members.Count > 0)
+            {
+                var validMemberIds = application.Squads
+                    .SelectMany(s => s.Members)
+                    .Select(m => m.Id)
+                    .ToHashSet();
+
+                var invalidMemberIds = item.Members
+                    .Where(m => !validMemberIds.Contains(m.Id))
+                    .Select(m => m.Id)
+                    .ToList();
+
+                if (invalidMemberIds.Count > 0)
+                {
+                    return OperationResult.Conflict(_localizer[nameof(IncidentResource.InvalidMembers)]);
+                }
+
+                existingIncident.Members = item.Members;
+            }
+
+            // Atualiza dados básicos
+            existingIncident.Title = item.Title;
+            existingIncident.Description = item.Description;
+            existingIncident.ApplicationId = item.ApplicationId;
+
+            // Controle de status e datas
+            if (item.Status == IncidentStatus.Fechado && existingIncident.ClosedAt == null)
+            {
+                existingIncident.ClosedAt = DateTime.UtcNow;
+            }
+            else if (item.Status == IncidentStatus.Reaberto)
+            {
+                existingIncident.ClosedAt = null;
+            }
+
+            existingIncident.Status = item.Status;
+
+            return await base.UpdateAsync(existingIncident).ConfigureAwait(false);
         }
 
         public new async Task<OperationResult> GetItemAsync(int id)

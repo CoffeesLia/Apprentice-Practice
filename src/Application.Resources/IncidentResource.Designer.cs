@@ -61,15 +61,6 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a  Application not found.  .
-        /// </summary>
-        public static string ApplicationNotFound {
-            get {
-                return ResourceManager.GetString("ApplicationNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Application is required..
         /// </summary>
         public static string ApplicationRequired {
