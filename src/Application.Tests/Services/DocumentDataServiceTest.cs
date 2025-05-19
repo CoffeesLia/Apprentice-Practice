@@ -40,6 +40,12 @@ namespace Application.Tests.Services
 
             _fixture = new Fixture(); // Adicione esta linha
 
+            _fixture.Behaviors
+             .OfType<ThrowingRecursionBehavior>()
+             .ToList()
+             .ForEach(b => _fixture.Behaviors.Remove(b));
+             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+
         }
 
 
