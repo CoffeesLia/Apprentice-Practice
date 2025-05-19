@@ -1,0 +1,8 @@
+﻿using Stellantis.ProjectName.Application.Interfaces.Services;
+using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Domain.Entities;
+
+public interface IIncidentService : IEntityServiceBase<Incident>
+{
+    Task<PagedResult<Incident>> GetListAsync(IncidentFilter filter);
+}

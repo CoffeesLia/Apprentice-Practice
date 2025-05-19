@@ -88,11 +88,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>DataServiceResources.resx</DependentUpon>
     </Compile>
-    <Compile Update="DocumentDataResources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>DocumentDataResources.resx</DependentUpon>
-    </Compile>
     <Compile Update="FilterResources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -140,12 +135,10 @@
       <LastGenOutput>DataServiceResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="DocumentDataResources.pt-BR.resx">
-      <LastGenOutput>DocumentDataResources.pt-BR.Designer.cs</LastGenOutput>
-      <Generator>PublicResXFileCodeGenerator</Generator>
+      <Generator></Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="DocumentDataResources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>DocumentDataResources.Designer.cs</LastGenOutput>
+      <Generator></Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="FilterResources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
@@ -161,6 +154,12 @@
     </EmbeddedResource>
     <EmbeddedResource Update="GeneralResources - Copy.zh-CN.resx">
       <DependentUpon>GeneralResources.resx</DependentUpon>
+      <Generator></Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="IncidentResource.pt-br.resx">
+      <Generator></Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="IncidentResource.resx">
       <Generator></Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Messages - Copy %282%29.pt-br.resx">
