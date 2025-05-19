@@ -16,6 +16,9 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
                 .IsRequired()
                 .HasMaxLength(200);
 
+            builder.HasOne(ad => ad.ApplicationData)
+               .WithMany(a => a.Documents)
+               .HasForeignKey(ad => ad.ApplicationId);
 
             builder.Property(d => d.Url)
                 .IsRequired();
@@ -23,7 +26,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
             builder.Property(d => d.ApplicationId)
                 .IsRequired();
 
-            builder.HasOne(d => d.Application)
+            builder.HasOne(d => d.ApplicationData)
                 .WithMany()
                 .HasForeignKey(d => d.ApplicationId)
                 .OnDelete(DeleteBehavior.Restrict);

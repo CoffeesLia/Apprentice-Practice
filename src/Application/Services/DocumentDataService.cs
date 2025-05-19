@@ -11,7 +11,7 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Services
 {
-    public class IDocumentDataService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<DocumentData> validator)
+    public class DocumentDataService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<DocumentData> validator)
         : EntityServiceBase<DocumentData>(unitOfWork, localizerFactory, validator), IDocumentService
     {
         private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(DocumentDataResources));
@@ -72,6 +72,13 @@ namespace Stellantis.ProjectName.Application.Services
         public override async Task<OperationResult> DeleteAsync(int id) 
         {
             return await base.DeleteAsync(id).ConfigureAwait(false);
+        }
+
+        public async Task<PagedResult<DocumentData>> GetListAsync(DocumentDataFilter filter)
+        {
+            filter ??= new  DocumentDataFilter();
+
+            return await UnitOfWork.DocumentDataRepository.GetListAsync(filter).ConfigureAwait(false);
         }
     }
 }

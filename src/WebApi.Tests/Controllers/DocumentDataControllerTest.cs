@@ -51,7 +51,7 @@ namespace WebApi.Tests.Controllers
                 Name = document.Name,
                 Url = document.Url,
                 ApplicationId = document.ApplicationId,
-                Application = new ApplicationVm
+                ApplicationData = new ApplicationVm
                 {
                     Id = 1,
                     Name = "App1",
