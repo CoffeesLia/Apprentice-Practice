@@ -66,7 +66,9 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             return await Context.Set<Incident>()
                 .Include(i => i.Members)
                 .Where(i => i.ApplicationId == applicationId)
-                .ToListAsync();
+                .ToListAsync()
+                .ConfigureAwait(false);
+
         }
 
         // Consulta todos os incidentes em que um membro está envolvido.
@@ -75,7 +77,9 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             return await Context.Set<Incident>()
                 .Include(i => i.Application)
                 .Where(i => i.Members.Any(m => m.Id == memberId))
-                .ToListAsync();
+                .ToListAsync()
+                .ConfigureAwait(false);
+
         }
 
         // Consulta todos os incidentes com um determinado status.
@@ -83,7 +87,9 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         {
             return await Context.Set<Incident>()
                 .Where(i => i.Status == status)
-                .ToListAsync();
+                .ToListAsync()
+                .ConfigureAwait(false);
+
         }
     }
 }
