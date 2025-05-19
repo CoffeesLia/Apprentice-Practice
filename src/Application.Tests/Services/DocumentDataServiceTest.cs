@@ -22,7 +22,7 @@ namespace Application.Tests.Services
     {
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private readonly Mock<IDocumentRepository> _documentRepositoryMock;
-        private readonly IDocumentDataService _documentService;
+        private readonly DocumentDataService _documentService;
         private readonly Fixture _fixture;
 
         public DocumentDataServiceTest()
@@ -36,7 +36,7 @@ namespace Application.Tests.Services
 
             _unitOfWorkMock.Setup(u => u.DocumentDataRepository).Returns(_documentRepositoryMock.Object);
 
-            _documentService = new IDocumentDataService(_unitOfWorkMock.Object, localizer, documentValidator);
+            _documentService = new DocumentDataService(_unitOfWorkMock.Object, localizer, documentValidator);
 
             _fixture = new Fixture(); // Adicione esta linha
 
@@ -85,7 +85,7 @@ namespace Application.Tests.Services
                 .Setup(v => v.ValidateAsync(document, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(validationResult);
 
-            var documentService = new IDocumentDataService(_unitOfWorkMock.Object, Helpers.LocalizerFactorHelper.Create(), validatorMock.Object);
+            var documentService = new DocumentDataService(_unitOfWorkMock.Object, Helpers.LocalizerFactorHelper.Create(), validatorMock.Object);
 
             // Act  
             OperationResult result = await documentService.CreateAsync(document);
@@ -190,7 +190,7 @@ namespace Application.Tests.Services
             // Força o validador a retornar inválido
             var localizer = Helpers.LocalizerFactorHelper.Create();
             var validator = new DocumentDataValidator(localizer);
-            var service = new IDocumentDataService(_unitOfWorkMock.Object, localizer, validator);
+            var service = new DocumentDataService(_unitOfWorkMock.Object, localizer, validator);
 
             var result = await service.UpdateAsync(document);
 

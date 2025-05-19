@@ -32,6 +32,18 @@ namespace WebApi.Tests.Controllers
             IMapper mapper = mapperConfiguration.CreateMapper();
             Microsoft.Extensions.Localization.IStringLocalizerFactory localizerFactor = LocalizerFactorHelper.Create();
             _controller = new DocumentDataController(_serviceMock.Object, mapper, localizerFactor);
+
+            _fixture.Behaviors
+
+             .OfType<ThrowingRecursionBehavior>()
+
+             .ToList()
+
+             .ForEach(b => _fixture.Behaviors.Remove(b));
+
+            _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+
+
         }
 
         [Fact]
@@ -51,7 +63,7 @@ namespace WebApi.Tests.Controllers
                 Name = document.Name,
                 Url = document.Url,
                 ApplicationId = document.ApplicationId,
-                Application = new ApplicationVm
+                ApplicationData = new ApplicationVm
                 {
                     Id = 1,
                     Name = "App1",
