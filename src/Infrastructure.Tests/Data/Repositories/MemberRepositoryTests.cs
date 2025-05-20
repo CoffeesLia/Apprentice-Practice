@@ -29,7 +29,6 @@ namespace Infrastructure.Tests.Data.Repositories
             .ForEach(b => _fixture.Behaviors.Remove(b));
 
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
-
         }
 
         [Fact]
