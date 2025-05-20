@@ -36,6 +36,12 @@ namespace Application.Tests.Services
 
             _memberService = new MemberService(_unitOfWorkMock.Object, localizer, memberValidator);
             _fixture = new Fixture();
+
+            _fixture.Behaviors
+            .OfType<ThrowingRecursionBehavior>()
+            .ToList()
+            .ForEach(b => _fixture.Behaviors.Remove(b));
+            _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
         }
 
 
