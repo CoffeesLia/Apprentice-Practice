@@ -35,8 +35,8 @@ namespace Application.Tests.Services
             _unitOfWorkMock.Setup(u => u.MemberRepository).Returns(_memberRepositoryMock.Object);
 
             _memberService = new MemberService(_unitOfWorkMock.Object, localizer, memberValidator);
-            _fixture = new Fixture();
 
+            _fixture = new Fixture();
             _fixture.Behaviors
             .OfType<ThrowingRecursionBehavior>()
             .ToList()
