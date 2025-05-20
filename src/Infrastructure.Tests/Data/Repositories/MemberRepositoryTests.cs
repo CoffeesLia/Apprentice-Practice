@@ -22,6 +22,13 @@ namespace Infrastructure.Tests.Data.Repositories
                 .Options;
             _context = new Context(options);
             _repository = new MemberRepository(_context);
+
+            _fixture.Behaviors
+            .OfType<ThrowingRecursionBehavior>()
+            .ToList()
+            .ForEach(b => _fixture.Behaviors.Remove(b));
+
+            _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
         }
 
         [Fact]
