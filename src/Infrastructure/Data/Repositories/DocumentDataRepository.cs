@@ -50,15 +50,22 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
              ).ConfigureAwait(false);
         }
 
-        public async Task<bool> IsDocumentNameUniqueAsync(string name, int? id = null)
+
+        public async Task<bool> IsDocumentNameUniqueAsync(string name, int applicationId, int? id = null)
         {
-           return await Context.Set<DocumentData>().AnyAsync(a => a.Name == name && (!id.HasValue || a.Id != id)).ConfigureAwait(false);
+            return await Context.Set<DocumentData>()
+                .AnyAsync(a => a.Name == name
+                            && a.ApplicationId == applicationId
+                            && (!id.HasValue || a.Id != id))
+                .ConfigureAwait(false);
         }
 
 
-        public async Task<bool> IsUrlUniqueAsync(Uri url, int? id = null)
+        public async Task<bool> IsUrlUniqueAsync(Uri url, int applicationId, int? id = null)
          {
-             return await Context.Set<DocumentData>().AnyAsync(a => a.Url == url && (!id.HasValue || a.Id !=id)).ConfigureAwait(false);
+             return await Context.Set<DocumentData>().AnyAsync(a => a.Url == url
+                            && a.ApplicationId == applicationId
+                            && (!id.HasValue || a.Id != id)).ConfigureAwait(false);
          }
     }
 }
