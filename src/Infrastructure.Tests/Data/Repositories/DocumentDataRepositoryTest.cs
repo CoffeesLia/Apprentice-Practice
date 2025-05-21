@@ -70,10 +70,12 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
-        public async Task IsDocumentNameUniqueAsync_ShouldReturnTrueIfExists()
+        public async Task IsDocumentNameUniqueAsyncShouldReturnFalseIfExists()
         {
             // Arrange
             var name = _fixture.Create<string>();
+            var applicationId = _fixture.Create<int>();
+
             var document = new DocumentData
             {
                 Name = name,
@@ -83,53 +85,58 @@ namespace Infrastructure.Tests.Data.Repositories
             await _repository.CreateAsync(document);
 
             // Act
-            var exists = await _repository.IsDocumentNameUniqueAsync(name);
-
-            // Assert
-            Assert.True(exists);
-        }
-
-        [Fact]
-        public async Task IsDocumentNameUniqueAsync_ShouldReturnFalseIfNotExists()
-        {
-            // Arrange
-            var name = _fixture.Create<string>();
-
-            // Act
-            var exists = await _repository.IsDocumentNameUniqueAsync(name);
+            var exists = await _repository.IsDocumentNameUniqueAsync(name, applicationId);
 
             // Assert
             Assert.False(exists);
         }
 
         [Fact]
-        public async Task IsUrlUniqueAsync_ShouldReturnTrueIfExists()
+        public async Task IsDocumentNameUniqueAsyncShouldReturnFalseIfNotExists()
         {
             // Arrange
+            var name = _fixture.Create<string>();
+            var applicationId = _fixture.Create<int>();
+
+
+            // Act
+            var exists = await _repository.IsDocumentNameUniqueAsync(name, applicationId);
+
+            // Assert
+            Assert.False(exists);
+        }
+
+        [Fact]
+        public async Task IsUrlUniqueAsyncShouldReturnTrueIfExists()
+        {
+            // Arrange
+            var applicationId = _fixture.Create<int>();
             var url = new Uri("https://example.com/" + _fixture.Create<string>());
             var document = new DocumentData
             {
                 Name = _fixture.Create<string>(),
                 Url = url,
-                ApplicationId = 1
+                ApplicationId = applicationId // Use o mesmo applicationId
             };
             await _repository.CreateAsync(document);
 
             // Act
-            var exists = await _repository.IsUrlUniqueAsync(url);
+            var exists = await _repository.IsUrlUniqueAsync(url, applicationId);
 
             // Assert
             Assert.True(exists);
         }
 
         [Fact]
-        public async Task IsUrlUniqueAsync_ShouldReturnFalseIfNotExists()
+        public async Task IsUrlUniqueAsyncShouldReturnFalseIfNotExists()
         {
             // Arrange
+            var name = _fixture.Create<string>();
+            var applicationId = _fixture.Create<int>();
             var url = new Uri("https://example.com/" + _fixture.Create<string>());
 
             // Act
-            var exists = await _repository.IsUrlUniqueAsync(url);
+            var exists = await _repository.IsDocumentNameUniqueAsync(name, applicationId);
 
             // Assert
             Assert.False(exists);
