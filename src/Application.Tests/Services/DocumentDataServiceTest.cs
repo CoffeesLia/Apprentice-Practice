@@ -225,5 +225,37 @@ namespace Application.Tests.Services
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
         }
+
+
+        [Fact]
+        public async Task GetListAsyncReturnsPagedResult()
+        {
+            // Arrange
+            var filter = new DocumentDataFilter { Name = "Doc", ApplicationId = 1 };
+            var documents = new List<DocumentData>
+            {
+             new DocumentData { Name = "Doc", Url = new Uri("https://exemplo.com"), ApplicationId = 1 }
+             };
+            var pagedResult = new PagedResult<DocumentData>
+            {
+                Result = documents,
+                Page = 1,
+                PageSize = 10,
+                Total = 1
+            };
+
+            _documentRepositoryMock
+                .Setup(r => r.GetListAsync(filter))
+                .ReturnsAsync(pagedResult);
+
+            // Act
+            var result = await _documentService.GetListAsync(filter);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Single(result.Result);
+            Assert.Equal(1, result.Total);
+            Assert.Equal("Doc", result.Result.First().Name);
+        }
     }
 }
