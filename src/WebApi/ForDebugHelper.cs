@@ -84,11 +84,11 @@ namespace Stellantis.ProjectName.WebApi
                     new ServiceData { Name = "Quality Assurance Tool", ApplicationId = 8 },
                     new ServiceData { Name = "Supplier Chain Integration", ApplicationId = 9 },
                     new ServiceData { Name = "Engineering Workflow", ApplicationId = 10 },
-                    new ServiceData { Name = "AMS Dashboard", ApplicationId = 11 },
-                    new ServiceData { Name = "Architecture Planner API", ApplicationId = 12 },
-                    new ServiceData { Name = "Integration Hub Service", ApplicationId = 13 }
+                    new ServiceData { Name = "AMS Dashboard", ApplicationId = 7 },
+                    new ServiceData { Name = "Architecture Planner API", ApplicationId = 8 },
+                    new ServiceData { Name = "Integration Hub Service", ApplicationId = 9 }
                 );
-#pragma warning disable S1075 // URIs should not be hardcoded
+
                 context.Repositories.AddRange(
                     new GitRepo("elog") { ApplicationId = 2, Name = "eLog", Description = "Site da plataforma eLog.", Url = new Uri("https://gitlab.fcalatam.com/fca/supply-chain/ELOG") },
                     new GitRepo("Cities's Web API") { ApplicationId = 2, Name = "Cities's Web API", Description = "Web API que retorna os dados das cidades.", Url = new Uri("https://gitlab.fcalatam.com/fca/supply-chain/e-log/city-api") },
@@ -103,7 +103,6 @@ namespace Stellantis.ProjectName.WebApi
                     new GitRepo("architecture-planner") { ApplicationId = 12, Name = "Architecture Planner", Description = "Planejador de arquitetura.", Url = new Uri("https://gitlab.fcalatam.com/fca/architecture/architecture-planner") },
                     new GitRepo("integration-hub") { ApplicationId = 13, Name = "Integration Hub", Description = "Hub de integração para serviços.", Url = new Uri("https://gitlab.fcalatam.com/fca/integration/integration-hub") }
                 );
-#pragma warning restore S1075 // URIs should not be hardcoded
 
                 // Squads
                 context.Squads.AddRange(
