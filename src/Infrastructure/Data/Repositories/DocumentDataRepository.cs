@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Domain.Entities;
+using Stellantis.ProjectName.Application.Models.Filters;
+using LinqKit;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
@@ -25,20 +27,45 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             }
         }
 
+
         public async Task<DocumentData?> GetByIdAsync(int id)
         {
             return await Context.Set<DocumentData>().FindAsync(id).ConfigureAwait(false);
         }
 
-        public async Task<bool> IsDocumentNameUniqueAsync(string name, int? id = null)
+        public async Task<PagedResult<DocumentData>> GetListAsync(DocumentDataFilter documentFilter)
         {
-           return await Context.Set<DocumentData>().AnyAsync(a => a.Name == name && (!id.HasValue || a.Id != id)).ConfigureAwait(false);
+            ArgumentNullException.ThrowIfNull(documentFilter);
+
+            var filters = PredicateBuilder.New<DocumentData>(true);
+            documentFilter.Page = documentFilter.Page <= 0 ? 1 : documentFilter.Page;
+            if (!string.IsNullOrWhiteSpace(documentFilter.Name))
+                filters = filters.And(x => x.Name.Contains(documentFilter.Name));
+            if (documentFilter.Url != null)
+                filters = filters.And(x => x.Url == documentFilter.Url);
+            if (documentFilter.ApplicationId > 0)
+                filters = filters.And(x => x.ApplicationId == documentFilter.ApplicationId);
+
+            return await GetListAsync(filter: filters, page: documentFilter.Page, sort: documentFilter.Sort, sortDir: documentFilter.SortDir, includeProperties: nameof(DocumentData.ApplicationData)
+             ).ConfigureAwait(false);
         }
 
 
-        public async Task<bool> IsUrlUniqueAsync(Uri url, int? id = null)
+        public async Task<bool> IsDocumentNameUniqueAsync(string name, int applicationId, int? id = null)
+        {
+            return await Context.Set<DocumentData>()
+                .AnyAsync(a => a.Name == name
+                            && a.ApplicationId == applicationId
+                            && (!id.HasValue || a.Id != id))
+                .ConfigureAwait(false);
+        }
+
+
+        public async Task<bool> IsUrlUniqueAsync(Uri url, int applicationId, int? id = null)
          {
-             return await Context.Set<DocumentData>().AnyAsync(a => a.Url == url && (!id.HasValue || a.Id !=id)).ConfigureAwait(false);
+             return await Context.Set<DocumentData>().AnyAsync(a => a.Url == url
+                            && a.ApplicationId == applicationId
+                            && (!id.HasValue || a.Id != id)).ConfigureAwait(false);
          }
     }
 }

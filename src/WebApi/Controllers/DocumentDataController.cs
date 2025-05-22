@@ -8,6 +8,9 @@ using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.ViewModels;
 
+
+using Stellantis.ProjectName.Application.Models.Filters;
+
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [Route("api/documents")]
@@ -17,17 +20,27 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         protected override IDocumentService Service => (IDocumentService)base.Service;
 
 
+        [HttpPost]
+        public async Task<IActionResult> CreateAsync([FromBody] DocumentDto itemDto)
+        {
+            return await CreateBaseAsync<DocumentVm>(itemDto).ConfigureAwait(false);
+        }
+
+
         [HttpGet("{id}")]
         public async Task<ActionResult> GetAsync(int id)
         {
             return await GetAsync<DocumentVm>(id).ConfigureAwait(false);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateAsync([FromBody] DocumentDto itemDto)
+        [HttpGet]
+        public async Task<IActionResult> GetListAsync([FromQuery] DocumentDataFilterDto filterDto)
         {
-            return await CreateBaseAsync<DocumentVm>(itemDto).ConfigureAwait(false);
+            DocumentDataFilter filter = Mapper.Map<DocumentDataFilter>(filterDto);
+            PagedResult<DocumentData> result = await Service.GetListAsync(filter).ConfigureAwait(false);
+            return Ok(Mapper.Map<PagedResultVm<DocumentVm>>(result));
         }
+
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] DocumentDto itemDto)

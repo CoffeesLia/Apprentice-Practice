@@ -45,8 +45,9 @@ namespace Stellantis.ProjectName.IoC
             services.AddScoped<IServiceData, ServiceDataService>();
             services.AddScoped<ISquadService, SquadService>();
             services.AddScoped<IMemberService, MemberService>();
+            services.AddScoped<IDocumentService, DocumentDataService>();
             services.AddScoped<IIncidentService, IncidentService>();
-            services.AddScoped<IDocumentService, IDocumentDataService>();
+            services.AddScoped<IDocumentService, DocumentDataService>();
 
         }
 

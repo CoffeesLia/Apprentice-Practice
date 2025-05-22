@@ -9,10 +9,12 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models;
+using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Controllers;
 using Stellantis.ProjectName.WebApi.Dto;
+using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.Mapper;
 using Stellantis.ProjectName.WebApi.ViewModels;
 using WebApi.Tests.Helpers;
@@ -32,6 +34,35 @@ namespace WebApi.Tests.Controllers
             IMapper mapper = mapperConfiguration.CreateMapper();
             Microsoft.Extensions.Localization.IStringLocalizerFactory localizerFactor = LocalizerFactorHelper.Create();
             _controller = new DocumentDataController(_serviceMock.Object, mapper, localizerFactor);
+
+            _fixture.Behaviors
+
+             .OfType<ThrowingRecursionBehavior>()
+
+             .ToList()
+
+             .ForEach(b => _fixture.Behaviors.Remove(b));
+
+            _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+
+
+        }
+
+
+        [Fact]
+        public async Task GetListAsyncShouldReturnPagedResultVm()
+        {
+            // Arrange
+            DocumentDataFilterDto filterDto = _fixture.Create<DocumentDataFilterDto>();
+            PagedResult<DocumentData> pagedResult = _fixture.Create<PagedResult<DocumentData>>();
+            _serviceMock.Setup(s => s.GetListAsync(It.IsAny<DocumentDataFilter>())).ReturnsAsync(pagedResult);
+
+            // Act
+            IActionResult result = await _controller.GetListAsync(filterDto);
+
+            // Assert
+            OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.IsType<PagedResultVm<DocumentVm>>(okResult.Value);
         }
 
         [Fact]
@@ -51,7 +82,7 @@ namespace WebApi.Tests.Controllers
                 Name = document.Name,
                 Url = document.Url,
                 ApplicationId = document.ApplicationId,
-                Application = new ApplicationVm
+                ApplicationData = new ApplicationVm
                 {
                     Id = 1,
                     Name = "App1",

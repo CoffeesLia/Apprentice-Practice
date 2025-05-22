@@ -27,6 +27,11 @@ namespace Infrastructure.Tests.Data.Repositories
 
             _context = new Context(_options);
             _repository = new GitRepoRepository(_context);
+            _fixture.Behaviors
+            .OfType<ThrowingRecursionBehavior>()
+            .ToList()
+            .ForEach(b => _fixture.Behaviors.Remove(b));
+                        _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
         }
 
         [Fact]
