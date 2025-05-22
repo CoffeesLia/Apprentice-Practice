@@ -5,7 +5,7 @@ using AutoFixture;
 using Stellantis.ProjectName.Infrastructure.Data.Extensions;
 using System.ComponentModel;
 
-namespace Infrastructure.Tests.Data.Extensions
+namespace Infrastructure.Tests.Data
 {
     public class QueryableExtensionsTests
     {

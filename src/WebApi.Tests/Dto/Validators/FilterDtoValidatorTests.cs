@@ -4,7 +4,7 @@ using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.Dto.Validators;
 using System.Globalization;
 
-namespace WebApi.Tests.Dto.Validators
+namespace WebApi.Tests
 {
     public class FilterDtoValidatorTests
     {

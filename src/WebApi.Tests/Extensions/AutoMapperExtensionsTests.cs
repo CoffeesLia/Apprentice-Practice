@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Stellantis.ProjectName.WebApi.Extensions;
 
-namespace WebApi.Tests.Extensions
+namespace WebApi.Tests
 {
     public class AutoMapperExtensionTests
     {

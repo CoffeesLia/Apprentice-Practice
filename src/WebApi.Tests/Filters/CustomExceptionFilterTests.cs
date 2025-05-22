@@ -7,7 +7,7 @@ using Stellantis.ProjectName.WebApi.Filters;
 using Stellantis.ProjectName.WebApi.ViewModels;
 using System.Net;
 
-namespace WebApi.Tests.Filters
+namespace WebApi.Tests
 {
     public class CustomExceptionFilterTests
     {

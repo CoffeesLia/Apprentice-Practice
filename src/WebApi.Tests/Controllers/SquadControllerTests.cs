@@ -23,7 +23,7 @@ namespace WebApi.Tests.Controllers
         private readonly Mock<ISquadService> _squadServiceMock;
         private readonly SquadController _controller;
         private readonly Fixture _fixture = new();
-        private readonly Mock<IMapper> _mapperMock; // Add this line
+        private readonly Mock<IMapper> _mapperMock;
         public SquadControllerTests()
         {
             MapperConfiguration mapperConfiguration = new(x => { x.AddProfile<AutoMapperProfile>(); });
@@ -31,7 +31,10 @@ namespace WebApi.Tests.Controllers
             IMapper mapper = mapperConfiguration.CreateMapper();
             IStringLocalizerFactory localizerFactory = LocalizerFactorHelper.Create();
             _controller = new SquadController(_squadServiceMock.Object, mapper, localizerFactory);
-            _mapperMock = new Mock<IMapper>(); // Add this line
+            _mapperMock = new Mock<IMapper>();
+            _fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList()
+                .ForEach(b => _fixture.Behaviors.Remove(b));
+            _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
         }
 
         [Fact]
@@ -39,7 +42,7 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             SquadDto squadDto = _fixture.Create<SquadDto>();
-            OperationResult operationResult = OperationResult.Complete(); // Add this line
+            OperationResult operationResult = OperationResult.Complete(); 
             _squadServiceMock.Setup(s => s.CreateAsync(It.IsAny<Squad>())).ReturnsAsync(operationResult);
 
             _mapperMock.Setup(m => m.Map<Squad>(It.IsAny<SquadDto>()))

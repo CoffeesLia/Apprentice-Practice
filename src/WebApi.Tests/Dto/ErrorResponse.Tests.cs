@@ -1,6 +1,6 @@
 ﻿using Stellantis.ProjectName.WebApi.Dto;
 
-namespace WebApi.Tests.Dto
+namespace WebApi.Tests
 {
     public class ErrorResponseTests
     {

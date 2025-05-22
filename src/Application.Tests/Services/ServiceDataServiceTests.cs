@@ -587,6 +587,20 @@ namespace Application.Tests.Services
             Assert.Equal(description, serviceData.Description);
         }
 
+        [Fact]
+        public void ServiceDataFilterShouldSetAndGetDescription()
+        {
+            // Arrange
+            string expectedDescription = "Test Description";
+            ServiceDataFilter filter = new();
+
+            // Act
+            filter.Description = expectedDescription;
+
+            // Assert
+            Assert.Equal(expectedDescription, filter.Description);
+        }
+
         // Testa se ServiceDataFilter cria uma instância com dados válidos.
         [Fact]
         public void ServiceDataFilterShouldCreateInstanceWithValidData()
