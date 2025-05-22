@@ -76,7 +76,8 @@ namespace Stellantis.ProjectName.WebApi.Mapper
              .ForMember(dest => dest.Members, opt => opt.Ignore())
              .ForMember(dest => dest.Application, opt => opt.Ignore())
              .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
-             .ForMember(dest => dest.ClosedAt, opt => opt.Ignore());
+             .ForMember(dest => dest.ClosedAt, opt => opt.Ignore())
+             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
 
             CreateMap<IncidentFilterDto, IncidentFilter>()
              .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
