@@ -277,7 +277,7 @@ namespace Application.Tests.Services
             var app = _fixture.Build<ApplicationData>().With(a => a.Squads, new List<Squad> { squad }).Create();
 
             var incident = _fixture.Build<Incident>()
-                .With(i => i.Status, IncidentStatus.Aberto)
+                .With(i => i.Status, IncidentStatus.Open)
                 .With(i => i.ClosedAt, (DateTime?)null)
                 .With(i => i.ApplicationId, app.Id)
                 .With(i => i.Members, new List<Member> { member })
@@ -285,7 +285,7 @@ namespace Application.Tests.Services
 
             var updatedIncident = _fixture.Build<Incident>()
                 .With(i => i.Id, incident.Id)
-                .With(i => i.Status, IncidentStatus.Fechado)
+                .With(i => i.Status, IncidentStatus.Closed)
                 .With(i => i.ClosedAt, (DateTime?)null)
                 .With(i => i.ApplicationId, app.Id)
                 .With(i => i.Members, new List<Member> { member })
@@ -311,7 +311,7 @@ namespace Application.Tests.Services
             var app = _fixture.Build<ApplicationData>().With(a => a.Squads, new List<Squad> { squad }).Create();
 
             var incident = _fixture.Build<Incident>()
-                .With(i => i.Status, IncidentStatus.Fechado)
+                .With(i => i.Status, IncidentStatus.Closed)
                 .With(i => i.ClosedAt, DateTime.UtcNow)
                 .With(i => i.ApplicationId, app.Id)
                 .With(i => i.Members, new List<Member> { member })
@@ -319,7 +319,7 @@ namespace Application.Tests.Services
 
             var updatedIncident = _fixture.Build<Incident>()
                 .With(i => i.Id, incident.Id)
-                .With(i => i.Status, IncidentStatus.Reaberto)
+                .With(i => i.Status, IncidentStatus.Reopened)
                 .With(i => i.ClosedAt, incident.ClosedAt)
                 .With(i => i.ApplicationId, app.Id)
                 .With(i => i.Members, new List<Member> { member })

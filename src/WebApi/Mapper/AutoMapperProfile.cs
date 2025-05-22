@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
@@ -75,16 +76,16 @@ namespace Stellantis.ProjectName.WebApi.Mapper
              .ForMember(dest => dest.Id, opt => opt.Ignore())
              .ForMember(dest => dest.Members, opt => opt.Ignore())
              .ForMember(dest => dest.Application, opt => opt.Ignore())
-             .ForMember(dest => dest.Status, opt => opt.Ignore())
              .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
              .ForMember(dest => dest.ClosedAt, opt => opt.Ignore());
 
-            CreateMap<IncidentFilterDto, IncidentFilter>();
+            CreateMap<IncidentFilterDto, IncidentFilter>()
+             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
 
             CreateMap<Incident, IncidentVm>()
              .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
-             .ForMember(dest => dest.MemberIds, opt => opt.MapFrom(src => src.Members.Select(m => m.Id)));
-
+             .ForMember(dest => dest.MemberIds, opt => opt.MapFrom(src => src.Members.Select(m => m.Id)))
+             .ForMember(dest => dest.Application, opt => opt.MapFrom(src => src.Application)); 
 
             CreateMap<IntegrationDto, Integration>()
               .ForMember(x => x.Id, x => x.Ignore())

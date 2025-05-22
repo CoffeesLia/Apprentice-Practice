@@ -143,6 +143,34 @@ namespace Stellantis.ProjectName.WebApi
                     new Member { Name = "Juliana Martins", Email = "juliana.martins@stellantis.com", Role = "Business Analyst", Cost = 1400 }
                 );
 
+                // Incidents
+                context.Incidents.AddRange(
+                    new Incident
+                    {
+                        Title = "Erro no Portal AMS",
+                        Description = "Erro ao acessar o portal AMS.",
+                        CreatedAt = DateTime.UtcNow.AddDays(-5),
+                        Status = IncidentStatus.Open,
+                        ApplicationId = 1
+                    },
+                    new Incident
+                    {
+                        Title = "Falha no eLog",
+                        Description = "O sistema eLog está fora do ar.",
+                        CreatedAt = DateTime.UtcNow.AddDays(-2),
+                        Status = IncidentStatus.InProgress,
+                        ApplicationId = 2
+                    },
+                    new Incident
+                    {
+                        Title = "Problema no Finance Tracker",
+                        Description = "Erro ao gerar relatórios financeiros.",
+                        CreatedAt = DateTime.UtcNow.AddDays(-10),
+                        ClosedAt = DateTime.UtcNow.AddDays(-1),
+                        Status = IncidentStatus.Closed,
+                        ApplicationId = 4
+                    }
+                );
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }
