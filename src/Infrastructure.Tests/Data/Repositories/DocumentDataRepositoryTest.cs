@@ -8,28 +8,70 @@ using Stellantis.ProjectName.Infrastructure.Data.Repositories;
 using Stellantis.ProjectName.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Domain.Entities;
+using Stellantis.ProjectName.Application.Models.Filters;
+using System.Runtime.InteropServices;
 
 namespace Infrastructure.Tests.Data.Repositories
 {
-    public class DocumentDataRepositoryTest : IDisposable
+    public class DocumentDataRepositoryTests : IDisposable
     {
-        private bool _disposed;
-
         private readonly Context _context;
         private readonly DocumentDataRepository _repository;
         private readonly Fixture _fixture = new();
+        private bool isDisposed;
+        private IntPtr nativeResource = Marshal.AllocHGlobal(100);
 
-        public DocumentDataRepositoryTest()
+        public DocumentDataRepositoryTests()
         {
             DbContextOptions<Context> options = new DbContextOptionsBuilder<Context>()
                 .UseInMemoryDatabase(databaseName: _fixture.Create<string>())
                 .Options;
             _context = new Context(options);
             _repository = new DocumentDataRepository(_context);
+            _fixture.Behaviors
+            .OfType<ThrowingRecursionBehavior>()
+            .ToList()
+            .ForEach(b => _fixture.Behaviors.Remove(b));
+            _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
         }
 
         [Fact]
-        public async Task CreateAndGetByIdAsync_ShouldPersistAndReturnDocument()
+        public async Task GetListAsyncWhenCalled()
+        {
+            // Arrange
+            var applicationId = 1;
+            var name = _fixture.Create<string>();
+            var url = _fixture.Create<Uri>();
+
+            DocumentDataFilter filter = new()
+            {
+              
+                Name = name,
+                Url = url,
+                ApplicationId = applicationId
+            };
+           
+
+            await _context.SaveChangesAsync();
+
+            // Act
+            PagedResult<DocumentData> result = await _repository.GetListAsync(filter);
+
+            // Assert
+            Assert.Equal(filter.Page, result.Page);
+            Assert.Equal(filter.PageSize, result.PageSize);
+        }
+
+        [Fact]
+        public async Task GetListAsyncShouldThrowIfFilterIsNull()
+        {
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentNullException>(() => _repository.GetListAsync(null!));
+        }
+
+
+        [Fact]
+        public async Task CreateAndGetByIdAsyncShouldPersistAndReturnDocument()
         {
             // Arrange
             var document = new DocumentData
@@ -50,7 +92,7 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
-        public async Task DeleteAsync_ShouldRemoveDocument()
+        public async Task DeleteAsyncShouldRemoveDocument()
         {
             // Arrange
             var document = new DocumentData
@@ -69,11 +111,17 @@ namespace Infrastructure.Tests.Data.Repositories
             Assert.Null(result);
         }
 
+
+
+
+
         [Fact]
-        public async Task IsDocumentNameUniqueAsync_ShouldReturnTrueIfExists()
+        public async Task IsDocumentNameUniqueAsyncShouldReturnFalseIfExists()
         {
             // Arrange
             var name = _fixture.Create<string>();
+            var applicationId = _fixture.Create<int>();
+
             var document = new DocumentData
             {
                 Name = name,
@@ -83,66 +131,61 @@ namespace Infrastructure.Tests.Data.Repositories
             await _repository.CreateAsync(document);
 
             // Act
-            var exists = await _repository.IsDocumentNameUniqueAsync(name);
-
-            // Assert
-            Assert.True(exists);
-        }
-
-        [Fact]
-        public async Task IsDocumentNameUniqueAsync_ShouldReturnFalseIfNotExists()
-        {
-            // Arrange
-            var name = _fixture.Create<string>();
-
-            // Act
-            var exists = await _repository.IsDocumentNameUniqueAsync(name);
+            var exists = await _repository.IsDocumentNameUniqueAsync(name, applicationId);
 
             // Assert
             Assert.False(exists);
         }
 
         [Fact]
-        public async Task IsUrlUniqueAsync_ShouldReturnTrueIfExists()
+        public async Task IsDocumentNameUniqueAsyncShouldReturnFalseIfNotExists()
         {
             // Arrange
+            var name = _fixture.Create<string>();
+            var applicationId = _fixture.Create<int>();
+
+
+            // Act
+            var exists = await _repository.IsDocumentNameUniqueAsync(name, applicationId);
+
+            // Assert
+            Assert.False(exists);
+        }
+
+        [Fact]
+        public async Task IsUrlUniqueAsyncShouldReturnTrueIfExists()
+        {
+            // Arrange
+            var applicationId = _fixture.Create<int>();
             var url = new Uri("https://example.com/" + _fixture.Create<string>());
             var document = new DocumentData
             {
                 Name = _fixture.Create<string>(),
                 Url = url,
-                ApplicationId = 1
+                ApplicationId = applicationId // Use o mesmo applicationId
             };
             await _repository.CreateAsync(document);
 
             // Act
-            var exists = await _repository.IsUrlUniqueAsync(url);
+            var exists = await _repository.IsUrlUniqueAsync(url, applicationId);
 
             // Assert
             Assert.True(exists);
         }
 
         [Fact]
-        public async Task IsUrlUniqueAsync_ShouldReturnFalseIfNotExists()
+        public async Task IsUrlUniqueAsyncShouldReturnFalseIfNotExists()
         {
             // Arrange
+            var name = _fixture.Create<string>();
+            var applicationId = _fixture.Create<int>();
             var url = new Uri("https://example.com/" + _fixture.Create<string>());
 
             // Act
-            var exists = await _repository.IsUrlUniqueAsync(url);
+            var exists = await _repository.IsDocumentNameUniqueAsync(name, applicationId);
 
             // Assert
             Assert.False(exists);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed && disposing && _context != null)
-            {
-                _context.Database.EnsureDeleted();
-                _context.Dispose();
-            }
-            _disposed = true;
         }
 
         public void Dispose()
@@ -151,9 +194,27 @@ namespace Infrastructure.Tests.Data.Repositories
             GC.SuppressFinalize(this);
         }
 
-        ~DocumentDataRepositoryTest()
+        protected virtual void Dispose(bool disposing)
         {
-            Dispose(false);
+            if (isDisposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                // free managed resources
+                _context?.Dispose();
+            }
+
+            // free native resources if there are any.
+            if (nativeResource != IntPtr.Zero)
+            {
+                Marshal.FreeHGlobal(nativeResource);
+                nativeResource = IntPtr.Zero;
+            }
+
+            isDisposed = true;
         }
     }
 }

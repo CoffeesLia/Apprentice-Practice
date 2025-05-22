@@ -22,7 +22,7 @@ namespace Application.Tests.Services
     {
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private readonly Mock<IDocumentRepository> _documentRepositoryMock;
-        private readonly IDocumentDataService _documentService;
+        private readonly DocumentDataService _documentService;
         private readonly Fixture _fixture;
 
         public DocumentDataServiceTest()
@@ -36,9 +36,15 @@ namespace Application.Tests.Services
 
             _unitOfWorkMock.Setup(u => u.DocumentDataRepository).Returns(_documentRepositoryMock.Object);
 
-            _documentService = new IDocumentDataService(_unitOfWorkMock.Object, localizer, documentValidator);
+            _documentService = new DocumentDataService(_unitOfWorkMock.Object, localizer, documentValidator);
 
             _fixture = new Fixture(); // Adicione esta linha
+
+            _fixture.Behaviors
+             .OfType<ThrowingRecursionBehavior>()
+             .ToList()
+             .ForEach(b => _fixture.Behaviors.Remove(b));
+            _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
         }
 
@@ -79,7 +85,7 @@ namespace Application.Tests.Services
                 .Setup(v => v.ValidateAsync(document, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(validationResult);
 
-            var documentService = new IDocumentDataService(_unitOfWorkMock.Object, Helpers.LocalizerFactorHelper.Create(), validatorMock.Object);
+            var documentService = new DocumentDataService(_unitOfWorkMock.Object, Helpers.LocalizerFactorHelper.Create(), validatorMock.Object);
 
             // Act  
             OperationResult result = await documentService.CreateAsync(document);
@@ -95,9 +101,7 @@ namespace Application.Tests.Services
         public async Task CreateAsyncValidDocumentReturnsComplete()
         {
             var document = new DocumentData { Name = "Doc", Url = new Uri("https://exemplo.com"), ApplicationId = 1 };
-            _documentRepositoryMock.Setup(r => r.IsDocumentNameUniqueAsync(document.Name, null)).ReturnsAsync(false);
-            _documentRepositoryMock.Setup(r => r.IsUrlUniqueAsync(document.Url, null)).ReturnsAsync(false);
-
+            _documentRepositoryMock.Setup(r => r.IsDocumentNameUniqueAsync(document.Name, document.ApplicationId, null)).ReturnsAsync(false); _documentRepositoryMock.Setup(r => r.IsDocumentNameUniqueAsync(document.Name, document.ApplicationId, null)).ReturnsAsync(false);
             var result = await _documentService.CreateAsync(document);
 
             Assert.Equal(OperationStatus.Success, result.Status);
@@ -107,8 +111,7 @@ namespace Application.Tests.Services
         public async Task CreateAsyncDuplicateNameReturnsConflict()
         {
             var document = new DocumentData { Name = "Doc", Url = new Uri("https://exemplo.com"), ApplicationId = 1 };
-            _documentRepositoryMock.Setup(r => r.IsDocumentNameUniqueAsync(document.Name, null)).ReturnsAsync(true);
-
+            _documentRepositoryMock.Setup(r => r.IsDocumentNameUniqueAsync(document.Name, document.ApplicationId, null)).ReturnsAsync(true);
             var result = await _documentService.CreateAsync(document);
 
             Assert.Equal(OperationStatus.Conflict, result.Status);
@@ -119,27 +122,37 @@ namespace Application.Tests.Services
         public async Task CreateAsyncDuplicateUrlReturnsConflict()
         {
             var document = new DocumentData { Name = "Doc", Url = new Uri("https://exemplo.com"), ApplicationId = 1 };
-            _documentRepositoryMock.Setup(r => r.IsDocumentNameUniqueAsync(document.Name, null)).ReturnsAsync(false);
-            _documentRepositoryMock.Setup(r => r.IsUrlUniqueAsync(document.Url, null)).ReturnsAsync(true);
+            _documentRepositoryMock
+              .Setup(r => r.IsDocumentNameUniqueAsync(document.Name, document.ApplicationId, null))
+              .ReturnsAsync(false); // Nome é único (não existe)
 
+            _documentRepositoryMock
+                .Setup(r => r.IsUrlUniqueAsync(document.Url, document.ApplicationId, null))
+                .ReturnsAsync(true); // URL NÃO é única (já existe)
             var result = await _documentService.CreateAsync(document);
 
             Assert.Equal(OperationStatus.Conflict, result.Status);
             Assert.Equal(DocumentDataResources.UrlAlreadyExists, result.Message);
         }
 
-    
 
 
         [Fact]
         public async Task UpdateAsyncValidDocumentReturnsComplete()
         {
             var document = new DocumentData { Name = "Doc", Url = new Uri("https://exemplo.com"), ApplicationId = 1 };
-            _documentRepositoryMock.Setup(r => r.IsDocumentNameUniqueAsync(document.Name, null)).ReturnsAsync(false);
-            _documentRepositoryMock.Setup(r => r.IsUrlUniqueAsync(document.Url, null)).ReturnsAsync(false);
+
             _documentRepositoryMock
-            .Setup(r => r.GetByIdAsync(It.IsAny<int>()))
-           .ReturnsAsync(new DocumentData { Id = document.Id, Name = document.Name, Url = document.Url, ApplicationId = document.ApplicationId });
+                .Setup(r => r.IsDocumentNameUniqueAsync(document.Name, document.ApplicationId, document.Id))
+                .ReturnsAsync(true);
+
+            _documentRepositoryMock
+                .Setup(r => r.IsUrlUniqueAsync(document.Url, document.ApplicationId, document.Id))
+                .ReturnsAsync(true);
+
+            _documentRepositoryMock
+                .Setup(r => r.GetByIdAsync(document.Id))
+                .ReturnsAsync(document);
 
             var result = await _documentService.UpdateAsync(document);
 
@@ -151,7 +164,7 @@ namespace Application.Tests.Services
         public async Task UpdateAsyncDuplicateNameReturnsConflict()
         {
             var document = new DocumentData { Name = "Doc", Url = new Uri("https://exemplo.com"), ApplicationId = 1 };
-            _documentRepositoryMock.Setup(r => r.IsDocumentNameUniqueAsync(document.Name, null)).ReturnsAsync(true);
+            _documentRepositoryMock.Setup(r => r.IsDocumentNameUniqueAsync(document.Name, document.ApplicationId, null)).ReturnsAsync(true);
 
             var result = await _documentService.UpdateAsync(document);
 
@@ -164,9 +177,16 @@ namespace Application.Tests.Services
         public async Task UpdateAsyncDuplicateUrlReturnsConflict()
         {
             var document = new DocumentData { Name = "Doc", Url = new Uri("https://exemplo.com"), ApplicationId = 1 };
-            _documentRepositoryMock.Setup(r => r.IsDocumentNameUniqueAsync(document.Name, null)).ReturnsAsync(false);
-            _documentRepositoryMock.Setup(r => r.IsUrlUniqueAsync(document.Url, null)).ReturnsAsync(true);
+            _documentRepositoryMock
+                .Setup(r => r.IsDocumentNameUniqueAsync(document.Name, document.ApplicationId, null))
+                .ReturnsAsync(false); // Nome é único (não existe)
 
+            _documentRepositoryMock
+                .Setup(r => r.IsUrlUniqueAsync(document.Url, document.ApplicationId, null))
+                .ReturnsAsync(true); // URL NÃO é única (já existe)
+            _documentRepositoryMock
+                .Setup(r => r.GetByIdAsync(document.Id))
+                .ReturnsAsync(document);
             var result = await _documentService.UpdateAsync(document);
 
             Assert.Equal(OperationStatus.Conflict, result.Status);
@@ -184,7 +204,7 @@ namespace Application.Tests.Services
             // Força o validador a retornar inválido
             var localizer = Helpers.LocalizerFactorHelper.Create();
             var validator = new DocumentDataValidator(localizer);
-            var service = new IDocumentDataService(_unitOfWorkMock.Object, localizer, validator);
+            var service = new DocumentDataService(_unitOfWorkMock.Object, localizer, validator);
 
             var result = await service.UpdateAsync(document);
 
@@ -204,6 +224,38 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
+        }
+
+
+        [Fact]
+        public async Task GetListAsyncReturnsPagedResult()
+        {
+            // Arrange
+            var filter = new DocumentDataFilter { Name = "Doc", ApplicationId = 1 };
+            var documents = new List<DocumentData>
+            {
+             new DocumentData { Name = "Doc", Url = new Uri("https://exemplo.com"), ApplicationId = 1 }
+             };
+            var pagedResult = new PagedResult<DocumentData>
+            {
+                Result = documents,
+                Page = 1,
+                PageSize = 10,
+                Total = 1
+            };
+
+            _documentRepositoryMock
+                .Setup(r => r.GetListAsync(filter))
+                .ReturnsAsync(pagedResult);
+
+            // Act
+            var result = await _documentService.GetListAsync(filter);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Single(result.Result);
+            Assert.Equal(1, result.Total);
+            Assert.Equal("Doc", result.Result.First().Name);
         }
     }
 }

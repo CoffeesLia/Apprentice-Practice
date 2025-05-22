@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.Identity.Client;
+using Microsoft.IdentityModel.Tokens;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Dto;
@@ -171,16 +172,20 @@ namespace Stellantis.ProjectName.WebApi.Mapper
 
 
             CreateMap<DocumentDto, DocumentData>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore()) // se necessário
-                .ForMember(dest => dest.Application, opt => opt.Ignore())
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.ApplicationData, opt => opt.Ignore())
                 .ForMember(x => x.Url, opt => opt.MapFrom(src => src.Url));
 
 
             CreateMap<DocumentData, DocumentVm>()
-                .ForMember(dest => dest.Application, opt => opt.Ignore())
+                .ForMember(dest => dest.ApplicationData, opt => opt.MapFrom(src => src.ApplicationData))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(x => x.Url, opt => opt.MapFrom(src => src.Url));
 
+            CreateMap<DocumentDataFilterDto, DocumentDataFilter>()
+                .ForMember(x => x.Url, opt => opt.MapFrom(src => src.Url))
+                .ForMember(x => x.Name, opt => opt.MapFrom(src => src.Name))
+                    .ForMember(x => x.ApplicationId, opt => opt.MapFrom(src => src.ApplicationId));
 
         }
     }
