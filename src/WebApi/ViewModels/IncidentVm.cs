@@ -9,6 +9,7 @@
         public DateTime? ClosedAt { get; set; }
         public string Status { get; set; } = string.Empty;
         public int ApplicationId { get; set; }
+        public ApplicationVm Application { get; set; }
         public IEnumerable<int> MemberIds { get; set; } = [];
     }
 }

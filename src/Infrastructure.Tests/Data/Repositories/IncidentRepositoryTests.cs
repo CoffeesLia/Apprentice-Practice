@@ -87,7 +87,7 @@ namespace Infrastructure.Tests.Data.Repositories
                 .With(x => x.Title, filter.Title)
                 .With(x => x.ApplicationId, application.Id)
                 .With(x => x.Application, application)
-                .With(x => x.Status, IncidentStatus.Aberto)
+                .With(x => x.Status, IncidentStatus.Open)
                 .CreateMany(Count);
 
             await _context.Set<Incident>().AddRangeAsync(incidents);
@@ -107,11 +107,11 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Theory]
-        [InlineData(IncidentStatus.Aberto)]
-        [InlineData(IncidentStatus.EmAtendimento)]
-        [InlineData(IncidentStatus.Cancelado)]
-        [InlineData(IncidentStatus.Fechado)]
-        [InlineData(IncidentStatus.Reaberto)]
+        [InlineData(IncidentStatus.Open)]
+        [InlineData(IncidentStatus.InProgress)]
+        [InlineData(IncidentStatus.Canceled)]
+        [InlineData(IncidentStatus.Closed)]
+        [InlineData(IncidentStatus.Reopened)]
         public async Task GetListAsync_FilterByStatus_ReturnsOnlyMatchingStatus(IncidentStatus status)
         {
             // Arrange
@@ -133,7 +133,7 @@ namespace Infrastructure.Tests.Data.Repositories
             var otherIncidents = _fixture.Build<Incident>()
                 .With(i => i.ApplicationId, application.Id)
                 .With(i => i.Application, application)
-                .With(i => i.Status, status == IncidentStatus.Aberto ? IncidentStatus.Fechado : IncidentStatus.Aberto)
+                .With(i => i.Status, status == IncidentStatus.Open ? IncidentStatus.Closed : IncidentStatus.Open)
                 .CreateMany(2)
                 .ToList();
 
@@ -209,7 +209,7 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task GetByStatusAsyncWhenExists()
         {
             // Arrange
-            var status = IncidentStatus.Aberto;
+            var status = IncidentStatus.Open;
             var incidents = _fixture.Build<Incident>()
                 .With(i => i.Status, status)
                 .CreateMany(2)
