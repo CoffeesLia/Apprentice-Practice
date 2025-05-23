@@ -73,20 +73,24 @@ namespace Infrastructure.Tests.Data.Repositories
             await _context.Set<ApplicationData>().AddAsync(application);
             await _context.SaveChangesAsync();
 
+            // Reutilize a instância rastreada de ApplicationData
+            var trackedApplication = await _context.Set<ApplicationData>().FirstAsync(a => a.Id == application.Id);
+
             IncidentFilter filter = new()
             {
                 Page = 1,
                 PageSize = 10,
                 Title = _fixture.Create<string>(),
-                ApplicationId = application.Id,
+                ApplicationId = trackedApplication.Id,
                 Status = null
             };
+
             const int Count = 10;
             IEnumerable<Incident> incidents = _fixture
                 .Build<Incident>()
                 .With(x => x.Title, filter.Title)
-                .With(x => x.ApplicationId, application.Id)
-                .With(x => x.Application, application)
+                .With(x => x.ApplicationId, trackedApplication.Id)
+                .With(x => x.Application, trackedApplication) // Use a instância rastreada
                 .With(x => x.Status, IncidentStatus.Open)
                 .CreateMany(Count);
 
@@ -104,41 +108,51 @@ namespace Infrastructure.Tests.Data.Repositories
             Assert.Equal(Count, result.Total);
             Assert.Equal(filter.Page, result.Page);
             Assert.Equal(filter.PageSize, result.PageSize);
+
         }
 
         [Theory]
         [InlineData(IncidentStatus.Open)]
         [InlineData(IncidentStatus.InProgress)]
-        [InlineData(IncidentStatus.Canceled)]
+        [InlineData(IncidentStatus.Cancelled)]
         [InlineData(IncidentStatus.Closed)]
         [InlineData(IncidentStatus.Reopened)]
         public async Task GetListAsync_FilterByStatus_ReturnsOnlyMatchingStatus(IncidentStatus status)
         {
             // Arrange
-            var application = _fixture.Build<ApplicationData>()
-                .With(a => a.Id, 0)
-                .Create();
-            await _context.Set<ApplicationData>().AddAsync(application);
-            await _context.SaveChangesAsync();
+            var fixture = new Fixture();
+            fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList()
+                .ForEach(b => fixture.Behaviors.Remove(b));
+            fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
-            // Cria 3 incidentes com o status desejado
-            var matchingIncidents = _fixture.Build<Incident>()
+            var options = new DbContextOptionsBuilder<Context>()
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()) // banco isolado!
+                .Options;
+
+            using var context = new Context(options);
+            var repository = new IncidentRepository(context);
+
+            var application = fixture.Build<ApplicationData>().Create();
+
+            await context.Set<ApplicationData>().AddAsync(application);
+            await context.SaveChangesAsync();
+
+            var matchingIncidents = fixture.Build<Incident>()
                 .With(i => i.ApplicationId, application.Id)
                 .With(i => i.Application, application)
                 .With(i => i.Status, status)
                 .CreateMany(3)
                 .ToList();
 
-            // Cria 2 incidentes com status diferente
-            var otherIncidents = _fixture.Build<Incident>()
+            var otherIncidents = fixture.Build<Incident>()
                 .With(i => i.ApplicationId, application.Id)
                 .With(i => i.Application, application)
                 .With(i => i.Status, status == IncidentStatus.Open ? IncidentStatus.Closed : IncidentStatus.Open)
                 .CreateMany(2)
                 .ToList();
 
-            await _context.Set<Incident>().AddRangeAsync(matchingIncidents.Concat(otherIncidents));
-            await _context.SaveChangesAsync();
+            await context.Set<Incident>().AddRangeAsync(matchingIncidents.Concat(otherIncidents));
+            await context.SaveChangesAsync();
 
             var filter = new IncidentFilter
             {
@@ -149,12 +163,13 @@ namespace Infrastructure.Tests.Data.Repositories
             };
 
             // Act
-            var result = await _repository.GetListAsync(filter);
+            var result = await repository.GetListAsync(filter);
 
             // Assert
             Assert.Equal(3, result.Total);
             Assert.All(result.Result, i => Assert.Equal(status, i.Status));
         }
+
 
         [Fact]
         public async Task GetByApplicationIdAsyncWhenExists()

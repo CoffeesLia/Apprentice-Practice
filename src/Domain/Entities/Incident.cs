@@ -5,7 +5,7 @@ namespace Stellantis.ProjectName.Domain.Entities
     {
         Open,
         InProgress,
-        Canceled,
+        Cancelled,
         Closed,
         Reopened
     }
