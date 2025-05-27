@@ -109,9 +109,9 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(dest => dest.ApplicationData, opt => opt.MapFrom(src => src.ApplicationData));
 
             CreateMap<SquadDto, Squad>()
-             .ForMember(x => x.Id, x => x.Ignore()) // Ignorar o ID porque ele é gerado pelo banco
-             .ForMember(x => x.Description, opt => opt.MapFrom(src => src.Description)) // Mapear Description
-             .ForMember(x => x.Name, opt => opt.MapFrom(src => src.Name)) // Mapear Name
+             .ForMember(x => x.Id, x => x.Ignore()) 
+             .ForMember(x => x.Description, opt => opt.MapFrom(src => src.Description)) 
+             .ForMember(x => x.Name, opt => opt.MapFrom(src => src.Name)) 
             .ForMember(dest => dest.Members, opt => opt.Ignore())
             .ForMember(dest => dest.Applications, opt => opt.Ignore());
 
@@ -119,9 +119,18 @@ namespace Stellantis.ProjectName.WebApi.Mapper
             CreateMap<PagedResult<Squad>, PagedResultVm<SquadVm>>();
 
             CreateMap<Squad, SquadVm>()
-                            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-                            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
-                            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
+               .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+               .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+               .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+               .ForMember(dest => dest.Applications, opt => opt.MapFrom(src => src.Applications))
+                .ForMember(dest => dest.Members, opt => opt.MapFrom(src => src.Members));
+
+
+            CreateMap<ApplicationData, ApplicationDataVm>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
+
 
             CreateMap<SquadFilterDto, SquadFilter>()
               .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))

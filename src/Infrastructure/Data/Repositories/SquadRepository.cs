@@ -63,10 +63,21 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             return await GetListAsync(query, squadFilter.Sort, squadFilter.SortDir, squadFilter.Page, squadFilter.PageSize).ConfigureAwait(false);
         }
 
-
         public async Task<bool> VerifySquadExistsAsync(int id)
         {
             return await Context.Squads.AnyAsync(s => s.Id == id).ConfigureAwait(false);
         }
+
+        // Novo método para buscar um Squad com as aplicações relacionadas
+        // SquadRepository.cs
+        public async Task<Squad?> GetSquadWithApplicationsAsync(int id)
+        {
+            return await Context.Squads
+                .Include(s => s.Applications) // Inclui as aplicações relacionadas
+                .FirstOrDefaultAsync(s => s.Id == id)
+                .ConfigureAwait(false);
+        }
+
+
     }
 }

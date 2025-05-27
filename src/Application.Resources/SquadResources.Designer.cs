@@ -61,6 +61,33 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a The list of application IDs cannot be empty..
+        /// </summary>
+        public static string ApplicationIdsCannotBeEmpty {
+            get {
+                return ResourceManager.GetString("ApplicationIdsCannotBeEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Applications successfully linked to the Squad..
+        /// </summary>
+        public static string ApplicationsLinkedSuccessfully {
+            get {
+                return ResourceManager.GetString("ApplicationsLinkedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a No applications found with the provided IDs..
+        /// </summary>
+        public static string ApplicationsNotFound {
+            get {
+                return ResourceManager.GetString("ApplicationsNotFound  ", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a The description must be between 3 and 255 characters..
         /// </summary>
         public static string DescriptionValidateLength {
