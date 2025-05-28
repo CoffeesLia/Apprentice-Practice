@@ -171,12 +171,10 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                .ForMember(dest => dest.Cost, opt => opt.MapFrom(src => src.Cost));
             CreateMap<PagedResult<Member>, PagedResultVm<MemberVm>>();
 
-
             CreateMap<DocumentDto, DocumentData>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.ApplicationData, opt => opt.Ignore())
                 .ForMember(x => x.Url, opt => opt.MapFrom(src => src.Url));
-
 
             CreateMap<DocumentData, DocumentVm>()
                 .ForMember(dest => dest.ApplicationData, opt => opt.MapFrom(src => src.ApplicationData))

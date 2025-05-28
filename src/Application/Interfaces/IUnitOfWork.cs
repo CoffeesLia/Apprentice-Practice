@@ -15,6 +15,8 @@ namespace Stellantis.ProjectName.Application.Interfaces
 
         IIncidentRepository IncidentRepository { get; }
 
+        IImprovementRepository ImprovementRepository { get; }
+
         IMemberRepository MemberRepository { get; }
 
         IServiceDataRepository ServiceDataRepository { get; }
