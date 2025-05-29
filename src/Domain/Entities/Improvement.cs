@@ -16,7 +16,7 @@ namespace Stellantis.ProjectName.Domain.Entities
         public string Description { get; set; } = null!;
         public DateTime CreatedAt { get; set; }
         public DateTime? ClosedAt { get; set; }
-        public ImprovementStatus Status { get; set; }
+        public ImprovementStatus StatusImprovement { get; set; }
         public int ApplicationId { get; set; }
         public ApplicationData Application { get; set; } = null!;
         public ICollection<Member> Members { get; set; } = [];

@@ -55,9 +55,9 @@ namespace Stellantis.ProjectName.Application.Services
             }
 
             item.CreatedAt = DateTime.UtcNow;
-            if (item.Status == default)
+            if (item.StatusImprovement == default)
             {
-                item.Status = ImprovementStatus.Open;
+                item.StatusImprovement = ImprovementStatus.Open;
             }
 
             return await base.CreateAsync(item).ConfigureAwait(false);
@@ -115,16 +115,16 @@ namespace Stellantis.ProjectName.Application.Services
             existingImprovement.ApplicationId = item.ApplicationId;
 
             // Controle de status e datas
-            if (item.Status == ImprovementStatus.Closed && existingImprovement.ClosedAt == null)
+            if (item.StatusImprovement == ImprovementStatus.Closed && existingImprovement.ClosedAt == null)
             {
                 existingImprovement.ClosedAt = DateTime.UtcNow;
             }
-            else if (item.Status == ImprovementStatus.Reopened)
+            else if (item.StatusImprovement == ImprovementStatus.Reopened)
             {
                 existingImprovement.ClosedAt = null;
             }
 
-            existingImprovement.Status = item.Status;
+            existingImprovement.StatusImprovement = item.StatusImprovement;
 
             return await base.UpdateAsync(existingImprovement).ConfigureAwait(false);
         }

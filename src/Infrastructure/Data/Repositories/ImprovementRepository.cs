@@ -29,10 +29,12 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             {
                 filters = filters.And(x => x.ApplicationId == filter.ApplicationId);
             }
-            if (filter.Status.HasValue)
+            // Filtro por status
+            if (filter.StatusImprovement.HasValue)
             {
-                filters = filters.And(x => x.Status == filter.Status.Value);
+                filters = filters.And(x => x.StatusImprovement == filter.StatusImprovement.Value);
             }
+            // Retorna a lista paginada com os filtros aplicados
             return await GetListAsync(
                 filter: filters,
                 page: filter.Page,
@@ -59,7 +61,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 }
             }
         }
-
         public async Task<IEnumerable<Member>> GetMembersByApplicationIdAsync(int applicationId)
         {
             var application = await Context.Set<AppDomain.ApplicationData>()
@@ -67,11 +68,10 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                     .ThenInclude(s => s.Members)
                 .FirstOrDefaultAsync(a => a.Id == applicationId);
 
-            if (application == null) return Enumerable.Empty<Member>();
+            if (application == null) return [];
 
-            return application.Squads.SelectMany(s => s.Members).Distinct().ToList();
+            return [.. application.Squads.SelectMany(s => s.Members).Distinct()];
         }
-
         public async Task<IEnumerable<Improvement>> GetByApplicationIdAsync(int applicationId)
         {
             return await Context.Set<Improvement>()
@@ -82,6 +82,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         }
 
+        // Consulta todos os improvementes em que um membro está envolvido.
         public async Task<IEnumerable<Improvement>> GetByMemberIdAsync(int memberId)
         {
             return await Context.Set<Improvement>()
@@ -92,10 +93,11 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         }
 
-        public async Task<IEnumerable<Improvement>> GetByStatusAsync(ImprovementStatus status)
+        // Consulta todos os improvementes com um determinado status.
+        public async Task<IEnumerable<Improvement>> GetByStatusAsync(ImprovementStatus statusImprovement)
         {
             return await Context.Set<Improvement>()
-                .Where(i => i.Status == status)
+                .Where(i => i.StatusImprovement == statusImprovement)
                 .ToListAsync()
                 .ConfigureAwait(false);
 
