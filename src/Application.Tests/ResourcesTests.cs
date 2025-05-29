@@ -37,17 +37,6 @@ namespace Application.Tests
             VerifyAllResources<ServiceResources>(ServiceResources.ResourceManager);
         }
 
-        [Fact]
-        public void ServiceDataResourcesAllCultures()
-        {
-            ServiceDataResources resource = new();
-            Assert.NotNull(resource);
-            ServiceDataResources.Culture = CultureInfo.InvariantCulture;
-            Assert.Equal(CultureInfo.InvariantCulture, ServiceDataResources.Culture);
-
-            VerifyAllResources<ServiceDataResources>(ServiceDataResources.ResourceManager);
-        }
-
         private void VerifyAllResources<TResouces>(ResourceManager resourceManager)
         {
             IStringLocalizer localizaer = LocalizerFactor.Create(typeof(TResouces));
@@ -68,6 +57,28 @@ namespace Application.Tests
                 }
 
             }
+        }
+
+        [Fact]
+        public void ServiceDataResourcesAllCultures()
+        {
+            ServiceDataResources resource = new();
+            Assert.NotNull(resource);
+            ServiceDataResources.Culture = CultureInfo.InvariantCulture;
+            Assert.Equal(CultureInfo.InvariantCulture, ServiceDataResources.Culture);
+
+            VerifyAllResources<ServiceDataResources>(ServiceDataResources.ResourceManager);
+        }
+
+        [Fact]
+        public void ManagerResourcesAllCultures()
+        {
+            ManagerResources resource = new();
+            Assert.NotNull(resource);
+            ManagerResources.Culture = CultureInfo.InvariantCulture;
+            Assert.Equal(CultureInfo.InvariantCulture, ManagerResources.Culture);
+
+            VerifyAllResources<ManagerResources>(ManagerResources.ResourceManager);
         }
 
         [Fact]
