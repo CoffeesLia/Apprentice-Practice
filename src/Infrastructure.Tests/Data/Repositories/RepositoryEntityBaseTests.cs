@@ -1,12 +1,14 @@
 ﻿#pragma warning disable IDE0079
 #pragma warning disable CA1812
 #pragma warning disable CA1852
+using System.Runtime.InteropServices;
 using AutoFixture;
 using AutoFixture.AutoMoq;
+using LinqKit;
 using Microsoft.EntityFrameworkCore;
+using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
-using System.Runtime.InteropServices;
 
 namespace Infrastructure.Tests.Data.Repositories
 {
@@ -191,8 +193,28 @@ namespace Infrastructure.Tests.Data.Repositories
             Assert.Equal(entity.Id, result.Id);
         }
 
+        [Fact]
+        public async Task GetListAsyncShouldUseDefaultFilterWhenFilterIsNull()
+        {
+            // Arrange
+            var filters = PredicateBuilder.New<TestEntity>(true);
+
+            // Act
+            var result = await _repository.CallGetListWithFilterAsync(filters, null);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(1, result.Page); 
+            Assert.Equal(10, result.PageSize); 
+        }
+
         private sealed class TestRepository(TestContext context) : RepositoryEntityBase<TestEntity, TestContext>(context)
         {
+            internal async Task<PagedResult<TestEntity>> CallGetListWithFilterAsync(
+            ExpressionStarter<TestEntity> filters, Filter filter)
+            {
+                return await GetListAsync(filters, filter).ConfigureAwait(false);
+            }
         }
 
         private sealed class TestEntity(string name) : EntityBase

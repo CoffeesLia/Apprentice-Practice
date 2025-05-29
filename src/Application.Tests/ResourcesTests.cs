@@ -60,6 +60,17 @@ namespace Application.Tests
         }
 
         [Fact]
+        public void AreaResourcesAllCultures()
+        {
+            AreaResources resource = new();
+            Assert.NotNull(resource);
+            AreaResources.Culture = CultureInfo.InvariantCulture;
+            Assert.Equal(CultureInfo.InvariantCulture, AreaResources.Culture);
+
+            VerifyAllResources<AreaResources>(AreaResources.ResourceManager);
+        }
+
+        [Fact]
         public void ServiceDataResourcesAllCultures()
         {
             ServiceDataResources resource = new();
@@ -120,6 +131,7 @@ namespace Application.Tests
             Assert.Equal(CultureInfo.InvariantCulture, ServiceResources.Culture);
             VerifyAllResources<ServiceResources>(ServiceResources.ResourceManager);
         }
+
         [Fact]
         public void IntegrationResourcesCulturePropertySetAndGetReturnsExpectedCulture()
         {

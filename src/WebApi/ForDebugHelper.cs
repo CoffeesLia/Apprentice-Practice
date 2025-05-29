@@ -1,6 +1,7 @@
 ﻿#if DEBUG
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
+using Stellantis.ProjectName.WebApi.ViewModels;
 
 namespace Stellantis.ProjectName.WebApi
 {
@@ -17,23 +18,44 @@ namespace Stellantis.ProjectName.WebApi
 
                 // Áreas
                 context.Areas.AddRange(
-                    new Area("AMS"),
-                    new Area("Architecture"),
-                    new Area("Commercial"),
-                    new Area("Engineering"),
-                    new Area("EngenChain"),
-                    new Area("Engeniring"),
-                    new Area("Finance"),
-                    new Area("Human Resources"),
-                    new Area("Integration"),
-                    new Area("Manufacturing"),
-                    new Area("Marketing"),
-                    new Area("Product Development"),
-                    new Area("Quality"),
-                    new Area("Quality control"),
-                    new Area("Sales"),
-                    new Area("Security"),
-                    new Area("Supplier Chain")
+                    new Area("AMS") { ManagerId = 1 },
+                    new Area("Architecture") { ManagerId = 2 },
+                    new Area("Commercial") { ManagerId = 3 },
+                    new Area("Engineering") { ManagerId = 4 },
+                    new Area("EngenChain") { ManagerId = 5 },
+                    new Area("Engeniring") { ManagerId = 6 },
+                    new Area("Finance") { ManagerId = 7 },
+                    new Area("Human Resources") { ManagerId = 8 },
+                    new Area("Integration") { ManagerId = 9 },
+                    new Area("Manufacturing") { ManagerId = 10 },
+                    new Area("Marketing") { ManagerId = 11 },
+                    new Area("Product Development") { ManagerId = 12 },
+                    new Area("Quality") { ManagerId = 13 },
+                    new Area("Quality control") { ManagerId = 14 },
+                    new Area("Sales") { ManagerId = 15 },
+                    new Area("Security") { ManagerId = 16 },
+                    new Area("Supplier Chain") { ManagerId = 17 }
+                );
+
+                // Gerentes
+                context.Managers.AddRange(
+                    new Manager { Name = "Luciene Miranda", Email = "luciene@stellantis.com" },
+                    new Manager { Name = "Alexia Lima", Email = "alexia@stellantis.com" },
+                    new Manager { Name = "Welton Duarte", Email = "welton@stellantis.com" },
+                    new Manager { Name = "Said Debien", Email = "said@stellantis.com" },
+                    new Manager { Name = "Matheus Fernandes", Email = "matheus@stellantis.com" },
+                    new Manager { Name = "Jardel Reyes", Email = "jardel@stellantis.com" },
+                    new Manager { Name = "Patricia Fernanda", Email = "patricia@stellantis.com" },
+                    new Manager { Name = "Vitoria Eshiley", Email = "vitoria@stellantis.com" },
+                    new Manager { Name = "Ana Raquel", Email = "anaraquel@stellantis.com" },
+                    new Manager { Name = "Cecilia Melgaco", Email = "cecilia@stellantis.com" },
+                    new Manager { Name = "Andryel Passos", Email = "andryel@stellantis.com" },
+                    new Manager { Name = "Vin Diesel", Email = "toretto@stellantis.com" },
+                    new Manager { Name = "Michael Jackson", Email = "michael@stellantis.com" },
+                    new Manager { Name = "Elvis Presley", Email = "elvis@stellantis.com" },
+                    new Manager { Name = "Ariana Grande", Email = "ariana@stellantis.com" },
+                    new Manager { Name = "Lana del Rey", Email = "lanadelrey@stellantis.com" },
+                    new Manager { Name = "Marshall Mathers", Email = "Eminem@stellantis.com" }
                 );
 
                 // Responsáveis
