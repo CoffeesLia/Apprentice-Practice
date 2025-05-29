@@ -1,10 +1,10 @@
-﻿using AutoFixture;
+﻿using System.Runtime.InteropServices;
+using AutoFixture;
 using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
-using System.Runtime.InteropServices;
 
 namespace Infrastructure.Tests.Data.Repositories
 {

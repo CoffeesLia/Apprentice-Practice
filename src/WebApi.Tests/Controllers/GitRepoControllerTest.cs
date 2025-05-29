@@ -33,7 +33,7 @@ namespace WebApi.Tests.Controllers
             .OfType<ThrowingRecursionBehavior>()
             .ToList()
             .ForEach(b => _fixture.Behaviors.Remove(b));
-                        _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+            _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
         }
 
         // Teste para verificar se CreateAsync retorna CreatedAtActionResult quando criação é bem-sucedida

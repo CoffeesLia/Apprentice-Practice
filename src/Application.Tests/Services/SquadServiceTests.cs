@@ -1,4 +1,5 @@
-﻿using Application.Tests.Helpers;
+﻿using System.Globalization;
+using Application.Tests.Helpers;
 using FluentValidation;
 using FluentValidation.Results;
 using Moq;
@@ -10,7 +11,6 @@ using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Application.Validators;
 using Stellantis.ProjectName.Domain.Entities;
-using System.Globalization;
 using Xunit;
 
 namespace Application.Tests.Services
@@ -161,7 +161,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-       public async Task UpdateAsyncReturnsConflictWhenNameAlreadyExists()
+        public async Task UpdateAsyncReturnsConflictWhenNameAlreadyExists()
         {
             // Arrange
             Squad squad = new() { Id = 1, Name = "Existing Squad" };

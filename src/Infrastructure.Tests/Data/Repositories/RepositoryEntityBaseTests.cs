@@ -1,12 +1,12 @@
 ﻿#pragma warning disable IDE0079
 #pragma warning disable CA1812
 #pragma warning disable CA1852
+using System.Runtime.InteropServices;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
-using System.Runtime.InteropServices;
 
 namespace Infrastructure.Tests.Data.Repositories
 {

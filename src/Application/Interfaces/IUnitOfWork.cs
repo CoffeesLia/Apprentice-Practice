@@ -5,7 +5,7 @@ namespace Stellantis.ProjectName.Application.Interfaces
     public interface IUnitOfWork
     {
 
-        IDocumentRepository DocumentDataRepository { get; } 
+        IDocumentRepository DocumentDataRepository { get; }
 
         IAreaRepository AreaRepository { get; }
 

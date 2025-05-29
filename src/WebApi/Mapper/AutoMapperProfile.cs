@@ -1,6 +1,4 @@
 using AutoMapper;
-using Microsoft.Identity.Client;
-using Microsoft.IdentityModel.Tokens;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Dto;
@@ -72,6 +70,22 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
             CreateMap<PagedResult<ServiceData>, PagedResultVm<ServiceDataVm>>();
 
+            CreateMap<ImprovementDto, Improvement>()
+ .ForMember(dest => dest.Id, opt => opt.Ignore())
+ .ForMember(dest => dest.Members, opt => opt.Ignore())
+ .ForMember(dest => dest.Application, opt => opt.Ignore())
+ .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+ .ForMember(dest => dest.ClosedAt, opt => opt.Ignore())
+ .ForMember(dest => dest.StatusImprovement, opt => opt.MapFrom(src => src.StatusImprovement));
+
+            CreateMap<ImprovementFilterDto, ImprovementFilter>()
+             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
+
+            CreateMap<Improvement, ImprovementVm>()
+             .ForMember(dest => dest.StatusImprovement, opt => opt.MapFrom(src => src.StatusImprovement.ToString()))
+             .ForMember(dest => dest.MemberIds, opt => opt.MapFrom(src => src.Members.Select(m => m.Id)))
+             .ForMember(dest => dest.Application, opt => opt.MapFrom(src => src.Application));
+
             CreateMap<IncidentDto, Incident>()
              .ForMember(dest => dest.Id, opt => opt.Ignore())
              .ForMember(dest => dest.Members, opt => opt.Ignore())
@@ -86,7 +100,7 @@ namespace Stellantis.ProjectName.WebApi.Mapper
             CreateMap<Incident, IncidentVm>()
              .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
              .ForMember(dest => dest.MemberIds, opt => opt.MapFrom(src => src.Members.Select(m => m.Id)))
-             .ForMember(dest => dest.Application, opt => opt.MapFrom(src => src.Application)); 
+             .ForMember(dest => dest.Application, opt => opt.MapFrom(src => src.Application));
 
             CreateMap<IntegrationDto, Integration>()
               .ForMember(x => x.Id, x => x.Ignore())

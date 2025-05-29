@@ -42,7 +42,7 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             SquadDto squadDto = _fixture.Create<SquadDto>();
-            OperationResult operationResult = OperationResult.Complete(); 
+            OperationResult operationResult = OperationResult.Complete();
             _squadServiceMock.Setup(s => s.CreateAsync(It.IsAny<Squad>())).ReturnsAsync(operationResult);
 
             _mapperMock.Setup(m => m.Map<Squad>(It.IsAny<SquadDto>()))

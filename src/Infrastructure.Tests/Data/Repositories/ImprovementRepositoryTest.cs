@@ -8,16 +8,16 @@ using Stellantis.ProjectName.Infrastructure.Data.Repositories;
 
 namespace Infrastructure.Tests.Data.Repositories
 {
-    public class IncidentRepositoryTests : IDisposable
+    public class ImprovementRepositoryTest : IDisposable
     {
         private readonly Context _context;
-        private readonly IncidentRepository _repository;
+        private readonly ImprovementRepository _repository;
         private readonly Fixture _fixture;
         private bool isDisposed;
         private IntPtr nativeResource = Marshal.AllocHGlobal(100);
 
 
-        public IncidentRepositoryTests()
+        public ImprovementRepositoryTest()
         {
             _fixture = new Fixture();
             // Evita exceção de referência circular no AutoFixture
@@ -31,23 +31,23 @@ namespace Infrastructure.Tests.Data.Repositories
                 .UseInMemoryDatabase(databaseName: _fixture.Create<string>())
                 .Options;
             _context = new Context(options);
-            _repository = new IncidentRepository(_context);
+            _repository = new ImprovementRepository(_context);
         }
 
         [Fact]
         public async Task GetByIdAsyncWhenIdExists()
         {
             // Arrange
-            Incident incident = _fixture.Create<Incident>();
-            await _context.Set<Incident>().AddAsync(incident);
+            Improvement improvement = _fixture.Create<Improvement>();
+            await _context.Set<Improvement>().AddAsync(improvement);
             await _context.SaveChangesAsync();
 
             // Act
-            Incident? result = await _repository.GetByIdAsync(incident.Id);
+            Improvement? result = await _repository.GetByIdAsync(improvement.Id);
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(incident.Id, result.Id);
+            Assert.Equal(improvement.Id, result.Id);
         }
 
         [Fact]
@@ -57,7 +57,7 @@ namespace Infrastructure.Tests.Data.Repositories
             int id = _fixture.Create<int>();
 
             // Act
-            Incident? result = await _repository.GetByIdAsync(id);
+            Improvement? result = await _repository.GetByIdAsync(id);
 
             // Assert
             Assert.Null(result);
@@ -76,33 +76,33 @@ namespace Infrastructure.Tests.Data.Repositories
             // Reutilize a instância rastreada de ApplicationData
             var trackedApplication = await _context.Set<ApplicationData>().FirstAsync(a => a.Id == application.Id);
 
-            IncidentFilter filter = new()
+            ImprovementFilter filter = new()
             {
                 Page = 1,
                 PageSize = 10,
                 Title = _fixture.Create<string>(),
                 ApplicationId = trackedApplication.Id,
-                Status = null
+                StatusImprovement = null
             };
 
             const int Count = 10;
-            IEnumerable<Incident> incidents = _fixture
-                .Build<Incident>()
+            IEnumerable<Improvement> incidents = _fixture
+                .Build<Improvement>()
                 .With(x => x.Title, filter.Title)
                 .With(x => x.ApplicationId, trackedApplication.Id)
                 .With(x => x.Application, trackedApplication) // Use a instância rastreada
-                .With(x => x.Status, IncidentStatus.Open)
+                .With(x => x.StatusImprovement, ImprovementStatus.Open)
                 .CreateMany(Count);
 
-            await _context.Set<Incident>().AddRangeAsync(incidents);
+            await _context.Set<Improvement>().AddRangeAsync(incidents);
             await _context.SaveChangesAsync();
 
             // Verifique se os dados foram salvos corretamente
-            List<Incident> savedIncidents = await _context.Set<Incident>().ToListAsync();
+            List<Improvement> savedIncidents = await _context.Set<Improvement>().ToListAsync();
             Assert.Equal(Count, savedIncidents.Count);
 
             // Act
-            PagedResult<Incident> result = await _repository.GetListAsync(filter);
+            PagedResult<Improvement> result = await _repository.GetListAsync(filter);
 
             // Assert
             Assert.Equal(Count, result.Total);
@@ -112,12 +112,12 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Theory]
-        [InlineData(IncidentStatus.Open)]
-        [InlineData(IncidentStatus.InProgress)]
-        [InlineData(IncidentStatus.Cancelled)]
-        [InlineData(IncidentStatus.Closed)]
-        [InlineData(IncidentStatus.Reopened)]
-        public async Task GetListAsync_FilterByStatus_ReturnsOnlyMatchingStatus(IncidentStatus status)
+        [InlineData(ImprovementStatus.Open)]
+        [InlineData(ImprovementStatus.InProgress)]
+        [InlineData(ImprovementStatus.Cancelled)]
+        [InlineData(ImprovementStatus.Closed)]
+        [InlineData(ImprovementStatus.Reopened)]
+        public async Task GetListAsyncFilterByStatusReturnsOnlyMatchingStatus(ImprovementStatus statusImprovement)
         {
             // Arrange
             var fixture = new Fixture();
@@ -130,35 +130,35 @@ namespace Infrastructure.Tests.Data.Repositories
                 .Options;
 
             using var context = new Context(options);
-            var repository = new IncidentRepository(context);
+            var repository = new ImprovementRepository(context);
 
             var application = fixture.Build<ApplicationData>().Create();
 
             await context.Set<ApplicationData>().AddAsync(application);
             await context.SaveChangesAsync();
 
-            var matchingIncidents = fixture.Build<Incident>()
+            var matchingIncidents = fixture.Build<Improvement>()
                 .With(i => i.ApplicationId, application.Id)
                 .With(i => i.Application, application)
-                .With(i => i.Status, status)
+                .With(i => i.StatusImprovement, statusImprovement)
                 .CreateMany(3)
                 .ToList();
 
-            var otherIncidents = fixture.Build<Incident>()
+            var otherIncidents = fixture.Build<Improvement>()
                 .With(i => i.ApplicationId, application.Id)
                 .With(i => i.Application, application)
-                .With(i => i.Status, status == IncidentStatus.Open ? IncidentStatus.Closed : IncidentStatus.Open)
+                .With(i => i.StatusImprovement, statusImprovement == ImprovementStatus.Open ? ImprovementStatus.Closed : ImprovementStatus.Open)
                 .CreateMany(2)
                 .ToList();
 
-            await context.Set<Incident>().AddRangeAsync(matchingIncidents.Concat(otherIncidents));
+            await context.Set<Improvement>().AddRangeAsync(matchingIncidents.Concat(otherIncidents));
             await context.SaveChangesAsync();
 
-            var filter = new IncidentFilter
+            var filter = new ImprovementFilter
             {
                 Page = 1,
                 PageSize = 10,
-                Status = status,
+                StatusImprovement = statusImprovement,
                 ApplicationId = application.Id
             };
 
@@ -167,7 +167,7 @@ namespace Infrastructure.Tests.Data.Repositories
 
             // Assert
             Assert.Equal(3, result.Total);
-            Assert.All(result.Result, i => Assert.Equal(status, i.Status));
+            Assert.All(result.Result, i => Assert.Equal(statusImprovement, i.StatusImprovement));
         }
 
 
@@ -181,13 +181,13 @@ namespace Infrastructure.Tests.Data.Repositories
             await _context.Set<ApplicationData>().AddAsync(application);
             await _context.SaveChangesAsync();
 
-            var incidents = _fixture.Build<Incident>()
+            var incidents = _fixture.Build<Improvement>()
                 .With(x => x.ApplicationId, application.Id)
                 .With(x => x.Application, application)
                 .CreateMany(3)
                 .ToList();
 
-            await _context.Set<Incident>().AddRangeAsync(incidents);
+            await _context.Set<Improvement>().AddRangeAsync(incidents);
             await _context.SaveChangesAsync();
 
             // Act
@@ -205,11 +205,11 @@ namespace Infrastructure.Tests.Data.Repositories
             // Arrange
             int memberId = _fixture.Create<int>();
             var member = _fixture.Build<Member>().With(m => m.Id, memberId).Create();
-            var incident = _fixture.Build<Incident>()
+            var improvement = _fixture.Build<Improvement>()
                 .With(i => i.Members, [member])
                 .Create();
 
-            await _context.Set<Incident>().AddAsync(incident);
+            await _context.Set<Improvement>().AddAsync(improvement);
             await _context.SaveChangesAsync();
 
             // Act
@@ -224,21 +224,21 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task GetByStatusAsyncWhenExists()
         {
             // Arrange
-            var status = IncidentStatus.Open;
-            var incidents = _fixture.Build<Incident>()
-                .With(i => i.Status, status)
+            var statusImprovement = ImprovementStatus.Open;
+            var incidents = _fixture.Build<Improvement>()
+                .With(i => i.StatusImprovement, statusImprovement)
                 .CreateMany(2)
                 .ToList();
 
-            await _context.Set<Incident>().AddRangeAsync(incidents);
+            await _context.Set<Improvement>().AddRangeAsync(incidents);
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _repository.GetByStatusAsync(status);
+            var result = await _repository.GetByStatusAsync(statusImprovement);
 
             // Assert
             Assert.NotNull(result);
-            Assert.All(result, i => Assert.Equal(status, i.Status));
+            Assert.All(result, i => Assert.Equal(statusImprovement, i.StatusImprovement));
         }
 
         [Fact]
@@ -251,18 +251,18 @@ namespace Infrastructure.Tests.Data.Repositories
             await _context.Set<ApplicationData>().AddAsync(application);
             await _context.SaveChangesAsync();
 
-            Incident incident = _fixture.Build<Incident>()
+            Improvement improvement = _fixture.Build<Improvement>()
                 .With(i => i.ApplicationId, application.Id)
                 .With(i => i.Application, application)
                 .With(i => i.Members, [])
                 .Create();
 
-            await _context.Set<Incident>().AddAsync(incident);
+            await _context.Set<Improvement>().AddAsync(improvement);
             await _context.SaveChangesAsync();
 
             // Act
-            await _repository.DeleteAsync(incident.Id);
-            Incident? result = await _context.Set<Incident>().FindAsync(incident.Id);
+            await _repository.DeleteAsync(improvement.Id);
+            Improvement? result = await _context.Set<Improvement>().FindAsync(improvement.Id);
 
             // Assert
             Assert.Null(result);

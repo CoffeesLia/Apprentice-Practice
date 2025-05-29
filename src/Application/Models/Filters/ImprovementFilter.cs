@@ -7,6 +7,6 @@ namespace Stellantis.ProjectName.Application.Models.Filters
         public int Id { get; set; }
         public string? Title { get; set; }
         public int ApplicationId { get; set; }
-        public IncidentStatus? StatusImprovement { get; set; }
+        public ImprovementStatus? StatusImprovement { get; set; }
     }
 }

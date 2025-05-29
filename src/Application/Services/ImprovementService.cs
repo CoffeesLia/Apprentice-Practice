@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
-using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
@@ -13,7 +12,7 @@ namespace Stellantis.ProjectName.Application.Services
     public class ImprovementService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<Improvement> validator)
             : EntityServiceBase<Improvement>(unitOfWork, localizerFactory, validator), IImprovementService
     {
-        private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(  ImprovementResources));
+        private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(ImprovementResources));
         protected override IImprovementRepository Repository => UnitOfWork.ImprovementRepository;
 
 
@@ -50,7 +49,7 @@ namespace Stellantis.ProjectName.Application.Services
 
                 if (invalidMemberIds.Count > 0)
                 {
-                    return OperationResult.Conflict(_localizer[nameof(  ImprovementResources.InvalidMembers)]);
+                    return OperationResult.Conflict(_localizer[nameof(ImprovementResources.InvalidMembers)]);
                 }
             }
 
@@ -103,7 +102,7 @@ namespace Stellantis.ProjectName.Application.Services
 
                 if (invalidMemberIds.Count > 0)
                 {
-                    return OperationResult.Conflict(_localizer[nameof(  ImprovementResources.InvalidMembers)]);
+                    return OperationResult.Conflict(_localizer[nameof(ImprovementResources.InvalidMembers)]);
                 }
 
                 existingImprovement.Members = item.Members;

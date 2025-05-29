@@ -1,10 +1,10 @@
-﻿using AutoFixture;
+﻿using System.Globalization;
+using System.Linq.Expressions;
+using System.Runtime.InteropServices;
+using AutoFixture;
 using AutoFixture.AutoMoq;
 using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Infrastructure.Data.Extensions;
-using System.Globalization;
-using System.Linq.Expressions;
-using System.Runtime.InteropServices;
 
 namespace Infrastructure.Tests.Data.Repositories
 {
