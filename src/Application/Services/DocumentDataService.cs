@@ -18,9 +18,9 @@ namespace Stellantis.ProjectName.Application.Services
 
         protected override IDocumentRepository Repository =>
             UnitOfWork.DocumentDataRepository;
-        
-       
-    public override async Task<OperationResult> CreateAsync(DocumentData item)
+
+
+        public override async Task<OperationResult> CreateAsync(DocumentData item)
         {
             ArgumentNullException.ThrowIfNull(item);
             ArgumentNullException.ThrowIfNull(item.Name);
@@ -69,14 +69,14 @@ namespace Stellantis.ProjectName.Application.Services
 
         }
 
-        public override async Task<OperationResult> DeleteAsync(int id) 
+        public override async Task<OperationResult> DeleteAsync(int id)
         {
             return await base.DeleteAsync(id).ConfigureAwait(false);
         }
 
         public async Task<PagedResult<DocumentData>> GetListAsync(DocumentDataFilter filter)
         {
-            filter ??= new  DocumentDataFilter();
+            filter ??= new DocumentDataFilter();
 
             return await UnitOfWork.DocumentDataRepository.GetListAsync(filter).ConfigureAwait(false);
         }

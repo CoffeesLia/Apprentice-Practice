@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Stellantis.ProjectName.Infrastructure.Data;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using Microsoft.EntityFrameworkCore;
+using Stellantis.ProjectName.Infrastructure.Data;
 
 namespace Infrastructure.Tests.Data
 {

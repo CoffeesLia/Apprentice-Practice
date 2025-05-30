@@ -1,8 +1,8 @@
-﻿using Application.Tests.Helpers;
+﻿using System.Globalization;
+using System.Resources;
+using Application.Tests.Helpers;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Resources;
-using System.Globalization;
-using System.Resources;
 using Xunit;
 
 namespace Application.Tests

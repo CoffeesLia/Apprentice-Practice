@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Net;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Stellantis.ProjectName.WebApi.ViewModels;
-using System.Net;
 
 namespace Stellantis.ProjectName.WebApi.Filters
 {
