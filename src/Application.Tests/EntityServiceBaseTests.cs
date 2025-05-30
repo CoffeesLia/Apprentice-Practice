@@ -1,12 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using FluentValidation;
+﻿using FluentValidation;
 using Microsoft.Extensions.Localization;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models;
-using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Domain.Entities;
 using Xunit;
