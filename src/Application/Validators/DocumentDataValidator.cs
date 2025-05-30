@@ -10,8 +10,8 @@ namespace Stellantis.ProjectName.Application.Validators
         internal const int MinimumLegth = 3;
         internal const int MaximumLength = 255;
 
-        public DocumentDataValidator(IStringLocalizerFactory localizerFactory )
-        { 
+        public DocumentDataValidator(IStringLocalizerFactory localizerFactory)
+        {
             ArgumentNullException.ThrowIfNull(localizerFactory);
             var localizer = localizerFactory.Create(typeof(DocumentDataResources));
 

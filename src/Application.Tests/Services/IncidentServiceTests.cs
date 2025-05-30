@@ -1,4 +1,5 @@
-﻿using Application.Tests.Helpers;
+﻿using System.Globalization;
+using Application.Tests.Helpers;
 using AutoFixture;
 using Microsoft.Extensions.Localization;
 using Moq;
@@ -10,7 +11,6 @@ using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Application.Validators;
 using Stellantis.ProjectName.Domain.Entities;
-using System.Globalization;
 using Xunit;
 
 namespace Application.Tests.Services
@@ -68,7 +68,7 @@ namespace Application.Tests.Services
             Incident incident = _fixture.Build<Incident>()
                 .With(i => i.Title, string.Empty)
                 .With(i => i.Description, string.Empty)
-                .With(i => i.ApplicationId, 0) 
+                .With(i => i.ApplicationId, 0)
 
                 .Create();
 

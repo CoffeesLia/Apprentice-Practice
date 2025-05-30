@@ -8,9 +8,6 @@ using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.ViewModels;
 
-
-using Stellantis.ProjectName.Application.Models.Filters;
-
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [Route("api/documents")]
@@ -47,7 +44,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         {
             return await UpdateBaseAsync<DocumentVm>(id, itemDto).ConfigureAwait(false);
         }
-       
+
 
         [HttpDelete("{id}")]
         public override async Task<IActionResult> DeleteAsync(int id)

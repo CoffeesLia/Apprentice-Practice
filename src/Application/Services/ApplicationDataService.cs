@@ -86,7 +86,7 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.Conflict(ApplicationDataResources.AlreadyExists);
             }
 
-           
+
             return await base.UpdateAsync(item).ConfigureAwait(false);
         }
 

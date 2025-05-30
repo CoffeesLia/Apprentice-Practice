@@ -1,6 +1,6 @@
-﻿using Stellantis.ProjectName.Application.Models.Filters;
+﻿using System.Linq.Expressions;
+using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
-using System.Linq.Expressions;
 
 namespace Stellantis.ProjectName.Application.Interfaces.Repositories
 {

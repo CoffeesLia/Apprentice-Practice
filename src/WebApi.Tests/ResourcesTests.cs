@@ -1,7 +1,7 @@
-﻿using Microsoft.Extensions.Localization;
-using Stellantis.ProjectName.WebApi.Resources;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Resources;
+using Microsoft.Extensions.Localization;
+using Stellantis.ProjectName.WebApi.Resources;
 using WebApi.Tests.Helpers;
 
 namespace WebApi.Tests

@@ -1,6 +1,6 @@
-﻿using Stellantis.ProjectName.Infrastructure.Data.Extensions;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using System.Reflection;
+using Stellantis.ProjectName.Infrastructure.Data.Extensions;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Extensions
 {

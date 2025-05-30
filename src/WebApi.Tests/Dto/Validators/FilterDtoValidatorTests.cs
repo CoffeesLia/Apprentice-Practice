@@ -1,8 +1,8 @@
-﻿using FluentValidation.TestHelper;
+﻿using System.Globalization;
+using FluentValidation.TestHelper;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.Dto.Validators;
-using System.Globalization;
 
 namespace WebApi.Tests
 {

@@ -31,7 +31,7 @@ namespace Infrastructure.Tests.Data.Repositories
             .OfType<ThrowingRecursionBehavior>()
             .ToList()
             .ForEach(b => _fixture.Behaviors.Remove(b));
-                        _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+            _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
         }
 
         [Fact]
