@@ -27,7 +27,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetListAsync([FromQuery] ImprovementFilter filterDto)
+        public async Task<IActionResult> GetListAsync([FromQuery] ImprovementFilterDto filterDto)
         {
             ImprovementFilter filter = Mapper.Map<ImprovementFilter>(filterDto);
             PagedResult<Improvement> pagedResult = await ((IImprovementService)Service).GetListAsync(filter!).ConfigureAwait(false);
