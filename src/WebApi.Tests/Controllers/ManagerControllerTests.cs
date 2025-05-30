@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-using System.Net;
-using AutoFixture;
+﻿using AutoFixture;
 using AutoMapper;
 using FluentValidation.TestHelper;
 using Microsoft.AspNetCore.Mvc;
@@ -19,26 +17,28 @@ using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.Mapper;
 using Stellantis.ProjectName.WebApi.ViewModels;
+using System.Globalization;
+using System.Net;
 using WebApi.Tests.Helpers;
 
 namespace WebApi.Tests.Controllers
 {
-    public class ServiceDataControllerTests
+    public class ManagerControllerTests
     {
-        private readonly Mock<IServiceDataService> _serviceMock;
-        private readonly ServiceDataController _controller;
+        private readonly Mock<IManagerService> _managerMock;
+        private readonly ManagerController _controller;
         private readonly Fixture _fixture = new();
-        private readonly ServiceDataValidator _validator;
+        private readonly ManagerValidator _validator;
 
-        public ServiceDataControllerTests()
+        public ManagerControllerTests()
         {
             CultureInfo.CurrentUICulture = CultureInfo.CurrentCulture = new CultureInfo("pt-BR");
-            _serviceMock = new Mock<IServiceDataService>();
+            _managerMock = new Mock<IManagerService>();
             MapperConfiguration mapperConfiguration = new(x => { x.AddProfile<AutoMapperProfile>(); });
             IMapper mapper = mapperConfiguration.CreateMapper();
             Microsoft.Extensions.Localization.IStringLocalizerFactory localizerFactor = LocalizerFactorHelper.Create();
-            _controller = new ServiceDataController(_serviceMock.Object, mapper, localizerFactor);
-            _validator = new ServiceDataValidator(localizerFactor);
+            _controller = new ManagerController(_managerMock.Object, mapper, localizerFactor);
+            _validator = new ManagerValidator(localizerFactor);
         }
 
         // Verifica se o método CreateAsync retorna CreatedAtActionResult quando o serviço é criado com sucesso.
@@ -46,15 +46,15 @@ namespace WebApi.Tests.Controllers
         public async Task CreateAsyncShouldReturnCorrectResultWhenCreationIsSuccessful()
         {
             // Arrange
-            ServiceDataDto serviceDataDto = _fixture.Create<ServiceDataDto>();
-            _serviceMock.Setup(s => s.CreateAsync(It.IsAny<ServiceData>())).ReturnsAsync(OperationResult.Complete());
+            ManagerDto managerDto = _fixture.Create<ManagerDto>();
+            _managerMock.Setup(s => s.CreateAsync(It.IsAny<Manager>())).ReturnsAsync(OperationResult.Complete());
 
             // Act
-            IActionResult result = await _controller.CreateAsync(serviceDataDto);
+            IActionResult result = await _controller.CreateAsync(managerDto);
 
             // Assert
             CreatedAtActionResult okResult = Assert.IsType<CreatedAtActionResult>(result);
-            Assert.IsType<ServiceDataVm>(okResult.Value);
+            Assert.IsType<ManagerVm>(okResult.Value);
         }
 
         // Testa se UpdateAsync retorna OkObjectResult.
@@ -62,8 +62,8 @@ namespace WebApi.Tests.Controllers
         public async Task UpdateAsyncShouldReturnOkObjectResult()
         {
             // Arrange
-            ServiceDataDto itemDto = new() { Name = "Updated Service", ApplicationId = 1 };
-            _serviceMock.Setup(service => service.UpdateAsync(It.IsAny<ServiceData>()))
+            ManagerDto itemDto = new() { Name = "Updated Manager", Email = string.Empty };
+            _managerMock.Setup(manager => manager.UpdateAsync(It.IsAny<Manager>()))
                 .ReturnsAsync(OperationResult.Complete());
 
             // Act
@@ -79,33 +79,33 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             int Id = 1;
-            ServiceData serviceData = new() { Id = Id, Name = "Test Service" };
-            _serviceMock.Setup(service => service.GetItemAsync(Id))
-                .ReturnsAsync(serviceData);
+            Manager manager = new() { Id = Id, Name = "Test Manager", Email = string.Empty };
+            _managerMock.Setup(manager => manager.GetItemAsync(Id))
+                .ReturnsAsync(manager);
 
             // Act
-            ActionResult<ServiceDataVm> result = await _controller.GetAsync(Id);
+            ActionResult<ManagerVm> result = await _controller.GetAsync(Id);
 
             // Assert
             OkObjectResult actionResult = Assert.IsType<OkObjectResult>(result.Result);
-            ServiceDataVm model = Assert.IsType<ServiceDataVm>(actionResult.Value);
+            ManagerVm model = Assert.IsType<ManagerVm>(actionResult.Value);
             Assert.Equal(Id, model.Id);
         }
 
         // Testa se DeleteAsync retorna NotFound quando o serviço não existe.
         [Fact]
-        public async Task DeleteAsyncShouldReturnNotFoundWhenServiceDoesNotExist()
+        public async Task DeleteAsyncShouldReturnNotFoundWhenManagerDoesNotExist()
         {
             // Arrange
             int nonExistentId = 999;
 
-            var localizerMock = new Mock<IStringLocalizer<ServiceDataResources>>();
-            localizerMock.Setup(l => l[nameof(ServiceDataResources.ServiceNotFound)])
-                .Returns(new LocalizedString(nameof(ServiceDataResources.ServiceNotFound), ServiceDataResources.ServiceNotFound));
+            var localizerMock = new Mock<IStringLocalizer<ManagerResources>>();
+            localizerMock.Setup(l => l[nameof(ManagerResources.ManagerNotFound)])
+                .Returns(new LocalizedString(nameof(ManagerResources.ManagerNotFound), ManagerResources.ManagerNotFound));
 
-            var notFoundMessage = localizerMock.Object[nameof(ServiceDataResources.ServiceNotFound)].Value;
+            var notFoundMessage = localizerMock.Object[nameof(ManagerResources.ManagerNotFound)].Value;
 
-            _serviceMock.Setup(service => service.DeleteAsync(nonExistentId))
+            _managerMock.Setup(manager => manager.DeleteAsync(nonExistentId))
                 .ReturnsAsync(OperationResult.NotFound(notFoundMessage));
 
 
@@ -122,21 +122,21 @@ namespace WebApi.Tests.Controllers
         public async Task GetListAsyncShouldReturnOkObjectResult()
         {
             // Arrange
-            ServiceDataFilterDto filterDto = new()
+            ManagerFilterDto filterDto = new()
             {
-                Name = "Test Service",
+                Name = "Test Manager",
                 PageSize = 10,
                 Page = 1
             };
 
-            PagedResult<ServiceData> pagedResult = new()
+            PagedResult<Manager> pagedResult = new()
             {
-                Result = [new ServiceData { Name = "Test Service" }],
+                Result = [new Manager { Name = "Test Manager", Email = string.Empty }],
                 Page = 1,
                 PageSize = 10,
                 Total = 1
             };
-            _serviceMock.Setup(service => service.GetListAsync(It.Is<ServiceDataFilter>(f => f.Name == filterDto.Name)))
+            _managerMock.Setup(manager => manager.GetListAsync(It.Is<ManagerFilter>(f => f.Name == filterDto.Name)))
                         .ReturnsAsync(pagedResult);
 
             // Act
@@ -144,7 +144,7 @@ namespace WebApi.Tests.Controllers
 
             // Assert
             OkObjectResult actionResult = Assert.IsType<OkObjectResult>(result);
-            PagedResultVm<ServiceDataVm> model = Assert.IsType<PagedResultVm<ServiceDataVm>>(actionResult.Value);
+            PagedResultVm<ManagerVm> model = Assert.IsType<PagedResultVm<ManagerVm>>(actionResult.Value);
             Assert.Single(model.Result);
         }
 
@@ -154,7 +154,7 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             int Id = 1;
-            _serviceMock.Setup(service => service.DeleteAsync(Id))
+            _managerMock.Setup(manager => manager.DeleteAsync(Id))
                 .ReturnsAsync(OperationResult.Complete());
 
             // Act
@@ -164,15 +164,15 @@ namespace WebApi.Tests.Controllers
             Assert.IsType<NoContentResult>(result);
         }
 
-        // Testa se ServiceDataFilterDto cria uma instância com dados válidos.
+        // Testa se ManagerFilterDto cria uma instância com dados válidos.
         [Fact]
-        public void ServiceDataFilterDtoShouldCreateInstanceWithValidData()
+        public void ManagerFilterDtoShouldCreateInstanceWithValidData()
         {
             // Arrange
-            string name = "Test Service";
+            string name = "Test Manager";
 
             // Act
-            ServiceDataFilterDto dto = new()
+            ManagerFilterDto dto = new()
             {
                 Name = name,
                 PageSize = 10,
@@ -183,27 +183,24 @@ namespace WebApi.Tests.Controllers
             Assert.Equal(name, dto.Name);
         }
 
-        // Testa se ServiceDataDto cria uma instância com dados válidos.
+        // Testa se ManagerDto cria uma instância com dados válidos.
         [Fact]
-        public void ServiceDataDtoShouldCreateInstanceWithValidData()
+        public void ManagerDtoShouldCreateInstanceWithValidData()
         {
             // Arrange
-            string name = "Test Service";
-            string description = "Test Description";
-            int applicationId = 5;
+            string name = "Test Manager";
+            string description = "Test Email";
 
             // Act
-            ServiceDataDto dto = new()
+            ManagerDto dto = new()
             {
                 Name = name,
-                Description = description,
-                ApplicationId = applicationId
+                Email = description,
             };
 
             // Assert
             Assert.Equal(name, dto.Name);
-            Assert.Equal(description, dto.Description);
-            Assert.Equal(applicationId, dto.ApplicationId);
+            Assert.Equal(description, dto.Email);
         }
 
         // Testa se o validador retorna erro quando o nome é muito curto.
@@ -211,14 +208,14 @@ namespace WebApi.Tests.Controllers
         public void ShouldHaveErrorWhenNameIsTooShort()
         {
             // Arrange
-            ServiceData model = new() { Name = "ab" };
+            Manager model = new() { Name = "ab", Email = string.Empty };
 
             // Act
-            TestValidationResult<ServiceData> result = _validator.TestValidate(model);
+            TestValidationResult<Manager> result = _validator.TestValidate(model);
 
             // Assert
             result.ShouldHaveValidationErrorFor(x => x.Name)
-                  .WithErrorMessage(ServiceDataResources.ServiceNameLength);
+                  .WithErrorMessage(ManagerResources.ManagerNameLength);
         }
 
         // Testa se o validador retorna erro quando o nome é muito longo.
@@ -226,14 +223,14 @@ namespace WebApi.Tests.Controllers
         public void ShouldHaveErrorWhenNameIsTooLong()
         {
             // Arrange
-            ServiceData model = new() { Name = new string('a', 256) };
+            Manager model = new() { Name = new string('a', 256), Email = string.Empty };
 
             // Act
-            TestValidationResult<ServiceData> result = _validator.TestValidate(model);
+            TestValidationResult<Manager> result = _validator.TestValidate(model);
 
             // Assert
             result.ShouldHaveValidationErrorFor(x => x.Name)
-                  .WithErrorMessage(ServiceDataResources.ServiceNameLength);
+                  .WithErrorMessage(ManagerResources.ManagerNameLength);
         }
 
         // Testa se o validador não retorna erro quando o nome é válido.
@@ -241,39 +238,35 @@ namespace WebApi.Tests.Controllers
         public void ShouldNotHaveErrorWhenNameIsValid()
         {
             // Arrange
-            ServiceData model = new() { Name = "ValidName" };
+            Manager model = new() { Name = "ValidName", Email = string.Empty };
 
             // Act
-            TestValidationResult<ServiceData> result = _validator.TestValidate(model);
+            TestValidationResult<Manager> result = _validator.TestValidate(model);
 
             // Assert
             result.ShouldNotHaveValidationErrorFor(x => x.Name);
         }
 
-        // Testa se ServiceDataVm possui a propriedade Name.
+        // Testa se ManagerVm possui a propriedade Name.
         [Fact]
-        public void ServiceDataVmShouldProperty()
+        public void ManagerVmShouldProperty()
         {
             // Arrange
-            string testName = "Test Service";
-            string testDescription = "Test Description";
-            int testApplicationId = 123;
-            ServiceDataVm serviceDataVm = new()
+            string testName = "Test Manager";
+            string testEmail = "Test Email";
+            ManagerVm managerVm = new()
             {
                 Name = testName,
-                Description = testDescription,
-                ApplicationId = testApplicationId
+                Email = testEmail,
             };
 
             // Act
-            serviceDataVm.Name = testName;
-            serviceDataVm.Description = testDescription;
-            serviceDataVm.ApplicationId = testApplicationId;
+            managerVm.Name = testName;
+            managerVm.Email = testEmail;
 
             // Assert
-            Assert.Equal(testName, serviceDataVm.Name);
-            Assert.Equal(testDescription, serviceDataVm.Description);
-            Assert.Equal(testApplicationId, serviceDataVm.ApplicationId);
+            Assert.Equal(testName, managerVm.Name);
+            Assert.Equal(testEmail, managerVm.Email);
         }
 
         // Testa se a configuração define o nome da tabela e as propriedades corretamente.
@@ -282,19 +275,19 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             ModelBuilder modelBuilder = new();
-            Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<ServiceData> builder = modelBuilder.Entity<ServiceData>();
-            ServiceDataConfig config = new();
+            Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<Manager> builder = modelBuilder.Entity<Manager>();
+            ManagerConfig config = new();
 
             // Act
             config.Configure(builder);
 
             // Assert
             Microsoft.EntityFrameworkCore.Metadata.IMutableEntityType entityType = builder.Metadata;
-            Assert.Equal("ServiceData", entityType.GetTableName());
+            Assert.Equal("Manager", entityType.GetTableName());
             Microsoft.EntityFrameworkCore.Metadata.IMutableKey? primaryKey = entityType.FindPrimaryKey();
             Assert.NotNull(primaryKey);
             Assert.Equal("Id", primaryKey.Properties[0].Name);
-            Microsoft.EntityFrameworkCore.Metadata.IMutableProperty? nameProperty = entityType.FindProperty(nameof(ServiceData.Name));
+            Microsoft.EntityFrameworkCore.Metadata.IMutableProperty? nameProperty = entityType.FindProperty(nameof(Manager.Name));
             Assert.NotNull(nameProperty);
             Assert.False(nameProperty.IsNullable);
             Assert.Equal(50, nameProperty.GetMaxLength());

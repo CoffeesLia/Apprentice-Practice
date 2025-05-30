@@ -27,6 +27,8 @@ namespace Stellantis.ProjectName.Application.Interfaces
 
         IGitRepoRepository GitRepoRepository { get; }
 
+        IManagerRepository ManagerRepository { get; }
+
         Task CommitAsync();
         void BeginTransaction();
     }

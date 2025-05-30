@@ -300,6 +300,28 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
+        public async Task GetListAsyncPageOutOfRangeBehavior()
+        {
+            // Arrange
+            int pageSize = 10;
+
+            int totalEntities = 25;
+            int requestedPage = 5;
+            int expectedPage = 3;
+            var entities = CreateMany(totalEntities);
+            await _context.Entities.AddRangeAsync(entities);
+            await _context.SaveChangesAsync();
+
+            var result = await _repository.GetListAsync(page: requestedPage, pageSize: pageSize);
+            Assert.Equal(expectedPage, result.Page);
+
+            await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () =>
+            {
+                await _repository.GetListAsync(page: 0, pageSize: pageSize).ConfigureAwait(false);
+            });
+        }
+
+        [Fact]
         public async Task GetListAsyncWithIncludeProperties()
         {
             // Arrange
