@@ -103,7 +103,7 @@ namespace Application.Tests.Services
             var incident = _fixture.Create<Incident>();
             var app = _fixture.Build<ApplicationData>()
                 .With(a => a.Id, incident.ApplicationId)
-                .With(a => a.Squads, new List<Squad>()) // Nenhum membro válido
+                .With(a => a.Squads, [])
                 .Create();
 
             _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(incident.ApplicationId)).ReturnsAsync(app);
@@ -121,11 +121,11 @@ namespace Application.Tests.Services
         {
             // Arrange
             var member = _fixture.Build<Member>().With(m => m.Id, 1).Create();
-            var squad = _fixture.Build<Squad>().With(s => s.Members, new List<Member> { member }).Create();
-            var app = _fixture.Build<ApplicationData>().With(a => a.Squads, new List<Squad> { squad }).Create();
+            var squad = _fixture.Build<Squad>().With(s => s.Members, [member]).Create();
+            var app = _fixture.Build<ApplicationData>().With(a => a.Squads, [squad]).Create();
             var incident = _fixture.Build<Incident>()
                 .With(i => i.ApplicationId, app.Id)
-                .With(i => i.Members, new List<Member> { member })
+                .With(i => i.Members, [member])
                 .Create();
 
             _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(app.Id)).ReturnsAsync(app);
@@ -234,7 +234,7 @@ namespace Application.Tests.Services
 
             var app = _fixture.Build<ApplicationData>()
                 .With(a => a.Id, incident.ApplicationId)
-                .With(a => a.Squads, new List<Squad>()) // Nenhum membro válido
+                .With(a => a.Squads, [])
                 .Create();
 
             _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(incident.ApplicationId)).ReturnsAsync(app);
@@ -251,11 +251,11 @@ namespace Application.Tests.Services
         {
             // Arrange
             var member = _fixture.Build<Member>().With(m => m.Id, 1).Create();
-            var squad = _fixture.Build<Squad>().With(s => s.Members, new List<Member> { member }).Create();
-            var app = _fixture.Build<ApplicationData>().With(a => a.Squads, new List<Squad> { squad }).Create();
+            var squad = _fixture.Build<Squad>().With(s => s.Members, [member]).Create();
+            var app = _fixture.Build<ApplicationData>().With(a => a.Squads, [squad]).Create();
             var incident = _fixture.Build<Incident>()
                 .With(i => i.ApplicationId, app.Id)
-                .With(i => i.Members, new List<Member> { member })
+                .With(i => i.Members, [member])
                 .Create();
 
             _incidentRepositoryMock.Setup(r => r.GetByIdAsync(incident.Id)).ReturnsAsync(incident);
@@ -273,14 +273,14 @@ namespace Application.Tests.Services
         {
             // Arrange
             var member = _fixture.Build<Member>().With(m => m.Id, 1).Create();
-            var squad = _fixture.Build<Squad>().With(s => s.Members, new List<Member> { member }).Create();
-            var app = _fixture.Build<ApplicationData>().With(a => a.Squads, new List<Squad> { squad }).Create();
+            var squad = _fixture.Build<Squad>().With(s => s.Members, [member]).Create();
+            var app = _fixture.Build<ApplicationData>().With(a => a.Squads, [squad]).Create();
 
             var incident = _fixture.Build<Incident>()
                 .With(i => i.Status, IncidentStatus.Open)
                 .With(i => i.ClosedAt, (DateTime?)null)
                 .With(i => i.ApplicationId, app.Id)
-                .With(i => i.Members, new List<Member> { member })
+                .With(i => i.Members, [member])
                 .Create();
 
             var updatedIncident = _fixture.Build<Incident>()
@@ -288,7 +288,7 @@ namespace Application.Tests.Services
                 .With(i => i.Status, IncidentStatus.Closed)
                 .With(i => i.ClosedAt, (DateTime?)null)
                 .With(i => i.ApplicationId, app.Id)
-                .With(i => i.Members, new List<Member> { member })
+                .With(i => i.Members, [member])
                 .Create();
 
             _incidentRepositoryMock.Setup(r => r.GetByIdAsync(incident.Id)).ReturnsAsync(incident);
@@ -307,14 +307,14 @@ namespace Application.Tests.Services
         {
             // Arrange
             var member = _fixture.Build<Member>().With(m => m.Id, 1).Create();
-            var squad = _fixture.Build<Squad>().With(s => s.Members, new List<Member> { member }).Create();
-            var app = _fixture.Build<ApplicationData>().With(a => a.Squads, new List<Squad> { squad }).Create();
+            var squad = _fixture.Build<Squad>().With(s => s.Members, [member]).Create();
+            var app = _fixture.Build<ApplicationData>().With(a => a.Squads, [squad]).Create();
 
             var incident = _fixture.Build<Incident>()
                 .With(i => i.Status, IncidentStatus.Closed)
                 .With(i => i.ClosedAt, DateTime.UtcNow)
                 .With(i => i.ApplicationId, app.Id)
-                .With(i => i.Members, new List<Member> { member })
+                .With(i => i.Members, [member])
                 .Create();
 
             var updatedIncident = _fixture.Build<Incident>()
@@ -322,7 +322,7 @@ namespace Application.Tests.Services
                 .With(i => i.Status, IncidentStatus.Reopened)
                 .With(i => i.ClosedAt, incident.ClosedAt)
                 .With(i => i.ApplicationId, app.Id)
-                .With(i => i.Members, new List<Member> { member })
+                .With(i => i.Members, [member])
                 .Create();
 
             _incidentRepositoryMock.Setup(r => r.GetByIdAsync(incident.Id)).ReturnsAsync(incident);
