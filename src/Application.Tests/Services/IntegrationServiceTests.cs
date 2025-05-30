@@ -1,5 +1,7 @@
-﻿using FluentValidation;
+﻿using System.Globalization;
+using FluentValidation;
 using FluentValidation.Results;
+using Microsoft.Extensions.Localization;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
@@ -9,7 +11,6 @@ using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Application.Validators;
 using Stellantis.ProjectName.Domain.Entities;
-using System.Globalization;
 using Xunit;
 
 namespace Application.Tests.Services
@@ -117,6 +118,19 @@ namespace Application.Tests.Services
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
         }
+
+        [Fact]
+        public void InvalidDataWithLocalizedStringThrowsNotImplementedException()
+        {
+            // Arrange
+            var localizedString = new LocalizedString("key", "mensagem de erro");
+
+            // Act & Assert
+            Assert.Throws<NotImplementedException>(() =>
+                OperationResult.InvalidData(localizedString)
+            );
+        }
+
         [Fact]
         public async Task CreateAsyncShouldReturnInvalidDataWhenIntegrationDescriptionIsWhiteSpace()
         {
