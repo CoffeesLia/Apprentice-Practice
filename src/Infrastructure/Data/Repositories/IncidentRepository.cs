@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
+using AppDomain = Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
@@ -17,6 +18,11 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             ExpressionStarter<Incident> filters = PredicateBuilder.New<Incident>(true);
             filter.Page = filter.Page <= 0 ? 1 : filter.Page;
 
+            // Filtro por ID do incidente
+            if (filter.Id > 0)
+            {
+                filters = filters.And(x => x.Id == filter.Id);
+            }
             // Filtro por título
             if (!string.IsNullOrWhiteSpace(filter.Title))
             {
@@ -58,6 +64,19 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                     await SaveChangesAsync().ConfigureAwait(false);
                 }
             }
+        }
+
+        // Implementação no IncidentRepository
+        public async Task<IEnumerable<Member>> GetMembersByApplicationIdAsync(int applicationId)
+        {
+            var application = await Context.Set<AppDomain.ApplicationData>()
+                            .Include(a => a.Squads)
+                    .ThenInclude(s => s.Members)
+                .FirstOrDefaultAsync(a => a.Id == applicationId);
+
+            if (application == null) return Enumerable.Empty<Member>();
+
+            return application.Squads.SelectMany(s => s.Members).Distinct().ToList();
         }
 
         // Consulta todos os incidentes vinculados a uma aplicação específica.

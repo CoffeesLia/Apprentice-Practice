@@ -1,4 +1,5 @@
-﻿using Application.Tests.Helpers;
+﻿using System.Globalization;
+using Application.Tests.Helpers;
 using AutoFixture;
 using FluentValidation;
 using FluentValidation.Results;
@@ -11,7 +12,6 @@ using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Application.Validators;
 using Stellantis.ProjectName.Domain.Entities;
-using System.Globalization;
 using Xunit;
 
 namespace Application.Tests.Services
@@ -111,7 +111,27 @@ namespace Application.Tests.Services
 
         }
 
+        [Fact]
+        public async Task UpdateAsyncWhenSuccessfulReturnsMemberUpdateSuccessfully()
+        {
+            // Arrange
+            Member member = _fixture.Build<Member>()
+                .With(m => m.Name, "Nome Válido")
+                .With(m => m.Email, "email.valido@exemplo.com")
+                .With(m => m.Role, "Desenvolvedor")
+                .With(m => m.Cost, 100)
+                .Create();
 
+            _memberRepositoryMock.Setup(r => r.GetByIdAsync(member.Id)).ReturnsAsync(member);
+            _memberRepositoryMock.Setup(r => r.IsEmailUnique(member.Email)).ReturnsAsync(true);
+
+            // Act
+            OperationResult result = await _memberService.UpdateAsync(member);
+
+            // Assert
+            Assert.Equal(OperationStatus.Success, result.Status);
+            Assert.Equal(ServiceResources.MemberUpdatedSuccessfully, result.Message);
+        }
 
         [Fact]
         public async Task CreateAsyncWhenEmailAlreadyExists()

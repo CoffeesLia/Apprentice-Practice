@@ -5,7 +5,7 @@ namespace Stellantis.ProjectName.Application.Interfaces
     public interface IUnitOfWork
     {
 
-        IDocumentRepository DocumentDataRepository { get; } 
+        IDocumentRepository DocumentDataRepository { get; }
 
         IAreaRepository AreaRepository { get; }
 
@@ -14,6 +14,8 @@ namespace Stellantis.ProjectName.Application.Interfaces
         IResponsibleRepository ResponsibleRepository { get; }
 
         IIncidentRepository IncidentRepository { get; }
+
+        IImprovementRepository ImprovementRepository { get; }
 
         IMemberRepository MemberRepository { get; }
 
@@ -25,8 +27,7 @@ namespace Stellantis.ProjectName.Application.Interfaces
 
         IGitRepoRepository GitRepoRepository { get; }
 
-
-        Task SaveChangesAsync(); 
+        IManagerRepository ManagerRepository { get; }
 
         Task CommitAsync();
         void BeginTransaction();

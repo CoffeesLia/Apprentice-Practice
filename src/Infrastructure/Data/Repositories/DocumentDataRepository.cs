@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using LinqKit;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
-using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Application.Models.Filters;
-using LinqKit;
+using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
@@ -16,7 +11,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         public async Task DeleteAsync(int id, bool saveChanges = true)
         {
 
-           DocumentData? entity = await GetByIdAsync(id).ConfigureAwait(false);
+            DocumentData? entity = await GetByIdAsync(id).ConfigureAwait(false);
             if (entity != null)
             {
                 Context.Set<DocumentData>().Remove(entity);
@@ -50,15 +45,22 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
              ).ConfigureAwait(false);
         }
 
-        public async Task<bool> IsDocumentNameUniqueAsync(string name, int? id = null)
+
+        public async Task<bool> IsDocumentNameUniqueAsync(string name, int applicationId, int? id = null)
         {
-           return await Context.Set<DocumentData>().AnyAsync(a => a.Name == name && (!id.HasValue || a.Id != id)).ConfigureAwait(false);
+            return await Context.Set<DocumentData>()
+                .AnyAsync(a => a.Name == name
+                            && a.ApplicationId == applicationId
+                            && (!id.HasValue || a.Id != id))
+                .ConfigureAwait(false);
         }
 
 
-        public async Task<bool> IsUrlUniqueAsync(Uri url, int? id = null)
-         {
-             return await Context.Set<DocumentData>().AnyAsync(a => a.Url == url && (!id.HasValue || a.Id !=id)).ConfigureAwait(false);
-         }
+        public async Task<bool> IsUrlUniqueAsync(Uri url, int applicationId, int? id = null)
+        {
+            return await Context.Set<DocumentData>().AnyAsync(a => a.Url == url
+                           && a.ApplicationId == applicationId
+                           && (!id.HasValue || a.Id != id)).ConfigureAwait(false);
+        }
     }
 }

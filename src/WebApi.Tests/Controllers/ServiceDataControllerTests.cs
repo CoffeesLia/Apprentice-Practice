@@ -1,4 +1,6 @@
-﻿using AutoFixture;
+﻿using System.Globalization;
+using System.Net;
+using AutoFixture;
 using AutoMapper;
 using FluentValidation.TestHelper;
 using Microsoft.AspNetCore.Mvc;
@@ -17,15 +19,13 @@ using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.Mapper;
 using Stellantis.ProjectName.WebApi.ViewModels;
-using System.Globalization;
-using System.Net;
 using WebApi.Tests.Helpers;
 
 namespace WebApi.Tests.Controllers
 {
     public class ServiceDataControllerTests
     {
-        private readonly Mock<IServiceData> _serviceMock;
+        private readonly Mock<IServiceDataService> _serviceMock;
         private readonly ServiceDataController _controller;
         private readonly Fixture _fixture = new();
         private readonly ServiceDataValidator _validator;
@@ -33,7 +33,7 @@ namespace WebApi.Tests.Controllers
         public ServiceDataControllerTests()
         {
             CultureInfo.CurrentUICulture = CultureInfo.CurrentCulture = new CultureInfo("pt-BR");
-            _serviceMock = new Mock<IServiceData>();
+            _serviceMock = new Mock<IServiceDataService>();
             MapperConfiguration mapperConfiguration = new(x => { x.AddProfile<AutoMapperProfile>(); });
             IMapper mapper = mapperConfiguration.CreateMapper();
             Microsoft.Extensions.Localization.IStringLocalizerFactory localizerFactor = LocalizerFactorHelper.Create();

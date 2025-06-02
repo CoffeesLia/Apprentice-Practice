@@ -15,6 +15,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data
         public DbSet<ServiceData> Services { get; set; }
         public DbSet<Incident> Incidents { get; set; }
         public DbSet<DocumentData> Documents { get; set; }
+        public DbSet<Manager> Managers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

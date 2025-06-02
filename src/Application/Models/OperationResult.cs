@@ -1,8 +1,8 @@
-﻿using FluentValidation.Results;
+﻿using System.Text.Json.Serialization;
+using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
-using System.Text.Json.Serialization;
 
 namespace Stellantis.ProjectName.Application.Models
 

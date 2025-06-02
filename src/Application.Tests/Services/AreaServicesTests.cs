@@ -1,3 +1,4 @@
+using System.Globalization;
 using AutoFixture;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces;
@@ -8,7 +9,6 @@ using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Application.Validators;
 using Stellantis.ProjectName.Domain.Entities;
-using System.Globalization;
 using Xunit;
 
 namespace Application.Tests.Services
@@ -29,6 +29,10 @@ namespace Application.Tests.Services
             AreaValidator areaValidator = new(localizer);
 
             _unitOfWorkMock.Setup(u => u.AreaRepository).Returns(_areaRepositoryMock.Object);
+
+            var managerRepositoryMock = new Mock<IManagerRepository>();
+            managerRepositoryMock.Setup(m => m.VerifyManagerExistsAsync(123)).ReturnsAsync(true);
+            _unitOfWorkMock.Setup(u => u.ManagerRepository).Returns(managerRepositoryMock.Object);
 
             _areaService = new AreaService(_unitOfWorkMock.Object, localizer, areaValidator);
         }
@@ -68,10 +72,10 @@ namespace Application.Tests.Services
         public async Task CreateAsyncShouldReturnConflictWhenNameAlreadyExists()
         {
             // Arrange
-            Area area = new("Test Area");
+            Area area = new("Test Area") { ManagerId = 123 };
             PagedResult<Area> pagedResult = new()
             {
-                Result = [new Area("Test Area") { Id = 1 }],
+                Result = [new Area("Test Area") { Id = 1, ManagerId = 123 }],
                 Page = 1,
                 PageSize = 10,
                 Total = 1
@@ -79,6 +83,11 @@ namespace Application.Tests.Services
 
             _areaRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<AreaFilter>())).ReturnsAsync(pagedResult);
             _areaRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(area.Name)).ReturnsAsync(true);
+
+            var manager = new Manager { Name = "Gerente", Id = 123, Email = "gerente@email.com" };
+            var managerRepositoryMock = new Mock<IManagerRepository>();
+            managerRepositoryMock.Setup(m => m.GetByIdAsync(area.ManagerId)).ReturnsAsync(manager);
+            _unitOfWorkMock.Setup(u => u.ManagerRepository).Returns(managerRepositoryMock.Object);
 
             // Act
             OperationResult result = await _areaService.CreateAsync(area);
@@ -88,14 +97,37 @@ namespace Application.Tests.Services
             Assert.Equal(AreaResources.AlreadyExists, result.Message);
         }
 
+        [Fact]
+        public async Task CreateAsyncShouldReturnConflictWhenManagerIsInvalid()
+        {
+            // Arrange
+            Area area = new("Test Area") { ManagerId = 999 };
+            _areaRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(area.Name)).ReturnsAsync(false);
 
+            // Mock do manager inexistente
+            var managerRepositoryMock = new Mock<IManagerRepository>();
+            managerRepositoryMock.Setup(m => m.GetByIdAsync(area.ManagerId)).ReturnsAsync((Manager?)null);
+            _unitOfWorkMock.Setup(u => u.ManagerRepository).Returns(managerRepositoryMock.Object);
+
+            // Act
+            OperationResult result = await _areaService.CreateAsync(area);
+
+            // Assert
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal(AreaResources.AreaInvalidManagerId, result.Message);
+        }
 
         [Fact]
         public async Task CreateAsyncShouldReturnSuccessWhenAreaIsValid()
         {
             // Arrange
-            Area area = new("Test Area");
+            Area area = new("Test Area") { ManagerId = 123 };
             _areaRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(area.Name)).ReturnsAsync(false);
+
+            var manager = new Manager { Name = "Gerente", Id = 123, Email = "gerente@email.com" };
+            var managerRepositoryMock = new Mock<IManagerRepository>();
+            managerRepositoryMock.Setup(m => m.GetByIdAsync(area.ManagerId)).ReturnsAsync(manager);
+            _unitOfWorkMock.Setup(u => u.ManagerRepository).Returns(managerRepositoryMock.Object);
 
             // Act
             OperationResult result = await _areaService.CreateAsync(area);
@@ -109,7 +141,7 @@ namespace Application.Tests.Services
         public async Task CreateAsyncShouldReturnInvalidDataWhenNameExceedsMaxLength()
         {
             // Arrange
-            Area area = new(new string('A', 256)); // Name com 256 caracteres
+            Area area = new(new string('A', 256)); 
 
             // Act
             OperationResult result = await _areaService.CreateAsync(area);
@@ -125,11 +157,11 @@ namespace Application.Tests.Services
             Fixture fixture = new();
             AreaFilter filter = fixture.Create<AreaFilter>();
             PagedResult<Area> pagedResult = fixture.Build<PagedResult<Area>>()
-                                     .With(pr => pr.Result, [.. fixture.CreateMany<Area>(2)])
-                                     .With(pr => pr.Page, 1)
-                                     .With(pr => pr.PageSize, 10)
-                                     .With(pr => pr.Total, 2)
-                                     .Create();
+                .With(pr => pr.Result, [.. fixture.CreateMany<Area>(2)])
+                .With(pr => pr.Page, 1)
+                .With(pr => pr.PageSize, 10)
+                .With(pr => pr.Total, 2)
+                .Create();
 
             _areaRepositoryMock.Setup(r => r.GetListAsync(filter)).ReturnsAsync(pagedResult);
 
@@ -238,15 +270,39 @@ namespace Application.Tests.Services
             Assert.Equal(AreaResources.NotFound, result.Message);
         }
 
+        [Fact]
+        public async Task UpdateAsyncShouldReturnInvalidDataWhenManagerIsNull()
+        {
+            // Arrange
+            Area area = new("Area com Manager inválido") { Id = 1, ManagerId = 999 };
+            _areaRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(area.Name)).ReturnsAsync(false);
+            _areaRepositoryMock.Setup(r => r.GetByIdAsync(area.Id)).ReturnsAsync(area);
 
+            var managerRepositoryMock = new Mock<IManagerRepository>();
+            managerRepositoryMock.Setup(m => m.GetByIdAsync(area.ManagerId)).ReturnsAsync((Manager?)null);
+            _unitOfWorkMock.Setup(u => u.ManagerRepository).Returns(managerRepositoryMock.Object);
+
+            // Act
+            OperationResult result = await _areaService.UpdateAsync(area);
+
+            // Assert
+            Assert.Equal(OperationStatus.InvalidData, result.Status);
+            Assert.True(string.IsNullOrEmpty(result.Message));
+            Assert.True(result.Errors == null || !result.Errors.Any());
+        }
 
         [Fact]
         public async Task UpdateAsyncShouldReturnConflictWhenNameAlreadyExists()
         {
             // Arrange
-            Area area = new("Existing Name") { Id = 1 };
+            Area area = new("Existing Name") { Id = 1, ManagerId = 123 };
             _areaRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(area.Name)).ReturnsAsync(true);
             _areaRepositoryMock.Setup(r => r.GetByIdAsync(area.Id)).ReturnsAsync(area);
+
+            var manager = new Manager { Name = "Gerente", Id = 123, Email = "gerente@email.com" };
+            var managerRepositoryMock = new Mock<IManagerRepository>();
+            managerRepositoryMock.Setup(m => m.GetByIdAsync(area.ManagerId)).ReturnsAsync(manager);
+            _unitOfWorkMock.Setup(u => u.ManagerRepository).Returns(managerRepositoryMock.Object);
 
             // Act
             OperationResult result = await _areaService.UpdateAsync(area);
@@ -255,15 +311,19 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.Conflict, result.Status);
         }
 
-
         [Fact]
         public async Task UpdateAsyncShouldReturnSuccessWhenAreaIsValid()
         {
             // Arrange
-            Area area = new("Valid Name") { Id = 1 };
+            Area area = new("Area Valida") { Id = 1, ManagerId = 123 };
             _areaRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(area.Name)).ReturnsAsync(false);
             _areaRepositoryMock.Setup(r => r.GetByIdAsync(area.Id)).ReturnsAsync(area);
             _areaRepositoryMock.Setup(r => r.UpdateAsync(area, true)).Returns(Task.CompletedTask);
+
+            var manager = new Manager { Name = "Gerente", Id = 123, Email = "gerente@email.com" };
+            var managerRepositoryMock = new Mock<IManagerRepository>();
+            managerRepositoryMock.Setup(m => m.GetByIdAsync(area.ManagerId)).ReturnsAsync(manager);
+            _unitOfWorkMock.Setup(u => u.ManagerRepository).Returns(managerRepositoryMock.Object);
 
             // Act
             OperationResult result = await _areaService.UpdateAsync(area);

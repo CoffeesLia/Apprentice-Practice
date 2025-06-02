@@ -1,6 +1,7 @@
 ﻿#if DEBUG
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
+using Stellantis.ProjectName.WebApi.ViewModels;
 
 namespace Stellantis.ProjectName.WebApi
 {
@@ -17,23 +18,44 @@ namespace Stellantis.ProjectName.WebApi
 
                 // Áreas
                 context.Areas.AddRange(
-                    new Area("AMS"),
-                    new Area("Architecture"),
-                    new Area("Commercial"),
-                    new Area("Engineering"),
-                    new Area("EngenChain"),
-                    new Area("Engeniring"),
-                    new Area("Finance"),
-                    new Area("Human Resources"),
-                    new Area("Integration"),
-                    new Area("Manufacturing"),
-                    new Area("Marketing"),
-                    new Area("Product Development"),
-                    new Area("Quality"),
-                    new Area("Quality control"),
-                    new Area("Sales"),
-                    new Area("Security"),
-                    new Area("Supplier Chain")
+                    new Area("AMS") { ManagerId = 1 },
+                    new Area("Architecture") { ManagerId = 2 },
+                    new Area("Commercial") { ManagerId = 3 },
+                    new Area("Engineering") { ManagerId = 4 },
+                    new Area("EngenChain") { ManagerId = 5 },
+                    new Area("Engeniring") { ManagerId = 6 },
+                    new Area("Finance") { ManagerId = 7 },
+                    new Area("Human Resources") { ManagerId = 8 },
+                    new Area("Integration") { ManagerId = 9 },
+                    new Area("Manufacturing") { ManagerId = 10 },
+                    new Area("Marketing") { ManagerId = 11 },
+                    new Area("Product Development") { ManagerId = 12 },
+                    new Area("Quality") { ManagerId = 13 },
+                    new Area("Quality control") { ManagerId = 14 },
+                    new Area("Sales") { ManagerId = 15 },
+                    new Area("Security") { ManagerId = 16 },
+                    new Area("Supplier Chain") { ManagerId = 17 }
+                );
+
+                // Gerentes
+                context.Managers.AddRange(
+                    new Manager { Name = "Luciene Miranda", Email = "luciene@stellantis.com" },
+                    new Manager { Name = "Alexia Lima", Email = "alexia@stellantis.com" },
+                    new Manager { Name = "Welton Duarte", Email = "welton@stellantis.com" },
+                    new Manager { Name = "Said Debien", Email = "said@stellantis.com" },
+                    new Manager { Name = "Matheus Fernandes", Email = "matheus@stellantis.com" },
+                    new Manager { Name = "Jardel Reyes", Email = "jardel@stellantis.com" },
+                    new Manager { Name = "Patricia Fernanda", Email = "patricia@stellantis.com" },
+                    new Manager { Name = "Vitoria Eshiley", Email = "vitoria@stellantis.com" },
+                    new Manager { Name = "Ana Raquel", Email = "anaraquel@stellantis.com" },
+                    new Manager { Name = "Cecilia Melgaco", Email = "cecilia@stellantis.com" },
+                    new Manager { Name = "Andryel Passos", Email = "andryel@stellantis.com" },
+                    new Manager { Name = "Vin Diesel", Email = "toretto@stellantis.com" },
+                    new Manager { Name = "Michael Jackson", Email = "michael@stellantis.com" },
+                    new Manager { Name = "Elvis Presley", Email = "elvis@stellantis.com" },
+                    new Manager { Name = "Ariana Grande", Email = "ariana@stellantis.com" },
+                    new Manager { Name = "Lana del Rey", Email = "lanadelrey@stellantis.com" },
+                    new Manager { Name = "Marshall Mathers", Email = "Eminem@stellantis.com" }
                 );
 
                 // Responsáveis
@@ -84,11 +106,11 @@ namespace Stellantis.ProjectName.WebApi
                     new ServiceData { Name = "Quality Assurance Tool", ApplicationId = 8 },
                     new ServiceData { Name = "Supplier Chain Integration", ApplicationId = 9 },
                     new ServiceData { Name = "Engineering Workflow", ApplicationId = 10 },
-                    new ServiceData { Name = "AMS Dashboard", ApplicationId = 11 },
-                    new ServiceData { Name = "Architecture Planner API", ApplicationId = 12 },
-                    new ServiceData { Name = "Integration Hub Service", ApplicationId = 13 }
+                    new ServiceData { Name = "AMS Dashboard", ApplicationId = 7 },
+                    new ServiceData { Name = "Architecture Planner API", ApplicationId = 8 },
+                    new ServiceData { Name = "Integration Hub Service", ApplicationId = 9 }
                 );
-#pragma warning disable S1075 // URIs should not be hardcoded
+
                 context.Repositories.AddRange(
                     new GitRepo("elog") { ApplicationId = 2, Name = "eLog", Description = "Site da plataforma eLog.", Url = new Uri("https://gitlab.fcalatam.com/fca/supply-chain/ELOG") },
                     new GitRepo("Cities's Web API") { ApplicationId = 2, Name = "Cities's Web API", Description = "Web API que retorna os dados das cidades.", Url = new Uri("https://gitlab.fcalatam.com/fca/supply-chain/e-log/city-api") },
@@ -103,7 +125,6 @@ namespace Stellantis.ProjectName.WebApi
                     new GitRepo("architecture-planner") { ApplicationId = 12, Name = "Architecture Planner", Description = "Planejador de arquitetura.", Url = new Uri("https://gitlab.fcalatam.com/fca/architecture/architecture-planner") },
                     new GitRepo("integration-hub") { ApplicationId = 13, Name = "Integration Hub", Description = "Hub de integração para serviços.", Url = new Uri("https://gitlab.fcalatam.com/fca/integration/integration-hub") }
                 );
-#pragma warning restore S1075 // URIs should not be hardcoded
 
                 // Squads
                 context.Squads.AddRange(
@@ -143,6 +164,34 @@ namespace Stellantis.ProjectName.WebApi
                     new Member { Name = "Juliana Martins", Email = "juliana.martins@stellantis.com", Role = "Business Analyst", Cost = 1400 }
                 );
 
+                // Incidents
+                context.Incidents.AddRange(
+                    new Incident
+                    {
+                        Title = "Erro no Portal AMS",
+                        Description = "Erro ao acessar o portal AMS.",
+                        CreatedAt = DateTime.UtcNow.AddDays(-5),
+                        Status = IncidentStatus.Open,
+                        ApplicationId = 1
+                    },
+                    new Incident
+                    {
+                        Title = "Falha no eLog",
+                        Description = "O sistema eLog está fora do ar.",
+                        CreatedAt = DateTime.UtcNow.AddDays(-2),
+                        Status = IncidentStatus.InProgress,
+                        ApplicationId = 2
+                    },
+                    new Incident
+                    {
+                        Title = "Problema no Finance Tracker",
+                        Description = "Erro ao gerar relatórios financeiros.",
+                        CreatedAt = DateTime.UtcNow.AddDays(-10),
+                        ClosedAt = DateTime.UtcNow.AddDays(-1),
+                        Status = IncidentStatus.Closed,
+                        ApplicationId = 4
+                    }
+                );
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }

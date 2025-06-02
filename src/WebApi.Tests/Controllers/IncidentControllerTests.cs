@@ -2,7 +2,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
@@ -35,6 +34,12 @@ namespace WebApi.Tests.Controllers
                 .ToList()
                 .ForEach(b => _fixture.Behaviors.Remove(b));
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+            // Configura o AutoFixture para gerar valores válidos para o Status
+            _fixture.Customize<IncidentDto>(c => c
+                .With(dto => dto.Status,
+                      () => _fixture.Create<IncidentStatus>().ToString()));
+
+
             _controller = new IncidentsController(_serviceMock.Object, mapper, localizerFactory);
         }
 

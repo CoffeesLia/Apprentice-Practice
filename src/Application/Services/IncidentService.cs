@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
-using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
@@ -10,7 +9,7 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Services
 {
-    public class IncidentService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<Incident> validator) 
+    public class IncidentService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<Incident> validator)
             : EntityServiceBase<Incident>(unitOfWork, localizerFactory, validator), IIncidentService
     {
         private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(IncidentResource));
@@ -55,7 +54,10 @@ namespace Stellantis.ProjectName.Application.Services
             }
 
             item.CreatedAt = DateTime.UtcNow;
-            item.Status = IncidentStatus.Aberto;
+            if (item.Status == default)
+            {
+                item.Status = IncidentStatus.Open;
+            }
 
             return await base.CreateAsync(item).ConfigureAwait(false);
         }
@@ -112,11 +114,11 @@ namespace Stellantis.ProjectName.Application.Services
             existingIncident.ApplicationId = item.ApplicationId;
 
             // Controle de status e datas
-            if (item.Status == IncidentStatus.Fechado && existingIncident.ClosedAt == null)
+            if (item.Status == IncidentStatus.Closed && existingIncident.ClosedAt == null)
             {
                 existingIncident.ClosedAt = DateTime.UtcNow;
             }
-            else if (item.Status == IncidentStatus.Reaberto)
+            else if (item.Status == IncidentStatus.Reopened)
             {
                 existingIncident.ClosedAt = null;
             }
@@ -124,6 +126,11 @@ namespace Stellantis.ProjectName.Application.Services
             existingIncident.Status = item.Status;
 
             return await base.UpdateAsync(existingIncident).ConfigureAwait(false);
+        }
+
+        public async Task<IEnumerable<Member>> GetMembersByApplicationIdAsync(int applicationId)
+        {
+            return await Repository.GetMembersByApplicationIdAsync(applicationId);
         }
 
         public new async Task<OperationResult> GetItemAsync(int id)

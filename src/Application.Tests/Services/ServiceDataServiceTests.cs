@@ -1,4 +1,5 @@
-﻿using Application.Tests.Helpers;
+﻿using System.Globalization;
+using Application.Tests.Helpers;
 using FluentValidation;
 using FluentValidation.Results;
 using FluentValidation.TestHelper;
@@ -12,7 +13,6 @@ using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Application.Validators;
 using Stellantis.ProjectName.Domain.Entities;
-using System.Globalization;
 using Xunit;
 
 namespace Application.Tests.Services
@@ -320,7 +320,7 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.Conflict, result.Status);
             Assert.Equal(localizedMessage, result.Message);
 
-            _serviceRepositoryMock.Verify(repo => repo.GetByIdAsync(serviceData.Id), Times.Exactly(2)); // Duas chamadas ao GetByIdAsync
+            _serviceRepositoryMock.Verify(repo => repo.GetByIdAsync(serviceData.Id), Times.Exactly(2));
             _serviceRepositoryMock.Verify(repo => repo.VerifyNameExistsAsync(serviceData.Name), Times.Once);
             _serviceRepositoryMock.Verify(repo => repo.GetListAsync(It.Is<ServiceDataFilter>(filter => filter.Name == serviceData.Name)), Times.Once);
         }
@@ -332,18 +332,16 @@ namespace Application.Tests.Services
             // Arrange
             ServiceData serviceData = new() { Id = 1, Name = "Existing Service", ApplicationId = 1 };
 
-            // Simula que o serviço existe
             _serviceRepositoryMock.Setup(repo => repo.GetByIdAsync(serviceData.Id))
                 .ReturnsAsync(serviceData);
 
-            // Simula que o nome já existe, mas pertence ao mesmo serviço (mesmo ID)
             _serviceRepositoryMock.Setup(repo => repo.VerifyNameExistsAsync(serviceData.Name))
                 .ReturnsAsync(true);
 
             _serviceRepositoryMock.Setup(repo => repo.GetListAsync(It.Is<ServiceDataFilter>(filter => filter.Name == serviceData.Name)))
                 .ReturnsAsync(new PagedResult<ServiceData>
                 {
-                    Result = new List<ServiceData> { serviceData }, // O mesmo serviço, sem conflito
+                    Result = new List<ServiceData> { serviceData }, 
                     Page = 1,
                     PageSize = 10,
                     Total = 1
@@ -585,6 +583,20 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(description, serviceData.Description);
+        }
+
+        [Fact]
+        public void ServiceDataFilterShouldSetAndGetDescription()
+        {
+            // Arrange
+            string expectedDescription = "Test Description";
+            ServiceDataFilter filter = new();
+
+            // Act
+            filter.Description = expectedDescription;
+
+            // Assert
+            Assert.Equal(expectedDescription, filter.Description);
         }
 
         // Testa se ServiceDataFilter cria uma instância com dados válidos.

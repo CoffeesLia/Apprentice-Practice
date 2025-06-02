@@ -8,7 +8,7 @@ using Moq;
 using Stellantis.ProjectName.WebApi.Filters;
 using Stellantis.ProjectName.WebApi.ViewModels;
 
-namespace WebApi.Tests.Filters
+namespace WebApi.Tests
 {
     public class ValidateModelStateFilterAttributeTests
     {

@@ -1,4 +1,5 @@
-﻿using AutoFixture;
+﻿using System.Globalization;
+using System.Text;
 using FluentValidation;
 using FluentValidation.Results;
 using Moq;
@@ -10,8 +11,6 @@ using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Application.Validators;
 using Stellantis.ProjectName.Domain.Entities;
-using System.Globalization;
-using System.Text;
 using Xunit;
 
 namespace Application.Tests.Services
@@ -21,7 +20,6 @@ namespace Application.Tests.Services
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private readonly Mock<IApplicationDataRepository> _applicationDataRepositoryMock;
         private readonly ApplicationDataService _applicationDataService;
-        private readonly Fixture _fixture;
 
         public ApplicationDataServiceTest()
         {
@@ -158,7 +156,7 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.InvalidData, result.Status);
         }
 
-    
+
         [Fact]
         public async Task CreateAsyncShouldReturnConflictWhenNameIsNotUnique()
         {

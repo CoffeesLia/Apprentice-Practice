@@ -1,4 +1,4 @@
-using FluentValidation;
+﻿using FluentValidation;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
@@ -26,6 +26,13 @@ namespace Stellantis.ProjectName.Application.Services
             {
                 return OperationResult.InvalidData(validationResult);
             }
+
+            var manager = await UnitOfWork.ManagerRepository.GetByIdAsync(item.ManagerId).ConfigureAwait(false);
+            if (manager == null)
+            {
+                return OperationResult.Conflict(_localizer[nameof(AreaResources.AreaInvalidManagerId)]);
+            }
+
             if (!await IsAreaNameUniqueAsync(item.Name).ConfigureAwait(false))
             {
                 return OperationResult.Conflict(_localizer[nameof(AreaResources.AlreadyExists)]);
@@ -84,6 +91,12 @@ namespace Stellantis.ProjectName.Application.Services
             if (existingArea == null)
             {
                 return OperationResult.NotFound(_localizer[nameof(AreaResources.NotFound)]);
+            }
+
+            var manager = await UnitOfWork.ManagerRepository.GetByIdAsync(area.ManagerId).ConfigureAwait(false);
+            if (manager == null)
+            {
+                return OperationResult.InvalidData(validationResult);
             }
 
             if (await Repository.VerifyNameAlreadyExistsAsync(area.Name).ConfigureAwait(false))

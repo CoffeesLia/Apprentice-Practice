@@ -1,11 +1,11 @@
-﻿using AutoFixture;
+﻿using System.Runtime.InteropServices;
+using AutoFixture;
 using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
-using System.Runtime.InteropServices;
 
 namespace Infrastructure.Tests.Data.Repositories
 {
@@ -28,7 +28,7 @@ namespace Infrastructure.Tests.Data.Repositories
             .OfType<ThrowingRecursionBehavior>()
             .ToList()
             .ForEach(b => _fixture.Behaviors.Remove(b));
-                        _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+            _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
         }
 
         [Fact]
@@ -86,6 +86,70 @@ namespace Infrastructure.Tests.Data.Repositories
             Assert.Equal(Count, result.Total);
             Assert.Equal(filter.Page, result.Page);
             Assert.Equal(filter.PageSize, result.PageSize);
+        }
+
+        [Fact]
+        public async Task GetListAsyncShouldFilterByManagerId()
+        {
+            // Arrange
+            int managerId = 42;
+            AreaFilter filter = new()
+            {
+                Page = 1,
+                PageSize = 10,
+                ManagerId = managerId
+            };
+
+            var areasWithManager = _fixture.Build<Area>()
+                .With(a => a.ManagerId, managerId)
+                .CreateMany(3)
+                .ToList();
+
+            var areasWithOtherManager = _fixture.Build<Area>()
+                .With(a => a.ManagerId, managerId + 1)
+                .CreateMany(2)
+                .ToList();
+
+            await _context.Set<Area>().AddRangeAsync(areasWithManager);
+            await _context.Set<Area>().AddRangeAsync(areasWithOtherManager);
+            await _context.SaveChangesAsync();
+
+            // Act
+            PagedResult<Area> result = await _repository.GetListAsync(filter);
+
+            // Assert
+            Assert.All(result.Result, a => Assert.Equal(managerId, a.ManagerId));
+            Assert.Equal(3, result.Total);
+        }
+
+        [Fact]
+        public async Task GetListAsyncShouldFilterById()
+        {
+            // Arrange
+            Area area = _fixture.Create<Area>();
+            await _context.Set<Area>().AddAsync(area);
+
+            var otherAreas = _fixture.Build<Area>()
+                .CreateMany(3)
+                .ToList();
+            await _context.Set<Area>().AddRangeAsync(otherAreas);
+
+            await _context.SaveChangesAsync();
+
+            AreaFilter filter = new()
+            {
+                Id = area.Id,
+                Page = 1,
+                PageSize = 10
+            };
+
+            // Act
+            PagedResult<Area> result = await _repository.GetListAsync(filter);
+
+            // Assert
+            Assert.Single(result.Result);
+            Assert.Equal(area.Id, result.Result.First().Id);
+            Assert.Equal(1, result.Total);
         }
 
         [Fact]

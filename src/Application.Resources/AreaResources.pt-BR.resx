@@ -132,4 +132,7 @@
   <data name="Undeleted" xml:space="preserve">
     <value>Não é possível excluir uma área que tem aplicações associadas.</value>
   </data>
+  <data name="AreaInvalidManagerId" xml:space="preserve">
+    <value>Id de gerente invalido.</value>
+  </data>
 </root>

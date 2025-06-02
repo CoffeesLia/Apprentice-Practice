@@ -1,3 +1,4 @@
+using System.Globalization;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
@@ -10,7 +11,6 @@ using Stellantis.ProjectName.IoC;
 using Stellantis.ProjectName.WebApi;
 using Stellantis.ProjectName.WebApi.Extensions;
 using Stellantis.ProjectName.WebApi.Filters;
-using System.Globalization;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +21,7 @@ ValidatorOptions.Global.LanguageManager.Culture = new CultureInfo("en-US");
 IConfigurationRoot configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddEnvironmentVariables()
     .Build();
 
 builder.Services.AddControllers();
@@ -44,7 +45,7 @@ builder.Services.Configure<ApiBehaviorOptions>(p =>
 builder.Services.ConfigureDependencyInjection();
 builder.Services.RegisterMapper();
 
-#if DEBUG
+
 
 string? databaseType = configuration["DatabaseType"];
 switch (databaseType)
@@ -58,10 +59,6 @@ switch (databaseType)
     default:
         throw new NotSupportedException(databaseType);
 }
-
-#else
-builder.Services.AddDbContext<Context>(options => options.UseSqlServer(configuration["ConnectionString"]));
-#endif
 
 string[] arrLanguage = ["en-US", "pt-BR", "es-AR", "fr-FR", "it-IT", "nl-NL"];
 builder.Services.Configure<RequestLocalizationOptions>(options =>

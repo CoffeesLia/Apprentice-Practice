@@ -18,9 +18,9 @@ namespace Stellantis.ProjectName.Application.Services
 
         protected override IDocumentRepository Repository =>
             UnitOfWork.DocumentDataRepository;
-        
-       
-    public override async Task<OperationResult> CreateAsync(DocumentData item)
+
+
+        public override async Task<OperationResult> CreateAsync(DocumentData item)
         {
             ArgumentNullException.ThrowIfNull(item);
             ArgumentNullException.ThrowIfNull(item.Name);
@@ -31,12 +31,12 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.InvalidData(validationResult);
             }
 
-            if (await Repository.IsDocumentNameUniqueAsync(item.Name!).ConfigureAwait(false))
+            if (await Repository.IsDocumentNameUniqueAsync(item.Name!, item.ApplicationId).ConfigureAwait(false))
             {
                 return OperationResult.Conflict(_localizer[nameof(DocumentDataResources.NameAlreadyExists)]);
             }
 
-            if (await Repository.IsUrlUniqueAsync(item.Url!).ConfigureAwait(false))
+            if (await Repository.IsUrlUniqueAsync(item.Url!, item.ApplicationId).ConfigureAwait(false))
             {
                 return OperationResult.Conflict(_localizer[nameof(DocumentDataResources.UrlAlreadyExists)]);
             }
@@ -55,12 +55,12 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.InvalidData(validationResult);
             }
 
-            if (await Repository.IsDocumentNameUniqueAsync(item.Name!).ConfigureAwait(false))
+            if (await Repository.IsDocumentNameUniqueAsync(item.Name!, item.ApplicationId).ConfigureAwait(false))
             {
                 return OperationResult.Conflict(_localizer[nameof(DocumentDataResources.NameAlreadyExists)]);
             }
 
-            if (await Repository.IsUrlUniqueAsync(item.Url!).ConfigureAwait(false))
+            if (await Repository.IsUrlUniqueAsync(item.Url!, item.ApplicationId).ConfigureAwait(false))
             {
                 return OperationResult.Conflict(_localizer[nameof(DocumentDataResources.UrlAlreadyExists)]);
             }
@@ -69,14 +69,14 @@ namespace Stellantis.ProjectName.Application.Services
 
         }
 
-        public override async Task<OperationResult> DeleteAsync(int id) 
+        public override async Task<OperationResult> DeleteAsync(int id)
         {
             return await base.DeleteAsync(id).ConfigureAwait(false);
         }
 
         public async Task<PagedResult<DocumentData>> GetListAsync(DocumentDataFilter filter)
         {
-            filter ??= new  DocumentDataFilter();
+            filter ??= new DocumentDataFilter();
 
             return await UnitOfWork.DocumentDataRepository.GetListAsync(filter).ConfigureAwait(false);
         }

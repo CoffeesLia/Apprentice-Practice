@@ -3,11 +3,11 @@ namespace Stellantis.ProjectName.Domain.Entities
 {
     public enum IncidentStatus
     {
-        Aberto,
-        EmAtendimento,
-        Cancelado,
-        Fechado,
-        Reaberto
+        Open,
+        InProgress,
+        Cancelled,
+        Closed,
+        Reopened
     }
 
     public class Incident : EntityBase

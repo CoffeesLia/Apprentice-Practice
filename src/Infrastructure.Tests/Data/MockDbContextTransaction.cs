@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Infrastructure.Tests.Data
 {

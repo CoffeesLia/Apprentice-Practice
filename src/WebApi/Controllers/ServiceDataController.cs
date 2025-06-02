@@ -11,10 +11,10 @@ using Stellantis.ProjectName.WebApi.ViewModels;
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [Route("api/services")]
-    public sealed class ServiceDataController(IServiceData serviceData, IMapper mapper, IStringLocalizerFactory localizerFactory)
+    public sealed class ServiceDataController(IServiceDataService serviceData, IMapper mapper, IStringLocalizerFactory localizerFactory)
     : EntityControllerBase<ServiceData, ServiceDataDto>(serviceData, mapper, localizerFactory)
     {
-        protected override IServiceData Service => (IServiceData)base.Service;
+        protected override IServiceDataService Service => (IServiceDataService)base.Service;
 
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] ServiceDataDto itemDto)
