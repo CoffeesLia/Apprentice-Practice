@@ -27,6 +27,11 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             IQueryable<Manager> query = Context.Set<Manager>();
 
+            if (managerFilter.Id.HasValue)
+            {
+                query = query.Where(a => a.Id == managerFilter.Id);
+            }
+
             if (!string.IsNullOrEmpty(managerFilter.Name))
             {
                 query = query.Where(a => a.Name != null && a.Name.Contains(managerFilter.Name, StringComparison.OrdinalIgnoreCase));
