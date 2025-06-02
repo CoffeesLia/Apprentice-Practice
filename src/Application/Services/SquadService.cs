@@ -51,18 +51,30 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.InvalidData(validationResult);
             }
 
-            var existingService = await Repository.GetByIdAsync(squad.Id).ConfigureAwait(false);
-            if (existingService == null)
+            var existingSquad = await Repository.GetByIdAsync(squad.Id).ConfigureAwait(false);
+            if (existingSquad == null)
             {
                 return OperationResult.NotFound(_localizer[nameof(SquadResources.SquadNotFound)]);
             }
 
+            // *** ALTERAÇÃO AQUI: Lógica aprimorada para verificar nome existente em Update ***
             if (await Repository.VerifyNameAlreadyExistsAsync(squad.Name!).ConfigureAwait(false))
             {
-                return OperationResult.Conflict(_localizer[nameof(SquadResources.SquadNameAlreadyExists)]);
+                // Se o nome já existe, agora precisamos verificar se pertence ao próprio squad que está sendo atualizado.
+                var squadWithSameName = await Repository.GetByNameAsync(squad.Name!).ConfigureAwait(false);
+                if (squadWithSameName != null && squadWithSameName.Id != squad.Id) // Se o nome pertence a OUTRO squad
+                {
+                    return OperationResult.Conflict(_localizer[nameof(SquadResources.SquadNameAlreadyExists)]);
+                }
             }
+            // Se o nome não existe, ou se o nome existe mas é do próprio squad, prossegue com a atualização.
 
-            return await base.UpdateAsync(squad).ConfigureAwait(false);
+            // Atualize as propriedades do existingSquad com os novos valores
+            existingSquad.Name = squad.Name;
+            existingSquad.Description = squad.Description;
+            // Se houver outras propriedades (exceto coleções que são tratadas separadamente), atualize-as aqui.
+
+            return await base.UpdateAsync(existingSquad).ConfigureAwait(false); // Atualiza o objeto existente
         }
 
         public override async Task<OperationResult> DeleteAsync(int id)
@@ -79,14 +91,15 @@ namespace Stellantis.ProjectName.Application.Services
         public async Task<PagedResult<Squad>> GetListAsync(SquadFilter squadFilter)
         {
             squadFilter ??= new SquadFilter();
+            // A chamada para o repositório já está OK aqui, pois o SquadRepository.GetListAsync foi corrigido para incluir as Applications.
             return await Repository.GetListAsync(squadFilter).ConfigureAwait(false);
         }
 
         public new async Task<Squad?> GetItemAsync(int id)
         {
+            // Este método já usa GetSquadWithApplicationsAsync que inclui as aplicações
             var squad = await Repository.GetSquadWithApplicationsAsync(id).ConfigureAwait(false);
             return squad;
-
         }
 
         public async Task<OperationResult> VerifySquadExistsAsync(int id)
@@ -118,9 +131,10 @@ namespace Stellantis.ProjectName.Application.Services
             {
                 return OperationResult.InvalidData(new ValidationResult(new[]
                 {
-            new ValidationFailure(nameof(SquadResources.ApplicationIdsCannotBeEmpty),
-                _localizer[nameof(SquadResources.ApplicationIdsCannotBeEmpty)].Value)
-        }));
+                    // Altera o nome da propriedade para algo mais genérico ou específico do recurso
+                    new ValidationFailure("ApplicationIds",
+                        _localizer[nameof(SquadResources.ApplicationIdsCannotBeEmpty)].Value)
+                }));
             }
 
             var squad = await Repository.GetSquadWithApplicationsAsync(squadId).ConfigureAwait(false);
@@ -129,8 +143,9 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.NotFound(_localizer[nameof(SquadResources.SquadNotFound)]);
             }
 
+          
             var applications = await UnitOfWork.ApplicationDataRepository
-                .GetListAsync(a => applicationIds.Contains(a.Id))
+                .GetListAsync(a => applicationIds.Contains(a.Id)) // Assume que GetListAsync tem uma sobrecarga que aceita Predicate<ApplicationData>
                 .ConfigureAwait(false);
 
             if (applications == null || !applications.Any())
@@ -138,9 +153,10 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.NotFound(_localizer[nameof(SquadResources.ApplicationsNotFound)]);
             }
 
+            // Adiciona as aplicações ao squad apenas se ainda não estiverem presentes
             foreach (var application in applications)
             {
-                if (!squad.Applications.Contains(application))
+                if (!squad.Applications.Any(a => a.Id == application.Id))
                 {
                     squad.Applications.Add(application);
                 }
@@ -150,8 +166,5 @@ namespace Stellantis.ProjectName.Application.Services
 
             return OperationResult.Complete(_localizer[nameof(SquadResources.ApplicationsLinkedSuccessfully)]);
         }
-
-
-
     }
 }

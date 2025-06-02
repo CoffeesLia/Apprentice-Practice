@@ -123,13 +123,8 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                .ForMember(dest => dest.Applications, opt => opt.MapFrom(src => src.Applications))
-                .ForMember(dest => dest.Members, opt => opt.MapFrom(src => src.Members));
-
-
-            CreateMap<ApplicationData, ApplicationDataVm>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
+                .ForMember(dest => dest.Members, opt => opt.MapFrom(src => src.Members))
+             .ForMember(dest => dest.Cost, opt => opt.MapFrom(src => src.Members.Sum(m => m.Cost)));
 
 
             CreateMap<SquadFilterDto, SquadFilter>()

@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Stellantis.ProjectName.WebApi.Dto/SquadDto.cs
+using System.Collections.Generic; // Certifique-se de que este using existe
 
 namespace Stellantis.ProjectName.WebApi.Dto
 {
@@ -6,17 +7,13 @@ namespace Stellantis.ProjectName.WebApi.Dto
     {
         public string? Name { get; set; }
         public string? Description { get; set; }
-        public IReadOnlyList<int> ApplicationIds { get; set; } = new List<int>(); // IDs das aplicações
-        public IReadOnlyList<int> MemberIds { get; set; } = new List<int>(); // IDs dos membros
 
-        public void AddApplicationId(int applicationId)
-        {
-            _applicationIds.Add(applicationId);
-        }
+        // As IDs das aplicações a serem vinculadas ao squad
+        public IReadOnlyList<int> ApplicationIds { get; set; } = new List<int>();
 
-        public void RemoveApplicationId(int applicationId)
-        {
-            _applicationIds.Remove(applicationId);
-        }
+        // As IDs dos membros a serem vinculados ao squad (se for implementar)
+        public IReadOnlyList<int> MemberIds { get; set; } = new List<int>();
+
+       
     }
 }
