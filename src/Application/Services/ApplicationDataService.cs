@@ -120,5 +120,6 @@ namespace Stellantis.ProjectName.Application.Services
             return responsible.AreaId == areaId;
         }
 
+
     }
 }

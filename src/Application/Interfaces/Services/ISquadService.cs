@@ -1,4 +1,5 @@
-﻿using Stellantis.ProjectName.Application.Models.Filters;
+﻿using Stellantis.ProjectName.Application.Models;
+using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Interfaces.Services
@@ -6,5 +7,8 @@ namespace Stellantis.ProjectName.Application.Interfaces.Services
     public interface ISquadService : IEntityServiceBase<Squad>
     {
         Task<PagedResult<Squad>> GetListAsync(SquadFilter squadFilter);
+        Task<OperationResult> AddApplicationsToSquadAsync(int squadId, List<int> applicationIds); // Add this method
+  
     }
+
 }

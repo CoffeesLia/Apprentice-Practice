@@ -15,12 +15,21 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
 
             builder.Property(p => p.Name)
                 .IsRequired()
-                .HasMaxLength(50);
+                .HasMaxLength(55);
 
             builder.Property(p => p.Description)
                 .IsRequired()
                 .HasMaxLength(200);
 
+            // Configuração do relacionamento muitos-para-muitos com ApplicationData
+            builder
+                .HasMany(s => s.Applications)
+                .WithMany(a => a.Squads)
+                .UsingEntity<Dictionary<string, object>>(
+                    "SquadApplication",
+                    j => j.HasOne<ApplicationData>().WithMany().HasForeignKey("ApplicationDataId"),
+                    j => j.HasOne<Squad>().WithMany().HasForeignKey("SquadId")
+                );
         }
     }
 }
