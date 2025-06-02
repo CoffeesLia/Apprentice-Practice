@@ -96,6 +96,34 @@ namespace Infrastructure.Tests.Data.Repositories
             Assert.Equal(2, result.Result.Count());
         }
 
+        // Verifica se o método GetListAsync retorna apenas os gerentes que correspondem ao filtro de nome.
+        [Fact]
+        public async Task GetListAsyncWithIdFilterReturnsOnlyMatchingManager()
+        {
+            // Arrange
+            var options = new DbContextOptionsBuilder<Context>()
+                .UseInMemoryDatabase(databaseName: "ManagerRepository_GetListAsync_IdFilter")
+                .Options;
+
+            using var context = new Context(options);
+            context.Managers.AddRange(
+                new Manager { Id = 1, Name = "Alice", Email = "alice@email.com" },
+                new Manager { Id = 2, Name = "Bob", Email = "bob@email.com" }
+            );
+            await context.SaveChangesAsync();
+
+            var repository = new ManagerRepository(context);
+            var filter = new ManagerFilter { Id = 2, Page = 1, PageSize = 10 };
+
+            // Act
+            var result = await repository.GetListAsync(filter);
+
+            // Assert
+            Assert.Single(result.Result);
+            Assert.Equal(2, result.Result.First().Id);
+            Assert.Equal("Bob", result.Result.First().Name);
+        }
+
         // Verifica se o método GetListAsync retorna um resultado vazio quando o filtro não corresponde.
         [Fact]
         public async Task GetListAsyncShouldReturnEmptyResultWhenFilterDoesNotMatch()
