@@ -3,6 +3,6 @@
     public class AreaDto
     {
         public string? Name { get; set; }
-
+        public required int ManagerId { get; set; }
     }
 }

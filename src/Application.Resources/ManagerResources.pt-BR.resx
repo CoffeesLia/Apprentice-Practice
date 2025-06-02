@@ -117,22 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AlreadyExists" xml:space="preserve">
-    <value>O nome já existe.</value>
+  <data name="ManagerAlreadyExists" xml:space="preserve">
+    <value>Esse gerente já existe.</value>
   </data>
-  <data name="NotFound" xml:space="preserve">
-    <value>Área não encontrada.</value>
+  <data name="ManagerCannotBeNull" xml:space="preserve">
+    <value>Gerente não pode ser nulo.</value>
   </data>
-  <data name="NameIsRequired" xml:space="preserve">
-    <value>O nome é obrigatório.</value>
+  <data name="ManagerEmailInvalid" xml:space="preserve">
+    <value>Email inválido.</value>
   </data>
-  <data name="NameValidateLength" xml:space="preserve">
-    <value>O nome deve ter entre {0} e {1} caracteres.</value>
+  <data name="ManagerEmailIsRequired" xml:space="preserve">
+    <value>O nome do gerente é obrigatório.</value>
   </data>
-  <data name="Undeleted" xml:space="preserve">
-    <value>Não é possível excluir uma área que tem aplicações associadas.</value>
+  <data name="ManagerEmailLength" xml:space="preserve">
+    <value>O email do gerente deve ter entre 5 e 70 caracteres.</value>
   </data>
-  <data name="AreaInvalidManagerId" xml:space="preserve">
-    <value>Id de gerente invalido.</value>
+  <data name="ManagerNameIsRequired" xml:space="preserve">
+    <value>O email do gerente é obrigatório.</value>
+  </data>
+  <data name="ManagerNameLength" xml:space="preserve">
+    <value>O nome do gerente deve ter entre 3 e 50 caracteres.</value>
+  </data>
+  <data name="ManagerNotFound" xml:space="preserve">
+    <value>Gerente não encontrado.</value>
   </data>
 </root>

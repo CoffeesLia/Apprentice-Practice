@@ -26,6 +26,28 @@ namespace WebApi.Tests
             VerifyAllResources<ControllerResources>(ControllerResources.ResourceManager);
         }
 
+        [Fact]
+        public void ControllerResourcesCannotBeNullExistsInAllCultures()
+        {
+            foreach (string culture in SupportedCultures)
+            {
+                ControllerResources.Culture = new CultureInfo(culture);
+                string? value = ControllerResources.CannotBeNull;
+                Assert.False(string.IsNullOrEmpty(value), $"{value} | {culture}");
+            }
+        }
+
+        [Fact]
+        public void ControllerResourcesIdMismatchExistsInAllCultures()
+        {
+            foreach (string culture in SupportedCultures)
+            {
+                ControllerResources.Culture = new CultureInfo(culture);
+                string? value = ControllerResources.IdMismatch;
+                Assert.False(string.IsNullOrEmpty(value), $"{value} | {culture}");
+            }
+        }
+
         private void VerifyAllResources<TResouces>(ResourceManager resourceManager)
         {
             IStringLocalizer localizaer = LocalizerFactor.Create(typeof(TResouces));
