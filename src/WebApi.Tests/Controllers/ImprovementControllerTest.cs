@@ -17,7 +17,7 @@ namespace WebApi.Tests.Controllers
     public class ImprovementControllerTest
     {
         private readonly Mock<IImprovementService> _serviceMock;
-        private readonly ImprovementController _controller;
+        private readonly ImprovementsController _controller;
         private readonly Fixture _fixture;
 
         public ImprovementControllerTest()
@@ -38,7 +38,7 @@ namespace WebApi.Tests.Controllers
                       () => _fixture.Create<IncidentStatus>().ToString()));
 
 
-            _controller = new ImprovementController(_serviceMock.Object, mapper, localizerFactory);
+            _controller = new ImprovementsController(_serviceMock.Object, mapper, localizerFactory);
         }
 
         [Fact]

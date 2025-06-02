@@ -11,7 +11,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [ApiController]
     [Route("api/improvement")]
-    public class ImprovementController(IImprovementService service, IMapper mapper, IStringLocalizerFactory localizerFactory)
+    public class ImprovementsController(IImprovementService service, IMapper mapper, IStringLocalizerFactory localizerFactory)
         : EntityControllerBase<Improvement, ImprovementDto>(service, mapper, localizerFactory)
     {
         [HttpPost]
