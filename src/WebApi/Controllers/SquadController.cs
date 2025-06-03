@@ -34,7 +34,9 @@ namespace Stellantis.ProjectName.WebApi.Controllers
 
             if (itemDto.ApplicationIds != null && itemDto.ApplicationIds.Any())
             {
-                var linkResult = await _squadService.AddApplicationsToSquadAsync(squad.Id, itemDto.ApplicationIds.ToList()).ConfigureAwait(false);
+                var linkResult = await _squadService.AddApplicationsToSquadAsync(
+                    squad.Id, new Collection<int>([.. itemDto.ApplicationIds])
+                ).ConfigureAwait(false);
                 if (linkResult.Status != OperationStatus.Success)
                     return StatusCode((int)linkResult.Status, linkResult.Message);
             }
@@ -59,7 +61,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
 
             if (itemDto.ApplicationIds != null)
             {
-                var linkResult = await _squadService.AddApplicationsToSquadAsync(id, itemDto.ApplicationIds.ToList()).ConfigureAwait(false);
+                var linkResult = await _squadService.AddApplicationsToSquadAsync(id, new Collection<int>([.. itemDto.ApplicationIds])).ConfigureAwait(false);
                 if (linkResult.Status != OperationStatus.Success)
                     return StatusCode((int)linkResult.Status, linkResult.Message);
             }
@@ -111,7 +113,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             if (applicationIds == null || applicationIds.Count == 0)
                 return BadRequest("A lista de IDs de aplicações não pode estar vazia.");
 
-            var result = await _squadService.AddApplicationsToSquadAsync(id, applicationIds.ToList()).ConfigureAwait(false);
+            var result = await _squadService.AddApplicationsToSquadAsync(id, new Collection<int>([.. applicationIds])).ConfigureAwait(false);
 
             if (result.Status != OperationStatus.Success)
                 return StatusCode((int)result.Status, result.Message);

@@ -211,9 +211,9 @@ namespace Infrastructure.Tests.Data.Repositories
         private sealed class TestRepository(TestContext context) : RepositoryEntityBase<TestEntity, TestContext>(context)
         {
             internal async Task<PagedResult<TestEntity>> CallGetListWithFilterAsync(
-            ExpressionStarter<TestEntity> filters, Filter filter)
+                ExpressionStarter<TestEntity> filters, Filter? filter)
             {
-                return await GetListAsync(filters, filter).ConfigureAwait(false);
+                return await GetListAsync(filters, filter ?? new Filter()).ConfigureAwait(false);
             }
         }
 

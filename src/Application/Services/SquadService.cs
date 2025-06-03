@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using System.Collections.ObjectModel;
+using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces;
@@ -95,11 +96,14 @@ namespace Stellantis.ProjectName.Application.Services
             return await Repository.GetListAsync(squadFilter).ConfigureAwait(false);
         }
 
-        public new async Task<Squad?> GetItemAsync(int id)
+        public new async Task<OperationResult> GetItemAsync(int id)
         {
-            // Este método já usa GetSquadWithApplicationsAsync que inclui as aplicações
             var squad = await Repository.GetSquadWithApplicationsAsync(id).ConfigureAwait(false);
-            return squad;
+            if (squad == null)
+            {
+                return OperationResult.NotFound(_localizer[nameof(SquadResources.SquadNotFound)]);
+            }
+            return OperationResult.Complete();
         }
 
         public async Task<OperationResult> VerifySquadExistsAsync(int id)
@@ -125,16 +129,15 @@ namespace Stellantis.ProjectName.Application.Services
             return OperationResult.Complete();
         }
 
-        public async Task<OperationResult> AddApplicationsToSquadAsync(int squadId, List<int> applicationIds)
+        public async Task<OperationResult> AddApplicationsToSquadAsync(int squadId, Collection<int> applicationIds)
         {
-            if (applicationIds == null || !applicationIds.Any())
+            if (applicationIds == null || applicationIds.Count == 0)
             {
-                return OperationResult.InvalidData(new ValidationResult(new[]
-                {
-                    // Altera o nome da propriedade para algo mais genérico ou específico do recurso
+                return OperationResult.InvalidData(new ValidationResult(
+                [
                     new ValidationFailure("ApplicationIds",
-                        _localizer[nameof(SquadResources.ApplicationIdsCannotBeEmpty)].Value)
-                }));
+                _localizer[nameof(SquadResources.ApplicationIdsCannotBeEmpty)].Value)
+                ]));
             }
 
             var squad = await Repository.GetSquadWithApplicationsAsync(squadId).ConfigureAwait(false);
@@ -143,17 +146,15 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.NotFound(_localizer[nameof(SquadResources.SquadNotFound)]);
             }
 
-          
             var applications = await UnitOfWork.ApplicationDataRepository
-                .GetListAsync(a => applicationIds.Contains(a.Id)) // Assume que GetListAsync tem uma sobrecarga que aceita Predicate<ApplicationData>
+                .GetListAsync(a => applicationIds.Contains(a.Id))
                 .ConfigureAwait(false);
 
-            if (applications == null || !applications.Any())
+            if (applications == null || applications.Count == 0)
             {
                 return OperationResult.NotFound(_localizer[nameof(SquadResources.ApplicationsNotFound)]);
             }
 
-            // Adiciona as aplicações ao squad apenas se ainda não estiverem presentes
             foreach (var application in applications)
             {
                 if (!squad.Applications.Any(a => a.Id == application.Id))
@@ -162,7 +163,7 @@ namespace Stellantis.ProjectName.Application.Services
                 }
             }
 
-            await UnitOfWork.SaveChangesAsync().ConfigureAwait(false);
+            await UnitOfWork.CommitAsync().ConfigureAwait(false);
 
             return OperationResult.Complete(_localizer[nameof(SquadResources.ApplicationsLinkedSuccessfully)]);
         }

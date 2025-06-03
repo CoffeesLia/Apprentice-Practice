@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+ï»¿using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
@@ -18,7 +18,7 @@ namespace WebApi.Tests.Controllers
 
     public class DummyEntityDto { }
 
-    internal class DummyEntityController : EntityControllerBase<DummyEntity, DummyEntityDto>
+    internal sealed class DummyEntityController : EntityControllerBase<DummyEntity, DummyEntityDto>
     {
         internal DummyEntityController(
             IEntityServiceBase<DummyEntity> service,
@@ -29,14 +29,14 @@ namespace WebApi.Tests.Controllers
         public new async Task<IActionResult> DeleteAsync(int id) => await base.DeleteAsync(id).ConfigureAwait(false);
 
         public async Task<IActionResult> UpdateBaseAsyncProxy(int id, DummyEntityDto? itemDto)
-            #pragma warning disable CS8604 // Possível argumento de referência nula.
+            #pragma warning disable CS8604 // PossÃ­vel argumento de referÃªncia nula.
             => await UpdateBaseAsync<DummyVm>(id, itemDto).ConfigureAwait(false);
-            #pragma warning restore CS8604 // Possível argumento de referência nula.
+            #pragma warning restore CS8604 // PossÃ­vel argumento de referÃªncia nula.
 
         public async Task<IActionResult> CreateBaseAsyncProxy<TEntityVm>(DummyEntityDto? itemDto) where TEntityVm : EntityVmBase
-            #pragma warning disable CS8604 // Possível argumento de referência nula.
+            #pragma warning disable CS8604 // PossÃ­vel argumento de referÃªncia nula.
             => await CreateBaseAsync<TEntityVm>(itemDto).ConfigureAwait(false);
-            #pragma warning restore CS8604 // Possível argumento de referência nula.
+            #pragma warning restore CS8604 // PossÃ­vel argumento de referÃªncia nula.
     }
 
     public class EntityControllerBaseTests
@@ -96,6 +96,84 @@ namespace WebApi.Tests.Controllers
         }
 
         [Fact]
+        public async Task UpdateBaseAsyncWhenStatusIsConflictReturnsConflictResult()
+        {
+            // Arrange
+            var serviceMock = new Mock<IEntityServiceBase<DummyEntity>>();
+            var mapperMock = new Mock<IMapper>();
+            var localizerMock = new Mock<IStringLocalizer>();
+            localizerMock.Setup(l => l[It.IsAny<string>()]).Returns((string key) => new LocalizedString(key, key));
+            var localizerFactoryMock = new Mock<IStringLocalizerFactory>();
+            localizerFactoryMock.Setup(f => f.Create(It.IsAny<Type>())).Returns(localizerMock.Object);
+
+            var operationResult = OperationResult.Conflict("Conflito de teste");
+            serviceMock.Setup(s => s.UpdateAsync(It.IsAny<DummyEntity>())).ReturnsAsync(operationResult);
+            mapperMock.Setup(m => m.Map<DummyEntity>(It.IsAny<DummyEntityDto>())).Returns(new DummyEntity());
+
+            var controller = new DummyEntityController(serviceMock.Object, mapperMock.Object, localizerFactoryMock.Object);
+
+            // Act
+            var result = await controller.UpdateBaseAsyncProxy(1, new DummyEntityDto());
+
+            // Assert
+            var conflictResult = Assert.IsType<ConflictObjectResult>(result);
+            Assert.Same(operationResult, conflictResult.Value);
+        }
+
+        [Fact]
+        public async Task UpdateBaseAsyncWhenStatusIsNotFoundReturnsNotFoundResult()
+        {
+            // Arrange
+            var serviceMock = new Mock<IEntityServiceBase<DummyEntity>>();
+            var mapperMock = new Mock<IMapper>();
+            var localizerMock = new Mock<IStringLocalizer>();
+            localizerMock.Setup(l => l[It.IsAny<string>()]).Returns((string key) => new LocalizedString(key, key));
+            var localizerFactoryMock = new Mock<IStringLocalizerFactory>();
+            localizerFactoryMock.Setup(f => f.Create(It.IsAny<Type>())).Returns(localizerMock.Object);
+
+            var operationResult = OperationResult.NotFound("NÃ£o encontrado");
+            serviceMock.Setup(s => s.UpdateAsync(It.IsAny<DummyEntity>())).ReturnsAsync(operationResult);
+            mapperMock.Setup(m => m.Map<DummyEntity>(It.IsAny<DummyEntityDto>())).Returns(new DummyEntity());
+
+            var controller = new DummyEntityController(serviceMock.Object, mapperMock.Object, localizerFactoryMock.Object);
+
+            // Act
+            var result = await controller.UpdateBaseAsyncProxy(1, new DummyEntityDto());
+
+            // Assert
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Fact]
+        public async Task UpdateBaseAsyncWhenStatusIsInvalidDataReturnsUnprocessableEntityResult()
+        {
+            // Arrange
+            var serviceMock = new Mock<IEntityServiceBase<DummyEntity>>();
+            var mapperMock = new Mock<IMapper>();
+            var localizerMock = new Mock<IStringLocalizer>();
+            localizerMock.Setup(l => l[It.IsAny<string>()]).Returns((string key) => new LocalizedString(key, key));
+            var localizerFactoryMock = new Mock<IStringLocalizerFactory>();
+            localizerFactoryMock.Setup(f => f.Create(It.IsAny<Type>())).Returns(localizerMock.Object);
+
+            var validationResult = new FluentValidation.Results.ValidationResult(
+                new[] { new FluentValidation.Results.ValidationFailure("Prop", "Erro de validaÃ§Ã£o") }
+            );
+            var operationResult = OperationResult.InvalidData(validationResult);
+
+            serviceMock.Setup(s => s.UpdateAsync(It.IsAny<DummyEntity>())).ReturnsAsync(operationResult);
+            mapperMock.Setup(m => m.Map<DummyEntity>(It.IsAny<DummyEntityDto>())).Returns(new DummyEntity());
+
+            var controller = new DummyEntityController(serviceMock.Object, mapperMock.Object, localizerFactoryMock.Object);
+
+            // Act
+            var result = await controller.UpdateBaseAsyncProxy(1, new DummyEntityDto());
+
+            // Assert
+            var unprocessableResult = Assert.IsType<UnprocessableEntityObjectResult>(result);
+            Assert.Same(operationResult, unprocessableResult.Value);
+        }
+
+        [Fact]
         public async Task UpdateBaseAsyncWhenItemDtoIsNullReturnsBadRequestWithLocalizedError()
         {
             // Arrange
@@ -131,13 +209,68 @@ namespace WebApi.Tests.Controllers
         }
 
         [Fact]
+        public async Task CreateBaseAsyncWhenStatusIsConflictReturnsConflictResult()
+        {
+            // Arrange
+            var serviceMock = new Mock<IEntityServiceBase<DummyEntity>>();
+            var mapperMock = new Mock<IMapper>();
+            var localizerMock = new Mock<IStringLocalizer>();
+            localizerMock.Setup(l => l[It.IsAny<string>()]).Returns((string key) => new LocalizedString(key, key));
+            var localizerFactoryMock = new Mock<IStringLocalizerFactory>();
+            localizerFactoryMock.Setup(f => f.Create(It.IsAny<Type>())).Returns(localizerMock.Object);
+
+            var operationResult = OperationResult.Conflict("Conflito de teste");
+            serviceMock.Setup(s => s.CreateAsync(It.IsAny<DummyEntity>())).ReturnsAsync(operationResult);
+            mapperMock.Setup(m => m.Map<DummyEntity>(It.IsAny<DummyEntityDto>())).Returns(new DummyEntity());
+
+            var controller = new DummyEntityController(serviceMock.Object, mapperMock.Object, localizerFactoryMock.Object);
+
+            // Act
+            var result = await controller.CreateBaseAsyncProxy<DummyVm>(new DummyEntityDto());
+
+            // Assert
+            var conflictResult = Assert.IsType<ConflictObjectResult>(result);
+            Assert.Same(operationResult, conflictResult.Value);
+        }
+
+        [Fact]
+        public async Task CreateBaseAsyncWhenStatusIsInvalidDataReturnsUnprocessableEntityResult()
+        {
+            // Arrange
+            var serviceMock = new Mock<IEntityServiceBase<DummyEntity>>();
+            var mapperMock = new Mock<IMapper>();
+            var localizerMock = new Mock<IStringLocalizer>();
+            localizerMock.Setup(l => l[It.IsAny<string>()]).Returns((string key) => new LocalizedString(key, key));
+            var localizerFactoryMock = new Mock<IStringLocalizerFactory>();
+            localizerFactoryMock.Setup(f => f.Create(It.IsAny<Type>())).Returns(localizerMock.Object);
+
+            // Crie um ValidationResult falso para simular dados invÃ¡lidos
+            var validationResult = new FluentValidation.Results.ValidationResult(
+                new[] { new FluentValidation.Results.ValidationFailure("Prop", "Erro de validaÃ§Ã£o") }
+            );
+            var operationResult = OperationResult.InvalidData(validationResult);
+
+            serviceMock.Setup(s => s.CreateAsync(It.IsAny<DummyEntity>())).ReturnsAsync(operationResult);
+            mapperMock.Setup(m => m.Map<DummyEntity>(It.IsAny<DummyEntityDto>())).Returns(new DummyEntity());
+
+            var controller = new DummyEntityController(serviceMock.Object, mapperMock.Object, localizerFactoryMock.Object);
+
+            // Act
+            var result = await controller.CreateBaseAsyncProxy<DummyVm>(new DummyEntityDto());
+
+            // Assert
+            var unprocessableResult = Assert.IsType<UnprocessableEntityObjectResult>(result);
+            Assert.Same(operationResult, unprocessableResult.Value);
+        }
+
+        [Fact]
         public async Task CreateBaseAsyncWhenItemDtoIsNullReturnsBadRequestWithLocalizedError()
         {
             // Arrange
             var serviceMock = new Mock<IEntityServiceBase<DummyEntity>>();
             var mapperMock = new Mock<IMapper>();
 
-            // Mock do localizer para retornar um LocalizedString válido
+            // Mock do localizer para retornar um LocalizedString vÃ¡lido
             var localizerMock = new Mock<IStringLocalizer>();
             localizerMock
                 .Setup(l => l[It.IsAny<string>()])
@@ -150,7 +283,7 @@ namespace WebApi.Tests.Controllers
 
             var controller = new DummyEntityController(serviceMock.Object, mapperMock.Object, localizerFactoryMock.Object);
 
-            // Expondo o método protegido via proxy
+            // Expondo o mÃ©todo protegido via proxy
             async Task<IActionResult> ProxyCreateBaseAsync()
                 => await controller.CreateBaseAsyncProxy<DummyVm>(null).ConfigureAwait(false);
 

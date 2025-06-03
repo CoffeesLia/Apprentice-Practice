@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic; 
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Stellantis.ProjectName.WebApi.ViewModels
 {
@@ -7,8 +8,8 @@ namespace Stellantis.ProjectName.WebApi.ViewModels
         public string? Name { get; set; }
         public string? Description { get; set; }
         public decimal Cost { get; set; }
-        public List<MemberVm> Members { get; set; } = [];
-        public List<ApplicationVm> Applications { get; set; } = [];
+        public Collection<MemberVm> Members { get; } = [];
+        public Collection<ApplicationVm> Applications { get; } = [];
     }
    
 }

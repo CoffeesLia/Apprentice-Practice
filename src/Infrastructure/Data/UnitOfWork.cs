@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Storage;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Interfaces;
@@ -47,11 +47,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data
 
                 throw;
             }
-        }
-
-        public async Task SaveChangesAsync()
-        {
-            await _context.SaveChangesAsync().ConfigureAwait(false);
         }
     }
 }
