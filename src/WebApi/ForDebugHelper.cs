@@ -55,7 +55,7 @@ namespace Stellantis.ProjectName.WebApi
                     new Manager { Name = "Elvis Presley", Email = "elvis@stellantis.com" },
                     new Manager { Name = "Ariana Grande", Email = "ariana@stellantis.com" },
                     new Manager { Name = "Lana del Rey", Email = "lanadelrey@stellantis.com" },
-                    new Manager { Name = "Marshall Mathers", Email = "Eminem@stellantis.com" }
+                    new Manager { Name = "Marshall Mathers", Email = "eminem@stellantis.com" }
                 );
 
                 // Responsáveis
@@ -93,22 +93,22 @@ namespace Stellantis.ProjectName.WebApi
                     new ApplicationData("Architecture Planner") { AreaId = 2, ResponsibleId = 2, ProductOwner = "Gabriel Torres", ConfigurationItem = "AP-Config" }
                 );
 
-                // Services
+                // Serviços
                 context.Services.AddRange(
-                    new ServiceData { Name = "WebApi", ApplicationId = 1 },
-                    new ServiceData { Name = "Integration Services", ApplicationId = 2 },
-                    new ServiceData { Name = "Conector", ApplicationId = 2 },
-                    new ServiceData { Name = "WebApi", ApplicationId = 3 },
-                    new ServiceData { Name = "Finance API", ApplicationId = 4 },
-                    new ServiceData { Name = "HR Management Service", ApplicationId = 5 },
-                    new ServiceData { Name = "Marketing Analytics", ApplicationId = 6 },
-                    new ServiceData { Name = "Sales Tracker", ApplicationId = 7 },
-                    new ServiceData { Name = "Quality Assurance Tool", ApplicationId = 8 },
-                    new ServiceData { Name = "Supplier Chain Integration", ApplicationId = 9 },
-                    new ServiceData { Name = "Engineering Workflow", ApplicationId = 10 },
-                    new ServiceData { Name = "AMS Dashboard", ApplicationId = 7 },
-                    new ServiceData { Name = "Architecture Planner API", ApplicationId = 8 },
-                    new ServiceData { Name = "Integration Hub Service", ApplicationId = 9 }
+                    new ServiceData { Name = "WebApi", Description = "API principal para acesso e gerenciamento dos dados do Portal AMS.", ApplicationId = 1 },
+                    new ServiceData { Name = "Integration Services", Description = "Serviços responsáveis pela integração entre sistemas internos e externos.", ApplicationId = 2 },
+                    new ServiceData { Name = "Conector", Description = "Módulo de conexão para troca de informações entre aplicações.", ApplicationId = 2 },
+                    new ServiceData { Name = "WebApi", Description = "API dedicada ao gerenciamento da Suite PD.", ApplicationId = 3 },
+                    new ServiceData { Name = "Finance API", Description = "API para operações e relatórios financeiros.", ApplicationId = 4 },
+                    new ServiceData { Name = "HR Management Service", Description = "Serviço para gerenciamento de recursos humanos.", ApplicationId = 5 },
+                    new ServiceData { Name = "Marketing Analytics", Description = "Serviço de análise e relatórios de marketing.", ApplicationId = 6 },
+                    new ServiceData { Name = "Sales Tracker", Description = "Ferramenta para acompanhamento de vendas.", ApplicationId = 7 },
+                    new ServiceData { Name = "Quality Assurance Tool", Description = "Ferramenta para controle e garantia de qualidade.", ApplicationId = 8 },
+                    new ServiceData { Name = "Supplier Chain Integration", Description = "Integração de processos da cadeia de fornecedores.", ApplicationId = 9 },
+                    new ServiceData { Name = "Engineering Workflow", Description = "Gerenciamento de fluxos de trabalho de engenharia.", ApplicationId = 10 },
+                    new ServiceData { Name = "AMS Dashboard", Description = "Painel de controle para visualização de dados do AMS.", ApplicationId = 7 },
+                    new ServiceData { Name = "Architecture Planner API", Description = "API para planejamento e gestão de arquitetura.", ApplicationId = 8 },
+                    new ServiceData { Name = "Integration Hub Service", Description = "Central de integração para orquestração de serviços.", ApplicationId = 9 }
                 );
 
                 context.Repositories.AddRange(
