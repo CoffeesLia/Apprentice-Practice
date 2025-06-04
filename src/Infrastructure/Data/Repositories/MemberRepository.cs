@@ -29,6 +29,27 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 query = query.Where(a => a.Name != null && a.Name.Contains(membersFilter.Name));
             }
 
+            if (!string.IsNullOrEmpty(membersFilter.Email))
+            {
+                query = query.Where(a => a.Email != null && a.Email.Contains(membersFilter.Email));
+            }
+
+            if (!string.IsNullOrEmpty(membersFilter.Role))
+            {
+                query = query.Where(a => a.Role != null && a.Role.Contains(membersFilter.Role));
+            }
+
+            if (membersFilter.Id > 0)
+                query = query.Where(a => a.Id == membersFilter.Id);
+
+            if (membersFilter.SquadId > 0)
+                query = query.Where(a => a.SquadId == membersFilter.SquadId);
+
+
+            if (membersFilter.Cost > 0)
+                query = query.Where(a => a.Cost == membersFilter.Cost);
+
+
             return await GetPagedResultAsync(query, membersFilter.Page, membersFilter.PageSize)
                 .ConfigureAwait(false);
         }

@@ -28,6 +28,12 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.InvalidData(validationResult);
             }
 
+            var squad = await UnitOfWork.SquadRepository.GetByIdAsync(item.SquadId).ConfigureAwait(false);
+            if (squad == null)
+            {
+                return OperationResult.Conflict(_localizer[nameof(ServiceDataResources.ServiceInvalidApplicationId)]);
+            }
+
             if (!await Repository.IsEmailUnique(item.Email).ConfigureAwait(false))
             {
                 return OperationResult.Conflict(_localizer[nameof(MemberResource.MemberEmailAlreadyExists)]);
