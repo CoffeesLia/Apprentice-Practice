@@ -8,10 +8,12 @@ include:
 
 variables:
   REPOSITORY_URL: 924431524709.dkr.ecr.us-east-1.amazonaws.com/digital-esb-app-esb-baseproject-esb
+  CX_ADDITIONAL_PARAMS: "--ignore-policy"
+
 
 stages:
-  - test
   - security
+  - test
   - build
 
 before_script:
