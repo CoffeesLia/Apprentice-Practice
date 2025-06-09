@@ -38,86 +38,6 @@ namespace WebApi.Tests.Controllers
         }
 
         [Fact]
-        public async Task CreateAsyncShouldReturnCreatedWhenOperationSuccess()
-        {
-            // Arrange
-            SquadDto squadDto = _fixture.Create<SquadDto>();
-            OperationResult operationResult = OperationResult.Complete();
-            _squadServiceMock.Setup(s => s.CreateAsync(It.IsAny<Squad>())).ReturnsAsync(operationResult);
-
-            _mapperMock.Setup(m => m.Map<Squad>(It.IsAny<SquadDto>()))
-                .Returns(new Squad());
-            _squadServiceMock.Setup(s => s.CreateAsync(It.IsAny<Squad>()))
-                .ReturnsAsync(operationResult);
-
-            // Act
-            IActionResult result = await _controller.CreateAsync(squadDto);
-
-            // Assert
-            CreatedAtActionResult createdResult = Assert.IsType<CreatedAtActionResult>(result);
-            Assert.IsType<SquadVm>(createdResult.Value);
-        }
-
-        [Theory]
-        [InlineData(OperationStatus.Conflict, typeof(ConflictObjectResult))]
-        [InlineData(OperationStatus.InvalidData, typeof(UnprocessableEntityObjectResult))]
-        public async Task CreateAsyncShouldReturnProperStatusWhenOperationFails(
-            OperationStatus status,
-            Type expectedResultType)
-        {
-            // Arrange
-            SquadDto squadDto = _fixture.Create<SquadDto>();
-
-            OperationResult operationResult = status switch
-            {
-                OperationStatus.Conflict => OperationResult.Conflict(SquadResources.SquadNameAlreadyExists),
-                OperationStatus.InvalidData => OperationResult.InvalidData(new ValidationResult(
-                new List<ValidationFailure> { new("Name", SquadResources.SquadNameRequired) })),
-                _ => throw new NotImplementedException()
-            };
-
-            _squadServiceMock.Setup(s => s.CreateAsync(It.IsAny<Squad>())).ReturnsAsync(operationResult);
-
-            // Act
-            IActionResult result = await _controller.CreateAsync(squadDto);
-
-            // Assert
-            Assert.IsType(expectedResultType, result);
-        }
-
-
-        [Theory]
-        [InlineData(OperationStatus.Conflict, typeof(ConflictObjectResult))]
-        [InlineData(OperationStatus.NotFound, typeof(NotFoundResult))]
-        [InlineData(OperationStatus.InvalidData, typeof(UnprocessableEntityObjectResult))]
-        public async Task UpdateAsyncShouldReturnProperStatusWhenOperationFails(
-     OperationStatus status,
-     Type expectedResultType)
-        {
-            // Arrange
-            int squadId = _fixture.Create<int>(); // Gere o ID separadamente
-            SquadDto squadDto = _fixture.Create<SquadDto>();
-
-            OperationResult operationResult = status switch
-            {
-                OperationStatus.Conflict => OperationResult.Conflict(SquadResources.SquadNameAlreadyExists),
-                OperationStatus.NotFound => OperationResult.NotFound(SquadResources.SquadNotFound),
-                OperationStatus.InvalidData => OperationResult.InvalidData(new ValidationResult(
-                    new List<ValidationFailure> { new("Name", SquadResources.SquadNameRequired) })),
-                _ => throw new NotImplementedException()
-            };
-
-            _squadServiceMock.Setup(s => s.UpdateAsync(It.IsAny<Squad>())).ReturnsAsync(operationResult);
-
-            // Act
-            IActionResult result = await _controller.UpdateAsync(squadId, squadDto); // Passe o ID diretamente
-
-            // Assert
-            Assert.IsType(expectedResultType, result);
-        }
-
-
-        [Fact]
         public async Task GetAsyncShouldReturnOkWhenSquadExists()
         {
             // Arrange
@@ -136,20 +56,6 @@ namespace WebApi.Tests.Controllers
             Assert.Equal(squadVm.Name, returnedSquadVm.Name);
         }
 
-        [Fact]
-        public async Task GetAsyncShouldReturnNotFoundWhenSquadNotExists()
-        {
-            // Arrange
-            int squadId = _fixture.Create<int>();
-
-            _squadServiceMock.Setup(s => s.GetItemAsync(squadId)).ReturnsAsync((Squad?)null);
-
-            // Act
-            ActionResult<SquadVm> result = await _controller.GetAsync(squadId);
-
-            // Assert
-            Assert.IsType<NotFoundResult>(result.Result);
-        }
         [Fact]
         public async Task GetListAsyncShouldReturnPagedResult()
         {

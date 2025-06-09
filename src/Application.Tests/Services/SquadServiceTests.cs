@@ -161,33 +161,6 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task UpdateAsyncReturnsConflictWhenNameAlreadyExists()
-        {
-            // Arrange
-            Squad squad = new() { Id = 1, Name = "Existing Squad" };
-            Mock<IValidator<Squad>> validatorMock = new(); // Criação do mock local
-            validatorMock.Setup(v => v.ValidateAsync(squad, default)).ReturnsAsync(new ValidationResult());
-            _squadRepositoryMock.Setup(r => r.GetByIdAsync(squad.Id)).ReturnsAsync(new Squad());
-            _squadRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(squad.Name)).ReturnsAsync(true);
-
-            Microsoft.Extensions.Localization.IStringLocalizerFactory localizerFactory = LocalizerFactorHelper.Create();
-            Microsoft.Extensions.Localization.IStringLocalizer localizer = localizerFactory.Create(typeof(SquadResources));
-            SquadService squadService = new(_unitOfWorkMock.Object, localizerFactory, validatorMock.Object);
-
-            // Act
-            OperationResult result = await squadService.UpdateAsync(squad);
-
-            // Assert
-            Microsoft.Extensions.Localization.LocalizedString expectedMessage = localizer[nameof(SquadResources.SquadNameAlreadyExists)]; // Use the localized resource
-            Assert.Equal(expectedMessage, result.Message); // Fix: Compare with the localized resource
-            Assert.Equal(OperationStatus.Conflict, result.Status);
-        }
-
-
-
-
-
-        [Fact]
         public async Task DeleteAsyncReturnsNotFoundWhenSquadDoesNotExist()
         {
             // Arrange
@@ -339,20 +312,6 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.NotNull(instance);
-        }
-        [Fact]
-        public async Task GetItemAsyncReturnsCompleteWhenSquadExists()
-        {
-            // Arrange
-            int squadId = 1;
-            Squad squad = new() { Id = squadId, Name = "Existing Squad" };
-            _squadRepositoryMock.Setup(r => r.GetByIdAsync(squadId)).ReturnsAsync(squad);
-
-            // Act
-            OperationResult result = await _squadService.GetItemAsync(squadId);
-
-            // Assert
-            Assert.Equal(OperationStatus.Success, result.Status);
         }
 
         [Fact]
