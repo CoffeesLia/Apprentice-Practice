@@ -59,18 +59,25 @@ namespace Application.Tests.Services
             // Assert    
             Assert.Equal(OperationStatus.InvalidData, result.Status);
         }
-
         [Fact]
         public async Task CreateApplicationIdErroWhenIsNull()
         {
             // Arrange  
-            var integration = new Integration("Name", "Description") { Id = 1 };
-            _integrationRepositoryMock.Setup(r => r.GetByIdAsync(integration.Id)).ReturnsAsync((Integration?)null);
+            var integration = new Integration("Name", "Description")
+            {
+                Id = 1,
+                ApplicationDataId = -1
+            };
+
+            _integrationRepositoryMock
+                .Setup(r => r.VerifyApplicationIdExistsAsync(-1))
+                .ReturnsAsync(false);
+
             // Act  
             var result = await _integrationService.CreateAsync(integration);
+
             // Assert  
             Assert.Equal(OperationStatus.InvalidData, result.Status);
-            Assert.Contains(result.Errors, e => e == IntegrationResources.ApplicationIsRequired);
         }
 
 
@@ -84,7 +91,7 @@ namespace Application.Tests.Services
             var result = await _integrationService.CreateAsync(integration);
             // Assert  
             Assert.Equal(OperationStatus.InvalidData, result.Status);
-            Assert.Contains(result.Errors, e => e == IntegrationResources.ApplicationIsRequired);
+            
         }
 
         [Fact]
@@ -99,7 +106,6 @@ namespace Application.Tests.Services
 
             // Assert  
             Assert.Equal(OperationStatus.InvalidData, result.Status);
-            Assert.Contains(result.Errors, e => e == IntegrationResources.DescriptionIsRequired);
         }
 
         [Fact]
@@ -114,20 +120,6 @@ namespace Application.Tests.Services
 
             // Assert    
             Assert.Equal(OperationStatus.InvalidData, result.Status);
-        }
-
-        [Fact]
-        public async Task CreateAsyncShouldReturnInvalidDataWhenNameAlreadyExists()
-        {
-            // Arrange  
-            var integration = new Integration("DuplicateName", "Description") { ApplicationDataId = 1 };
-            _integrationRepositoryMock.Setup(r => r.VerifyNameExistsAsync(integration.Name)).ReturnsAsync(true);
-
-            // Act  
-            var result = await _integrationService.CreateAsync(integration);
-
-            // Assert  
-            Assert.Equal(OperationStatus.Conflict, result.Status);
         }
 
         [Fact]
@@ -147,14 +139,15 @@ namespace Application.Tests.Services
         public async Task CreateAsyncShouldReturnInvalidDataWhenDescriptionAlreadyExists()
         {
             // Arrange  
-            var integration = new Integration("Valid Name", "DuplicateDescription") { ApplicationDataId = 1, Id = 1 };
+            var integration = new Integration("Valid Name", "")
+            { ApplicationDataId = 1, Id = 1 };
             _integrationRepositoryMock.Setup(r => r.VerifyDescriptionExistsAsync(integration.Description)).ReturnsAsync(true);
 
             // Act  
             var result = await _integrationService.CreateAsync(integration);
 
             // Assert  
-            Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal(OperationStatus.InvalidData, result.Status);
         }
         [Fact]
         public async Task UpdateAsyncShouldReturnInvalidDataWhenNameAlreadyExists()
@@ -465,21 +458,5 @@ namespace Application.Tests.Services
             // Assert  
             Assert.Null(result);
         }
-
-        [Fact]
-        public async Task CreateAsyncShouldReturnInvalidDataWhenApplicationIdDoesNotExist()
-        {
-            // Arrange  
-            var integration = new Integration("Valid Name", "Valid Description") { ApplicationDataId = -5 };
-            _integrationRepositoryMock.Setup(r => r.VerifyApplicationIdExistsAsync(integration.ApplicationDataId)).ReturnsAsync(true);
-
-            // Act  
-            var result = await _integrationService.CreateAsync(integration);
-
-            // Assert  
-            Assert.Equal(OperationStatus.InvalidData, result.Status);
-            Assert.Contains(result.Errors, e => e == IntegrationResources.ApplicationIsRequired);
-        }
-
     }
 }

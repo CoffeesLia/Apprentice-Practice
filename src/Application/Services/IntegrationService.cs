@@ -25,25 +25,21 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.InvalidData(validationResult);
             }
 
-            // Verificar se o nome da integração é único
             if (!await IsIntegrationNameUniqueAsync(item.Name).ConfigureAwait(false))
             {
                 return OperationResult.Conflict(IntegrationResources.AlreadyExists);
             }
 
-            // Remover duplicidade de verificações desnecessárias
             if (await Repository.VerifyDescriptionExistsAsync(item.Description).ConfigureAwait(false))
             {
                 return OperationResult.Conflict(Localizer[IntegrationResources.DescriptionIsRequired]);
             }
 
-            // Verificar se o ApplicationDataId existe
             if (!await Repository.VerifyApplicationIdExistsAsync(item.ApplicationDataId).ConfigureAwait(false))
             {
                 return OperationResult.Conflict(Localizer[IntegrationResources.ApplicationIsRequired]);
             }
 
-            // Criar a integração
             await Repository.CreateAsync(item).ConfigureAwait(false);
             return OperationResult.Complete(Localizer[IntegrationResources.MessageSucess]);
         }
