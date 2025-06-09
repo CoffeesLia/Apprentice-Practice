@@ -1,4 +1,5 @@
 using LinqKit;
+using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
@@ -9,7 +10,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
     {
         public async Task DeleteAsync(int id, bool saveChanges = true)
         {
-            Integration? integration = await GetByIdAsync(id).ConfigureAwait(false);
+            var integration = await GetByIdAsync(id).ConfigureAwait(false);
             if (integration != null)
             {
                 Context.Set<Integration>().Remove(integration);
@@ -19,6 +20,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 }
             }
         }
+
         public async Task<Integration?> GetByIdAsync(int id)
         {
             return await Context.Set<Integration>().FindAsync(id).ConfigureAwait(false);
@@ -28,19 +30,29 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         {
             ArgumentNullException.ThrowIfNull(filter);
 
-            ExpressionStarter<Integration> filters = PredicateBuilder.New<Integration>(true);
+            var filters = PredicateBuilder.New<Integration>(true);
 
             if (!string.IsNullOrWhiteSpace(filter.Name))
-            {
                 filters = filters.And(x => x.Name != null && x.Name.Contains(filter.Name));
-            }
+            if (filter.ApplicationDataId > 0)
+                filters = filters.And(x => x.ApplicationDataId == filter.ApplicationDataId);
 
-            if (filter.ApplicationData != null)
-            {
-                filters = filters.And(x => x.ApplicationData.Id == filter.ApplicationData.Id);
-            }
+            return await GetListAsync(filter: filters, page: filter.Page > 0 ? filter.Page : 1, sort: filter.Sort, sortDir: filter.SortDir).ConfigureAwait(false);
+        }
 
-            return await GetListAsync(filter: filters, page: filter.Page, sort: filter.Sort, sortDir: filter.SortDir).ConfigureAwait(false);
+        public async Task<bool> VerifyNameExistsAsync(string Name)
+        {
+            return await context.Set<Integration>().AnyAsync(repo => repo.Name == Name).ConfigureAwait(false);
+        }
+
+        public async Task<bool> VerifyDescriptionExistsAsync(string description)
+        {
+            return await Context.Set<Integration>().AnyAsync(repo => repo.Description == description).ConfigureAwait(false);
+        }
+
+        public async Task<bool> VerifyApplicationIdExistsAsync(int applicationId)
+        {
+            return await Context.Set<Integration>().AnyAsync(repo => repo.ApplicationDataId == applicationId).ConfigureAwait(false);
         }
     }
 }

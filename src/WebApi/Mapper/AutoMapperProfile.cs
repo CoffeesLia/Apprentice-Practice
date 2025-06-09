@@ -102,27 +102,27 @@ namespace Stellantis.ProjectName.WebApi.Mapper
              .ForMember(dest => dest.MemberIds, opt => opt.MapFrom(src => src.Members.Select(m => m.Id)))
              .ForMember(dest => dest.Application, opt => opt.MapFrom(src => src.Application));
 
-            CreateMap<IntegrationDto, Integration>()
-              .ForMember(x => x.Id, x => x.Ignore())
-              .ForMember(x => x.Name, opt => opt.MapFrom(src => src.Name))
-              .ForMember(x => x.Description, opt => opt.MapFrom(src => src.Description))
-              .ForMember(x => x.ApplicationData, opt => opt.MapFrom(src => src.ApplicationData));
-
             CreateMap<IntegrationFilterDto, IntegrationFilter>()
             .ForMember(x => x.Name, opt => opt.MapFrom(src => src.Name))
-            .ForMember(x => x.ApplicationData, opt => opt.MapFrom(src => src.ApplicationDataDto));
+            .ForMember(dest => dest.ApplicationDataId, opt => opt.MapFrom(src => src.ApplicationDataId));
 
-            CreateMap<PagedResult<Integration>, PagedResult<IntegrationVm>>()
-                .ForMember(dest => dest.Page, opt => opt.MapFrom(src => src.Page))
-                .ForMember(dest => dest.Result, opt => opt.MapFrom(src => src.Result))
-                .ForMember(dest => dest.PageSize, opt => opt.MapFrom(src => src.PageSize))
-                .ForMember(dest => dest.Total, opt => opt.MapFrom(src => src.Total));
+            CreateMap<IntegrationDto, Integration>()
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+            .ForMember(dest => dest.ApplicationDataId, opt => opt.MapFrom(src => src.ApplicationDataId))
+            .ForMember(dest => dest.ApplicationData, opt => opt.Ignore());
 
 
             CreateMap<Integration, IntegrationVm>()
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
-                .ForMember(dest => dest.ApplicationData, opt => opt.MapFrom(src => src.ApplicationData));
+               .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+               .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+               .ForMember(dest => dest.ApplicationDataId, opt => opt.MapFrom(src => src.ApplicationDataId));
+
+            CreateMap<PagedResult<Integration>, PagedResultVm<IntegrationVm>>()
+                .ForMember(dest => dest.Result, opt => opt.MapFrom(src => src.Result))
+                .ForMember(dest => dest.Total, opt => opt.MapFrom(src => src.Total))
+                .ForMember(dest => dest.Page, opt => opt.MapFrom(src => src.Page))
+                .ForMember(dest => dest.PageSize, opt => opt.MapFrom(src => src.PageSize));
 
             CreateMap<SquadDto, Squad>()
              .ForMember(x => x.Id, x => x.Ignore()) 
