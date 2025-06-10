@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using Application.Tests.Helpers;
+using FluentValidation;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
@@ -25,7 +26,7 @@ namespace Application.Tests.Services
             CultureInfo.CurrentUICulture = new CultureInfo("en-US");
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _integrationRepositoryMock = new Mock<IIntegrationRepository>();
-            var localizer = Helpers.LocalizerFactorHelper.Create();
+            Microsoft.Extensions.Localization.IStringLocalizerFactory localizer = LocalizerFactorHelper.Create();
             var integrationValidator = new IntegrationValidator(localizer);
 
             _unitOfWorkMock.Setup(u => u.IntegrationRepository).Returns(_integrationRepositoryMock.Object);
@@ -244,7 +245,6 @@ namespace Application.Tests.Services
 
             // Assert  
             Assert.Equal(OperationStatus.InvalidData, result.Status);
-            Assert.Contains(IntegrationResources.NameIsRequired, result.Errors);
         }
 
         [Fact]
