@@ -44,6 +44,8 @@ namespace Application.Tests.Services
 
             // Assert    
             Assert.Equal(OperationStatus.InvalidData, result.Status);
+            Assert.Contains(IntegrationResources.NameIsRequired, result.Errors);
+
         }
 
 
@@ -430,20 +432,6 @@ namespace Application.Tests.Services
             // Assert  
             Assert.Equal(OperationStatus.NotFound, result.Status);
             Assert.Equal(IntegrationResources.MessageNotFound, result.Message);
-        }
-
-        [Fact]
-        public async Task CreateAsyncShouldReturnInvalidDataWhenNameAndNameAreRequired()
-        {
-            // Arrange  
-            var integration = new Integration(string.Empty, null!);
-
-            // Act  
-            var result = await _integrationService.CreateAsync(integration);
-
-            // Assert  
-            Assert.Equal(OperationStatus.InvalidData, result.Status);
-            Assert.Contains(IntegrationResources.NameIsRequired, result.Errors);
         }
 
         [Fact]
