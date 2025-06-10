@@ -125,25 +125,19 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(dest => dest.ApplicationData, opt => opt.MapFrom(src => src.ApplicationData));
 
             CreateMap<SquadDto, Squad>()
-             .ForMember(x => x.Id, x => x.Ignore()) 
-             .ForMember(x => x.Description, opt => opt.MapFrom(src => src.Description)) 
-             .ForMember(x => x.Name, opt => opt.MapFrom(src => src.Name)) 
-            .ForMember(dest => dest.Members, opt => opt.Ignore())
-            .ForMember(dest => dest.Applications, opt => opt.Ignore());
-
-
+             .ForMember(x => x.Id, x => x.Ignore())
+             .ForMember(x => x.Description, opt => opt.MapFrom(src => src.Description))
+             .ForMember(x => x.Name, opt => opt.MapFrom(src => src.Name));
             CreateMap<PagedResult<Squad>, PagedResultVm<SquadVm>>();
-
             CreateMap<Squad, SquadVm>()
-                            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-                            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
-                            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
-
+               .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+               .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+               .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Cost, opt => opt.MapFrom(src => src.Cost));
             CreateMap<SquadFilterDto, SquadFilter>()
               .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
               .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
               .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
-
             CreateMap<GitRepoDto, GitRepo>()
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.Application, opt => opt.Ignore())

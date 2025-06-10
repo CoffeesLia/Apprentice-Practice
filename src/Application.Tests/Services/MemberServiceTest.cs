@@ -111,8 +111,6 @@ namespace Application.Tests.Services
 
         }
 
-
-
         [Fact]
         public async Task CreateAsyncWhenEmailAlreadyExists()
         {

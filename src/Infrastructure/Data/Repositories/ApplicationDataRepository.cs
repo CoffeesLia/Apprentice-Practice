@@ -1,4 +1,5 @@
-﻿using LinqKit;
+﻿using System.Linq.Expressions;
+using LinqKit;
 using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models.Filters;
@@ -83,5 +84,14 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         {
             return await Context.Set<Responsible>().AnyAsync(r => r.Id == responsibleId && r.AreaId == areaId).ConfigureAwait(false);
         }
+        public async Task<List<ApplicationData>> GetListAsync(Expression<Func<ApplicationData, bool>> filter)
+        {
+            return await Context.Set<ApplicationData>()
+                .Where(filter)
+                .ToListAsync()
+                .ConfigureAwait(false);
+        }
+
+
     }
 }

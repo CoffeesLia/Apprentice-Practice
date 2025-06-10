@@ -129,7 +129,4 @@
   <data name="UpdatedSuccessfully" xml:space="preserve">
     <value>Aggiornato con successo.</value>
   </data>
-  <data name="MemberUpdatedSuccessfully" xml:space="preserve">
-    <value>Membro aggiornato correttamente.</value>
-  </data>
 </root>

@@ -129,7 +129,4 @@
   <data name="UpdatedSuccessfully" xml:space="preserve">
     <value>更新成功 (Gēngxīn chénggōng).</value>
   </data>
-  <data name="MemberUpdatedSuccessfully" xml:space="preserve">
-    <value>成員更新成功。 (chéngyuán gēngxīn chénggōng。)</value>
-  </data>
 </root>

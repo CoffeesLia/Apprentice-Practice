@@ -141,4 +141,13 @@
   <data name="DescriptionValidateLength" xml:space="preserve">
     <value>The description must be between 3 and 255 characters.</value>
   </data>
+  <data name="ApplicationsNotFound  " xml:space="preserve">
+    <value>No applications found with the provided IDs.</value>
+  </data>
+  <data name="ApplicationIdsCannotBeEmpty" xml:space="preserve">
+    <value>The list of application IDs cannot be empty.</value>
+  </data>
+  <data name="ApplicationsLinkedSuccessfully" xml:space="preserve">
+    <value>Applications successfully linked to the Squad.</value>
+  </data>
 </root>

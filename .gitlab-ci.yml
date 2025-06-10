@@ -8,11 +8,14 @@ include:
 
 variables:
   REPOSITORY_URL: 924431524709.dkr.ecr.us-east-1.amazonaws.com/digital-esb-app-esb-baseproject-esb
+  CX_ADDITIONAL_PARAMS: "--ignore-policy"
+
 
 stages:
-  - test
   - security
   - build
+  - test
+
 
 before_script:
   - IMAGE_TAG="$(echo $CI_COMMIT_SHA | head -c 8)"

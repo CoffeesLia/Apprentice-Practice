@@ -11,7 +11,7 @@ namespace WebApi.Tests
 {
     public class ProgramTests
     {
-        private class CustomWebApplicationFactory : WebApplicationFactory<Program>
+        private sealed class CustomWebApplicationFactory : WebApplicationFactory<Program>
         {
             private readonly string _databaseType;
             public CustomWebApplicationFactory(string databaseType)
