@@ -45,11 +45,9 @@ namespace Application.Tests.Services
             // Assert    
             Assert.Equal(OperationStatus.InvalidData, result.Status);
             Assert.Contains(IntegrationResources.NameIsRequired, result.Errors);
-
         }
 
-
-        [Fact]
+            [Fact]
         public async Task CreateAsyncShouldReturnErrorWhenIntegrationDescriptionIsName()
         {
             // Arrange      
@@ -246,7 +244,7 @@ namespace Application.Tests.Services
 
             // Assert  
             Assert.Equal(OperationStatus.InvalidData, result.Status);
-
+            Assert.Contains(IntegrationResources.NameIsRequired, result.Errors);
         }
 
         [Fact]
