@@ -117,8 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ApplicationIsRequired" xml:space="preserve">
+    <value>Application Is Required</value>
+  </data>
   <data name="DeletedSuccessfully" xml:space="preserve">
     <value>Deleted Successfully</value>
+  </data>
+  <data name="DescriptionIsRequired" xml:space="preserve">
+    <value>Description Is Required</value>
   </data>
   <data name="GettingIntegrationList" xml:space="preserve">
     <value>Getting Integration List</value>
@@ -136,7 +142,7 @@
     <value>Successfully created</value>
   </data>
   <data name="NameIsRequired" xml:space="preserve">
-    <value>Name Is Required</value>
+    <value>Name Is Required.</value>
   </data>
   <data name="NameValidateLength" xml:space="preserve">
     <value>The name must be between {0} and {1} characters long.</value>
