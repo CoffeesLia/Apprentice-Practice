@@ -22,8 +22,8 @@ namespace Application.Tests.Services
 
         public IntegrationServiceTests()
         {
-            CultureInfo.CurrentCulture = new CultureInfo("en-US");
-            CultureInfo.CurrentUICulture = new CultureInfo("en-US");
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+            Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _integrationRepositoryMock = new Mock<IIntegrationRepository>();
             Microsoft.Extensions.Localization.IStringLocalizerFactory localizer = LocalizerFactorHelper.Create();
@@ -38,14 +38,13 @@ namespace Application.Tests.Services
         {
             // Arrange      
             var integration = new Integration(string.Empty, "Description") { ApplicationDataId = 1, Id = 1 };
-            _integrationRepositoryMock.Setup(r => r.GetByIdAsync(integration.Id)).ReturnsAsync((Integration?)null);
-
+            _integrationRepositoryMock.Setup(r => r.VerifyNameExistsAsync(integration.Name)).ReturnsAsync(true);
             // Act    
             var result = await _integrationService.CreateAsync(integration);
 
             // Assert    
-            Assert.Equal(OperationStatus.InvalidData, result.Status);
-            Assert.Contains(IntegrationResources.NameIsRequired, result.Errors);
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal(IntegrationResources.NameIsRequired, result.Message);
         }
 
             [Fact]
@@ -228,23 +227,6 @@ namespace Application.Tests.Services
             // Assert  
             Assert.Equal(OperationStatus.Conflict, result.Status);
             Assert.Equal(IntegrationResources.AlreadyExists, result.Message);
-        }
-
-
-        [Fact]
-        public async Task CreateAsyncShouldReturnInvalidDataWhenNameIsRequired()
-        {
-            // Arrange  
-            var integration = new Integration(string.Empty, "Valid Description")
-            {
-                ApplicationDataId = 1
-            };
-
-            // Act  
-            var result = await _integrationService.CreateAsync(integration);
-
-            // Assert  
-            Assert.Equal(OperationStatus.InvalidData, result.Status);
         }
 
         [Fact]

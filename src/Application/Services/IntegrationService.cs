@@ -19,6 +19,11 @@ namespace Stellantis.ProjectName.Application.Services
         {
             ArgumentNullException.ThrowIfNull(item);
 
+            if (await Repository.VerifyNameExistsAsync(item.Name).ConfigureAwait(false))
+            {
+                return OperationResult.Conflict(Localizer[IntegrationResources.NameIsRequired]);
+            }
+
             var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
             if (!validationResult.IsValid)
             {
