@@ -228,6 +228,22 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.Conflict, result.Status);
             Assert.Equal(IntegrationResources.AlreadyExists, result.Message);
         }
+        [Fact]
+        public async Task CreateAsyncShouldReturnErrorWhenDescriptionIsNull()
+        {
+            // Arrange  
+            var integration = new Integration("Name", null!) { ApplicationDataId = 1, Id = 1 };
+            _integrationRepositoryMock.Setup(r => r.GetByIdAsync(integration.Id)).ReturnsAsync((Integration?)null);
+
+            // Act  
+            var result = await _integrationService.CreateAsync(integration);
+
+            // Assert  
+            Assert.Equal(OperationStatus.InvalidData, result.Status);
+            Assert.Contains(result.Errors, e => e == IntegrationResources.DescriptionIsRequired);
+        }
+
+
 
         [Fact]
         public async Task DeleteAsyncShouldReturnSuccessWhenIntegrationExists()
