@@ -1,6 +1,5 @@
 ﻿using AutoFixture;
 using AutoMapper;
-using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Moq;
@@ -15,185 +14,183 @@ using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.Mapper;
 using Stellantis.ProjectName.WebApi.ViewModels;
 using WebApi.Tests.Helpers;
+using Xunit;
 
 namespace WebApi.Tests.Controllers
 {
     public class SquadControllerTests
     {
         private readonly Mock<ISquadService> _squadServiceMock;
+        private readonly IMapper _mapper;
         private readonly SquadController _controller;
         private readonly Fixture _fixture = new();
-        private readonly Mock<IMapper> _mapperMock;
+
         public SquadControllerTests()
         {
-            MapperConfiguration mapperConfiguration = new(x => { x.AddProfile<AutoMapperProfile>(); });
+            var mapperConfiguration = new MapperConfiguration(cfg => cfg.AddProfile<AutoMapperProfile>());
+            _mapper = mapperConfiguration.CreateMapper();
             _squadServiceMock = new Mock<ISquadService>();
-            IMapper mapper = mapperConfiguration.CreateMapper();
-            IStringLocalizerFactory localizerFactory = LocalizerFactorHelper.Create();
-            _controller = new SquadController(_squadServiceMock.Object, mapper, localizerFactory);
-            _mapperMock = new Mock<IMapper>();
+            var localizerFactory = LocalizerFactorHelper.Create();
+            _controller = new SquadController(_squadServiceMock.Object, _mapper, localizerFactory);
+
             _fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList()
                 .ForEach(b => _fixture.Behaviors.Remove(b));
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
         }
 
         [Fact]
-        public async Task GetAsyncShouldReturnOkWhenSquadExists()
+        public async Task CreateAsync_ReturnsBadRequest_WhenDtoIsNull()
         {
-            // Arrange
-            Squad squad = _fixture.Create<Squad>();
-            SquadVm squadVm = _fixture.Build<SquadVm>().With(s => s.Id, squad.Id).With(s => s.Name, squad.Name).Create();
-
-            _squadServiceMock.Setup(s => s.GetItemAsync(squad.Id)).ReturnsAsync(squad);
-
             // Act
-            ActionResult<SquadVm> result = await _controller.GetAsync(squad.Id);
+            var result = await _controller.CreateAsync(null!);
 
             // Assert
-            OkObjectResult okResult = Assert.IsType<OkObjectResult>(result.Result);
-            SquadVm returnedSquadVm = Assert.IsType<SquadVm>(okResult.Value);
-            Assert.Equal(squadVm.Id, returnedSquadVm.Id);
-            Assert.Equal(squadVm.Name, returnedSquadVm.Name);
+            var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("O objeto SquadDto não pode ser nulo.", badRequest.Value);
         }
 
         [Fact]
-        public async Task GetListAsyncShouldReturnPagedResult()
+        public async Task UpdateAsync_ReturnsBadRequest_WhenDtoIsNull()
+        {
+            // Act
+            var result = await _controller.UpdateAsync(1, null!);
+
+            // Assert
+            var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("O objeto SquadDto não pode ser nulo.", badRequest.Value);
+        }
+
+        [Fact]
+        public async Task GetAsync_ReturnsOk_WhenSquadExists()
         {
             // Arrange
-            SquadFilterDto filterDto = _fixture.Create<SquadFilterDto>();
-            List<Squad> squads = [.. _fixture.CreateMany<Squad>(2)];
-            List<SquadVm> squadVms = [.. squads.Select(s => new SquadVm { Id = s.Id, Name = s.Name, Description = s.Description })];
-            PagedResult<Squad> pagedResult = new()
+            var squad = _fixture.Create<Squad>();
+            var squadVm = _mapper.Map<SquadVm>(squad);
+            _squadServiceMock.Setup(s => s.GetItemAsync(squad.Id)).ReturnsAsync(squad);
+
+            // Act
+            var result = await _controller.GetAsync(squad.Id);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var returnedVm = Assert.IsType<SquadVm>(okResult.Value);
+            Assert.Equal(squadVm.Id, returnedVm.Id);
+            Assert.Equal(squadVm.Name, returnedVm.Name);
+        }
+
+        [Fact]
+        public async Task GetAsync_ReturnsNotFound_WhenSquadDoesNotExist()
+        {
+            // Arrange
+            int id = _fixture.Create<int>();
+            _squadServiceMock.Setup(s => s.GetItemAsync(id)).ReturnsAsync((Squad?)null);
+
+            // Act
+            var result = await _controller.GetAsync(id);
+
+            // Assert
+            Assert.IsType<NotFoundResult>(result.Result);
+        }
+
+        [Fact]
+        public async Task GetListAsync_ReturnsPagedResult()
+        {
+            // Arrange
+            var filterDto = _fixture.Create<SquadFilterDto>();
+            var squads = _fixture.CreateMany<Squad>(2).ToList();
+            var pagedResult = new PagedResult<Squad>
             {
                 Result = squads,
                 Page = 1,
                 PageSize = 10,
                 Total = squads.Count
             };
-
             _squadServiceMock.Setup(s => s.GetListAsync(It.IsAny<SquadFilter>())).ReturnsAsync(pagedResult);
-            _mapperMock.Setup(m => m.Map<IEnumerable<SquadVm>>(squads)).Returns(squadVms);
 
             // Act
-            IActionResult result = await _controller.GetListAsync(filterDto);
+            var result = await _controller.GetListAsync(filterDto);
 
             // Assert
-            OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
-            PagedResultVm<SquadVm> returnedPagedResultVm = Assert.IsType<PagedResultVm<SquadVm>>(okResult.Value);
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var returnedPagedResultVm = Assert.IsType<PagedResultVm<SquadVm>>(okResult.Value);
             Assert.Equal(pagedResult.Page, returnedPagedResultVm.Page);
             Assert.Equal(pagedResult.PageSize, returnedPagedResultVm.PageSize);
             Assert.Equal(pagedResult.Total, returnedPagedResultVm.Total);
             Assert.Equal(pagedResult.Result.Count(), returnedPagedResultVm.Result.Count());
         }
 
-
-
-
         [Fact]
-        public async Task DeleteAsyncShouldReturnNoContentWhenOperationSuccess()
+        public async Task DeleteAsync_ReturnsNoContent_WhenSuccess()
         {
             // Arrange
             int squadId = _fixture.Create<int>();
-            _squadServiceMock.Setup(s => s.DeleteAsync(squadId)).ReturnsAsync(OperationResult.Complete(SquadResources.SquadSuccessfullyDeleted));
+            _squadServiceMock.Setup(s => s.DeleteAsync(squadId))
+                .ReturnsAsync(OperationResult.Complete(SquadResources.SquadSuccessfullyDeleted));
 
             // Act
-            IActionResult result = await _controller.DeleteAsync(squadId);
+            var result = await _controller.DeleteAsync(squadId);
 
             // Assert
-            NoContentResult noContentResult = Assert.IsType<NoContentResult>(result);
-            Assert.Equal(204, noContentResult.StatusCode);
+            var noContent = Assert.IsType<NoContentResult>(result);
+            Assert.Equal(204, noContent.StatusCode);
         }
 
         [Theory]
         [InlineData(OperationStatus.Conflict, typeof(ConflictObjectResult))]
         [InlineData(OperationStatus.NotFound, typeof(NotFoundResult))]
-        public async Task DeleteAsyncShouldReturnProperStatusWhenOperationFails(
+        public async Task DeleteAsync_ReturnsProperStatus_WhenOperationFails(
             OperationStatus status,
             Type expectedResultType)
         {
             // Arrange
             int squadId = _fixture.Create<int>();
-
             OperationResult operationResult = status switch
             {
                 OperationStatus.Conflict => OperationResult.Conflict(SquadResources.SquadNameAlreadyExists),
                 OperationStatus.NotFound => OperationResult.NotFound(SquadResources.SquadNotFound),
                 _ => throw new NotImplementedException()
             };
-
             _squadServiceMock.Setup(s => s.DeleteAsync(squadId)).ReturnsAsync(operationResult);
 
             // Act
-            IActionResult result = await _controller.DeleteAsync(squadId);
+            var result = await _controller.DeleteAsync(squadId);
 
             // Assert
             Assert.IsType(expectedResultType, result);
         }
+
         [Fact]
-        public void SquadVmShouldHaveNameProperty()
+        public void SquadVm_ShouldSetAndGetProperties()
         {
             // Arrange
-            SquadVm squadVm = new()
+            var squadVm = new SquadVm
             {
-                // Act
-                Name = "Test Squad"
+                Id = 1,
+                Name = "Test Squad",
+                Description = "Test Description",
+                Cost = 100
             };
 
             // Assert
+            Assert.Equal(1, squadVm.Id);
             Assert.Equal("Test Squad", squadVm.Name);
+            Assert.Equal("Test Description", squadVm.Description);
+            Assert.Equal(100, squadVm.Cost);
         }
 
         [Fact]
-        public void SquadDtoShouldSetAndGetPropertiesCorrectly()
+        public void SquadDto_ShouldSetAndGetProperties()
         {
             // Arrange
-            SquadDto squadDto = new();
-            string expectedName = "Test Squad";
-            string expectedDescription = "Test Description";
-
-            // Act
-
-            squadDto.Name = expectedName;
-            squadDto.Description = expectedDescription;
+            var squadDto = new SquadDto
+            {
+                Name = "Test Squad",
+                Description = "Test Description"
+            };
 
             // Assert
-            Assert.Equal(expectedName, squadDto.Name);
-            Assert.Equal(expectedDescription, squadDto.Description);
+            Assert.Equal("Test Squad", squadDto.Name);
+            Assert.Equal("Test Description", squadDto.Description);
         }
-        [Fact]
-        public async Task CreateAsyncReturnsBadRequestWhenSquadDtoIsNull()
-        {
-            // Arrange
-            Mock<ISquadService> squadServiceMock = new();
-            Mock<IMapper> mapperMock = new();
-            Mock<IStringLocalizerFactory> localizerFactoryMock = new();
-            SquadController controller = new(squadServiceMock.Object, mapperMock.Object, localizerFactoryMock.Object);
-
-            // Act
-            IActionResult result = await controller.CreateAsync(null!);
-
-            // Assert
-            BadRequestObjectResult badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Equal("O objeto SquadDto não pode ser nulo.", badRequestResult.Value);
-        }
-
-        [Fact]
-        public async Task UpdateAsyncReturnsBadRequestWhenSquadDtoIsNull()
-        {
-            // Arrange
-            Mock<ISquadService> squadServiceMock = new();
-            Mock<IMapper> mapperMock = new();
-            Mock<IStringLocalizerFactory> localizerFactoryMock = new();
-            SquadController controller = new(squadServiceMock.Object, mapperMock.Object, localizerFactoryMock.Object);
-
-            // Act
-            IActionResult result = await controller.UpdateAsync(1, null!);
-
-            // Assert
-            BadRequestObjectResult badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Equal("O objeto SquadDto não pode ser nulo.", badRequestResult.Value);
-        }
-
-
     }
 }
