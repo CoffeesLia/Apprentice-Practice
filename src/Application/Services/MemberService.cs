@@ -66,10 +66,12 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.InvalidData(validationResult);
             }
 
-            if (!await Repository.IsEmailUnique(item.Email).ConfigureAwait(false))
+            if (!await Repository.IsEmailUnique(item.Email, item.Id).ConfigureAwait(false))
             {
                 return OperationResult.Conflict(Localizer[nameof(MemberResource.MemberEmailAlreadyExists)]);
             }
+
+            item.Email = existingMember.Email;
 
             return await base.UpdateAsync(item).ConfigureAwait(false);
         }

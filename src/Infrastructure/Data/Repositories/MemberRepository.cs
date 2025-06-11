@@ -2,6 +2,9 @@
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
+using System.Linq;
+using System.Threading.Tasks;
+
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
@@ -69,9 +72,16 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             };
         }
 
-        public async Task<bool> IsEmailUnique(string email)
+        public async Task<bool> IsEmailUnique(string email, int? excludeId = null)
         {
-            return await Context.Set<Member>().AllAsync(m => m.Email != email).ConfigureAwait(false);
+            var query = Context.Set<Member>().Where(m => m.Email == email);
+
+            if (excludeId.HasValue && excludeId.Value > 0) 
+            {
+                query = query.Where(m => m.Id != excludeId.Value);
+            }
+
+            return !await query.AnyAsync().ConfigureAwait(false);
         }
 
         public async Task DeleteAsync(int id, bool saveChanges = true)
