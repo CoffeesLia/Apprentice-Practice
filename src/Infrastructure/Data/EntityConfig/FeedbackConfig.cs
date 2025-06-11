@@ -9,7 +9,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
         public void Configure(EntityTypeBuilder<Feedback> builder)
         {
             ArgumentNullException.ThrowIfNull(builder);
-            builder.ToTable("Feedbacks");
+            builder.ToTable("Feedback");
             builder.HasKey(i => i.Id);
 
             builder.Property(i => i.Title)

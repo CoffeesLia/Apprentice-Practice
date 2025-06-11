@@ -10,16 +10,16 @@ namespace Stellantis.ProjectName.Application.Validators
         public FeedbackValidator(IStringLocalizerFactory localizerFactory)
         {
             ArgumentNullException.ThrowIfNull(localizerFactory);
-            var localizer = localizerFactory.Create(typeof(FeedbacksResources));
+            var localizer = localizerFactory.Create(typeof(FeedbackResources));
 
             RuleFor(i => i.Title)
-                .NotEmpty().WithMessage(localizer[nameof(FeedbacksResources.TitleRequired)]);
+                .NotEmpty().WithMessage(localizer[nameof(FeedbackResources.TitleRequired)]);
 
             RuleFor(i => i.Description)
-                .NotEmpty().WithMessage(localizer[nameof(FeedbacksResources.DescriptionRequired)]);
+                .NotEmpty().WithMessage(localizer[nameof(FeedbackResources.DescriptionRequired)]);
 
             RuleFor(i => i.ApplicationId)
-                .GreaterThan(0).WithMessage(localizer[nameof(FeedbacksResources.ApplicationRequired)]);
+                .GreaterThan(0).WithMessage(localizer[nameof(FeedbackResources.ApplicationRequired)]);
         }
     }
 }

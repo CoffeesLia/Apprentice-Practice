@@ -12,8 +12,8 @@ namespace Stellantis.ProjectName.Application.Services
     public class FeedbackService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<Feedback> validator)
             : EntityServiceBase<Feedback>(unitOfWork, localizerFactory, validator), IFeedbackService
     {
-        private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(FeedbacksResources));
-        protected override IFeedbackRepository Repository => UnitOfWork.FeedbacksRepository;
+        private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(FeedbackResources));
+        protected override IFeedbackRepository Repository => UnitOfWork.FeedbackRepository;
 
 
         public override async Task<OperationResult> CreateAsync(Feedback item)
@@ -28,7 +28,7 @@ namespace Stellantis.ProjectName.Application.Services
             }
 
             // Verificar se a aplicação existe
-            var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(item.ApplicationId).ConfigureAwait(false); ;
+            var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(item.ApplicationId).ConfigureAwait(false); 
             if (application == null)
             {
                 return OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
@@ -49,7 +49,7 @@ namespace Stellantis.ProjectName.Application.Services
 
                 if (invalidMemberIds.Count > 0)
                 {
-                    return OperationResult.Conflict(_localizer[nameof(FeedbacksResources.InvalidMembers)]);
+                    return OperationResult.Conflict(_localizer[nameof(FeedbackResources.InvalidMembers)]);
                 }
             }
 
@@ -81,7 +81,7 @@ namespace Stellantis.ProjectName.Application.Services
             }
 
             // Verifica se a aplicação existe
-            var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(item.ApplicationId).ConfigureAwait(false); ;
+            var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(item.ApplicationId).ConfigureAwait(false); 
             if (application == null)
             {
                 return OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
@@ -102,7 +102,7 @@ namespace Stellantis.ProjectName.Application.Services
 
                 if (invalidMemberIds.Count > 0)
                 {
-                    return OperationResult.Conflict(_localizer[nameof(FeedbacksResources.InvalidMembers)]);
+                    return OperationResult.Conflict(_localizer[nameof(FeedbackResources.InvalidMembers)]);
                 }
 
                 existingFeedbacks.Members.Clear();
@@ -140,16 +140,16 @@ namespace Stellantis.ProjectName.Application.Services
 
         public new async Task<OperationResult> GetItemAsync(int id)
         {
-            var Feedbacks = await Repository.GetByIdAsync(id).ConfigureAwait(false);
-            return Feedbacks != null
+            var Feedback = await Repository.GetByIdAsync(id).ConfigureAwait(false);
+            return Feedback != null
              ? OperationResult.Complete()
                 : OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
         }
 
-        public async Task<PagedResult<Feedback>> GetListAsync(FeedbackFilter FeedbacksFilter)
+        public async Task<PagedResult<Feedback>> GetListAsync(FeedbackFilter filter)
         {
-            FeedbacksFilter ??= new FeedbackFilter();
-            return await UnitOfWork.FeedbacksRepository.GetListAsync(FeedbacksFilter).ConfigureAwait(false);
+            filter ??= new FeedbackFilter();
+            return await UnitOfWork.FeedbackRepository.GetListAsync(filter).ConfigureAwait(false);
         }
 
         public override async Task<OperationResult> DeleteAsync(int id)

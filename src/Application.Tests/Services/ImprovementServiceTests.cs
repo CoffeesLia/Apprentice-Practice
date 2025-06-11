@@ -65,7 +65,7 @@
 //        public async Task CreateAsyncWhenValidationFails()
 //        {
 //            // Arrange
-//            Feedbacks feedbacks = _fixture.Build<Feedbacks>()
+//            Feedback feedbacks = _fixture.Build<Feedback>()
 //                .With(i => i.Title, string.Empty)
 //                .With(i => i.Description, string.Empty)
 //                .With(i => i.ApplicationId, 0) 
@@ -86,7 +86,7 @@
 //        public async Task CreateAsyncWhenApplicationNotFound()
 //        {
 //            // Arrange
-//            Feedbacks feedbacks = _fixture.Create<Feedbacks>();
+//            Feedback feedbacks = _fixture.Create<Feedback>();
 //            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(feedbacks.ApplicationId)).ReturnsAsync((ApplicationData?)null);
 
 //            // Act
@@ -100,7 +100,7 @@
 //        public async Task CreateAsyncWhenInvalidMembers()
 //        {
 //            // Arrange
-//            var feedbacks = _fixture.Create<Feedbacks>();
+//            var feedbacks = _fixture.Create<Feedback>();
 //            var app = _fixture.Build<ApplicationData>()
 //                .With(a => a.Id, feedbacks.ApplicationId)
 //                .With(a => a.Squads, [])
@@ -123,7 +123,7 @@
 //            var member = _fixture.Build<Member>().With(m => m.Id, 1).Create();
 //            var squad = _fixture.Build<Squad>().With(s => s.Members, [member]).Create();
 //            var app = _fixture.Build<ApplicationData>().With(a => a.Squads, [squad]).Create();
-//            var feedbacks = _fixture.Build<Feedbacks>()
+//            var feedbacks = _fixture.Build<Feedback>()
 //                .With(i => i.ApplicationId, app.Id)
 //                .With(i => i.Members, [member])
 //                .Create();
@@ -141,12 +141,12 @@
 //        public async Task GetListAsyncShouldReturnPagedResult()
 //        {
 //            // Arrange
-//            FeedbacksFilter filter = _fixture.Create<FeedbacksFilter>();
-//            PagedResult<Feedbacks> pagedResult = _fixture.Create<PagedResult<Feedbacks>>();
+//            filter filter = _fixture.Create<filter>();
+//            PagedResult<Feedback> pagedResult = _fixture.Create<PagedResult<Feedback>>();
 //            _feedbacksRepositoryMock.Setup(r => r.GetListAsync(filter)).ReturnsAsync(pagedResult);
 
 //            // Act
-//            PagedResult<Feedbacks> result = await _feedbacksService.GetListAsync(filter);
+//            PagedResult<Feedback> result = await _feedbacksService.GetListAsync(filter);
 
 //            // Assert
 //            Assert.Equal(pagedResult, result);
@@ -157,7 +157,7 @@
 //        {
 //            // Arrange
 //            int id = _fixture.Create<int>();
-//            _feedbacksRepositoryMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync((Feedbacks?)null);
+//            _feedbacksRepositoryMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync((Feedback?)null);
 
 //            // Act
 //            OperationResult result = await _feedbacksService.GetItemAsync(id);
@@ -170,7 +170,7 @@
 //        public async Task GetItemAsyncWhenItemExists()
 //        {
 //            // Arrange
-//            Feedbacks feedbacks = _fixture.Create<Feedbacks>();
+//            Feedback feedbacks = _fixture.Create<Feedback>();
 //            _feedbacksRepositoryMock.Setup(r => r.GetByIdAsync(feedbacks.Id)).ReturnsAsync(feedbacks);
 
 //            // Act
@@ -184,7 +184,7 @@
 //        public async Task UpdateAsyncWhenValidationFails()
 //        {
 //            // Arrange
-//            Feedbacks feedbacks = _fixture.Build<Feedbacks>()
+//            Feedback feedbacks = _fixture.Build<Feedback>()
 //                .With(i => i.Title, string.Empty)
 //                .With(i => i.Description, string.Empty)
 //                .Create();
@@ -200,8 +200,8 @@
 //        public async Task UpdateAsyncWhenFeedbacksNotFound()
 //        {
 //            // Arrange
-//            Feedbacks feedbacks = _fixture.Create<Feedbacks>();
-//            _feedbacksRepositoryMock.Setup(r => r.GetByIdAsync(feedbacks.Id)).ReturnsAsync((Feedbacks?)null);
+//            Feedback feedbacks = _fixture.Create<Feedback>();
+//            _feedbacksRepositoryMock.Setup(r => r.GetByIdAsync(feedbacks.Id)).ReturnsAsync((Feedback?)null);
 
 //            // Act
 //            OperationResult result = await _feedbacksService.UpdateAsync(feedbacks);
@@ -214,7 +214,7 @@
 //        public async Task UpdateAsyncWhenApplicationNotFound()
 //        {
 //            // Arrange
-//            Feedbacks feedbacks = _fixture.Create<Feedbacks>();
+//            Feedback feedbacks = _fixture.Create<Feedback>();
 //            _feedbacksRepositoryMock.Setup(r => r.GetByIdAsync(feedbacks.Id)).ReturnsAsync(feedbacks);
 //            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(feedbacks.ApplicationId)).ReturnsAsync((ApplicationData?)null);
 
@@ -229,7 +229,7 @@
 //        public async Task UpdateAsyncWhenInvalidMembers()
 //        {
 //            // Arrange
-//            var feedbacks = _fixture.Create<Feedbacks>();
+//            var feedbacks = _fixture.Create<Feedback>();
 //            _feedbacksRepositoryMock.Setup(r => r.GetByIdAsync(feedbacks.Id)).ReturnsAsync(feedbacks);
 
 //            var app = _fixture.Build<ApplicationData>()
@@ -253,7 +253,7 @@
 //            var member = _fixture.Build<Member>().With(m => m.Id, 1).Create();
 //            var squad = _fixture.Build<Squad>().With(s => s.Members, [member]).Create();
 //            var app = _fixture.Build<ApplicationData>().With(a => a.Squads, [squad]).Create();
-//            var feedbacks = _fixture.Build<Feedbacks>()
+//            var feedbacks = _fixture.Build<Feedback>()
 //                .With(i => i.ApplicationId, app.Id)
 //                .With(i => i.Members, [member])
 //                .Create();
@@ -276,14 +276,14 @@
 //            var squad = _fixture.Build<Squad>().With(s => s.Members, [member]).Create();
 //            var app = _fixture.Build<ApplicationData>().With(a => a.Squads, [squad]).Create();
 
-//            var feedbacks = _fixture.Build<Feedbacks>()
+//            var feedbacks = _fixture.Build<Feedback>()
 //                .With(i => i.FeedbackStatus, Status.Open)
 //                .With(i => i.ClosedAt, (DateTime?)null)
 //                .With(i => i.ApplicationId, app.Id)
 //                .With(i => i.Members, [member])
 //                .Create();
 
-//            var updatedFeedbacks = _fixture.Build<Feedbacks>()
+//            var updatedFeedbacks = _fixture.Build<Feedback>()
 //                .With(i => i.Id, feedbacks.Id)
 //                .With(i => i.FeedbackStatus, Status.Closed)
 //                .With(i => i.ClosedAt, (DateTime?)null)
@@ -310,14 +310,14 @@
 //            var squad = _fixture.Build<Squad>().With(s => s.Members, [member]).Create();
 //            var app = _fixture.Build<ApplicationData>().With(a => a.Squads, [squad]).Create();
 
-//            var feedbacks = _fixture.Build<Feedbacks>()
+//            var feedbacks = _fixture.Build<Feedback>()
 //                .With(i => i.FeedbackStatus, Status.Closed)
 //                .With(i => i.ClosedAt, DateTime.UtcNow)
 //                .With(i => i.ApplicationId, app.Id)
 //                .With(i => i.Members, [member])
 //                .Create();
 
-//            var updatedFeedbacks = _fixture.Build<Feedbacks>()
+//            var updatedFeedbacks = _fixture.Build<Feedback>()
 //                .With(i => i.Id, feedbacks.Id)
 //                .With(i => i.FeedbackStatus, Status.Reopened)
 //                .With(i => i.ClosedAt, feedbacks.ClosedAt)
@@ -341,7 +341,7 @@
 //        {
 //            // Arrange
 //            int id = _fixture.Create<int>();
-//            _feedbacksRepositoryMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync((Feedbacks?)null);
+//            _feedbacksRepositoryMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync((Feedback?)null);
 
 //            // Act
 //            OperationResult result = await _feedbacksService.DeleteAsync(id);
@@ -354,7 +354,7 @@
 //        public async Task DeleteAsyncWhenSuccessful()
 //        {
 //            // Arrange
-//            Feedbacks feedbacks = _fixture.Create<Feedbacks>();
+//            Feedback feedbacks = _fixture.Create<Feedback>();
 //            _feedbacksRepositoryMock.Setup(r => r.GetByIdAsync(feedbacks.Id)).ReturnsAsync(feedbacks);
 
 //            // Act
