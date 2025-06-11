@@ -145,23 +145,23 @@ namespace Stellantis.ProjectName.WebApi
 
                 // Membros
                 context.Members.AddRange(
-                    new Member { Name = "Matheus", Email = "matheus@stellantis.com", Role = "Developer", Cost = 1000 },
-                    new Member { Name = "Patricia", Email = "patricia@stellantis.com", Role = "Developer", Cost = 1000 },
-                    new Member { Name = "Jardel", Email = "jardel@stellantis.com", Role = "Developer", Cost = 1000 },
-                    new Member { Name = "Vitória", Email = "vitoria@stellantis.com", Role = "Developer", Cost = 1000 },
-                    new Member { Name = "Andryel", Email = "andryel@stellantis.com", Role = "Developer", Cost = 1000 },
-                    new Member { Name = "Ana", Email = "ana@stellantis.com", Role = "Developer", Cost = 1000 },
-                    new Member { Name = "Cecília", Email = "cecilia@stellantis.com", Role = "Developer", Cost = 1000 },
-                    new Member { Name = "João Silva", Email = "joao.silva@stellantis.com", Role = "Developer", Cost = 1200 },
-                    new Member { Name = "Maria Oliveira", Email = "maria.oliveira@stellantis.com", Role = "Tester", Cost = 1100 },
-                    new Member { Name = "Pedro Santos", Email = "pedro.santos@stellantis.com", Role = "Scrum Master", Cost = 1500 },
-                    new Member { Name = "Ana Costa", Email = "ana.costa@stellantis.com", Role = "Product Owner", Cost = 1600 },
-                    new Member { Name = "Lucas Almeida", Email = "lucas.almeida@stellantis.com", Role = "Developer", Cost = 1300 },
-                    new Member { Name = "Carla Mendes", Email = "carla.mendes@stellantis.com", Role = "UX Designer", Cost = 1400 },
-                    new Member { Name = "Rafael Lima", Email = "rafael.lima@stellantis.com", Role = "DevOps Engineer", Cost = 1500 },
-                    new Member { Name = "Fernanda Souza", Email = "fernanda.souza@stellantis.com", Role = "Tester", Cost = 1100 },
-                    new Member { Name = "Bruno Rocha", Email = "bruno.rocha@stellantis.com", Role = "Developer", Cost = 1200 },
-                    new Member { Name = "Juliana Martins", Email = "juliana.martins@stellantis.com", Role = "Business Analyst", Cost = 1400 }
+                    new Member { Name = "Matheus", Email = "matheus@stellantis.com", Role = "Developer", Cost = 1000, SquadId = 2 },
+                    new Member { Name = "Patricia", Email = "patricia@stellantis.com", Role = "Developer", Cost = 1000, SquadId = 1 },
+                    new Member { Name = "Jardel", Email = "jardel@stellantis.com", Role = "Developer", Cost = 1000, SquadId = 4 },
+                    new Member { Name = "Vitória", Email = "vitoria@stellantis.com", Role = "Developer", Cost = 1000, SquadId = 3 },
+                    new Member { Name = "Andryel", Email = "andryel@stellantis.com", Role = "Developer", Cost = 1000, SquadId = 5 },
+                    new Member { Name = "Ana", Email = "ana@stellantis.com", Role = "Developer", Cost = 1000, SquadId = 6 },
+                    new Member { Name = "Cecília", Email = "cecilia@stellantis.com", Role = "Developer", Cost = 1000, SquadId = 2 },
+                    new Member { Name = "João Silva", Email = "joao.silva@stellantis.com", Role = "Developer", Cost = 1200, SquadId = 1 },
+                    new Member { Name = "Maria Oliveira", Email = "maria.oliveira@stellantis.com", Role = "Tester", Cost = 1100, SquadId = 4 },
+                    new Member { Name = "Pedro Santos", Email = "pedro.santos@stellantis.com", Role = "Scrum Master", Cost = 1500, SquadId = 3 },
+                    new Member { Name = "Ana Costa", Email = "ana.costa@stellantis.com", Role = "Product Owner", Cost = 1600, SquadId = 5 },
+                    new Member { Name = "Lucas Almeida", Email = "lucas.almeida@stellantis.com", Role = "Developer", Cost = 1300, SquadId = 6 },
+                    new Member { Name = "Carla Mendes", Email = "carla.mendes@stellantis.com", Role = "UX Designer", Cost = 1400, SquadId = 2 },
+                    new Member { Name = "Rafael Lima", Email = "rafael.lima@stellantis.com", Role = "DevOps Engineer", Cost = 1500, SquadId = 1 },
+                    new Member { Name = "Fernanda Souza", Email = "fernanda.souza@stellantis.com", Role = "Tester", Cost = 1100, SquadId = 4 },
+                    new Member { Name = "Bruno Rocha", Email = "bruno.rocha@stellantis.com", Role = "Developer", Cost = 1200, SquadId = 3 },
+                    new Member { Name = "Juliana Martins", Email = "juliana.martins@stellantis.com", Role = "Business Analyst", Cost = 1400, SquadId = 5 }
                 );
 
                 // Incidents

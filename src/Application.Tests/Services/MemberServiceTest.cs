@@ -122,7 +122,7 @@ namespace Application.Tests.Services
             Mock<IValidator<Member>> validatorMock = new();
             ValidationResult validationResult = new();
             validatorMock.Setup(v => v.ValidateAsync(member, default)).ReturnsAsync(validationResult);
-            _memberRepositoryMock.Setup(r => r.IsEmailUnique(member.Email)).ReturnsAsync(false);
+            _memberRepositoryMock.Setup(r => r.IsEmailUnique(member.Email, null)).ReturnsAsync(false);
 
             // Act
             OperationResult result = await _memberService.CreateAsync(member);
@@ -144,7 +144,7 @@ namespace Application.Tests.Services
             Mock<IValidator<Member>> validatorMock = new();
             ValidationResult validationResult = new();
             validatorMock.Setup(v => v.ValidateAsync(member, default)).ReturnsAsync(validationResult);
-            _memberRepositoryMock.Setup(r => r.IsEmailUnique(member.Email)).ReturnsAsync(true);
+            _memberRepositoryMock.Setup(r => r.IsEmailUnique(member.Email, null)).ReturnsAsync(true);
 
             // Act
             OperationResult result = await _memberService.CreateAsync(member);
@@ -255,7 +255,7 @@ namespace Application.Tests.Services
             Mock<IValidator<Member>> validatorMock = new();
             ValidationResult validationResult = new(); // Certifique-se de que o resultado da validação seja válido
             validatorMock.Setup(v => v.ValidateAsync(member, default)).ReturnsAsync(validationResult);
-            _memberRepositoryMock.Setup(r => r.IsEmailUnique(member.Email)).ReturnsAsync(false);
+            _memberRepositoryMock.Setup(r => r.IsEmailUnique(member.Email, null)).ReturnsAsync(false);
             _memberRepositoryMock.Setup(r => r.GetByIdAsync(member.Id)).ReturnsAsync(member);
 
             // Act
@@ -276,7 +276,7 @@ namespace Application.Tests.Services
             Mock<IValidator<Member>> validatorMock = new();
             ValidationResult validationResult = new();
             validatorMock.Setup(v => v.ValidateAsync(member, default)).ReturnsAsync(validationResult);
-            _memberRepositoryMock.Setup(r => r.IsEmailUnique(member.Email)).ReturnsAsync(true);
+            _memberRepositoryMock.Setup(r => r.IsEmailUnique(member.Email, null)).ReturnsAsync(false);
             _memberRepositoryMock.Setup(r => r.GetByIdAsync(member.Id)).ReturnsAsync(member);
 
             // Act
