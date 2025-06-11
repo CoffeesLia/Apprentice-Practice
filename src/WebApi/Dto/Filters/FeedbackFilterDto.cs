@@ -1,12 +1,13 @@
 ﻿using Stellantis.ProjectName.Domain.Entities;
 
-namespace Stellantis.ProjectName.Application.Models.Filters
+namespace Stellantis.ProjectName.WebApi.Dto.Filters
 {
-    public class FeedbacksFilter : Filter
+    public class FeedbackFilterDto : FilterDto
     {
         public int Id { get; set; }
         public string? Title { get; set; }
         public int ApplicationId { get; set; }
-        public FeedbacksStatus? StatusFeedbacks { get; set; }
+        public Status? FeedbackStatus { get; set; }
     }
 }
+

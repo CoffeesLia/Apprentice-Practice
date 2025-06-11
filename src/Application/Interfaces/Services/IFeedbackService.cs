@@ -2,7 +2,7 @@
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 
-public interface IFeedbacksService : IEntityServiceBase<Feedbacks>
+public interface IFeedbackService : IEntityServiceBase<Feedback>
 {
-    Task<PagedResult<Feedbacks>> GetListAsync(FeedbacksFilter filter);
+    Task<PagedResult<Feedback>> GetListAsync(FeedbackFilter filter);
 }

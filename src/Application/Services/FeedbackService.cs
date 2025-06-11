@@ -9,14 +9,14 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Services
 {
-    public class FeedbackstService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<Feedbacks> validator)
-            : EntityServiceBase<Feedbacks>(unitOfWork, localizerFactory, validator), IFeedbacksService
+    public class FeedbackService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<Feedback> validator)
+            : EntityServiceBase<Feedback>(unitOfWork, localizerFactory, validator), IFeedbackService
     {
         private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(FeedbacksResources));
-        protected override IFeedbacksRepository Repository => UnitOfWork.FeedbacksRepository;
+        protected override IFeedbackRepository Repository => UnitOfWork.FeedbacksRepository;
 
 
-        public override async Task<OperationResult> CreateAsync(Feedbacks item)
+        public override async Task<OperationResult> CreateAsync(Feedback item)
         {
             ArgumentNullException.ThrowIfNull(item);
 
@@ -54,15 +54,15 @@ namespace Stellantis.ProjectName.Application.Services
             }
 
             item.CreatedAt = DateTime.UtcNow;
-            if (item.StatusFeedbacks == default)
+            if (item.FeedbackStatus == default)
             {
-                item.StatusFeedbacks = FeedbacksStatus.Open;
+                item.FeedbackStatus = Status.Open;
             }
 
             return await base.CreateAsync(item).ConfigureAwait(false);
         }
 
-        public override async Task<OperationResult> UpdateAsync(Feedbacks item)
+        public override async Task<OperationResult> UpdateAsync(Feedback item)
         {
             ArgumentNullException.ThrowIfNull(item);
 
@@ -119,16 +119,16 @@ namespace Stellantis.ProjectName.Application.Services
             existingFeedbacks.ApplicationId = item.ApplicationId;
 
             // Controle de status e datas
-            if (item.StatusFeedbacks == FeedbacksStatus.Closed && existingFeedbacks.ClosedAt == null)
+            if (item.FeedbackStatus == Status.Closed && existingFeedbacks.ClosedAt == null)
             {
                 existingFeedbacks.ClosedAt = DateTime.UtcNow;
             }
-            else if (item.StatusFeedbacks == FeedbacksStatus.Reopened)
+            else if (item.FeedbackStatus == Status.Reopened)
             {
                 existingFeedbacks.ClosedAt = null;
             }
 
-            existingFeedbacks.StatusFeedbacks = item.StatusFeedbacks;
+            existingFeedbacks.FeedbackStatus = item.FeedbackStatus;
 
             return await base.UpdateAsync(existingFeedbacks).ConfigureAwait(false);
         }
@@ -146,9 +146,9 @@ namespace Stellantis.ProjectName.Application.Services
                 : OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
         }
 
-        public async Task<PagedResult<Feedbacks>> GetListAsync(FeedbacksFilter FeedbacksFilter)
+        public async Task<PagedResult<Feedback>> GetListAsync(FeedbackFilter FeedbacksFilter)
         {
-            FeedbacksFilter ??= new FeedbacksFilter();
+            FeedbacksFilter ??= new FeedbackFilter();
             return await UnitOfWork.FeedbacksRepository.GetListAsync(FeedbacksFilter).ConfigureAwait(false);
         }
 

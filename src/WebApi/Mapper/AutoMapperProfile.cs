@@ -70,19 +70,19 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
             CreateMap<PagedResult<ServiceData>, PagedResultVm<ServiceDataVm>>();
 
-            CreateMap<FeedbacksDto, Feedbacks>()
- .ForMember(dest => dest.Id, opt => opt.Ignore())
- .ForMember(dest => dest.Members, opt => opt.Ignore())
- .ForMember(dest => dest.Application, opt => opt.Ignore())
- .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
- .ForMember(dest => dest.ClosedAt, opt => opt.Ignore())
- .ForMember(dest => dest.StatusFeedbacks, opt => opt.MapFrom(src => src.StatusFeedbacks));
+           CreateMap<FeedbackDto, Feedback>()
+             .ForMember(dest => dest.Id, opt => opt.Ignore())
+             .ForMember(dest => dest.Members, opt => opt.Ignore())
+             .ForMember(dest => dest.Application, opt => opt.Ignore())
+             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+             .ForMember(dest => dest.ClosedAt, opt => opt.Ignore())
+             .ForMember(dest => dest.FeedbackStatus, opt => opt.MapFrom(src => src.FeedbackStatus));
 
-            CreateMap<FeedbacksFilterDto, FeedbacksFilter>()
+            CreateMap<FeedbackFilterDto, FeedbackFilter>()
              .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
 
-            CreateMap<Feedbacks, FeedbacksVm>()
-             .ForMember(dest => dest.StatusFeedbacks, opt => opt.MapFrom(src => src.StatusFeedbacks.ToString()))
+            CreateMap<Feedback, FeedbacksVm>()
+             .ForMember(dest => dest.FeedbackStatus, opt => opt.MapFrom(src => src.FeedbackStatus.ToString()))
              .ForMember(dest => dest.MemberIds, opt => opt.MapFrom(src => src.Members.Select(m => m.Id)))
              .ForMember(dest => dest.Application, opt => opt.MapFrom(src => src.Application));
 

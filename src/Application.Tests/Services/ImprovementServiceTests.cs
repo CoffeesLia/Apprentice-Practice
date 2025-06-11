@@ -277,7 +277,7 @@
 //            var app = _fixture.Build<ApplicationData>().With(a => a.Squads, [squad]).Create();
 
 //            var feedbacks = _fixture.Build<Feedbacks>()
-//                .With(i => i.StatusFeedbacks, FeedbacksStatus.Open)
+//                .With(i => i.FeedbackStatus, Status.Open)
 //                .With(i => i.ClosedAt, (DateTime?)null)
 //                .With(i => i.ApplicationId, app.Id)
 //                .With(i => i.Members, [member])
@@ -285,7 +285,7 @@
 
 //            var updatedFeedbacks = _fixture.Build<Feedbacks>()
 //                .With(i => i.Id, feedbacks.Id)
-//                .With(i => i.StatusFeedbacks, FeedbacksStatus.Closed)
+//                .With(i => i.FeedbackStatus, Status.Closed)
 //                .With(i => i.ClosedAt, (DateTime?)null)
 //                .With(i => i.ApplicationId, app.Id)
 //                .With(i => i.Members, [member])
@@ -311,7 +311,7 @@
 //            var app = _fixture.Build<ApplicationData>().With(a => a.Squads, [squad]).Create();
 
 //            var feedbacks = _fixture.Build<Feedbacks>()
-//                .With(i => i.StatusFeedbacks, FeedbacksStatus.Closed)
+//                .With(i => i.FeedbackStatus, Status.Closed)
 //                .With(i => i.ClosedAt, DateTime.UtcNow)
 //                .With(i => i.ApplicationId, app.Id)
 //                .With(i => i.Members, [member])
@@ -319,7 +319,7 @@
 
 //            var updatedFeedbacks = _fixture.Build<Feedbacks>()
 //                .With(i => i.Id, feedbacks.Id)
-//                .With(i => i.StatusFeedbacks, FeedbacksStatus.Reopened)
+//                .With(i => i.FeedbackStatus, Status.Reopened)
 //                .With(i => i.ClosedAt, feedbacks.ClosedAt)
 //                .With(i => i.ApplicationId, app.Id)
 //                .With(i => i.Members, [member])

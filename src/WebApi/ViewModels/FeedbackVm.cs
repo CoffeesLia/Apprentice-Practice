@@ -7,7 +7,7 @@
         public string Description { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
         public DateTime? ClosedAt { get; set; }
-        public string StatusFeedbacks { get; set; } = string.Empty;
+        public string FeedbackStatus { get; set; } = string.Empty;
         public int ApplicationId { get; set; }
         public required ApplicationVm Application { get; set; }
         public IEnumerable<int> MemberIds { get; set; } = [];

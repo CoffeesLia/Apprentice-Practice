@@ -5,9 +5,9 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Validators
 {
-    public class FeedbacksValidator : AbstractValidator<Feedbacks>
+    public class FeedbackValidator : AbstractValidator<Feedback>
     {
-        public FeedbacksValidator(IStringLocalizerFactory localizerFactory)
+        public FeedbackValidator(IStringLocalizerFactory localizerFactory)
         {
             ArgumentNullException.ThrowIfNull(localizerFactory);
             var localizer = localizerFactory.Create(typeof(FeedbacksResources));

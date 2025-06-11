@@ -14,15 +14,15 @@ using WebApi.Tests.Helpers;
 
 namespace WebApi.Tests.Controllers
 {
-    public class FeedbacksControllerTest
+    public class FeedbackControllerTest
     {
-        private readonly Mock<IFeedbacksService> _serviceMock;
-        private readonly FeedbacksController _controller;
+        private readonly Mock<IFeedbackService> _serviceMock;
+        private readonly FeedbackController _controller;
         private readonly Fixture _fixture;
 
-        public FeedbacksControllerTest()
+        public FeedbackControllerTest()
         {
-            _serviceMock = new Mock<IFeedbacksService>();
+            _serviceMock = new Mock<IFeedbackService>();
             MapperConfiguration mapperConfiguration = new(x => { x.AddProfile<AutoMapperProfile>(); });
             IMapper mapper = mapperConfiguration.CreateMapper();
             var localizerFactory = LocalizerFactorHelper.Create();
@@ -33,20 +33,20 @@ namespace WebApi.Tests.Controllers
                 .ToList()
                 .ForEach(b => _fixture.Behaviors.Remove(b));
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
-            _fixture.Customize<FeedbacksDto>(c => c
-                .With(dto => dto.StatusFeedbacks,
+            _fixture.Customize<FeedbackDto>(c => c
+                .With(dto => dto.FeedbackStatus,
                       () => _fixture.Create<IncidentStatus>().ToString()));
 
 
-            _controller = new FeedbacksController(_serviceMock.Object, mapper, localizerFactory);
+            _controller = new FeedbackController(_serviceMock.Object, mapper, localizerFactory);
         }
 
         [Fact]
         public async Task CreateAsyncShouldReturnCreatedAtActionResult()
         {
             // Arrange
-            FeedbacksDto feedbacksDto = _fixture.Create<FeedbacksDto>();
-            _serviceMock.Setup(s => s.CreateAsync(It.IsAny<Feedbacks>())).ReturnsAsync(OperationResult.Complete());
+            FeedbackDto feedbacksDto = _fixture.Create<FeedbackDto>();
+            _serviceMock.Setup(s => s.CreateAsync(It.IsAny<Feedback>())).ReturnsAsync(OperationResult.Complete());
 
             // Act
             IActionResult result = await _controller.CreateAsync(feedbacksDto);
@@ -59,7 +59,7 @@ namespace WebApi.Tests.Controllers
         public async Task GetAsyncShouldReturnIncidentVm()
         {
             // Arrange
-            Feedbacks feedbacks = _fixture.Create<Feedbacks>();
+            Feedback feedbacks = _fixture.Create<Feedback>();
             _serviceMock.Setup(s => s.GetItemAsync(It.IsAny<int>())).ReturnsAsync(feedbacks);
 
             // Act
@@ -74,9 +74,9 @@ namespace WebApi.Tests.Controllers
         public async Task GetListAsyncShouldReturnPagedResultVm()
         {
             // Arrange
-            FeedbacksFilterDto filterDto = _fixture.Create<FeedbacksFilterDto>();
-            PagedResult<Feedbacks> pagedResult = _fixture.Create<PagedResult<Feedbacks>>();
-            _serviceMock.Setup(s => s.GetListAsync(It.IsAny<FeedbacksFilter>())).ReturnsAsync(pagedResult);
+            FeedbackFilterDto filterDto = _fixture.Create<FeedbackFilterDto>();
+            PagedResult<Feedback> pagedResult = _fixture.Create<PagedResult<Feedback>>();
+            _serviceMock.Setup(s => s.GetListAsync(It.IsAny<FeedbackFilter>())).ReturnsAsync(pagedResult);
 
             // Act
             IActionResult result = await _controller.GetListAsync(filterDto);
@@ -91,8 +91,8 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             int feedbacksId = _fixture.Create<int>();
-            FeedbacksDto incidentDto = _fixture.Create<FeedbacksDto>();
-            _serviceMock.Setup(s => s.UpdateAsync(It.IsAny<Feedbacks>())).ReturnsAsync(OperationResult.Complete());
+            FeedbackDto incidentDto = _fixture.Create<FeedbackDto>();
+            _serviceMock.Setup(s => s.UpdateAsync(It.IsAny<Feedback>())).ReturnsAsync(OperationResult.Complete());
 
             // Act
             IActionResult result = await _controller.UpdateAsync(feedbacksId, incidentDto);

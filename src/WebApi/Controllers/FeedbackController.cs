@@ -11,11 +11,11 @@ namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [ApiController]
     [Route("api/feedbacks")]
-    public class FeedbacksController(IFeedbacksService service, IMapper mapper, IStringLocalizerFactory localizerFactory)
-        : EntityControllerBase<Feedbacks, FeedbacksDto>(service, mapper, localizerFactory)
+    public class FeedbackController(IFeedbackService service, IMapper mapper, IStringLocalizerFactory localizerFactory)
+        : EntityControllerBase<Feedback, FeedbackDto>(service, mapper, localizerFactory)
     {
         [HttpPost]
-        public async Task<IActionResult> CreateAsync([FromBody] FeedbacksDto itemDto)
+        public async Task<IActionResult> CreateAsync([FromBody] FeedbackDto itemDto)
         {
             return await CreateBaseAsync<FeedbacksVm>(itemDto).ConfigureAwait(false);
         }
@@ -27,16 +27,16 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetListAsync([FromQuery] FeedbacksFilterDto filterDto)
+        public async Task<IActionResult> GetListAsync([FromQuery] FeedbackFilterDto filterDto)
         {
-            FeedbacksFilter filter = Mapper.Map<FeedbacksFilter>(filterDto);
-            PagedResult<Feedbacks> pagedResult = await ((IFeedbacksService)Service).GetListAsync(filter!).ConfigureAwait(false);
+            FeedbackFilter filter = Mapper.Map<FeedbackFilter>(filterDto);
+            PagedResult<Feedback> pagedResult = await ((IFeedbackService)Service).GetListAsync(filter!).ConfigureAwait(false);
             PagedResultVm<FeedbacksVm> result = Mapper.Map<PagedResultVm<FeedbacksVm>>(pagedResult);
             return Ok(result);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAsync(int id, [FromBody] FeedbacksDto itemDto)
+        public async Task<IActionResult> UpdateAsync(int id, [FromBody] FeedbackDto itemDto)
         {
             return await base.UpdateBaseAsync<FeedbacksVm>(id, itemDto).ConfigureAwait(false);
         }
