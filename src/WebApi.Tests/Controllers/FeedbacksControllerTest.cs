@@ -14,15 +14,15 @@ using WebApi.Tests.Helpers;
 
 namespace WebApi.Tests.Controllers
 {
-    public class ImprovementControllerTest
+    public class FeedbacksControllerTest
     {
-        private readonly Mock<IImprovementService> _serviceMock;
-        private readonly ImprovementsController _controller;
+        private readonly Mock<IFeedbacksService> _serviceMock;
+        private readonly FeedbacksController _controller;
         private readonly Fixture _fixture;
 
-        public ImprovementControllerTest()
+        public FeedbacksControllerTest()
         {
-            _serviceMock = new Mock<IImprovementService>();
+            _serviceMock = new Mock<IFeedbacksService>();
             MapperConfiguration mapperConfiguration = new(x => { x.AddProfile<AutoMapperProfile>(); });
             IMapper mapper = mapperConfiguration.CreateMapper();
             var localizerFactory = LocalizerFactorHelper.Create();
@@ -33,23 +33,23 @@ namespace WebApi.Tests.Controllers
                 .ToList()
                 .ForEach(b => _fixture.Behaviors.Remove(b));
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
-            _fixture.Customize<ImprovementDto>(c => c
-                .With(dto => dto.StatusImprovement,
+            _fixture.Customize<FeedbacksDto>(c => c
+                .With(dto => dto.StatusFeedbacks,
                       () => _fixture.Create<IncidentStatus>().ToString()));
 
 
-            _controller = new ImprovementsController(_serviceMock.Object, mapper, localizerFactory);
+            _controller = new FeedbacksController(_serviceMock.Object, mapper, localizerFactory);
         }
 
         [Fact]
         public async Task CreateAsyncShouldReturnCreatedAtActionResult()
         {
             // Arrange
-            ImprovementDto improvementDto = _fixture.Create<ImprovementDto>();
-            _serviceMock.Setup(s => s.CreateAsync(It.IsAny<Improvement>())).ReturnsAsync(OperationResult.Complete());
+            FeedbacksDto feedbacksDto = _fixture.Create<FeedbacksDto>();
+            _serviceMock.Setup(s => s.CreateAsync(It.IsAny<Feedbacks>())).ReturnsAsync(OperationResult.Complete());
 
             // Act
-            IActionResult result = await _controller.CreateAsync(improvementDto);
+            IActionResult result = await _controller.CreateAsync(feedbacksDto);
 
             // Assert
             Assert.IsType<CreatedAtActionResult>(result);
@@ -59,43 +59,43 @@ namespace WebApi.Tests.Controllers
         public async Task GetAsyncShouldReturnIncidentVm()
         {
             // Arrange
-            Improvement improvement = _fixture.Create<Improvement>();
-            _serviceMock.Setup(s => s.GetItemAsync(It.IsAny<int>())).ReturnsAsync(improvement);
+            Feedbacks feedbacks = _fixture.Create<Feedbacks>();
+            _serviceMock.Setup(s => s.GetItemAsync(It.IsAny<int>())).ReturnsAsync(feedbacks);
 
             // Act
-            ActionResult<ImprovementVm> result = await _controller.GetAsync(improvement.Id);
+            ActionResult<FeedbacksVm> result = await _controller.GetAsync(feedbacks.Id);
 
             // Assert
             OkObjectResult okResult = Assert.IsType<OkObjectResult>(result.Result);
-            Assert.IsType<ImprovementVm>(okResult.Value);
+            Assert.IsType<FeedbacksVm>(okResult.Value);
         }
 
         [Fact]
         public async Task GetListAsyncShouldReturnPagedResultVm()
         {
             // Arrange
-            ImprovementFilterDto filterDto = _fixture.Create<ImprovementFilterDto>();
-            PagedResult<Improvement> pagedResult = _fixture.Create<PagedResult<Improvement>>();
-            _serviceMock.Setup(s => s.GetListAsync(It.IsAny<ImprovementFilter>())).ReturnsAsync(pagedResult);
+            FeedbacksFilterDto filterDto = _fixture.Create<FeedbacksFilterDto>();
+            PagedResult<Feedbacks> pagedResult = _fixture.Create<PagedResult<Feedbacks>>();
+            _serviceMock.Setup(s => s.GetListAsync(It.IsAny<FeedbacksFilter>())).ReturnsAsync(pagedResult);
 
             // Act
             IActionResult result = await _controller.GetListAsync(filterDto);
 
             // Assert
             OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.IsType<PagedResultVm<ImprovementVm>>(okResult.Value);
+            Assert.IsType<PagedResultVm<FeedbacksVm>>(okResult.Value);
         }
 
         [Fact]
         public async Task UpdateAsyncShouldReturnOkResult()
         {
             // Arrange
-            int improvementId = _fixture.Create<int>();
-            ImprovementDto incidentDto = _fixture.Create<ImprovementDto>();
-            _serviceMock.Setup(s => s.UpdateAsync(It.IsAny<Improvement>())).ReturnsAsync(OperationResult.Complete());
+            int feedbacksId = _fixture.Create<int>();
+            FeedbacksDto incidentDto = _fixture.Create<FeedbacksDto>();
+            _serviceMock.Setup(s => s.UpdateAsync(It.IsAny<Feedbacks>())).ReturnsAsync(OperationResult.Complete());
 
             // Act
-            IActionResult result = await _controller.UpdateAsync(improvementId, incidentDto);
+            IActionResult result = await _controller.UpdateAsync(feedbacksId, incidentDto);
 
             // Assert
             Assert.IsType<OkObjectResult>(result);
