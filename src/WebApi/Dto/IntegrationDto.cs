@@ -4,8 +4,10 @@ namespace Stellantis.ProjectName.WebApi.Dto
 {
     public class IntegrationDto
     {
-        public required string Name { get; set; }
-        public string? Description { get; set; } = null!;
-        public ApplicationData ApplicationData { get; set; } = null!;
+        public int Id { get; set; }
+        public string Name { get; set; } = null!;
+        public string Description { get; set; } = null!;
+        public int ApplicationDataId { get; set; }
+
     }
 }

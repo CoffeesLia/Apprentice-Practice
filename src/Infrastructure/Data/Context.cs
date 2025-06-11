@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Infrastructure.Data
@@ -13,9 +13,10 @@ namespace Stellantis.ProjectName.Infrastructure.Data
         public DbSet<ApplicationData> Applications { get; set; }
         public DbSet<GitRepo> Repositories { get; set; }
         public DbSet<ServiceData> Services { get; set; }
+        public DbSet<Manager> Managers { get; set; }
+
         public DbSet<Incident> Incidents { get; set; }
         public DbSet<DocumentData> Documents { get; set; }
-        public DbSet<Manager> Managers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

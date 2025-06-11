@@ -3,5 +3,5 @@
 public class IntegrationFilterDto : FilterDto
 {
     public string? Name { get; set; }
-    public ApplicationDataDto ApplicationDataDto { get; set; } = null!;
+    public int ApplicationDataId { get; set; }
 }
