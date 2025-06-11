@@ -1,10 +1,10 @@
-﻿using AutoFixture;
+﻿using System.Runtime.InteropServices;
+using AutoFixture;
 using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
-using System.Runtime.InteropServices;
 
 namespace Infrastructure.Tests.Data.Repositories
 {
@@ -206,7 +206,7 @@ namespace Infrastructure.Tests.Data.Repositories
             int memberId = _fixture.Create<int>();
             var member = _fixture.Build<Member>().With(m => m.Id, memberId).Create();
             var incident = _fixture.Build<Incident>()
-                .With(i => i.Members, new List<Member> { member })
+                .With(i => i.Members, [member])
                 .Create();
 
             await _context.Set<Incident>().AddAsync(incident);
@@ -254,7 +254,7 @@ namespace Infrastructure.Tests.Data.Repositories
             Incident incident = _fixture.Build<Incident>()
                 .With(i => i.ApplicationId, application.Id)
                 .With(i => i.Application, application)
-                .With(i => i.Members, new List<Member>()) // <-- Sem membros
+                .With(i => i.Members, [])
                 .Create();
 
             await _context.Set<Incident>().AddAsync(incident);

@@ -132,4 +132,7 @@
   <data name="Undeleted" xml:space="preserve">
     <value>You cannot delete an area that has associated applications.</value>
   </data>
+  <data name="AreaInvalidManagerId" xml:space="preserve">
+    <value>Area invalid manager id.</value>
+  </data>
 </root>

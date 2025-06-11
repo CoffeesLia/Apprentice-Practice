@@ -11,7 +11,7 @@ using Stellantis.ProjectName.Domain.Entities;
 namespace Stellantis.ProjectName.Application.Services
 {
     public class ServiceDataService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<ServiceData> validator)
-        : EntityServiceBase<ServiceData>(unitOfWork, localizerFactory, validator), IServiceData
+        : EntityServiceBase<ServiceData>(unitOfWork, localizerFactory, validator), IServiceDataService
     {
         private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(ServiceDataResources));
         protected override IServiceDataRepository Repository => UnitOfWork.ServiceDataRepository;

@@ -1,8 +1,8 @@
-﻿using Application.Tests.Helpers;
+﻿using System.Globalization;
+using System.Resources;
+using Application.Tests.Helpers;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Resources;
-using System.Globalization;
-using System.Resources;
 using Xunit;
 
 namespace Application.Tests
@@ -37,17 +37,6 @@ namespace Application.Tests
             VerifyAllResources<ServiceResources>(ServiceResources.ResourceManager);
         }
 
-        [Fact]
-        public void ServiceDataResourcesAllCultures()
-        {
-            ServiceDataResources resource = new();
-            Assert.NotNull(resource);
-            ServiceDataResources.Culture = CultureInfo.InvariantCulture;
-            Assert.Equal(CultureInfo.InvariantCulture, ServiceDataResources.Culture);
-
-            VerifyAllResources<ServiceDataResources>(ServiceDataResources.ResourceManager);
-        }
-
         private void VerifyAllResources<TResouces>(ResourceManager resourceManager)
         {
             IStringLocalizer localizaer = LocalizerFactor.Create(typeof(TResouces));
@@ -68,6 +57,39 @@ namespace Application.Tests
                 }
 
             }
+        }
+
+        [Fact]
+        public void AreaResourcesAllCultures()
+        {
+            AreaResources resource = new();
+            Assert.NotNull(resource);
+            AreaResources.Culture = CultureInfo.InvariantCulture;
+            Assert.Equal(CultureInfo.InvariantCulture, AreaResources.Culture);
+
+            VerifyAllResources<AreaResources>(AreaResources.ResourceManager);
+        }
+
+        [Fact]
+        public void ServiceDataResourcesAllCultures()
+        {
+            ServiceDataResources resource = new();
+            Assert.NotNull(resource);
+            ServiceDataResources.Culture = CultureInfo.InvariantCulture;
+            Assert.Equal(CultureInfo.InvariantCulture, ServiceDataResources.Culture);
+
+            VerifyAllResources<ServiceDataResources>(ServiceDataResources.ResourceManager);
+        }
+
+        [Fact]
+        public void ManagerResourcesAllCultures()
+        {
+            ManagerResources resource = new();
+            Assert.NotNull(resource);
+            ManagerResources.Culture = CultureInfo.InvariantCulture;
+            Assert.Equal(CultureInfo.InvariantCulture, ManagerResources.Culture);
+
+            VerifyAllResources<ManagerResources>(ManagerResources.ResourceManager);
         }
 
         [Fact]
@@ -109,6 +131,7 @@ namespace Application.Tests
             Assert.Equal(CultureInfo.InvariantCulture, ServiceResources.Culture);
             VerifyAllResources<ServiceResources>(ServiceResources.ResourceManager);
         }
+
         [Fact]
         public void IntegrationResourcesCulturePropertySetAndGetReturnsExpectedCulture()
         {

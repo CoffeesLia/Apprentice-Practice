@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.InteropServices;
 using AutoFixture;
-using Stellantis.ProjectName.Infrastructure.Data.Repositories;
-using Stellantis.ProjectName.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Application.Models.Filters;
-using System.Runtime.InteropServices;
+using Stellantis.ProjectName.Domain.Entities;
+using Stellantis.ProjectName.Infrastructure.Data;
+using Stellantis.ProjectName.Infrastructure.Data.Repositories;
 
 namespace Infrastructure.Tests.Data.Repositories
 {
@@ -45,12 +40,12 @@ namespace Infrastructure.Tests.Data.Repositories
 
             DocumentDataFilter filter = new()
             {
-              
+
                 Name = name,
                 Url = url,
                 ApplicationId = applicationId
             };
-           
+
 
             await _context.SaveChangesAsync();
 

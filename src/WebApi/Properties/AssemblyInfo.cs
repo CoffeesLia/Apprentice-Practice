@@ -1,6 +1,6 @@
-using Microsoft.Extensions.Configuration.UserSecrets;
 using System.Reflection;
 using System.Resources;
+using Microsoft.Extensions.Configuration.UserSecrets;
 
 [assembly: UserSecretsId("74668664-49c0-4c0b-a519-a16c41b7e881")]
 [assembly: AssemblyCompany("Stellantis")]

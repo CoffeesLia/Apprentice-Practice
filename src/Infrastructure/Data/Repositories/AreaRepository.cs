@@ -31,6 +31,12 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             ArgumentNullException.ThrowIfNull(filter);
             filter.Page = filter.Page <= 0 ? 1 : filter.Page;
             IQueryable<Area> query = Context.Set<Area>();
+
+            if (filter.ManagerId > 0)
+            {
+                query = query.Where(a => a.ManagerId == filter.ManagerId);
+            }
+
             if (filter.Id.HasValue)
             {
                 query = query.Where(a => a.Id == filter.Id);

@@ -1,4 +1,5 @@
-﻿using AutoFixture;
+﻿using System.Collections.ObjectModel;
+using AutoFixture;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
@@ -11,7 +12,6 @@ using Stellantis.ProjectName.WebApi.Controllers;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.ViewModels;
-using System.Collections.ObjectModel;
 
 
 namespace WebApi.Tests.Controllers

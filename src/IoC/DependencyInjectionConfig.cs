@@ -1,4 +1,4 @@
-using FluentValidation;
+﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
@@ -28,11 +28,11 @@ namespace Stellantis.ProjectName.IoC
             services.AddScoped<IValidator<GitRepo>, GitRepoValidator>();
             services.AddScoped<IValidator<Integration>, IntegrationValidator>();
             services.AddScoped<IValidator<ServiceData>, ServiceDataValidator>();
+            services.AddScoped<IValidator<Manager>, ManagerValidator>();
             services.AddScoped<IValidator<Squad>, SquadValidator>();
             services.AddScoped<IValidator<Member>, MemberValidator>();
             services.AddScoped<IValidator<Incident>, IncidentValidator>();
             services.AddScoped<IValidator<DocumentData>, DocumentDataValidator>();
-
         }
 
         private static void Services(IServiceCollection services)
@@ -42,13 +42,13 @@ namespace Stellantis.ProjectName.IoC
             services.AddScoped<IResponsibleService, ResponsibleService>();
             services.AddScoped<IGitRepoService, GitRepoService>();
             services.AddScoped<IIntegrationService, IntegrationService>();
-            services.AddScoped<IServiceData, ServiceDataService>();
+            services.AddScoped<IServiceDataService, ServiceDataService>();
+            services.AddScoped<IManagerService, ManagerService>();
             services.AddScoped<ISquadService, SquadService>();
             services.AddScoped<IMemberService, MemberService>();
             services.AddScoped<IDocumentService, DocumentDataService>();
             services.AddScoped<IIncidentService, IncidentService>();
             services.AddScoped<IDocumentService, DocumentDataService>();
-
         }
 
         private static void Repositories(IServiceCollection services)
@@ -59,6 +59,7 @@ namespace Stellantis.ProjectName.IoC
             services.AddScoped<IGitRepoRepository, GitRepoRepository>();
             services.AddScoped<IIntegrationRepository, IntegrationRepository>();
             services.AddScoped<IServiceDataRepository, ServiceDataRepository>();
+            services.AddScoped<IManagerRepository, ManagerRepository>();
             services.AddScoped<ISquadRepository, SquadRepository>();
             services.AddScoped<IMemberRepository, MemberRepository>();
             services.AddScoped<IIncidentRepository, IncidentRepository>();

@@ -1,0 +1,166 @@
+﻿using FluentValidation;
+using Microsoft.Extensions.Localization;
+using Stellantis.ProjectName.Application.Interfaces;
+using Stellantis.ProjectName.Application.Interfaces.Repositories;
+using Stellantis.ProjectName.Application.Models;
+using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Application.Resources;
+using Stellantis.ProjectName.Domain.Entities;
+
+namespace Stellantis.ProjectName.Application.Services
+{
+    public class FeedbackstService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<Feedbacks> validator)
+            : EntityServiceBase<Feedbacks>(unitOfWork, localizerFactory, validator), IFeedbacksService
+    {
+        private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(FeedbacksResources));
+        protected override IFeedbacksRepository Repository => UnitOfWork.FeedbacksRepository;
+
+
+        public override async Task<OperationResult> CreateAsync(Feedbacks item)
+        {
+            ArgumentNullException.ThrowIfNull(item);
+
+            // Validação do objeto pelo FluentValidation
+            var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
+            if (!validationResult.IsValid)
+            {
+                return OperationResult.InvalidData(validationResult);
+            }
+
+            // Verificar se a aplicação existe
+            var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(item.ApplicationId).ConfigureAwait(false); ;
+            if (application == null)
+            {
+                return OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
+            }
+
+            // Validar se os membros estão nos squads da aplicação
+            if (item.Members.Count > 0)
+            {
+                var validMemberIds = application.Squads
+                    .SelectMany(s => s.Members)
+                    .Select(m => m.Id)
+                    .ToHashSet();
+
+                var invalidMemberIds = item.Members
+                    .Where(m => !validMemberIds.Contains(m.Id))
+                    .Select(m => m.Id)
+                    .ToList();
+
+                if (invalidMemberIds.Count > 0)
+                {
+                    return OperationResult.Conflict(_localizer[nameof(FeedbacksResources.InvalidMembers)]);
+                }
+            }
+
+            item.CreatedAt = DateTime.UtcNow;
+            if (item.StatusFeedbacks == default)
+            {
+                item.StatusFeedbacks = FeedbacksStatus.Open;
+            }
+
+            return await base.CreateAsync(item).ConfigureAwait(false);
+        }
+
+        public override async Task<OperationResult> UpdateAsync(Feedbacks item)
+        {
+            ArgumentNullException.ThrowIfNull(item);
+
+            // Validação do objeto pelo FluentValidation
+            var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
+            if (!validationResult.IsValid)
+            {
+                return OperationResult.InvalidData(validationResult);
+            }
+
+            // Verificar se o Feedbackse existe
+            var existingFeedbacks = await Repository.GetByIdAsync(item.Id).ConfigureAwait(false);
+            if (existingFeedbacks == null)
+            {
+                return OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
+            }
+
+            // Verifica se a aplicação existe
+            var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(item.ApplicationId).ConfigureAwait(false); ;
+            if (application == null)
+            {
+                return OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
+            }
+
+            // Valida membros se existirem
+            if (item.Members.Count > 0)
+            {
+                var validMemberIds = application.Squads
+                    .SelectMany(s => s.Members)
+                    .Select(m => m.Id)
+                    .ToHashSet();
+
+                var invalidMemberIds = item.Members
+                    .Where(m => !validMemberIds.Contains(m.Id))
+                    .Select(m => m.Id)
+                    .ToList();
+
+                if (invalidMemberIds.Count > 0)
+                {
+                    return OperationResult.Conflict(_localizer[nameof(FeedbacksResources.InvalidMembers)]);
+                }
+
+                existingFeedbacks.Members.Clear();
+                foreach (var member in item.Members)
+                {
+                    existingFeedbacks.Members.Add(member);
+                }
+                existingFeedbacks.Members = item.Members;
+            }
+
+            // Atualiza dados básicos
+            existingFeedbacks.Title = item.Title;
+            existingFeedbacks.Description = item.Description;
+            existingFeedbacks.ApplicationId = item.ApplicationId;
+
+            // Controle de status e datas
+            if (item.StatusFeedbacks == FeedbacksStatus.Closed && existingFeedbacks.ClosedAt == null)
+            {
+                existingFeedbacks.ClosedAt = DateTime.UtcNow;
+            }
+            else if (item.StatusFeedbacks == FeedbacksStatus.Reopened)
+            {
+                existingFeedbacks.ClosedAt = null;
+            }
+
+            existingFeedbacks.StatusFeedbacks = item.StatusFeedbacks;
+
+            return await base.UpdateAsync(existingFeedbacks).ConfigureAwait(false);
+        }
+
+        public async Task<IEnumerable<Member>> GetMembersByApplicationIdAsync(int applicationId)
+        {
+            return await Repository.GetMembersByApplicationIdAsync(applicationId);
+        }
+
+        public new async Task<OperationResult> GetItemAsync(int id)
+        {
+            var Feedbacks = await Repository.GetByIdAsync(id).ConfigureAwait(false);
+            return Feedbacks != null
+             ? OperationResult.Complete()
+                : OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
+        }
+
+        public async Task<PagedResult<Feedbacks>> GetListAsync(FeedbacksFilter FeedbacksFilter)
+        {
+            FeedbacksFilter ??= new FeedbacksFilter();
+            return await UnitOfWork.FeedbacksRepository.GetListAsync(FeedbacksFilter).ConfigureAwait(false);
+        }
+
+        public override async Task<OperationResult> DeleteAsync(int id)
+        {
+            var item = await Repository.GetByIdAsync(id).ConfigureAwait(false);
+            if (item == null)
+            {
+                return OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
+            }
+            return await base.DeleteAsync(item).ConfigureAwait(false);
+        }
+
+    }
+}

@@ -11,7 +11,7 @@ using Stellantis.ProjectName.Domain.Entities;
 namespace Stellantis.ProjectName.Application.Services
 {
     public class IntegrationService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<Integration> validator)
-            : EntityServiceBase<Integration>(unitOfWork, localizerFactory, validator), IIntegrationService
+               : EntityServiceBase<Integration>(unitOfWork, localizerFactory, validator), IIntegrationService
     {
         protected override IIntegrationRepository Repository => UnitOfWork.IntegrationRepository;
 
@@ -19,10 +19,30 @@ namespace Stellantis.ProjectName.Application.Services
         {
             ArgumentNullException.ThrowIfNull(item);
 
+            if (await Repository.VerifyNameExistsAsync(item.Name).ConfigureAwait(false))
+            {
+                return OperationResult.Conflict(Localizer[IntegrationResources.NameIsRequired]);
+            }
+
             var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
             if (!validationResult.IsValid)
             {
                 return OperationResult.InvalidData(validationResult);
+            }
+
+            if (!await IsIntegrationNameUniqueAsync(item.Name).ConfigureAwait(false))
+            {
+                return OperationResult.Conflict(IntegrationResources.AlreadyExists);
+            }
+
+            if (await Repository.VerifyDescriptionExistsAsync(item.Description).ConfigureAwait(false))
+            {
+                return OperationResult.Conflict(Localizer[IntegrationResources.DescriptionIsRequired]);
+            }
+
+            if (!await Repository.VerifyApplicationIdExistsAsync(item.ApplicationDataId).ConfigureAwait(false))
+            {
+                return OperationResult.Conflict(Localizer[IntegrationResources.ApplicationIsRequired]);
             }
 
             await Repository.CreateAsync(item).ConfigureAwait(false);
@@ -41,16 +61,19 @@ namespace Stellantis.ProjectName.Application.Services
             return OperationResult.Complete(Localizer[IntegrationResources.DeletedSuccessfully]);
         }
 
-        public new async Task<Integration?> GetItemAsync(int id)
+        public new async Task<OperationResult> GetItemAsync(int id)
         {
             var integration = await Repository.GetByIdAsync(id).ConfigureAwait(false);
-            return integration ?? throw new KeyNotFoundException(Localizer[IntegrationResources.MessageNotFound]);
+            if (integration == null)
+            {
+                return OperationResult.NotFound(Localizer[IntegrationResources.MessageNotFound]);
+            }
+            return OperationResult.Complete(Localizer[IntegrationResources.MessageSucess]);
         }
 
         public override async Task<OperationResult> UpdateAsync(Integration item)
         {
             ArgumentNullException.ThrowIfNull(item);
-            ArgumentNullException.ThrowIfNull(item.Name);
 
             var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
             if (!validationResult.IsValid)
@@ -58,14 +81,25 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.InvalidData(validationResult);
             }
 
+            if (!await IsIntegrationNameUniqueAsync(item.Name).ConfigureAwait(false))
+            {
+                return OperationResult.Conflict(IntegrationResources.AlreadyExists);
+            }
+            if (await Repository.VerifyDescriptionExistsAsync(item.Description).ConfigureAwait(false))
+            {
+                return OperationResult.InvalidData(validationResult);
+            }
+            if (await Repository.VerifyNameExistsAsync(item.Name).ConfigureAwait(false))
+            {
+                return OperationResult.InvalidData(validationResult);
+            }
 
             var existingIntegration = await Repository.GetByIdAsync(item.Id).ConfigureAwait(false);
             if (existingIntegration == null)
             {
                 return OperationResult.NotFound(Localizer[IntegrationResources.MessageNotFound]);
             }
-
-            await Repository.UpdateAsync(item).ConfigureAwait(false);
+            await Repository.UpdateAsync(existingIntegration).ConfigureAwait(false);
             return OperationResult.Complete(Localizer[IntegrationResources.UpdatedSuccessfully]);
         }
 
@@ -91,7 +125,7 @@ namespace Stellantis.ProjectName.Application.Services
             var integrationFilter = new IntegrationFilter
             {
                 Name = filter.Name,
-                ApplicationData = filter.ApplicationData,
+                ApplicationDataId = filter.ApplicationDataId,
                 Page = filter.Page,
                 PageSize = filter.PageSize
             };

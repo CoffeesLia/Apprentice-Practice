@@ -6,7 +6,9 @@ using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
+using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.WebApi.ViewModels;
+using System.Collections.ObjectModel;
 
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
@@ -15,24 +17,19 @@ namespace Stellantis.ProjectName.WebApi.Controllers
     public class SquadController(ISquadService squadService, IMapper mapper, IStringLocalizerFactory localizerFactory)
         : EntityControllerBase<Squad, SquadDto>(squadService, mapper, localizerFactory)
     {
-        private readonly ISquadService _squadService = squadService;
+        protected override ISquadService Service => (ISquadService)base.Service;
+
 
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] SquadDto itemDto)
         {
-            // Validação opcional (se necessário)
-            return itemDto == null
-                ? BadRequest("O objeto SquadDto não pode ser nulo.")
-                : await CreateBaseAsync<SquadVm>(itemDto).ConfigureAwait(false);
+            return await CreateBaseAsync<SquadVm>(itemDto).ConfigureAwait(false);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] SquadDto itemDto)
         {
-            // Validação opcional (se necessário)
-            return itemDto == null
-                ? BadRequest("O objeto SquadDto não pode ser nulo.")
-                : await UpdateBaseAsync<SquadVm>(id, itemDto).ConfigureAwait(false);
+            return await UpdateBaseAsync<SquadVm>(id, itemDto).ConfigureAwait(false);
         }
 
         [HttpGet("{id}")]
@@ -44,26 +41,11 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetListAsync([FromQuery] SquadFilterDto filterDto)
         {
-            // Mapeia o DTO de filtro para o modelo de filtro
             SquadFilter filter = Mapper.Map<SquadFilter>(filterDto);
-
-            // Obtém o resultado paginado do serviço
-            PagedResult<Squad> pagedResult = await _squadService.GetListAsync(filter!).ConfigureAwait(false);
-
-            // Mapeia o resultado para o ViewModel
-            PagedResultVm<SquadVm> result = new()
-            {
-                Result = Mapper.Map<IEnumerable<SquadVm>>(pagedResult.Result),
-                Page = pagedResult.Page,
-                PageSize = pagedResult.PageSize,
-                Total = pagedResult.Total
-            };
-
-            // Retorna o resultado no formato esperado pelo frontend
+            PagedResult<Squad> pagedResult = await Service.GetListAsync(filter!).ConfigureAwait(false);
+            PagedResultVm<SquadVm> result = Mapper.Map<PagedResultVm<SquadVm>>(pagedResult);
             return Ok(result);
         }
-
-
 
         [HttpDelete("{id}")]
         public override async Task<IActionResult> DeleteAsync(int id)

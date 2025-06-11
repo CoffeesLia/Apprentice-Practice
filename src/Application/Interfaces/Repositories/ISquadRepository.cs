@@ -8,6 +8,6 @@ namespace Stellantis.ProjectName.Application.Interfaces.Repositories
         Task<PagedResult<Squad>> GetListAsync(SquadFilter squadFilter);
         Task<bool> VerifySquadExistsAsync(int id);
         Task<bool> VerifyNameAlreadyExistsAsync(string name);
+      
     }
-
 }

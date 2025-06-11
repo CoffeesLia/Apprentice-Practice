@@ -1,7 +1,7 @@
-﻿using Microsoft.Extensions.Localization;
-using Stellantis.ProjectName.WebApi.Resources;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Resources;
+using Microsoft.Extensions.Localization;
+using Stellantis.ProjectName.WebApi.Resources;
 using WebApi.Tests.Helpers;
 
 namespace WebApi.Tests
@@ -24,6 +24,28 @@ namespace WebApi.Tests
             ControllerResources.Culture = CultureInfo.InvariantCulture;
             Assert.Equal(CultureInfo.InvariantCulture, ControllerResources.Culture);
             VerifyAllResources<ControllerResources>(ControllerResources.ResourceManager);
+        }
+
+        [Fact]
+        public void ControllerResourcesCannotBeNullExistsInAllCultures()
+        {
+            foreach (string culture in SupportedCultures)
+            {
+                ControllerResources.Culture = new CultureInfo(culture);
+                string? value = ControllerResources.CannotBeNull;
+                Assert.False(string.IsNullOrEmpty(value), $"{value} | {culture}");
+            }
+        }
+
+        [Fact]
+        public void ControllerResourcesIdMismatchExistsInAllCultures()
+        {
+            foreach (string culture in SupportedCultures)
+            {
+                ControllerResources.Culture = new CultureInfo(culture);
+                string? value = ControllerResources.IdMismatch;
+                Assert.False(string.IsNullOrEmpty(value), $"{value} | {culture}");
+            }
         }
 
         private void VerifyAllResources<TResouces>(ResourceManager resourceManager)

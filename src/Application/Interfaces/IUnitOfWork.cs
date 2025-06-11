@@ -1,11 +1,11 @@
-using Stellantis.ProjectName.Application.Interfaces.Repositories;
+﻿using Stellantis.ProjectName.Application.Interfaces.Repositories;
 
 namespace Stellantis.ProjectName.Application.Interfaces
 {
     public interface IUnitOfWork
     {
 
-        IDocumentRepository DocumentDataRepository { get; } 
+        IDocumentRepository DocumentDataRepository { get; }
 
         IAreaRepository AreaRepository { get; }
 
@@ -15,9 +15,13 @@ namespace Stellantis.ProjectName.Application.Interfaces
 
         IIncidentRepository IncidentRepository { get; }
 
+        IFeedbacksRepository FeedbacksRepository { get; }
+
         IMemberRepository MemberRepository { get; }
 
         IServiceDataRepository ServiceDataRepository { get; }
+
+        IManagerRepository ManagerRepository { get; }
 
         IApplicationDataRepository ApplicationDataRepository { get; }
 

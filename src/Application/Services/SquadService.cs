@@ -1,4 +1,6 @@
-﻿using FluentValidation;
+﻿using System.Collections.ObjectModel;
+using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
@@ -23,11 +25,9 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.Conflict(_localizer[nameof(SquadResources.SquadCannotBeNull)]);
             }
 
-            // Validação com o FluentValidation
             var validationResult = await Validator.ValidateAsync(squad).ConfigureAwait(false);
             if (!validationResult.IsValid)
             {
-                // Retorna os erros de validação
                 return OperationResult.InvalidData(validationResult);
             }
 
@@ -35,11 +35,9 @@ namespace Stellantis.ProjectName.Application.Services
             {
                 return OperationResult.Conflict(_localizer[nameof(SquadResources.SquadNameAlreadyExists)]);
             }
-            // Continua com a criação se a validação passar
+
             return await base.CreateAsync(squad).ConfigureAwait(false);
         }
-
-
 
         public override async Task<OperationResult> UpdateAsync(Squad squad)
         {
@@ -54,23 +52,19 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.InvalidData(validationResult);
             }
 
-            var existingService = await Repository.GetByIdAsync(squad.Id).ConfigureAwait(false);
-            if (existingService == null)
+            var existingSquad = await Repository.GetByIdAsync(squad.Id).ConfigureAwait(false);
+            if (existingSquad == null)
             {
                 return OperationResult.NotFound(_localizer[nameof(SquadResources.SquadNotFound)]);
             }
-
 
             if (await Repository.VerifyNameAlreadyExistsAsync(squad.Name!).ConfigureAwait(false))
             {
                 return OperationResult.Conflict(_localizer[nameof(SquadResources.SquadNameAlreadyExists)]);
             }
 
-            return await base.UpdateAsync(squad).ConfigureAwait(false);
+            return await base.UpdateAsync(existingSquad).ConfigureAwait(false); // Atualiza o objeto existente
         }
-
-
-
 
         public override async Task<OperationResult> DeleteAsync(int id)
         {
@@ -83,12 +77,12 @@ namespace Stellantis.ProjectName.Application.Services
             return OperationResult.Complete();
         }
 
-
         public async Task<PagedResult<Squad>> GetListAsync(SquadFilter squadFilter)
         {
             squadFilter ??= new SquadFilter();
             return await Repository.GetListAsync(squadFilter).ConfigureAwait(false);
         }
+
         public new async Task<OperationResult> GetItemAsync(int id)
         {
             var squad = await Repository.GetByIdAsync(id).ConfigureAwait(false);
@@ -96,6 +90,7 @@ namespace Stellantis.ProjectName.Application.Services
                ? OperationResult.Complete()
                : OperationResult.NotFound(_localizer[nameof(SquadResources.SquadNotFound)]);
         }
+
         public async Task<OperationResult> VerifySquadExistsAsync(int id)
         {
             if (await Repository.VerifySquadExistsAsync(id).ConfigureAwait(false))
@@ -104,7 +99,6 @@ namespace Stellantis.ProjectName.Application.Services
             }
             return OperationResult.NotFound(_localizer[nameof(SquadResources.SquadNotFound)]);
         }
-
 
         public async Task<OperationResult> VerifyNameAlreadyExistsAsync(string name)
         {

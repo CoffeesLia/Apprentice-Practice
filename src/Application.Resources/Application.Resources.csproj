@@ -93,10 +93,20 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>FilterResources.resx</DependentUpon>
     </Compile>
+    <Compile Update="ManagerResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ManagerResources.resx</DependentUpon>
+    </Compile>
     <Compile Update="ResponsibleResource.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>ResponsibleResource.resx</DependentUpon>
+    </Compile>
+    <Compile Update="FeedbacksResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>FeedbacksResources.resx</DependentUpon>
     </Compile>
     <Compile Update="ServiceDataResources.Designer.cs">
       <DesignTime>True</DesignTime>
@@ -156,15 +166,26 @@
       <DependentUpon>GeneralResources.resx</DependentUpon>
       <Generator></Generator>
     </EmbeddedResource>
+    <EmbeddedResource Update="FeedbacksResources.pt-BR.resx">
+      <Generator></Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="IncidentResource.pt-br.resx">
       <Generator></Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="IncidentResource.resx">
       <Generator></Generator>
     </EmbeddedResource>
+    <EmbeddedResource Update="ManagerResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ManagerResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Update="Messages - Copy %282%29.pt-br.resx">
       <SubType>Designer</SubType>
       <DependentUpon>Messages.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="FeedbacksResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>FeedbacksResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="ServiceDataResources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
