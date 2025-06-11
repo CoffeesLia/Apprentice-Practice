@@ -15,9 +15,9 @@ namespace Stellantis.ProjectName.WebApi.Controllers;
 [Route("api/integrations")]
 [Authorize]
 public sealed class IntegrationController(IIntegrationService service, IMapper mapper, IStringLocalizerFactory localizerFactory) : EntityControllerBase<Integration, IntegrationDto>(service, mapper, localizerFactory)
+
 {
     protected override IIntegrationService Service => (IIntegrationService)base.Service;
-
 
     [HttpPost]
     public async Task<IActionResult> CreateAsync([FromBody] IntegrationDto itemDto)
@@ -34,13 +34,13 @@ public sealed class IntegrationController(IIntegrationService service, IMapper m
     [HttpGet]
     public async Task<IActionResult> GetListAsync([FromQuery] IntegrationFilterDto filterDto)
     {
-        IntegrationFilter filter = Mapper.Map<IntegrationFilter>(filterDto);
-        PagedResult<Integration> result = await Service.GetListAsync(filter).ConfigureAwait(false);
-        return Ok(Mapper.Map<PagedResult<IntegrationVm>>(result));
+        var filter = Mapper.Map<IntegrationFilter>(filterDto);
+        var result = await Service.GetListAsync(filter).ConfigureAwait(false);
+        return Ok(Mapper.Map<PagedResultVm<IntegrationVm>>(result));
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateAsync(int id, [FromBody] IntegrationDto itemDto)
+    public async Task<IActionResult> UpdateBaseAsync(int id, [FromBody] IntegrationDto itemDto)
     {
         return await UpdateBaseAsync<IntegrationVm>(id, itemDto).ConfigureAwait(false);
     }

@@ -2,9 +2,9 @@
 {
     public class Integration(string name, string description) : EntityBase
     {
-
         public string Name { get; set; } = name;
         public string Description { get; set; } = description;
+        public int ApplicationDataId { get; set; }
         public ApplicationData ApplicationData { get; set; } = null!;
     }
 }
