@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Dto;
@@ -12,38 +12,6 @@ namespace Stellantis.ProjectName.WebApi.Mapper
         public AutoMapperProfile()
         {
             CreateMap(typeof(PagedResult<>), typeof(PagedResultVm<>));
-
-
-            CreateMap<ServiceDataDto, ServiceData>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore())
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
-            CreateMap<ServiceData, ServiceDataVm>().ReverseMap()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
-            CreateMap<ServiceDataFilterDto, ServiceDataFilter>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
-            CreateMap<PagedResult<ServiceData>, PagedResultVm<ServiceDataVm>>();
-
-
-            CreateMap<ManagerDto, Manager>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore())
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));
-            CreateMap<Manager, ManagerVm>().ReverseMap()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));
-            CreateMap<ManagerFilterDto, ManagerFilter>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));
-            CreateMap<PagedResult<Manager>, PagedResultVm<ManagerVm>>();
-
-
             CreateMap<ApplicationDataDto, ApplicationData>()
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.Area, opt => opt.Ignore())
@@ -88,19 +56,33 @@ namespace Stellantis.ProjectName.WebApi.Mapper
 
             CreateMap<ResponsibleFilterDto, ResponsibleFilter>();
 
-            CreateMap<ImprovementDto, Improvement>()
+            CreateMap<ServiceDataDto, ServiceData>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
+            CreateMap<ServiceData, ServiceDataVm>().ReverseMap()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
+            CreateMap<ServiceDataFilterDto, ServiceDataFilter>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
+            CreateMap<PagedResult<ServiceData>, PagedResultVm<ServiceDataVm>>();
+
+            CreateMap<FeedbacksDto, Feedbacks>()
  .ForMember(dest => dest.Id, opt => opt.Ignore())
  .ForMember(dest => dest.Members, opt => opt.Ignore())
  .ForMember(dest => dest.Application, opt => opt.Ignore())
  .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
  .ForMember(dest => dest.ClosedAt, opt => opt.Ignore())
- .ForMember(dest => dest.StatusImprovement, opt => opt.MapFrom(src => src.StatusImprovement));
+ .ForMember(dest => dest.StatusFeedbacks, opt => opt.MapFrom(src => src.StatusFeedbacks));
 
-            CreateMap<ImprovementFilterDto, ImprovementFilter>()
+            CreateMap<FeedbacksFilterDto, FeedbacksFilter>()
              .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
 
-            CreateMap<Improvement, ImprovementVm>()
-             .ForMember(dest => dest.StatusImprovement, opt => opt.MapFrom(src => src.StatusImprovement.ToString()))
+            CreateMap<Feedbacks, FeedbacksVm>()
+             .ForMember(dest => dest.StatusFeedbacks, opt => opt.MapFrom(src => src.StatusFeedbacks.ToString()))
              .ForMember(dest => dest.MemberIds, opt => opt.MapFrom(src => src.Members.Select(m => m.Id)))
              .ForMember(dest => dest.Application, opt => opt.MapFrom(src => src.Application));
 
@@ -120,27 +102,27 @@ namespace Stellantis.ProjectName.WebApi.Mapper
              .ForMember(dest => dest.MemberIds, opt => opt.MapFrom(src => src.Members.Select(m => m.Id)))
              .ForMember(dest => dest.Application, opt => opt.MapFrom(src => src.Application));
 
+            CreateMap<IntegrationDto, Integration>()
+              .ForMember(x => x.Id, x => x.Ignore())
+              .ForMember(x => x.Name, opt => opt.MapFrom(src => src.Name))
+              .ForMember(x => x.Description, opt => opt.MapFrom(src => src.Description))
+              .ForMember(x => x.ApplicationData, opt => opt.MapFrom(src => src.ApplicationData));
+
             CreateMap<IntegrationFilterDto, IntegrationFilter>()
             .ForMember(x => x.Name, opt => opt.MapFrom(src => src.Name))
-            .ForMember(dest => dest.ApplicationDataId, opt => opt.MapFrom(src => src.ApplicationDataId));
+            .ForMember(x => x.ApplicationData, opt => opt.MapFrom(src => src.ApplicationDataDto));
 
-            CreateMap<IntegrationDto, Integration>()
-            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
-            .ForMember(dest => dest.ApplicationDataId, opt => opt.MapFrom(src => src.ApplicationDataId))
-            .ForMember(dest => dest.ApplicationData, opt => opt.Ignore());
+            CreateMap<PagedResult<Integration>, PagedResult<IntegrationVm>>()
+                .ForMember(dest => dest.Page, opt => opt.MapFrom(src => src.Page))
+                .ForMember(dest => dest.Result, opt => opt.MapFrom(src => src.Result))
+                .ForMember(dest => dest.PageSize, opt => opt.MapFrom(src => src.PageSize))
+                .ForMember(dest => dest.Total, opt => opt.MapFrom(src => src.Total));
 
 
             CreateMap<Integration, IntegrationVm>()
-               .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-               .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
-               .ForMember(dest => dest.ApplicationDataId, opt => opt.MapFrom(src => src.ApplicationDataId));
-
-            CreateMap<PagedResult<Integration>, PagedResultVm<IntegrationVm>>()
-                .ForMember(dest => dest.Result, opt => opt.MapFrom(src => src.Result))
-                .ForMember(dest => dest.Total, opt => opt.MapFrom(src => src.Total))
-                .ForMember(dest => dest.Page, opt => opt.MapFrom(src => src.Page))
-                .ForMember(dest => dest.PageSize, opt => opt.MapFrom(src => src.PageSize));
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.ApplicationData, opt => opt.MapFrom(src => src.ApplicationData));
 
             CreateMap<SquadDto, Squad>()
              .ForMember(x => x.Id, x => x.Ignore())
@@ -211,6 +193,20 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(x => x.Url, opt => opt.MapFrom(src => src.Url))
                 .ForMember(x => x.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(x => x.ApplicationId, opt => opt.MapFrom(src => src.ApplicationId));
+
+            CreateMap<ManagerDto, Manager>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));
+            CreateMap<Manager, ManagerVm>().ReverseMap()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));
+            CreateMap<ManagerFilterDto, ManagerFilter>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));
+            CreateMap<PagedResult<Manager>, PagedResultVm<ManagerVm>>();
         }
     }
 }

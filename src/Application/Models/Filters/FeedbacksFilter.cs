@@ -1,12 +1,12 @@
 ﻿using Stellantis.ProjectName.Domain.Entities;
 
-namespace Stellantis.ProjectName.WebApi.Dto.Filters
+namespace Stellantis.ProjectName.Application.Models.Filters
 {
-    public class ImprovementFilterDto : FilterDto
+    public class FeedbacksFilter : Filter
     {
         public int Id { get; set; }
         public string? Title { get; set; }
         public int ApplicationId { get; set; }
-        public ImprovementStatus? StatusImprovement { get; set; }
+        public FeedbacksStatus? StatusFeedbacks { get; set; }
     }
 }

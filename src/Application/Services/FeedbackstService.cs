@@ -9,14 +9,14 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Services
 {
-    public class ImprovementService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<Improvement> validator)
-            : EntityServiceBase<Improvement>(unitOfWork, localizerFactory, validator), IImprovementService
+    public class FeedbackstService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<Feedbacks> validator)
+            : EntityServiceBase<Feedbacks>(unitOfWork, localizerFactory, validator), IFeedbacksService
     {
-        private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(ImprovementResources));
-        protected override IImprovementRepository Repository => UnitOfWork.ImprovementRepository;
+        private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(FeedbacksResources));
+        protected override IFeedbacksRepository Repository => UnitOfWork.FeedbacksRepository;
 
 
-        public override async Task<OperationResult> CreateAsync(Improvement item)
+        public override async Task<OperationResult> CreateAsync(Feedbacks item)
         {
             ArgumentNullException.ThrowIfNull(item);
 
@@ -49,20 +49,20 @@ namespace Stellantis.ProjectName.Application.Services
 
                 if (invalidMemberIds.Count > 0)
                 {
-                    return OperationResult.Conflict(_localizer[nameof(ImprovementResources.InvalidMembers)]);
+                    return OperationResult.Conflict(_localizer[nameof(FeedbacksResources.InvalidMembers)]);
                 }
             }
 
             item.CreatedAt = DateTime.UtcNow;
-            if (item.StatusImprovement == default)
+            if (item.StatusFeedbacks == default)
             {
-                item.StatusImprovement = ImprovementStatus.Open;
+                item.StatusFeedbacks = FeedbacksStatus.Open;
             }
 
             return await base.CreateAsync(item).ConfigureAwait(false);
         }
 
-        public override async Task<OperationResult> UpdateAsync(Improvement item)
+        public override async Task<OperationResult> UpdateAsync(Feedbacks item)
         {
             ArgumentNullException.ThrowIfNull(item);
 
@@ -73,9 +73,9 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.InvalidData(validationResult);
             }
 
-            // Verificar se o Improvemente existe
-            var existingImprovement = await Repository.GetByIdAsync(item.Id).ConfigureAwait(false);
-            if (existingImprovement == null)
+            // Verificar se o Feedbackse existe
+            var existingFeedbacks = await Repository.GetByIdAsync(item.Id).ConfigureAwait(false);
+            if (existingFeedbacks == null)
             {
                 return OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
             }
@@ -102,30 +102,35 @@ namespace Stellantis.ProjectName.Application.Services
 
                 if (invalidMemberIds.Count > 0)
                 {
-                    return OperationResult.Conflict(_localizer[nameof(ImprovementResources.InvalidMembers)]);
+                    return OperationResult.Conflict(_localizer[nameof(FeedbacksResources.InvalidMembers)]);
                 }
 
-                existingImprovement.Members = item.Members;
+                existingFeedbacks.Members.Clear();
+                foreach (var member in item.Members)
+                {
+                    existingFeedbacks.Members.Add(member);
+                }
+                existingFeedbacks.Members = item.Members;
             }
 
             // Atualiza dados básicos
-            existingImprovement.Title = item.Title;
-            existingImprovement.Description = item.Description;
-            existingImprovement.ApplicationId = item.ApplicationId;
+            existingFeedbacks.Title = item.Title;
+            existingFeedbacks.Description = item.Description;
+            existingFeedbacks.ApplicationId = item.ApplicationId;
 
             // Controle de status e datas
-            if (item.StatusImprovement == ImprovementStatus.Closed && existingImprovement.ClosedAt == null)
+            if (item.StatusFeedbacks == FeedbacksStatus.Closed && existingFeedbacks.ClosedAt == null)
             {
-                existingImprovement.ClosedAt = DateTime.UtcNow;
+                existingFeedbacks.ClosedAt = DateTime.UtcNow;
             }
-            else if (item.StatusImprovement == ImprovementStatus.Reopened)
+            else if (item.StatusFeedbacks == FeedbacksStatus.Reopened)
             {
-                existingImprovement.ClosedAt = null;
+                existingFeedbacks.ClosedAt = null;
             }
 
-            existingImprovement.StatusImprovement = item.StatusImprovement;
+            existingFeedbacks.StatusFeedbacks = item.StatusFeedbacks;
 
-            return await base.UpdateAsync(existingImprovement).ConfigureAwait(false);
+            return await base.UpdateAsync(existingFeedbacks).ConfigureAwait(false);
         }
 
         public async Task<IEnumerable<Member>> GetMembersByApplicationIdAsync(int applicationId)
@@ -135,16 +140,16 @@ namespace Stellantis.ProjectName.Application.Services
 
         public new async Task<OperationResult> GetItemAsync(int id)
         {
-            var Improvement = await Repository.GetByIdAsync(id).ConfigureAwait(false);
-            return Improvement != null
+            var Feedbacks = await Repository.GetByIdAsync(id).ConfigureAwait(false);
+            return Feedbacks != null
              ? OperationResult.Complete()
                 : OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
         }
 
-        public async Task<PagedResult<Improvement>> GetListAsync(ImprovementFilter ImprovementFilter)
+        public async Task<PagedResult<Feedbacks>> GetListAsync(FeedbacksFilter FeedbacksFilter)
         {
-            ImprovementFilter ??= new ImprovementFilter();
-            return await UnitOfWork.ImprovementRepository.GetListAsync(ImprovementFilter).ConfigureAwait(false);
+            FeedbacksFilter ??= new FeedbacksFilter();
+            return await UnitOfWork.FeedbacksRepository.GetListAsync(FeedbacksFilter).ConfigureAwait(false);
         }
 
         public override async Task<OperationResult> DeleteAsync(int id)

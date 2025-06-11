@@ -103,10 +103,10 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>ResponsibleResource.resx</DependentUpon>
     </Compile>
-    <Compile Update="ImprovementResources.Designer.cs">
+    <Compile Update="FeedbacksResources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>ImprovementResources.resx</DependentUpon>
+      <DependentUpon>FeedbacksResources.resx</DependentUpon>
     </Compile>
     <Compile Update="ServiceDataResources.Designer.cs">
       <DesignTime>True</DesignTime>
@@ -166,7 +166,7 @@
       <DependentUpon>GeneralResources.resx</DependentUpon>
       <Generator></Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="ImprovementResources.pt-BR.resx">
+    <EmbeddedResource Update="FeedbacksResources.pt-BR.resx">
       <Generator></Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="IncidentResource.pt-br.resx">
@@ -183,9 +183,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>Messages.resx</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="ImprovementResources.resx">
+    <EmbeddedResource Update="FeedbacksResources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>ImprovementResources.Designer.cs</LastGenOutput>
+      <LastGenOutput>FeedbacksResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="ServiceDataResources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
