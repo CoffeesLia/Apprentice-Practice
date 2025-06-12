@@ -44,7 +44,8 @@ namespace WebApi.Tests.Controllers
 
             // Assert
             var badRequest = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Equal("O objeto SquadDto não pode ser nulo.", badRequest.Value);
+            var errorResponse = Assert.IsType<ErrorResponse>(badRequest.Value);
+            Assert.Equal("Os dados não podem ser nulos.", errorResponse.Message);
         }
 
         [Fact]
@@ -55,7 +56,8 @@ namespace WebApi.Tests.Controllers
 
             // Assert
             var badRequest = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Equal("O objeto SquadDto não pode ser nulo.", badRequest.Value);
+            var errorResponse = Assert.IsType<ErrorResponse>(badRequest.Value);
+            Assert.Equal("Os dados não podem ser nulos.", errorResponse.Message);
         }
 
         [Fact]
