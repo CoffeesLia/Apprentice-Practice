@@ -1,6 +1,6 @@
 ﻿namespace Stellantis.ProjectName.WebApi.ViewModels
 {
-    public class FeedbacksVm : EntityVmBase
+    public class FeedbackVm : EntityVmBase
     {
         public int Id { get; set; } 
         public string Title { get; set; } = string.Empty;
