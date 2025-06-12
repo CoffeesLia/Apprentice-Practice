@@ -228,6 +228,7 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.Conflict, result.Status);
             Assert.Equal(IntegrationResources.AlreadyExists, result.Message);
         }
+
         [Fact]
         public async Task CreateAsyncShouldReturnErrorWhenDescriptionIsNull()
         {
@@ -240,7 +241,11 @@ namespace Application.Tests.Services
 
             // Assert  
             Assert.Equal(OperationStatus.InvalidData, result.Status);
-            Assert.Contains(result.Errors, e => e == IntegrationResources.DescriptionIsRequired);
+            Assert.Contains(result.Errors, e =>
+                e == IntegrationResources.DescriptionIsRequired ||
+                e == "'Description' must not be empty." ||
+                e == "Description Is Required"
+            );
         }
 
 

@@ -78,14 +78,14 @@ namespace Stellantis.ProjectName.WebApi
 
                 // Applications
                 context.Applications.AddRange(
-                    new ApplicationData("Portal AMS") { AreaId = 1, ResponsibleId = 1, ProductOwner = "", ConfigurationItem = "" },
+                    new ApplicationData("Portal AMS") { AreaId = 7, ResponsibleId = 1, ProductOwner = "", ConfigurationItem = "" },
                     new ApplicationData("eLog") { AreaId = 2, ResponsibleId = 2, ProductOwner = "", ConfigurationItem = "" },
                     new ApplicationData("Suite PD") { AreaId = 4, ResponsibleId = 4, ProductOwner = "", ConfigurationItem = "" },
                     new ApplicationData("Finance Tracker") { AreaId = 6, ResponsibleId = 6, ProductOwner = "Carlos Silva", ConfigurationItem = "FT-Config" },
                     new ApplicationData("HR Portal") { AreaId = 8, ResponsibleId = 8, ProductOwner = "Fernanda Oliveira", ConfigurationItem = "HRP-Config" },
                     new ApplicationData("Marketing Dashboard") { AreaId = 10, ResponsibleId = 10, ProductOwner = "Bruno Almeida", ConfigurationItem = "MD-Config" },
                     new ApplicationData("Sales CRM") { AreaId = 14, ResponsibleId = 14, ProductOwner = "Rodrigo Martins", ConfigurationItem = "CRM-Config" },
-                    new ApplicationData("Quality Control System") { AreaId = 13, ResponsibleId = 13, ProductOwner = "Ana Paula", ConfigurationItem = "QCS-Config" },
+                    new ApplicationData("Quality Control System") { AreaId = 1, ResponsibleId = 13, ProductOwner = "Ana Paula", ConfigurationItem = "QCS-Config" },
                     new ApplicationData("Supplier Chain Manager") { AreaId = 16, ResponsibleId = 5, ProductOwner = "Mariana Silva", ConfigurationItem = "SCM-Config" },
                     new ApplicationData("Engineering Tools") { AreaId = 4, ResponsibleId = 4, ProductOwner = "Leonardo Souza", ConfigurationItem = "ET-Config" },
                     new ApplicationData("Integration Hub") { AreaId = 9, ResponsibleId = 9, ProductOwner = "Juliana Costa", ConfigurationItem = "IH-Config" },
