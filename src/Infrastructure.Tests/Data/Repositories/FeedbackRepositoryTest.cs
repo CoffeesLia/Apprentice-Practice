@@ -82,7 +82,7 @@ namespace Infrastructure.Tests.Data.Repositories
                 PageSize = 10,
                 Title = _fixture.Create<string>(),
                 ApplicationId = trackedApplication.Id,
-                FeedbackStatus = null
+                Status = null
             };
 
             const int Count = 10;
@@ -91,7 +91,7 @@ namespace Infrastructure.Tests.Data.Repositories
                 .With(x => x.Title, filter.Title)
                 .With(x => x.ApplicationId, trackedApplication.Id)
                 .With(x => x.Application, trackedApplication) // Use a instância rastreada
-                .With(x => x.FeedbackStatus, Status.Open)
+                .With(x => x.Status, FeedbackStatus.Open)
                 .CreateMany(Count);
 
             await _context.Set<Feedback>().AddRangeAsync(incidents);
@@ -112,12 +112,12 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Theory]
-        [InlineData(Status.Open)]
-        [InlineData(Status.InProgress)]
-        [InlineData(Status.Cancelled)]
-        [InlineData(Status.Closed)]
-        [InlineData(Status.Reopened)]
-        public async Task GetListAsyncFilterByStatusReturnsOnlyMatchingStatus(Status statusFeedbacks)
+        [InlineData(FeedbackStatus.Open)]
+        [InlineData(FeedbackStatus.InProgress)]
+        [InlineData(FeedbackStatus.Cancelled)]
+        [InlineData(FeedbackStatus.Closed)]
+        [InlineData(FeedbackStatus.Reopened)]
+        public async Task GetListAsyncFilterByStatusReturnsOnlyMatchingStatus(FeedbackStatus statusFeedbacks)
         {
             // Arrange
             var fixture = new Fixture();
@@ -140,14 +140,14 @@ namespace Infrastructure.Tests.Data.Repositories
             var matchingIncidents = fixture.Build<Feedback>()
                 .With(i => i.ApplicationId, application.Id)
                 .With(i => i.Application, application)
-                .With(i => i.FeedbackStatus, statusFeedbacks)
+                .With(i => i.Status, statusFeedbacks)
                 .CreateMany(3)
                 .ToList();
 
             var otherIncidents = fixture.Build<Feedback>()
                 .With(i => i.ApplicationId, application.Id)
                 .With(i => i.Application, application)
-                .With(i => i.FeedbackStatus, statusFeedbacks == Status.Open ? Status.Closed : Status.Open)
+                .With(i => i.Status, statusFeedbacks == FeedbackStatus.Open ? FeedbackStatus.Closed : FeedbackStatus.Open)
                 .CreateMany(2)
                 .ToList();
 
@@ -158,7 +158,7 @@ namespace Infrastructure.Tests.Data.Repositories
             {
                 Page = 1,
                 PageSize = 10,
-                FeedbackStatus = statusFeedbacks,
+                Status = statusFeedbacks,
                 ApplicationId = application.Id
             };
 
@@ -167,7 +167,7 @@ namespace Infrastructure.Tests.Data.Repositories
 
             // Assert
             Assert.Equal(3, result.Total);
-            Assert.All(result.Result, i => Assert.Equal(statusFeedbacks, i.FeedbackStatus));
+            Assert.All(result.Result, i => Assert.Equal(statusFeedbacks, i.Status));
         }
 
 
@@ -224,9 +224,9 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task GetByStatusAsyncWhenExists()
         {
             // Arrange
-            var statusFeedbacks = Status.Open;
+            var statusFeedbacks = FeedbackStatus.Open;
             var incidents = _fixture.Build<Feedback>()
-                .With(i => i.FeedbackStatus, statusFeedbacks)
+                .With(i => i.Status, statusFeedbacks)
                 .CreateMany(2)
                 .ToList();
 
@@ -238,7 +238,7 @@ namespace Infrastructure.Tests.Data.Repositories
 
             // Assert
             Assert.NotNull(result);
-            Assert.All(result, i => Assert.Equal(statusFeedbacks, i.FeedbackStatus));
+            Assert.All(result, i => Assert.Equal(statusFeedbacks, i.Status));
         }
 
         [Fact]

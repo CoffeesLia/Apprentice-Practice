@@ -54,9 +54,9 @@ namespace Stellantis.ProjectName.Application.Services
             }
 
             item.CreatedAt = DateTime.UtcNow;
-            if (item.FeedbackStatus == default)
+            if (item.Status == default)
             {
-                item.FeedbackStatus = Status.Open;
+                item.Status = FeedbackStatus.Open;
             }
 
             return await base.CreateAsync(item).ConfigureAwait(false);
@@ -119,16 +119,16 @@ namespace Stellantis.ProjectName.Application.Services
             existingFeedbacks.ApplicationId = item.ApplicationId;
 
             // Controle de status e datas
-            if (item.FeedbackStatus == Status.Closed && existingFeedbacks.ClosedAt == null)
+            if (item.Status == FeedbackStatus.Closed && existingFeedbacks.ClosedAt == null)
             {
                 existingFeedbacks.ClosedAt = DateTime.UtcNow;
             }
-            else if (item.FeedbackStatus == Status.Reopened)
+            else if (item.Status == FeedbackStatus.Reopened)
             {
                 existingFeedbacks.ClosedAt = null;
             }
 
-            existingFeedbacks.FeedbackStatus = item.FeedbackStatus;
+            existingFeedbacks.Status = item.Status;
 
             return await base.UpdateAsync(existingFeedbacks).ConfigureAwait(false);
         }

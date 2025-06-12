@@ -13,6 +13,6 @@ namespace Stellantis.ProjectName.Application.Interfaces.Repositories
 
         Task<IEnumerable<Feedback>> GetByMemberIdAsync(int memberId);
 
-        Task<IEnumerable<Feedback>> GetByStatusAsync(Status statusFeedbacks);
+        Task<IEnumerable<Feedback>> GetByStatusAsync(FeedbackStatus statusFeedbacks);
     }
 }

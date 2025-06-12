@@ -7,7 +7,7 @@ namespace Stellantis.ProjectName.WebApi.Dto.Filters
         public int Id { get; set; }
         public string? Title { get; set; }
         public int ApplicationId { get; set; }
-        public Status? FeedbackStatus { get; set; }
+        public FeedbackStatus? Status { get; set; }
     }
 }
 

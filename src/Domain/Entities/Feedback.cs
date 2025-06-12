@@ -1,7 +1,7 @@
 ﻿
 namespace Stellantis.ProjectName.Domain.Entities
 {
-    public enum Status
+    public enum FeedbackStatus
     {
         Open,
         InProgress,
@@ -16,7 +16,7 @@ namespace Stellantis.ProjectName.Domain.Entities
         public string Description { get; set; } = null!;
         public DateTime CreatedAt { get; set; }
         public DateTime? ClosedAt { get; set; }
-        public Status FeedbackStatus { get; set; }
+        public FeedbackStatus Status { get; set; }
         public int ApplicationId { get; set; }
         public ApplicationData Application { get; set; } = null!;
         public ICollection<Member> Members { get; set; } = [];

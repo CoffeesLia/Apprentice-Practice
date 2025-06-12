@@ -25,7 +25,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
             builder.Property(i => i.CreatedAt)
                 .IsRequired();
 
-            builder.Property(i => i.FeedbackStatus)
+            builder.Property(i => i.Status)
                 .IsRequired();
 
             builder.HasOne(i => i.Application)

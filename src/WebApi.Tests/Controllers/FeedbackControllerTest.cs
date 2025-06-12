@@ -34,7 +34,7 @@ namespace WebApi.Tests.Controllers
                 .ForEach(b => _fixture.Behaviors.Remove(b));
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
             _fixture.Customize<FeedbackDto>(c => c
-                .With(dto => dto.FeedbackStatus,
+                .With(dto => dto.Status,
                       () => _fixture.Create<IncidentStatus>().ToString()));
 
 

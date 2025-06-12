@@ -76,14 +76,12 @@ namespace Stellantis.ProjectName.WebApi.Mapper
              .ForMember(dest => dest.Application, opt => opt.Ignore())
              .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
              .ForMember(dest => dest.ClosedAt, opt => opt.Ignore())
-             .ForMember(dest => dest.FeedbackStatus, opt => opt.MapFrom(src => src.FeedbackStatus));
-
+             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
             CreateMap<FeedbackFilterDto, FeedbackFilter>()
              .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
-
-            CreateMap<Feedback, FeedbacksVm>()
-             .ForMember(dest => dest.FeedbackStatus, opt => opt.MapFrom(src => src.FeedbackStatus.ToString()))
-             .ForMember(dest => dest.MemberIds, opt => opt.MapFrom(src => src.Members.Select(m => m.Id)))
+            CreateMap<Feedback, FeedbacksVm>().ReverseMap()
+             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.FeedbackStatus.ToString()))
+             .ForMember(dest => dest.Members, opt => opt.Ignore())
              .ForMember(dest => dest.Application, opt => opt.MapFrom(src => src.Application));
 
             CreateMap<IncidentDto, Incident>()

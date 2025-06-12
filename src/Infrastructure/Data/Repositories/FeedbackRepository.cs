@@ -30,9 +30,9 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 filters = filters.And(x => x.ApplicationId == filter.ApplicationId);
             }
             // Filtro por status
-            if (filter.FeedbackStatus.HasValue)
+            if (filter.Status.HasValue)
             {
-                filters = filters.And(x => x.FeedbackStatus == filter.FeedbackStatus.Value);
+                filters = filters.And(x => x.Status == filter.Status.Value);
             }
             // Retorna a lista paginada com os filtros aplicados
             return await GetListAsync(
@@ -93,11 +93,10 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         }
 
-        // Consulta todos os feedbackses com um determinado status.
-        public async Task<IEnumerable<Feedback>> GetByStatusAsync(Status statusFeedbacks)
+        public async Task<IEnumerable<Feedback>> GetByStatusAsync(FeedbackStatus statusFeedbacks)
         {
             return await Context.Set<Feedback>()
-                .Where(i => i.FeedbackStatus == statusFeedbacks)
+                .Where(i => i.Status == statusFeedbacks)
                 .ToListAsync()
                 .ConfigureAwait(false);
 
