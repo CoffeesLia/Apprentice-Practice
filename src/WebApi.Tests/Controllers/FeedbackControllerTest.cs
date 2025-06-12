@@ -63,11 +63,11 @@ namespace WebApi.Tests.Controllers
             _serviceMock.Setup(s => s.GetItemAsync(It.IsAny<int>())).ReturnsAsync(feedbacks);
 
             // Act
-            ActionResult<FeedbacksVm> result = await _controller.GetAsync(feedbacks.Id);
+            ActionResult<FeedbackVm> result = await _controller.GetAsync(feedbacks.Id);
 
             // Assert
             OkObjectResult okResult = Assert.IsType<OkObjectResult>(result.Result);
-            Assert.IsType<FeedbacksVm>(okResult.Value);
+            Assert.IsType<FeedbackVm>(okResult.Value);
         }
 
         [Fact]
@@ -83,7 +83,7 @@ namespace WebApi.Tests.Controllers
 
             // Assert
             OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.IsType<PagedResultVm<FeedbacksVm>>(okResult.Value);
+            Assert.IsType<PagedResultVm<FeedbackVm>>(okResult.Value);
         }
 
         [Fact]
