@@ -3,7 +3,7 @@
     public class ApplicationVm : EntityVmBase
     {
         public required string Name { get; set; }
-        public required AreaVm Area { get; set; }
+        public AreaVm Area { get; set; } = null!;
         public string? Description { get; set; }
         public required string ProductOwner { get; set; }
         public required string ConfigurationItem { get; set; }
