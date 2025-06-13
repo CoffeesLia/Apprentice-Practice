@@ -1,7 +1,6 @@
 ﻿using AutoFixture;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models;
@@ -14,7 +13,6 @@ using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.Mapper;
 using Stellantis.ProjectName.WebApi.ViewModels;
 using WebApi.Tests.Helpers;
-using Xunit;
 
 namespace WebApi.Tests.Controllers
 {
@@ -39,29 +37,31 @@ namespace WebApi.Tests.Controllers
         }
 
         [Fact]
-        public async Task CreateAsync_ReturnsBadRequest_WhenDtoIsNull()
+        public async Task CreateAsyncReturnsBadRequestWhenDtoIsNull()
         {
             // Act
             var result = await _controller.CreateAsync(null!);
 
             // Assert
             var badRequest = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Equal("O objeto SquadDto não pode ser nulo.", badRequest.Value);
+            var errorResponse = Assert.IsType<ErrorResponse>(badRequest.Value);
+            Assert.Equal("Os dados não podem ser nulos.", errorResponse.Message);
         }
 
         [Fact]
-        public async Task UpdateAsync_ReturnsBadRequest_WhenDtoIsNull()
+        public async Task UpdateAsyncReturnsBadRequestWhenDtoIsNull()
         {
             // Act
             var result = await _controller.UpdateAsync(1, null!);
 
             // Assert
             var badRequest = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Equal("O objeto SquadDto não pode ser nulo.", badRequest.Value);
+            var errorResponse = Assert.IsType<ErrorResponse>(badRequest.Value);
+            Assert.Equal("Os dados não podem ser nulos.", errorResponse.Message);
         }
 
         [Fact]
-        public async Task GetAsync_ReturnsOk_WhenSquadExists()
+        public async Task GetAsyncReturnsOkWhenSquadExists()
         {
             // Arrange
             var squad = _fixture.Create<Squad>();
@@ -79,7 +79,7 @@ namespace WebApi.Tests.Controllers
         }
 
         [Fact]
-        public async Task GetAsync_ReturnsNotFound_WhenSquadDoesNotExist()
+        public async Task GetAsyncReturnsNotFoundWhenSquadDoesNotExist()
         {
             // Arrange
             int id = _fixture.Create<int>();
@@ -93,7 +93,7 @@ namespace WebApi.Tests.Controllers
         }
 
         [Fact]
-        public async Task GetListAsync_ReturnsPagedResult()
+        public async Task GetListAsyncReturnsPagedResult()
         {
             // Arrange
             var filterDto = _fixture.Create<SquadFilterDto>();
@@ -120,7 +120,7 @@ namespace WebApi.Tests.Controllers
         }
 
         [Fact]
-        public async Task DeleteAsync_ReturnsNoContent_WhenSuccess()
+        public async Task DeleteAsyncReturnsNoContentWhenSuccess()
         {
             // Arrange
             int squadId = _fixture.Create<int>();
@@ -138,7 +138,7 @@ namespace WebApi.Tests.Controllers
         [Theory]
         [InlineData(OperationStatus.Conflict, typeof(ConflictObjectResult))]
         [InlineData(OperationStatus.NotFound, typeof(NotFoundResult))]
-        public async Task DeleteAsync_ReturnsProperStatus_WhenOperationFails(
+        public async Task DeleteAsyncReturnsProperStatusWhenOperationFails(
             OperationStatus status,
             Type expectedResultType)
         {
@@ -160,7 +160,7 @@ namespace WebApi.Tests.Controllers
         }
 
         [Fact]
-        public void SquadVm_ShouldSetAndGetProperties()
+        public void SquadVmShouldSetAndGetProperties()
         {
             // Arrange
             var squadVm = new SquadVm
@@ -179,7 +179,7 @@ namespace WebApi.Tests.Controllers
         }
 
         [Fact]
-        public void SquadDto_ShouldSetAndGetProperties()
+        public void SquadDtoShouldSetAndGetProperties()
         {
             // Arrange
             var squadDto = new SquadDto
