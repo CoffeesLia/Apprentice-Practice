@@ -119,8 +119,8 @@ namespace Application.Tests.Services
                                  .With(m => m.Name, "Valid Name")
                                  .With(m => m.Email, "valid.email@example.com")
                                  .Create();
-            Mock<IValidator<Member>> validatorMock = new();
             ValidationResult validationResult = new();
+            Mock<IValidator<Member>> validatorMock = new();
             validatorMock.Setup(v => v.ValidateAsync(member, default)).ReturnsAsync(validationResult);
             _memberRepositoryMock.Setup(r => r.IsEmailUnique(member.Email, null)).ReturnsAsync(false);
 
