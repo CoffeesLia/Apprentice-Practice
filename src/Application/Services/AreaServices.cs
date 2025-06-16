@@ -99,10 +99,13 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.InvalidData(validationResult);
             }
 
-            if (await Repository.VerifyNameAlreadyExistsAsync(area.Name).ConfigureAwait(false))
+
+            var areasWithSameName = await Repository.GetListAsync(new AreaFilter { Name = area.Name }).ConfigureAwait(false);
+            if (areasWithSameName.Result.Any(a => a.Id != area.Id))
             {
                 return OperationResult.Conflict(_localizer[nameof(AreaResources.AlreadyExists)]);
             }
+
             return await base.UpdateAsync(area).ConfigureAwait(false);
         }
     }

@@ -472,5 +472,64 @@ namespace Application.Tests.Services
             Assert.Equal(string.Format(CultureInfo.InvariantCulture, ApplicationDataResources.DescriptionValidateLength, ApplicationDataValidator.DescriptionMaxLength), result.Errors.First());
         }
 
+
+        [Fact]
+        public async Task IsResponsibleFromAreaReturnsTrueWhenResponsibleExistsAndAreaMatches()
+        {
+            // Arrange
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+            var responsible = new Responsible { Id = 1, AreaId = 10, Name = "Teste", Email = "teste@teste.com" };
+            mockUnitOfWork.Setup(u => u.ResponsibleRepository.GetByIdAsync(1)).ReturnsAsync(responsible);
+
+            var localizer = Helpers.LocalizerFactorHelper.Create();
+            var validator = new Mock<IValidator<ApplicationData>>().Object;
+            var service = new ApplicationDataService(mockUnitOfWork.Object, localizer, validator);
+
+            // Act
+            var result = await service.IsResponsibleFromArea(10, 1);
+
+            // Assert
+            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task IsResponsibleFromAreaReturnsFalseWhenResponsibleDoesNotExist()
+        {
+            // Arrange
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(u => u.ResponsibleRepository.GetByIdAsync(2)).ReturnsAsync((Responsible?)null);
+
+
+            var localizer = Helpers.LocalizerFactorHelper.Create();
+            var validator = new Mock<IValidator<ApplicationData>>().Object;
+            var service = new ApplicationDataService(mockUnitOfWork.Object, localizer, validator);
+
+            // Act
+            var result = await service.IsResponsibleFromArea(10, 2);
+
+            // Assert
+            Assert.False(result);
+        }
+
+        [Fact]
+        public async Task IsResponsibleFromAreaReturnsFalseWhenAreaDoesNotMatch()
+        {
+            // Arrange
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+            var responsible = new Responsible { Id = 1, AreaId = 20, Name = "Teste", Email = "teste@teste.com" };
+            mockUnitOfWork.Setup(u => u.ResponsibleRepository.GetByIdAsync(1)).ReturnsAsync(responsible);
+
+
+            var localizer = Helpers.LocalizerFactorHelper.Create();
+            var validator = new Mock<IValidator<ApplicationData>>().Object;
+            var service = new ApplicationDataService(mockUnitOfWork.Object, localizer, validator);
+
+            // Act
+            var result = await service.IsResponsibleFromArea(10, 1);
+
+            // Assert
+            Assert.False(result);
+        }
+
     }
 }
