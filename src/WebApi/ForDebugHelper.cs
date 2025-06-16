@@ -78,8 +78,8 @@ namespace Stellantis.ProjectName.WebApi
 
                 // Applications
                 context.Applications.AddRange(
-                    new ApplicationData("Portal AMS") { AreaId = 7, ResponsibleId = 1, ProductOwner = "", ConfigurationItem = "" },
-                    new ApplicationData("eLog") { AreaId = 2, ResponsibleId = 2, ProductOwner = "", ConfigurationItem = "" },
+                    new ApplicationData("Portal AMS") { AreaId = 7, ResponsibleId = 1, ProductOwner = "", ConfigurationItem = "", SquadId = 1},
+                    new ApplicationData("eLog") { AreaId = 2, ResponsibleId = 2, ProductOwner = "", ConfigurationItem = "", SquadId = 2 },
                     new ApplicationData("Suite PD") { AreaId = 4, ResponsibleId = 4, ProductOwner = "", ConfigurationItem = "" },
                     new ApplicationData("Finance Tracker") { AreaId = 6, ResponsibleId = 6, ProductOwner = "Carlos Silva", ConfigurationItem = "FT-Config" },
                     new ApplicationData("HR Portal") { AreaId = 8, ResponsibleId = 8, ProductOwner = "Fernanda Oliveira", ConfigurationItem = "HRP-Config" },
@@ -164,6 +164,18 @@ namespace Stellantis.ProjectName.WebApi
                     new Member { Name = "Juliana Martins", Email = "juliana.martins@stellantis.com", Role = "Business Analyst", Cost = 1400, SquadId = 5 }
                 );
 
+                context.Feedbacks.AddRange(
+                    new Feedback { Title = "Melhora no design do Portal AMS", Description = "O design do site está muito simples, talvez modernizar as cores e fontes ajudasse.", CreatedAt = DateTime.UtcNow.AddDays(-7), ApplicationId = 1, Status = FeedbackStatus.Open }, // Feedback aberto
+                    new Feedback { Title = "Dificuldade em encontrar funcionalidades no eLog", Description = "Sinto que algumas funções importantes estão escondidas ou não são intuitivas de achar no menu.", CreatedAt = DateTime.UtcNow.AddDays(-5), ApplicationId = 2, Status = FeedbackStatus.InProgress }, // Feedback em progresso
+                    new Feedback { Title = "Finance Tracker muito rápido, excelente experiência!", Description = "Gostei muito da velocidade de carregamento e da fluidez ao navegar no Finance Tracker. Parabéns!", CreatedAt = DateTime.UtcNow.AddDays(-3), ApplicationId = 4, Status = FeedbackStatus.Closed }, // Feedback já fechado
+                    new Feedback { Title = "Sugestão de nova funcionalidade: integração com calendário no HR Portal", Description = "Seria ótimo se pudéssemos integrar com nosso calendário para agendar tarefas diretamente do HR Portal.", CreatedAt = DateTime.UtcNow.AddDays(-2), ApplicationId = 5, Status = FeedbackStatus.Reopened }, // Feedback reaberto
+                    new Feedback { Title = "Conteúdo desatualizado em algumas seções do Marketing Dashboard", Description = "Notei que algumas informações nas seções de 'Sobre Nós' e 'FAQ' no Marketing Dashboard parecem estar desatualizadas.", CreatedAt = DateTime.UtcNow.AddDays(-1), ApplicationId = 6, Status = FeedbackStatus.Cancelled }, // Feedback cancelado
+                    new Feedback { Title = "Ótimo suporte ao cliente no Sales CRM", Description = "Tive uma dúvida e o atendimento via chat no Sales CRM foi muito rápido e eficiente. Fiquei impressionado!", CreatedAt = DateTime.UtcNow.AddHours(-12), ApplicationId = 7, Status = FeedbackStatus.Closed }, // Outro feedback fechado
+                    new Feedback { Title = "Problema de login intermitente no Quality Control System", Description = "Às vezes, o sistema de controle de qualidade apresenta falha ao tentar fazer login, exigindo várias tentativas.", CreatedAt = DateTime.UtcNow.AddDays(-4), ApplicationId = 8, Status = FeedbackStatus.Open }, // Outro feedback aberto
+                    new Feedback { Title = "Sugestão de melhoria na interface do Supplier Chain Manager", Description = "A interface poderia ser mais limpa e moderna para facilitar a visualização de grandes volumes de dados.", CreatedAt = DateTime.UtcNow.AddDays(-6), ApplicationId = 9, Status = FeedbackStatus.InProgress }, // Outro feedback em progresso
+                    new Feedback { Title = "Ferramentas de Engenharia estão ótimas!", Description = "As Engineering Tools estão muito completas e eficientes para o nosso trabalho diário. Excelente!", CreatedAt = DateTime.UtcNow.AddDays(-8), ApplicationId = 10, Status = FeedbackStatus.Closed } // Mais um feedback fechado
+                );
+
                 // Incidents
                 context.Incidents.AddRange(
                     new Incident
@@ -190,6 +202,22 @@ namespace Stellantis.ProjectName.WebApi
                         ClosedAt = DateTime.UtcNow.AddDays(-1),
                         Status = IncidentStatus.Closed,
                         ApplicationId = 4
+                    },
+                     new Incident
+                     {
+                         Title = "Chamado reaberto no HR Portal",
+                         Description = "Problema voltou a ocorrer no HR Portal.",
+                         CreatedAt = DateTime.UtcNow.AddDays(-8),
+                         Status = IncidentStatus.Reopened,
+                         ApplicationId = 5
+                     },
+                    new Incident
+                    {
+                        Title = "Incidente cancelado no Marketing Dashboard",
+                        Description = "Incidente foi cancelado pelo solicitante.",
+                        CreatedAt = DateTime.UtcNow.AddDays(-6),
+                        Status = IncidentStatus.Cancelled,
+                        ApplicationId = 6
                     }
                 );
                 await context.SaveChangesAsync().ConfigureAwait(false);

@@ -33,6 +33,7 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(dest => dest.External, opt => opt.MapFrom(src => src.External));
 
             CreateMap<ApplicationDataFilterDto, ApplicationFilter>()
+                .ForMember(x => x.SquadId, opt => opt.MapFrom(src => src.SquadId))
                 .ForMember(x => x.AreaId, opt => opt.MapFrom(src => src.AreaId))
                 .ForMember(x => x.External, opt => opt.MapFrom(src => src.External))
                 .ForMember(x => x.ProductOwner, opt => opt.MapFrom(src => src.ProductOwner));
@@ -70,19 +71,19 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
             CreateMap<PagedResult<ServiceData>, PagedResultVm<ServiceDataVm>>();
 
-            CreateMap<FeedbacksDto, Feedbacks>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore())
-                .ForMember(dest => dest.Members, opt => opt.Ignore())
-                .ForMember(dest => dest.Application, opt => opt.Ignore())
-                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
-                .ForMember(dest => dest.ClosedAt, opt => opt.Ignore())
-                .ForMember(dest => dest.StatusFeedbacks, opt => opt.MapFrom(src => src.StatusFeedbacks));
-            CreateMap<FeedbacksFilterDto, FeedbacksFilter>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
-            CreateMap<Feedbacks, FeedbacksVm>()
-                .ForMember(dest => dest.StatusFeedbacks, opt => opt.MapFrom(src => src.StatusFeedbacks.ToString()))
-                .ForMember(dest => dest.MemberIds, opt => opt.MapFrom(src => src.Members.Select(m => m.Id)))
-                .ForMember(dest => dest.Application, opt => opt.MapFrom(src => src.Application));
+           CreateMap<FeedbackDto, Feedback>()
+             .ForMember(dest => dest.Id, opt => opt.Ignore())
+             .ForMember(dest => dest.Members, opt => opt.Ignore())
+             .ForMember(dest => dest.Application, opt => opt.Ignore())
+             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+             .ForMember(dest => dest.ClosedAt, opt => opt.Ignore())
+             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
+            CreateMap<FeedbackFilterDto, FeedbackFilter>()
+             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
+            CreateMap<Feedback, FeedbackVm>()
+             .ForMember(dest => dest.FeedbackStatus, opt => opt.MapFrom(src => src.Status.ToString()))
+             .ForMember(dest => dest.MemberIds, opt => opt.Ignore())
+             .ForMember(dest => dest.Application, opt => opt.MapFrom(src => src.Application));
 
             CreateMap<IncidentDto, Incident>()
              .ForMember(dest => dest.Id, opt => opt.Ignore())

@@ -2,11 +2,11 @@
 
 namespace Stellantis.ProjectName.Application.Models.Filters
 {
-    public class FeedbacksFilter : Filter
+    public class FeedbackFilter : Filter
     {
         public int Id { get; set; }
         public string? Title { get; set; }
         public int ApplicationId { get; set; }
-        public FeedbacksStatus? StatusFeedbacks { get; set; }
+        public FeedbackStatus? Status { get; set; }
     }
 }
