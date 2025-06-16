@@ -1,7 +1,6 @@
-﻿using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore.Storage;
-using Stellantis.ProjectName.Application.Interfaces.Repositories;
+﻿using Microsoft.EntityFrameworkCore.Storage;
 using Stellantis.ProjectName.Application.Interfaces;
+using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
 
 namespace Stellantis.ProjectName.Infrastructure.Data
@@ -15,14 +14,13 @@ namespace Stellantis.ProjectName.Infrastructure.Data
         public IAreaRepository AreaRepository { get; } = new AreaRepository(context);
         public IIntegrationRepository IntegrationRepository { get; } = new IntegrationRepository(context);
         public IResponsibleRepository ResponsibleRepository { get; } = new ResponsibleRepository(context);
-        public IFeedbacksRepository FeedbacksRepository { get; } = new FeedbacksRepository(context);
+        public IFeedbackRepository FeedbackRepository { get; } = new FeedbackRepository(context);
         public IIncidentRepository IncidentRepository { get; } = new IncidentRepository(context);
         public IMemberRepository MemberRepository { get; } = new MemberRepository(context);
         public IApplicationDataRepository ApplicationDataRepository { get; } = new ApplicationDataRepository(context);
         public ISquadRepository SquadRepository { get; } = new SquadRepository(context);
         public IServiceDataRepository ServiceDataRepository { get; } = new ServiceDataRepository(context);
         public IManagerRepository ManagerRepository { get; } = new ManagerRepository(context);
-
         public IGitRepoRepository GitRepoRepository { get; } = new GitRepoRepository(context);
 
         public void BeginTransaction()
