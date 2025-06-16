@@ -190,6 +190,22 @@ namespace Stellantis.ProjectName.WebApi
                         ClosedAt = DateTime.UtcNow.AddDays(-1),
                         Status = IncidentStatus.Closed,
                         ApplicationId = 4
+                    },
+                     new Incident
+                     {
+                         Title = "Chamado reaberto no HR Portal",
+                         Description = "Problema voltou a ocorrer no HR Portal.",
+                         CreatedAt = DateTime.UtcNow.AddDays(-8),
+                         Status = IncidentStatus.Reopened,
+                         ApplicationId = 5
+                     },
+                    new Incident
+                    {
+                        Title = "Incidente cancelado no Marketing Dashboard",
+                        Description = "Incidente foi cancelado pelo solicitante.",
+                        CreatedAt = DateTime.UtcNow.AddDays(-6),
+                        Status = IncidentStatus.Cancelled,
+                        ApplicationId = 6
                     }
                 );
                 await context.SaveChangesAsync().ConfigureAwait(false);
