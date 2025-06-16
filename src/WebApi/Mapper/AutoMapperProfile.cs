@@ -79,7 +79,7 @@ namespace Stellantis.ProjectName.WebApi.Mapper
              .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
             CreateMap<FeedbackFilterDto, FeedbackFilter>()
              .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
-            CreateMap<Feedback, FeedbacksVm>()
+            CreateMap<Feedback, FeedbackVm>()
              .ForMember(dest => dest.FeedbackStatus, opt => opt.MapFrom(src => src.Status.ToString()))
              .ForMember(dest => dest.MemberIds, opt => opt.Ignore())
              .ForMember(dest => dest.Application, opt => opt.MapFrom(src => src.Application));

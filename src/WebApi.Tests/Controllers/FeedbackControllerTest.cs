@@ -34,9 +34,9 @@ namespace WebApi.Tests.Controllers
                 .ForEach(b => _fixture.Behaviors.Remove(b));
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
             _fixture.Customize<FeedbackDto>(c => c
-                .With(dto => dto.Status,
-                      () => _fixture.Create<IncidentStatus>().ToString()));
+                .With(dto => dto.Status, () => _fixture.Create<Stellantis.ProjectName.WebApi.Dto.FeedbackStatus>()));
 
+            var feedbackDtoString = _fixture.Create<FeedbackDto>().ToString();
 
             _controller = new FeedbackController(_serviceMock.Object, mapper, localizerFactory);
         }
