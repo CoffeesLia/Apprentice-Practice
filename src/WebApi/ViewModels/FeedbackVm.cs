@@ -1,6 +1,6 @@
 ﻿namespace Stellantis.ProjectName.WebApi.ViewModels
 {
-    public class FeedbacksVm : EntityVmBase
+    public class FeedbackVm : EntityVmBase
     {
         public new int Id { get; set; } // Use the 'new' keyword to explicitly hide the inherited member  
         public string Title { get; set; } = string.Empty;
