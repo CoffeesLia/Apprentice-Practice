@@ -33,6 +33,7 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(dest => dest.External, opt => opt.MapFrom(src => src.External));
 
             CreateMap<ApplicationDataFilterDto, ApplicationFilter>()
+                .ForMember(x => x.SquadId, opt => opt.MapFrom(src => src.SquadId))
                 .ForMember(x => x.AreaId, opt => opt.MapFrom(src => src.AreaId))
                 .ForMember(x => x.External, opt => opt.MapFrom(src => src.External))
                 .ForMember(x => x.ProductOwner, opt => opt.MapFrom(src => src.ProductOwner));
