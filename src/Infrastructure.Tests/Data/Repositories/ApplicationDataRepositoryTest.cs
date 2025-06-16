@@ -245,6 +245,33 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
 
+        [Fact]
+        public async Task GetListAsyncWithFilterReturnsFilteredList()
+        {
+            // Arrange
+            var areaId = 99;
+            var expectedCount = 3;
+            var applicationDataList = Enumerable.Range(1, 5)
+                .Select(i => new ApplicationData($"App {i}")
+                {
+                    AreaId = i <= expectedCount ? areaId : areaId + 1,
+                    ProductOwner = "Owner",
+                    ConfigurationItem = "Config"
+                }).ToList();
+
+            await _context.Set<ApplicationData>().AddRangeAsync(applicationDataList);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.GetListAsync(x => x.AreaId == areaId);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(expectedCount, result.Count);
+            Assert.All(result, x => Assert.Equal(areaId, x.AreaId));
+        }
+
+
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposed && disposing && _context != null)
