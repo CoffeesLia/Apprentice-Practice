@@ -19,30 +19,21 @@ namespace Stellantis.ProjectName.Application.Services
         {
             ArgumentNullException.ThrowIfNull(item);
 
-            if (await Repository.VerifyNameExistsAsync(item.Name).ConfigureAwait(false))
-            {
-                return OperationResult.Conflict(Localizer[IntegrationResources.NameIsRequired]);
-            }
-
             var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
             if (!validationResult.IsValid)
             {
                 return OperationResult.InvalidData(validationResult);
             }
 
-            if (!await IsIntegrationNameUniqueAsync(item.Name).ConfigureAwait(false))
+
+            if (await Repository.VerifyNameExistsAsync(item.Name).ConfigureAwait(false))
             {
-                return OperationResult.Conflict(IntegrationResources.AlreadyExists);
+                return OperationResult.Conflict(Localizer[IntegrationResources.NameIsRequired]);
             }
 
             if (await Repository.VerifyDescriptionExistsAsync(item.Description).ConfigureAwait(false))
             {
                 return OperationResult.Conflict(Localizer[IntegrationResources.DescriptionIsRequired]);
-            }
-
-            if (!await Repository.VerifyApplicationIdExistsAsync(item.ApplicationDataId).ConfigureAwait(false))
-            {
-                return OperationResult.Conflict(Localizer[IntegrationResources.ApplicationIsRequired]);
             }
 
             await Repository.CreateAsync(item).ConfigureAwait(false);
@@ -81,10 +72,6 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.InvalidData(validationResult);
             }
 
-            if (!await IsIntegrationNameUniqueAsync(item.Name).ConfigureAwait(false))
-            {
-                return OperationResult.Conflict(IntegrationResources.AlreadyExists);
-            }
             if (await Repository.VerifyDescriptionExistsAsync(item.Description).ConfigureAwait(false))
             {
                 return OperationResult.InvalidData(validationResult);
@@ -92,6 +79,10 @@ namespace Stellantis.ProjectName.Application.Services
             if (await Repository.VerifyNameExistsAsync(item.Name).ConfigureAwait(false))
             {
                 return OperationResult.InvalidData(validationResult);
+            }
+            if (!await Repository.VerifyApplicationIdExistsAsync(item.ApplicationDataId).ConfigureAwait(false))
+            {
+                return OperationResult.Conflict(Localizer[IntegrationResources.ApplicationIsRequired]);
             }
 
             var existingIntegration = await Repository.GetByIdAsync(item.Id).ConfigureAwait(false);
