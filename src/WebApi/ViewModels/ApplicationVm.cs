@@ -4,6 +4,7 @@
     {
         public required string Name { get; set; }
         public int ResponsibleId { get; set; }
+        public int SquadId { get; set; }
         public int AreaId { get; set; }
         public AreaVm Area { get; set; } = null!;
         public string? Description { get; set; }
