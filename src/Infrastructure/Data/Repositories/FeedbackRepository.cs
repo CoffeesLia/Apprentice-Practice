@@ -35,6 +35,8 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 filters = filters.And(x => x.Status == filter.Status.Value);
             }
             // Retorna a lista paginada com os filtros aplicados
+            var sortProperty = !string.IsNullOrWhiteSpace(filter.Sort) ? filter.Sort : nameof(Feedback.Id);
+
             return await GetListAsync(
                 filter: filters,
                 page: filter.Page,
