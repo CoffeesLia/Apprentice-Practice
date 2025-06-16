@@ -4,6 +4,7 @@ using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
@@ -103,6 +104,11 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             ArgumentNullException.ThrowIfNull(filter);
             ExpressionStarter<GitRepo> filters = PredicateBuilder.New<GitRepo>(true);
             filter.Page = filter.Page <= 0 ? 1 : filter.Page;
+
+            if (filter.ApplicationId > 0)
+            {
+                filters = filters.And(a => a.ApplicationId == filter.ApplicationId);
+            }
 
             if (!string.IsNullOrWhiteSpace(filter.Description))
             {

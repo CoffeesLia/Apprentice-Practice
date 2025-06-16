@@ -1,4 +1,4 @@
-using Stellantis.ProjectName.Application.Interfaces.Repositories;
+﻿using Stellantis.ProjectName.Application.Interfaces.Repositories;
 
 namespace Stellantis.ProjectName.Application.Interfaces
 {
@@ -15,19 +15,19 @@ namespace Stellantis.ProjectName.Application.Interfaces
 
         IIncidentRepository IncidentRepository { get; }
 
-        IImprovementRepository ImprovementRepository { get; }
+        IFeedbacksRepository FeedbacksRepository { get; }
 
         IMemberRepository MemberRepository { get; }
 
         IServiceDataRepository ServiceDataRepository { get; }
+
+        IManagerRepository ManagerRepository { get; }
 
         IApplicationDataRepository ApplicationDataRepository { get; }
 
         ISquadRepository SquadRepository { get; }
 
         IGitRepoRepository GitRepoRepository { get; }
-
-        IManagerRepository ManagerRepository { get; }
 
         Task CommitAsync();
         void BeginTransaction();

@@ -115,11 +115,6 @@ namespace Stellantis.ProjectName.Application.Models
         {
             return new OperationResult(OperationStatus.NotFound, message, [message]);
         }
-
-        internal static PagedResult<Integration> InvalidData(LocalizedString localizedString)
-        {
-            throw new NotImplementedException();
-        }
     }
 
 }

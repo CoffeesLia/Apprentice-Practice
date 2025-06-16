@@ -9,18 +9,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
     public class ApplicationDataRepository(Context context) : RepositoryBase<ApplicationData, Context>(context), IApplicationDataRepository
     {
-        public async Task DeleteAsync(int id, bool saveChanges = true)
-        {
-            ApplicationData? entity = await GetByIdAsync(id).ConfigureAwait(false);
-            if (entity != null)
-            {
-                Context.Set<ApplicationData>().Remove(entity);
-                if (saveChanges)
-                {
-                    await SaveChangesAsync().ConfigureAwait(false);
-                }
-            }
-        }
+  
 
         public async Task<ApplicationData?> GetByIdAsync(int id)
         {
@@ -92,6 +81,18 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 .ConfigureAwait(false);
         }
 
+        public async Task DeleteAsync(int id, bool saveChanges = true)
+        {
+            ApplicationData? entity = await GetByIdAsync(id).ConfigureAwait(false);
+            if (entity != null)
+            {
+                Context.Set<ApplicationData>().Remove(entity);
+                if (saveChanges)
+                {
+                    await SaveChangesAsync().ConfigureAwait(false);
+                }
+            }
+        }
 
     }
 }
