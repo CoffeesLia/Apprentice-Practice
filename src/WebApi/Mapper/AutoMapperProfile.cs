@@ -26,6 +26,7 @@ namespace Stellantis.ProjectName.WebApi.Mapper
 
 
             CreateMap<ApplicationData, ApplicationVm>()
+                .ForMember(dest => dest.Squads, opt => opt.MapFrom(src => src.Squads))
                 .ForMember(dest => dest.Area, opt => opt.MapFrom(src => src.Area))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(dest => dest.ProductOwner, opt => opt.MapFrom(src => src.ProductOwner))

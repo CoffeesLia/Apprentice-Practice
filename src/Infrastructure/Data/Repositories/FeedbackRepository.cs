@@ -70,9 +70,9 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                     .ThenInclude(s => s.Members)
                 .FirstOrDefaultAsync(a => a.Id == applicationId);
 
-            if (application == null) return [];
+            if (application == null) return Enumerable.Empty<Member>();
 
-            return [.. application.Squads.SelectMany(s => s.Members).Distinct()];
+            return application.Squads.Members?.Distinct() ?? Enumerable.Empty<Member>();
         }
         public async Task<IEnumerable<Feedback>> GetByApplicationIdAsync(int applicationId)
         {

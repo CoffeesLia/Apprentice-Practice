@@ -76,7 +76,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             if (application == null) return Enumerable.Empty<Member>();
 
-            return application.Squads.SelectMany(s => s.Members).Distinct().ToList();
+            return application.Squads.Members?.Distinct().ToList() ?? Enumerable.Empty<Member>();
         }
 
         // Consulta todos os incidentes vinculados a uma aplicação específica.
