@@ -7,14 +7,14 @@ using AppDomain = Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
-    public class ImprovementRepository(Context context)
-        : RepositoryBase<Improvement, Context>(context), IImprovementRepository
+    public class FeedbackRepository(Context context)
+        : RepositoryBase<Feedback, Context>(context), IFeedbackRepository
     {
-        public async Task<PagedResult<Improvement>> GetListAsync(ImprovementFilter filter)
+        public async Task<PagedResult<Feedback>> GetListAsync(FeedbackFilter filter)
         {
             ArgumentNullException.ThrowIfNull(filter);
 
-            ExpressionStarter<Improvement> filters = PredicateBuilder.New<Improvement>(true);
+            ExpressionStarter<Feedback> filters = PredicateBuilder.New<Feedback>(true);
             filter.Page = filter.Page <= 0 ? 1 : filter.Page;
 
             if (filter.Id > 0)
@@ -30,31 +30,33 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 filters = filters.And(x => x.ApplicationId == filter.ApplicationId);
             }
             // Filtro por status
-            if (filter.StatusImprovement.HasValue)
+            if (filter.Status.HasValue)
             {
-                filters = filters.And(x => x.StatusImprovement == filter.StatusImprovement.Value);
+                filters = filters.And(x => x.Status == filter.Status.Value);
             }
             // Retorna a lista paginada com os filtros aplicados
+            var sortProperty = !string.IsNullOrWhiteSpace(filter.Sort) ? filter.Sort : nameof(Feedback.Id);
+
             return await GetListAsync(
                 filter: filters,
                 page: filter.Page,
                 sort: filter.Sort,
                 sortDir: filter.SortDir,
-                includeProperties: nameof(Improvement.Application)
+                includeProperties: nameof(Feedback.Application)
             ).ConfigureAwait(false);
         }
 
-        public async Task<Improvement?> GetByIdAsync(int id)
+        public async Task<Feedback?> GetByIdAsync(int id)
         {
-            return await Context.Set<Improvement>().FindAsync(id).ConfigureAwait(false);
+            return await Context.Set<Feedback>().FindAsync(id).ConfigureAwait(false);
         }
 
         public async Task DeleteAsync(int id, bool saveChanges = true)
         {
-            Improvement? entity = await GetByIdAsync(id).ConfigureAwait(false);
+            Feedback? entity = await GetByIdAsync(id).ConfigureAwait(false);
             if (entity != null)
             {
-                Context.Set<Improvement>().Remove(entity);
+                Context.Set<Feedback>().Remove(entity);
                 if (saveChanges)
                 {
                     await SaveChangesAsync().ConfigureAwait(false);
@@ -68,13 +70,13 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                     .ThenInclude(s => s.Members)
                 .FirstOrDefaultAsync(a => a.Id == applicationId);
 
-            if (application == null) return [];
+            if (application == null) return Enumerable.Empty<Member>();
 
-            return [.. application.Squads.SelectMany(s => s.Members).Distinct()];
+            return application.Squads.Members?.Distinct() ?? Enumerable.Empty<Member>();
         }
-        public async Task<IEnumerable<Improvement>> GetByApplicationIdAsync(int applicationId)
+        public async Task<IEnumerable<Feedback>> GetByApplicationIdAsync(int applicationId)
         {
-            return await Context.Set<Improvement>()
+            return await Context.Set<Feedback>()
                 .Include(i => i.Members)
                 .Where(i => i.ApplicationId == applicationId)
                 .ToListAsync()
@@ -82,10 +84,10 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         }
 
-        // Consulta todos os improvementes em que um membro está envolvido.
-        public async Task<IEnumerable<Improvement>> GetByMemberIdAsync(int memberId)
+        // Consulta todos os feedbackses em que um membro está envolvido.
+        public async Task<IEnumerable<Feedback>> GetByMemberIdAsync(int memberId)
         {
-            return await Context.Set<Improvement>()
+            return await Context.Set<Feedback>()
                 .Include(i => i.Application)
                 .Where(i => i.Members.Any(m => m.Id == memberId))
                 .ToListAsync()
@@ -93,11 +95,10 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         }
 
-        // Consulta todos os improvementes com um determinado status.
-        public async Task<IEnumerable<Improvement>> GetByStatusAsync(ImprovementStatus statusImprovement)
+        public async Task<IEnumerable<Feedback>> GetByStatusAsync(FeedbackStatus statusFeedbacks)
         {
-            return await Context.Set<Improvement>()
-                .Where(i => i.StatusImprovement == statusImprovement)
+            return await Context.Set<Feedback>()
+                .Where(i => i.Status == statusFeedbacks)
                 .ToListAsync()
                 .ConfigureAwait(false);
 

@@ -14,45 +14,42 @@ using WebApi.Tests.Helpers;
 
 namespace WebApi.Tests.Controllers
 {
-    public class IncidentsControllerTests
+    public class FeedbackControllerTest
     {
-        private readonly Mock<IIncidentService> _serviceMock;
-        private readonly IncidentsController _controller;
+        private readonly Mock<IFeedbackService> _serviceMock;
+        private readonly FeedbackController _controller;
         private readonly Fixture _fixture;
 
-        public IncidentsControllerTests()
+        public FeedbackControllerTest()
         {
-            _serviceMock = new Mock<IIncidentService>();
+            _serviceMock = new Mock<IFeedbackService>();
             MapperConfiguration mapperConfiguration = new(x => { x.AddProfile<AutoMapperProfile>(); });
             IMapper mapper = mapperConfiguration.CreateMapper();
             var localizerFactory = LocalizerFactorHelper.Create();
 
             _fixture = new Fixture();
-            // Evita exceção de referência circular no AutoFixture
             _fixture.Behaviors
                 .OfType<ThrowingRecursionBehavior>()
                 .ToList()
                 .ForEach(b => _fixture.Behaviors.Remove(b));
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
-            // Configura o AutoFixture para gerar valores válidos para o Status
-            _fixture.Customize<IncidentDto>(c => c
-                .With(dto => dto.Status, () => _fixture.Create<Stellantis.ProjectName.WebApi.Dto.IncidentStatus>()));
+            _fixture.Customize<FeedbackDto>(c => c
+                .With(dto => dto.Status, () => _fixture.Create<Stellantis.ProjectName.WebApi.Dto.FeedbackStatus>()));
 
+            var feedbackDtoString = _fixture.Create<FeedbackDto>().ToString();
 
-            var incidentDtoString = _fixture.Create<IncidentDto>().ToString();
-
-            _controller = new IncidentsController(_serviceMock.Object, mapper, localizerFactory);
+            _controller = new FeedbackController(_serviceMock.Object, mapper, localizerFactory);
         }
 
         [Fact]
         public async Task CreateAsyncShouldReturnCreatedAtActionResult()
         {
             // Arrange
-            IncidentDto incidentDto = _fixture.Create<IncidentDto>();
-            _serviceMock.Setup(s => s.CreateAsync(It.IsAny<Incident>())).ReturnsAsync(OperationResult.Complete());
+            FeedbackDto feedbacksDto = _fixture.Create<FeedbackDto>();
+            _serviceMock.Setup(s => s.CreateAsync(It.IsAny<Feedback>())).ReturnsAsync(OperationResult.Complete());
 
             // Act
-            IActionResult result = await _controller.CreateAsync(incidentDto);
+            IActionResult result = await _controller.CreateAsync(feedbacksDto);
 
             // Assert
             Assert.IsType<CreatedAtActionResult>(result);
@@ -62,43 +59,43 @@ namespace WebApi.Tests.Controllers
         public async Task GetAsyncShouldReturnIncidentVm()
         {
             // Arrange
-            Incident incident = _fixture.Create<Incident>();
-            _serviceMock.Setup(s => s.GetItemAsync(It.IsAny<int>())).ReturnsAsync(incident);
+            Feedback feedbacks = _fixture.Create<Feedback>();
+            _serviceMock.Setup(s => s.GetItemAsync(It.IsAny<int>())).ReturnsAsync(feedbacks);
 
             // Act
-            ActionResult<IncidentVm> result = await _controller.GetAsync(incident.Id);
+            ActionResult<FeedbackVm> result = await _controller.GetAsync(feedbacks.Id);
 
             // Assert
             OkObjectResult okResult = Assert.IsType<OkObjectResult>(result.Result);
-            Assert.IsType<IncidentVm>(okResult.Value);
+            Assert.IsType<FeedbackVm>(okResult.Value);
         }
 
         [Fact]
         public async Task GetListAsyncShouldReturnPagedResultVm()
         {
             // Arrange
-            IncidentFilterDto filterDto = _fixture.Create<IncidentFilterDto>();
-            PagedResult<Incident> pagedResult = _fixture.Create<PagedResult<Incident>>();
-            _serviceMock.Setup(s => s.GetListAsync(It.IsAny<IncidentFilter>())).ReturnsAsync(pagedResult);
+            FeedbackFilterDto filterDto = _fixture.Create<FeedbackFilterDto>();
+            PagedResult<Feedback> pagedResult = _fixture.Create<PagedResult<Feedback>>();
+            _serviceMock.Setup(s => s.GetListAsync(It.IsAny<FeedbackFilter>())).ReturnsAsync(pagedResult);
 
             // Act
             IActionResult result = await _controller.GetListAsync(filterDto);
 
             // Assert
             OkObjectResult okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.IsType<PagedResultVm<IncidentVm>>(okResult.Value);
+            Assert.IsType<PagedResultVm<FeedbackVm>>(okResult.Value);
         }
 
         [Fact]
         public async Task UpdateAsyncShouldReturnOkResult()
         {
             // Arrange
-            int incidentId = _fixture.Create<int>();
-            IncidentDto incidentDto = _fixture.Create<IncidentDto>();
-            _serviceMock.Setup(s => s.UpdateAsync(It.IsAny<Incident>())).ReturnsAsync(OperationResult.Complete());
+            int feedbacksId = _fixture.Create<int>();
+            FeedbackDto incidentDto = _fixture.Create<FeedbackDto>();
+            _serviceMock.Setup(s => s.UpdateAsync(It.IsAny<Feedback>())).ReturnsAsync(OperationResult.Complete());
 
             // Act
-            IActionResult result = await _controller.UpdateAsync(incidentId, incidentDto);
+            IActionResult result = await _controller.UpdateAsync(feedbacksId, incidentDto);
 
             // Assert
             Assert.IsType<OkObjectResult>(result);

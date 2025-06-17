@@ -4,12 +4,12 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
 {
-    public class ImprovementConfig : IEntityTypeConfiguration<Improvement>
+    public class FeedbackConfig : IEntityTypeConfiguration<Feedback>
     {
-        public void Configure(EntityTypeBuilder<Improvement> builder)
+        public void Configure(EntityTypeBuilder<Feedback> builder)
         {
             ArgumentNullException.ThrowIfNull(builder);
-            builder.ToTable("Improvement");
+            builder.ToTable("Feedback");
             builder.HasKey(i => i.Id);
 
             builder.Property(i => i.Title)
@@ -25,7 +25,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
             builder.Property(i => i.CreatedAt)
                 .IsRequired();
 
-            builder.Property(i => i.StatusImprovement)
+            builder.Property(i => i.Status)
                 .IsRequired();
 
             builder.HasOne(i => i.Application)

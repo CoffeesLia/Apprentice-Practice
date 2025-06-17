@@ -1,6 +1,8 @@
-﻿namespace Stellantis.ProjectName.WebApi.Dto
+﻿using Stellantis.ProjectName.Domain.Entities;
+
+namespace Stellantis.ProjectName.WebApi.Dto
 {
-    public enum IncidentStatus
+    public enum FeedbackStatus
     {
         Open,
         InProgress,
@@ -8,14 +10,13 @@
         Closed,
         Reopened
     }
-    public class IncidentDto
+
+    public class FeedbackDto
     {
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public int ApplicationId { get; set; }
-        public int MemberId { get; set; }
-
-        public IncidentStatus Status { get; set; }
-
+        public IEnumerable<int> MemberIds { get; set; } = [];
+        public FeedbackStatus Status { get; set; }
     }
 }

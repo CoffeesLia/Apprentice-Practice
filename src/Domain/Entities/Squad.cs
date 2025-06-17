@@ -4,7 +4,8 @@
     {
         public string? Name { get; set; }
         public string? Description { get; set; }
-        public ICollection<Member> Members { get; } = []; // Membros
-        public ICollection<ApplicationData> Applications { get; } = []; // Aplicações
+        public decimal? Cost { get; set; }
+        public ICollection<Member>? Members { get; }
+
     }
 }

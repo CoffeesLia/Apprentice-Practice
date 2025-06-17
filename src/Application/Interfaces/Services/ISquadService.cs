@@ -8,7 +8,5 @@ namespace Stellantis.ProjectName.Application.Interfaces.Services
     public interface ISquadService : IEntityServiceBase<Squad>
     {
         Task<PagedResult<Squad>> GetListAsync(SquadFilter squadFilter);
-        Task<OperationResult> AddApplicationsToSquadAsync(int squadId, Collection<int> applicationIds);
     }
-
 }

@@ -1,4 +1,4 @@
-using FluentValidation;
+﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
@@ -25,30 +25,32 @@ namespace Stellantis.ProjectName.IoC
             services.AddScoped<IValidator<Area>, AreaValidator>();
             services.AddScoped<IValidator<ApplicationData>, ApplicationDataValidator>();
             services.AddScoped<IValidator<Responsible>, ResponsibleValidator>();
+            services.AddScoped<IValidator<Feedback>, FeedbackValidator>();
             services.AddScoped<IValidator<GitRepo>, GitRepoValidator>();
             services.AddScoped<IValidator<Integration>, IntegrationValidator>();
             services.AddScoped<IValidator<ServiceData>, ServiceDataValidator>();
+            services.AddScoped<IValidator<Manager>, ManagerValidator>();
             services.AddScoped<IValidator<Squad>, SquadValidator>();
             services.AddScoped<IValidator<Member>, MemberValidator>();
             services.AddScoped<IValidator<Incident>, IncidentValidator>();
             services.AddScoped<IValidator<DocumentData>, DocumentDataValidator>();
-            services.AddScoped<IValidator<Manager>, ManagerValidator>();
         }
 
         private static void Services(IServiceCollection services)
         {
             services.AddScoped<IAreaService, AreaService>();
             services.AddScoped<IApplicationDataService, ApplicationDataService>();
+            services.AddScoped<IFeedbackService, FeedbackService>();
             services.AddScoped<IResponsibleService, ResponsibleService>();
             services.AddScoped<IGitRepoService, GitRepoService>();
             services.AddScoped<IIntegrationService, IntegrationService>();
             services.AddScoped<IServiceDataService, ServiceDataService>();
+            services.AddScoped<IManagerService, ManagerService>();
             services.AddScoped<ISquadService, SquadService>();
             services.AddScoped<IMemberService, MemberService>();
             services.AddScoped<IDocumentService, DocumentDataService>();
             services.AddScoped<IIncidentService, IncidentService>();
             services.AddScoped<IDocumentService, DocumentDataService>();
-            services.AddScoped<IManagerService, ManagerService>();
         }
 
         private static void Repositories(IServiceCollection services)
@@ -56,15 +58,16 @@ namespace Stellantis.ProjectName.IoC
             services.AddScoped<IAreaRepository, AreaRepository>();
             services.AddScoped<IApplicationDataRepository, ApplicationDataRepository>();
             services.AddScoped<IResponsibleRepository, ResponsibleRepository>();
+            services.AddScoped<IFeedbackRepository, FeedbackRepository>();
             services.AddScoped<IGitRepoRepository, GitRepoRepository>();
             services.AddScoped<IIntegrationRepository, IntegrationRepository>();
             services.AddScoped<IServiceDataRepository, ServiceDataRepository>();
+            services.AddScoped<IManagerRepository, ManagerRepository>();
             services.AddScoped<ISquadRepository, SquadRepository>();
             services.AddScoped<IMemberRepository, MemberRepository>();
             services.AddScoped<IIncidentRepository, IncidentRepository>();
             services.AddScoped<IDocumentRepository, DocumentDataRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IManagerRepository, ManagerRepository>();
         }
     }
 }

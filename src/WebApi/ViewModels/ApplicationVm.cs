@@ -1,9 +1,15 @@
-﻿namespace Stellantis.ProjectName.WebApi.ViewModels
+﻿using Stellantis.ProjectName.Domain.Entities;
+
+namespace Stellantis.ProjectName.WebApi.ViewModels
 {
     public class ApplicationVm : EntityVmBase
     {
         public required string Name { get; set; }
-        public required AreaVm Area { get; set; }
+        public int ResponsibleId { get; set; }
+        public int SquadId { get; set; }
+        public int AreaId { get; set; }
+        public SquadVm Squads { get; set; }
+        public AreaVm Area { get; set; } = null!;
         public string? Description { get; set; }
         public required string ProductOwner { get; set; }
         public required string ConfigurationItem { get; set; }

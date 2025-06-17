@@ -4,14 +4,15 @@ namespace Stellantis.ProjectName.Domain.Entities
     {
         public string? Name { get; set; } = name;
         public int AreaId { get; set; }
-        public Area? Area { get; set; }
+        public Area Area { get; set; } = null!;
         public ICollection<Integration> Integration { get; } = [];
         public int ResponsibleId { get; set; }
         public string? Description { get; set; }
         public required string ProductOwner { get; set; }
         public required string ConfigurationItem { get; set; }
+        public int SquadId { get; set; }   
         public bool External { get; set; }
-        public ICollection<Squad> Squads { get; } = [];
+        public Squad Squads { get; set; }
         public ICollection<DocumentData> Documents { get; } = [];
 
 

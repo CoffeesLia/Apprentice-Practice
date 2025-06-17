@@ -6,7 +6,7 @@ namespace Stellantis.ProjectName.Application.Interfaces.Repositories
     public interface IMemberRepository : IRepositoryEntityBase<Member>
     {
         Task<PagedResult<Member>> GetListAsync(MemberFilter membersFilter);
-        Task<bool> IsEmailUnique(string email);
+        Task<bool> IsEmailUnique(string email, int? excludeId = null);
 
     }
 }
