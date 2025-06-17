@@ -91,18 +91,6 @@ namespace Stellantis.ProjectName.Application.Resources
             }
         }
 
-
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Message Not Found.
-        /// </summary>
-        public static string ApplicationIsRequired
-        {
-            get
-            {
-                return ResourceManager.GetString("ApplicationIsRequired", resourceCulture);
-            }
-        }
-
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Description Is Required.
         /// </summary>
@@ -133,17 +121,6 @@ namespace Stellantis.ProjectName.Application.Resources
             get
             {
                 return ResourceManager.GetString("NameIsRequired", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Already Exists.
-        /// </summary>
-        public static string AlreadyExists
-        {
-            get
-            {
-                return ResourceManager.GetString("AlreadyExists", resourceCulture);
             }
         }
 
