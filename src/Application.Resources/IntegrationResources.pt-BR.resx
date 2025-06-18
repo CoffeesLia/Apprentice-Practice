@@ -126,14 +126,8 @@
   <data name="DescriptionIsRequired" xml:space="preserve">
     <value>Descrição é obrigatória.</value>
   </data>
-  <data name="GettingIntegrationList" xml:space="preserve">
-    <value>Lista de integrações recuperada com sucesso.</value>
-  </data>
   <data name="IdNotFound" xml:space="preserve">
     <value>Id não encontrado.</value>
-  </data>
-  <data name="MessageConflict" xml:space="preserve">
-    <value>A integração já existe.</value>
   </data>
   <data name="MessageNotFound" xml:space="preserve">
     <value>Integração não encontrada.</value>
@@ -142,13 +136,7 @@
     <value>Integração criada com sucesso.</value>
   </data>
   <data name="NameIsRequired" xml:space="preserve">
-    <value>É obrigatório o preenchimento do nome.</value>
-  </data>
-  <data name="NameValidateLength" xml:space="preserve">
-    <value>O nome deve ter entre {0} e {1} caracteres.</value>
-  </data>
-  <data name="NoIntegrations" xml:space="preserve">
-    <value>Sem integrações.</value>
+    <value>Nome é obrigatório.</value>
   </data>
   <data name="UpdatedSuccessfully" xml:space="preserve">
     <value>Integração atualizada com sucesso.</value>
