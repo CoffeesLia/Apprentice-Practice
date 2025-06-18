@@ -21,8 +21,8 @@ namespace Application.Tests.Services
 
         public IntegrationServiceTests()
         {
-            CultureInfo.CurrentCulture = new CultureInfo("en-US");
-            CultureInfo.CurrentUICulture = new CultureInfo("en-US");
+            CultureInfo.CurrentCulture = new CultureInfo("pt-BR");
+            CultureInfo.CurrentUICulture = new CultureInfo("pt-BR");
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _integrationRepositoryMock = new Mock<IIntegrationRepository>();
             Microsoft.Extensions.Localization.IStringLocalizerFactory localizer = LocalizerFactorHelper.Create();
