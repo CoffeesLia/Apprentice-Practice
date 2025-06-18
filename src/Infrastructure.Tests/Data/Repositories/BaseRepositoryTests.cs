@@ -504,11 +504,12 @@ namespace Infrastructure.Tests.Data.Repositories
 
             if (disposing)
             {
-                // free managed resources
-                _context?.Dispose();
+                if (_context != null)
+                {
+                    _context.Dispose();
+                }
             }
 
-            // free native resources if there are any.
             if (nativeResource != IntPtr.Zero)
             {
                 Marshal.FreeHGlobal(nativeResource);
