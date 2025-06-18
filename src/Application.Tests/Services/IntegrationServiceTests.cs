@@ -5,6 +5,7 @@ using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Services;
+using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Application.Validators;
 using Stellantis.ProjectName.Domain.Entities;
 using System.Globalization;
@@ -20,8 +21,10 @@ namespace Application.Tests.Services
 
         public IntegrationServiceTests()
         {
-            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
-            Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
+            CultureInfo.CurrentCulture = new CultureInfo("pt-BR");
+            CultureInfo.CurrentUICulture = new CultureInfo("pt-BR");
+            CultureInfo.CurrentCulture = new CultureInfo("en-US");
+            CultureInfo.CurrentUICulture = new CultureInfo("en-US");
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _integrationRepositoryMock = new Mock<IIntegrationRepository>();
             Microsoft.Extensions.Localization.IStringLocalizerFactory localizer = LocalizerFactorHelper.Create();
@@ -241,7 +244,6 @@ namespace Application.Tests.Services
 
             // Assert  
             Assert.Equal(OperationStatus.InvalidData, result.Status);
-            Assert.Equal(result.Message, result.Message);
         }
         [Fact]
         public async Task CreateAsyncShouldReturnErrorWhenIntegrationNameIsEmpty()
@@ -255,8 +257,8 @@ namespace Application.Tests.Services
 
             // Assert    
             Assert.Equal(OperationStatus.InvalidData, result.Status);
+            Assert.Equal(IntegrationResources.NameIsRequired, result.Errors.First());
         }
-
 
         [Fact]
         public async Task CreateAsyncShouldReturnErrorWhenIntegrationDescriptionIsName()
@@ -270,6 +272,7 @@ namespace Application.Tests.Services
 
             // Assert    
             Assert.Equal(OperationStatus.InvalidData, result.Status);
+            Assert.Equal(IntegrationResources.DescriptionIsRequired, result.Errors.First());
         }
 
         [Fact]
