@@ -21,8 +21,6 @@ namespace Application.Tests.Services
 
         public IntegrationServiceTests()
         {
-            CultureInfo.CurrentCulture = new CultureInfo("pt-BR");
-            CultureInfo.CurrentUICulture = new CultureInfo("pt-BR");
             CultureInfo.CurrentCulture = new CultureInfo("en-US");
             CultureInfo.CurrentUICulture = new CultureInfo("en-US");
             _unitOfWorkMock = new Mock<IUnitOfWork>();
