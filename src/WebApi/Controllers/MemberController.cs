@@ -36,9 +36,8 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         public async Task<IActionResult> GetListAsync([FromQuery] MemberFilterDto filterDto)
         {
             MemberFilter filter = Mapper.Map<MemberFilter>(filterDto);
-            PagedResult<Member> pagedResult = await Service.GetListAsync(filter!).ConfigureAwait(false);
-            PagedResultVm<MemberVm> result = Mapper.Map<PagedResultVm<MemberVm>>(pagedResult);
-            return Ok(result);
+            PagedResult<Member> result = await Service.GetListAsync(filter).ConfigureAwait(false);
+            return Ok(Mapper.Map<PagedResultVm<MemberVm>>(result));
         }
 
         [HttpPut("{id}")]
