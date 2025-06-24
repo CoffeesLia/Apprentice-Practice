@@ -12,6 +12,7 @@ namespace Stellantis.ProjectName.Domain.Entities
         public required string ConfigurationItem { get; set; }
         public bool External { get; set; }
         public ICollection<Squad> Squads { get; } = [];
+        public ICollection<Repo> Repos { get; } = [];
         public ICollection<DocumentData> Documents { get; } = [];
 
 

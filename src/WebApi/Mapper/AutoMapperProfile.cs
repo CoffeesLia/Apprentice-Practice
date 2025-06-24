@@ -79,7 +79,7 @@ namespace Stellantis.ProjectName.WebApi.Mapper
              .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
             CreateMap<FeedbackFilterDto, FeedbackFilter>()
              .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
-            CreateMap<Feedback, FeedbacksVm>()
+            CreateMap<Feedback, FeedbackVm>()
              .ForMember(dest => dest.FeedbackStatus, opt => opt.MapFrom(src => src.Status.ToString()))
              .ForMember(dest => dest.MemberIds, opt => opt.Ignore())
              .ForMember(dest => dest.Application, opt => opt.MapFrom(src => src.Application));
@@ -138,23 +138,23 @@ namespace Stellantis.ProjectName.WebApi.Mapper
               .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
               .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
               .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
-            CreateMap<GitRepoDto, GitRepo>()
+            CreateMap<RepoDto, Repo>()
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.Application, opt => opt.Ignore())
                 .ForMember(x => x.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(x => x.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(x => x.Url, opt => opt.MapFrom(src => src.Url));
 
-            CreateMap<GitRepo, GitRepoVm>()
+            CreateMap<Repo, RepoVm>()
                 .ForMember(x => x.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(x => x.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(x => x.Url, opt => opt.MapFrom(src => src.Url));
 
-            CreateMap<GitRepoFilterDto, GitRepoFilter>()
+            CreateMap<RepoFilterDto, RepoFilter>()
                 .ForMember(x => x.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(x => x.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(x => x.Url, opt => opt.MapFrom(src => src.Url));
-            CreateMap<PagedResult<GitRepo>, PagedResultVm<GitRepoVm>>();
+            CreateMap<PagedResult<Repo>, PagedResultVm<RepoVm>>();
 
             CreateMap<MemberDto, Member>()
                .ForMember(dest => dest.Id, opt => opt.Ignore())

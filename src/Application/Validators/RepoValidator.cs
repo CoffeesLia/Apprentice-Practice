@@ -5,9 +5,11 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Validators
 {
-    public class GitRepoValidator : AbstractValidator<GitRepo>
+    public class RepoValidator : AbstractValidator<Repo>
     {
-        public GitRepoValidator(IStringLocalizerFactory localizerFactory)
+        internal const int MinimumLegth = 3;
+        internal const int MaximumLength = 255;
+        public RepoValidator(IStringLocalizerFactory localizerFactory)
         {
             ArgumentNullException.ThrowIfNull(localizerFactory);
             var localizer = localizerFactory.Create(typeof(GitResource));
@@ -27,6 +29,11 @@ namespace Stellantis.ProjectName.Application.Validators
             RuleFor(repo => repo.ApplicationId)
                 .NotNull()
                 .NotEmpty().WithMessage(localizer[nameof(GitResource.ApplicationIdIsRequired)]);
+
+            RuleFor(x => x.Name)
+            .Length(MinimumLegth, MaximumLength)
+            .WithMessage(localizer[nameof(DocumentDataResources.NameValidateLength), MinimumLegth, MaximumLength]);
+
         }
     }
 

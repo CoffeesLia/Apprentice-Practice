@@ -27,7 +27,7 @@ namespace Stellantis.ProjectName.Application.Interfaces
 
         ISquadRepository SquadRepository { get; }
 
-        IGitRepoRepository GitRepoRepository { get; }
+        IRepoRepository RepoRepository { get; }
 
         Task CommitAsync();
         void BeginTransaction();

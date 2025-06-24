@@ -112,18 +112,18 @@ namespace Stellantis.ProjectName.WebApi
                 );
 
                 context.Repositories.AddRange(
-                    new GitRepo("elog") { ApplicationId = 2, Name = "eLog", Description = "Site da plataforma eLog.", Url = new Uri("https://gitlab.fcalatam.com/fca/supply-chain/ELOG") },
-                    new GitRepo("Cities's Web API") { ApplicationId = 2, Name = "Cities's Web API", Description = "Web API que retorna os dados das cidades.", Url = new Uri("https://gitlab.fcalatam.com/fca/supply-chain/e-log/city-api") },
-                    new GitRepo("finance-tracker") { ApplicationId = 4, Name = "Finance Tracker", Description = "Repositório do sistema de rastreamento financeiro.", Url = new Uri("https://gitlab.fcalatam.com/fca/finance/finance-tracker") },
-                    new GitRepo("hr-portal") { ApplicationId = 5, Name = "HR Portal", Description = "Portal de gerenciamento de recursos humanos.", Url = new Uri("https://gitlab.fcalatam.com/fca/hr/hr-portal") },
-                    new GitRepo("marketing-dashboard") { ApplicationId = 6, Name = "Marketing Dashboard", Description = "Painel de análise de marketing.", Url = new Uri("https://gitlab.fcalatam.com/fca/marketing/marketing-dashboard") },
-                    new GitRepo("sales-crm") { ApplicationId = 7, Name = "Sales CRM", Description = "Sistema de gerenciamento de relacionamento com clientes.", Url = new Uri("https://gitlab.fcalatam.com/fca/sales/sales-crm") },
-                    new GitRepo("quality-control-system") { ApplicationId = 8, Name = "Quality Control System", Description = "Ferramenta de controle de qualidade.", Url = new Uri("https://gitlab.fcalatam.com/fca/quality/quality-control-system") },
-                    new GitRepo("supplier-chain-manager") { ApplicationId = 9, Name = "Supplier Chain Manager", Description = "Gerenciador da cadeia de fornecedores.", Url = new Uri("https://gitlab.fcalatam.com/fca/supply-chain/supplier-chain-manager") },
-                    new GitRepo("engineering-tools") { ApplicationId = 10, Name = "Engineering Tools", Description = "Ferramentas para suporte à engenharia.", Url = new Uri("https://gitlab.fcalatam.com/fca/engineering/engineering-tools") },
-                    new GitRepo("ams-portal") { ApplicationId = 11, Name = "AMS Portal", Description = "Portal de gerenciamento AMS.", Url = new Uri("https://gitlab.fcalatam.com/fca/ams/ams-portal") },
-                    new GitRepo("architecture-planner") { ApplicationId = 12, Name = "Architecture Planner", Description = "Planejador de arquitetura.", Url = new Uri("https://gitlab.fcalatam.com/fca/architecture/architecture-planner") },
-                    new GitRepo("integration-hub") { ApplicationId = 13, Name = "Integration Hub", Description = "Hub de integração para serviços.", Url = new Uri("https://gitlab.fcalatam.com/fca/integration/integration-hub") }
+                    new Repo("elog") { ApplicationId = 2, Name = "eLog", Description = "Site da plataforma eLog.", Url = new Uri("https://gitlab.fcalatam.com/fca/supply-chain/ELOG") },
+                    new Repo("Cities's Web API") { ApplicationId = 2, Name = "Cities's Web API", Description = "Web API que retorna os dados das cidades.", Url = new Uri("https://gitlab.fcalatam.com/fca/supply-chain/e-log/city-api") },
+                    new Repo("finance-tracker") { ApplicationId = 4, Name = "Finance Tracker", Description = "Repositório do sistema de rastreamento financeiro.", Url = new Uri("https://gitlab.fcalatam.com/fca/finance/finance-tracker") },
+                    new Repo("hr-portal") { ApplicationId = 5, Name = "HR Portal", Description = "Portal de gerenciamento de recursos humanos.", Url = new Uri("https://gitlab.fcalatam.com/fca/hr/hr-portal") },
+                    new Repo("marketing-dashboard") { ApplicationId = 6, Name = "Marketing Dashboard", Description = "Painel de análise de marketing.", Url = new Uri("https://gitlab.fcalatam.com/fca/marketing/marketing-dashboard") },
+                    new Repo("sales-crm") { ApplicationId = 7, Name = "Sales CRM", Description = "Sistema de gerenciamento de relacionamento com clientes.", Url = new Uri("https://gitlab.fcalatam.com/fca/sales/sales-crm") },
+                    new Repo("quality-control-system") { ApplicationId = 8, Name = "Quality Control System", Description = "Ferramenta de controle de qualidade.", Url = new Uri("https://gitlab.fcalatam.com/fca/quality/quality-control-system") },
+                    new Repo("supplier-chain-manager") { ApplicationId = 9, Name = "Supplier Chain Manager", Description = "Gerenciador da cadeia de fornecedores.", Url = new Uri("https://gitlab.fcalatam.com/fca/supply-chain/supplier-chain-manager") },
+                    new Repo("engineering-tools") { ApplicationId = 10, Name = "Engineering Tools", Description = "Ferramentas para suporte à engenharia.", Url = new Uri("https://gitlab.fcalatam.com/fca/engineering/engineering-tools") },
+                    new Repo("ams-portal") { ApplicationId = 11, Name = "AMS Portal", Description = "Portal de gerenciamento AMS.", Url = new Uri("https://gitlab.fcalatam.com/fca/ams/ams-portal") },
+                    new Repo("architecture-planner") { ApplicationId = 12, Name = "Architecture Planner", Description = "Planejador de arquitetura.", Url = new Uri("https://gitlab.fcalatam.com/fca/architecture/architecture-planner") },
+                    new Repo("integration-hub") { ApplicationId = 13, Name = "Integration Hub", Description = "Hub de integração para serviços.", Url = new Uri("https://gitlab.fcalatam.com/fca/integration/integration-hub") }
                 );
 
                 // Squads
