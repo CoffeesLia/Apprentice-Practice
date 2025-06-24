@@ -9,7 +9,7 @@ namespace Stellantis.ProjectName.WebApi.ViewModels
         public decimal Cost { get; set; }
         public required string Email { get; set; }
         public int SquadId { get; set; }
-        public SquadVm Squad { get; set; } = null!;
+        public SquadVm Squad { get; set; } 
 
 
     }
