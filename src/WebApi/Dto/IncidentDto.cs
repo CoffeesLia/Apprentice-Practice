@@ -13,7 +13,8 @@
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public int ApplicationId { get; set; }
-        public IEnumerable<int> MemberIds { get; set; } = [];
+        public int MemberId { get; set; }
+
         public IncidentStatus Status { get; set; }
 
     }

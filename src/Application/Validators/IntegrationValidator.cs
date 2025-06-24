@@ -21,11 +21,6 @@ namespace Stellantis.ProjectName.Application.Validators
                .NotEmpty()
                .WithMessage(localizer[nameof(IntegrationResources.DescriptionIsRequired)]);
 
-            RuleFor(x => x.ApplicationDataId)
-                .NotNull()
-                .NotEmpty()
-                .GreaterThanOrEqualTo(1)
-                .WithMessage(localizer[nameof(IntegrationResources.ApplicationIsRequired)]);
         }
     }
 }
