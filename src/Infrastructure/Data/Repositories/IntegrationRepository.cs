@@ -1,4 +1,4 @@
-using LinqKit;
+﻿using LinqKit;
 using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models.Filters;
@@ -34,6 +34,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             if (!string.IsNullOrWhiteSpace(filter.Name))
                 filters = filters.And(x => x.Name != null && x.Name.Contains(filter.Name));
+
             if (filter.ApplicationDataId > 0)
                 filters = filters.And(x => x.ApplicationDataId == filter.ApplicationDataId);
 
@@ -42,7 +43,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         public async Task<bool> VerifyNameExistsAsync(string Name)
         {
-            return await context.Set<Integration>().AnyAsync(repo => repo.Name == Name).ConfigureAwait(false);
+            return await Context.Set<Integration>().AnyAsync(repo => repo.Name == Name).ConfigureAwait(false);
         }
 
         public async Task<bool> VerifyDescriptionExistsAsync(string description)

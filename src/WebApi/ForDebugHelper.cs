@@ -143,6 +143,20 @@ namespace Stellantis.ProjectName.WebApi
                     new Squad { Name = "Full Stack Heroes", Description = "Squad versátil com habilidades em frontend e backend." }
                 );
 
+                // Integrações
+                context.Integrations.AddRange(
+                    new Integration("Balão Mágico", "Bombardiro crocodilo") { ApplicationDataId = 1 },
+                    new Integration("Finance Sync", "Integração entre sistemas financeiros e ERP") { ApplicationDataId = 4 },
+                    new Integration("HR Connector", "Sincronização de dados de RH com sistemas externos") { ApplicationDataId = 5 },
+                    new Integration("Salesforce Bridge", "Integração de oportunidades de vendas com Salesforce") { ApplicationDataId = 7 },
+                    new Integration("Marketing Data Feed", "Importação de leads de campanhas de marketing") { ApplicationDataId = 6 },
+                    new Integration("Supplier API", "Integração com fornecedores externos para atualização de estoque") { ApplicationDataId = 9 },
+                    new Integration("Quality Gateway", "Envio de dados de qualidade para sistemas de auditoria") { ApplicationDataId = 8 },
+                    new Integration("AMS Notifier", "Notificações automáticas do Portal AMS para usuários") { ApplicationDataId = 1 },
+                    new Integration("Engineering Sync", "Integração de ferramentas de engenharia com repositórios") { ApplicationDataId = 10 },
+                    new Integration("eLog Importer", "Importação de dados logísticos do sistema eLog") { ApplicationDataId = 2 }
+                );
+
                 // Membros
                 context.Members.AddRange(
                     new Member { Name = "Matheus", Email = "matheus@stellantis.com", Role = "Developer", Cost = 1000, SquadId = 2 },

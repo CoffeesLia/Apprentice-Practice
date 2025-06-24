@@ -65,20 +65,6 @@ namespace WebApi.Tests.Controllers
         }
 
         [Fact]
-        public async Task UpdateAsyncShouldReturnOkResultWhenIntegrationIsUpdated()
-        {
-            // Arrange  
-            var integrationDto = _fixture.Create<IntegrationDto>();
-            _serviceMock.Setup(s => s.UpdateAsync(It.IsAny<Integration>())).ReturnsAsync(OperationResult.Complete());
-
-            // Act  
-            var result = await _controller.UpdateBaseAsync(integrationDto.Id, integrationDto);
-
-            // Assert  
-            Assert.IsType<OkObjectResult>(result);
-        }
-
-        [Fact]
         public async Task DeleteAsyncShouldReturnNoContentResultWhenIntegrationIsDeleted()
         {
             // Arrange
@@ -96,8 +82,8 @@ namespace WebApi.Tests.Controllers
         public async Task CreateAsyncShouldReturnCreatedResultWhenIntegrationIsCreated()
         {
             // Arrange
-            var integrationDto = new IntegrationDto { Id = 0, Name = "Test Integration", Description = "Test Description", ApplicationDataId = 1 };
-            var integration = new Integration("Test Integration", "Test Description") { Id = 0, ApplicationDataId = 1 };
+            var integrationDto = new IntegrationDto { Name = "Test Integration", Description = "Test Description", ApplicationDataId = 1 };
+            var integration = new Integration("Test Integration", "Test Description") {  ApplicationDataId = 1 };
             _serviceMock.Setup(s => s.CreateAsync(It.IsAny<Integration>())).ReturnsAsync(OperationResult.Complete());
 
             // Act

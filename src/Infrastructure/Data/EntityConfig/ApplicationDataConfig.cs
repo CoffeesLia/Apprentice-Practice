@@ -29,6 +29,12 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
                 .WithMany(a => a.Applications)
                 .HasForeignKey(r => r.AreaId)
                 .IsRequired();
+
+            builder.HasOne(ad => ad.Squads)
+            .WithMany()
+            .HasForeignKey(ad => ad.SquadId)
+            .IsRequired(false); // Torna o vínculo opcional
+  
         }
     }
 }
