@@ -34,6 +34,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             if (!string.IsNullOrWhiteSpace(filter.Name))
                 filters = filters.And(x => x.Name != null && x.Name.Contains(filter.Name));
+
             if (filter.ApplicationDataId > 0)
                 filters = filters.And(x => x.ApplicationDataId == filter.ApplicationDataId);
 
