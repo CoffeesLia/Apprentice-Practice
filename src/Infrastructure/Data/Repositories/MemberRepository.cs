@@ -48,8 +48,10 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
 
             return await GetListAsync(filter: filters, page: membersFilter.Page, sort: membersFilter.Sort, sortDir: membersFilter.SortDir,
-                includeProperties: $"{nameof(Member.Squad)}").ConfigureAwait(false);      
+                includeProperties: $"{nameof(Member.Squads)}").ConfigureAwait(false);      
         }
+
+
 
 
         private static async Task<PagedResult<Member>> GetPagedResultAsync(IQueryable<Member> query, int page, int pageSize)
