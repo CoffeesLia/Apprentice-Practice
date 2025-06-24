@@ -109,12 +109,14 @@ namespace Stellantis.ProjectName.WebApi.Mapper
             .ForMember(dest => dest.ApplicationDataId, opt => opt.MapFrom(src => src.ApplicationDataId));
 
             CreateMap<IntegrationDto, Integration>()
+            .ForMember(x => x.Id, x => x.Ignore())
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
             .ForMember(dest => dest.ApplicationDataId, opt => opt.MapFrom(src => src.ApplicationDataId))
             .ForMember(dest => dest.ApplicationData, opt => opt.Ignore());
 
             CreateMap<Integration, IntegrationVm>()
+               .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
                .ForMember(dest => dest.ApplicationDataId, opt => opt.MapFrom(src => src.ApplicationDataId));
