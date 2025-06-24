@@ -22,8 +22,6 @@ namespace Application.Tests.Services
         private readonly Mock<IMemberRepository> _memberRepositoryMock;
         private readonly MemberService _memberService;
         private readonly Fixture _fixture;
-        private readonly Mock<ISquadRepository> _squadRepositoryMock;
-
 
         public MemberServiceTests()
         {
@@ -37,9 +35,6 @@ namespace Application.Tests.Services
             _unitOfWorkMock.Setup(u => u.MemberRepository).Returns(_memberRepositoryMock.Object);
 
             _memberService = new MemberService(_unitOfWorkMock.Object, localizer, memberValidator);
-
-            _squadRepositoryMock = new Mock<ISquadRepository>();
-            _unitOfWorkMock.Setup(u => u.SquadRepository).Returns(_squadRepositoryMock.Object);
 
             _fixture = new Fixture();
             _fixture.Behaviors
@@ -128,7 +123,6 @@ namespace Application.Tests.Services
             Mock<IValidator<Member>> validatorMock = new();
             validatorMock.Setup(v => v.ValidateAsync(member, default)).ReturnsAsync(validationResult);
             _memberRepositoryMock.Setup(r => r.IsEmailUnique(member.Email, null)).ReturnsAsync(false);
-            _squadRepositoryMock.Setup(r => r.GetByIdAsync(member.SquadId)).ReturnsAsync(new Squad());
 
             // Act
             OperationResult result = await _memberService.CreateAsync(member);
@@ -151,7 +145,6 @@ namespace Application.Tests.Services
             ValidationResult validationResult = new();
             validatorMock.Setup(v => v.ValidateAsync(member, default)).ReturnsAsync(validationResult);
             _memberRepositoryMock.Setup(r => r.IsEmailUnique(member.Email, null)).ReturnsAsync(true);
-            _squadRepositoryMock.Setup(r => r.GetByIdAsync(member.SquadId)).ReturnsAsync(new Squad());
 
             // Act
             OperationResult result = await _memberService.CreateAsync(member);
@@ -283,7 +276,7 @@ namespace Application.Tests.Services
             Mock<IValidator<Member>> validatorMock = new();
             ValidationResult validationResult = new();
             validatorMock.Setup(v => v.ValidateAsync(member, default)).ReturnsAsync(validationResult);
-            _memberRepositoryMock.Setup(r => r.IsEmailUnique(member.Email, member.Id)).ReturnsAsync(true);
+            _memberRepositoryMock.Setup(r => r.IsEmailUnique(member.Email, null)).ReturnsAsync(false);
             _memberRepositoryMock.Setup(r => r.GetByIdAsync(member.Id)).ReturnsAsync(member);
 
             // Act
