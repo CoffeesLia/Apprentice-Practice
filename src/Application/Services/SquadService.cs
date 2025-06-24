@@ -63,7 +63,11 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.Conflict(_localizer[nameof(SquadResources.SquadNameAlreadyExists)]);
             }
 
-            return await base.UpdateAsync(existingSquad).ConfigureAwait(false); // Atualiza o objeto existente
+            
+            existingSquad.Name = squad.Name;
+            existingSquad.Description = squad.Description;
+
+            return await base.UpdateAsync(existingSquad).ConfigureAwait(false);
         }
 
         public override async Task<OperationResult> DeleteAsync(int id)
@@ -89,6 +93,16 @@ namespace Stellantis.ProjectName.Application.Services
             return squad != null
                ? OperationResult.Complete()
                : OperationResult.NotFound(_localizer[nameof(SquadResources.SquadNotFound)]);
+        }
+
+        public async Task<decimal> GetTotalCostAsync(int squadId)
+        {
+            // Esperar ana rqauqel terminar para ver se vai funcionar isso aqui
+            var members = await UnitOfWork.MemberRepository.GetListAsync(
+                new MemberFilter { SquadId = squadId }
+            ).ConfigureAwait(false);
+
+            return members.Result.Sum(m => m.Cost);
         }
 
         public async Task<OperationResult> VerifySquadExistsAsync(int id)

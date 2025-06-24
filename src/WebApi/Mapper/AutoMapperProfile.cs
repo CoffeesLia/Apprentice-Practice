@@ -139,11 +139,11 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-            .ForMember(dest => dest.Cost, opt => opt.MapFrom(src => src.Cost));
-            CreateMap<SquadFilterDto, SquadFilter>()
+    .ForMember(dest => dest.Cost, opt => opt.MapFrom(src => src.Members != null ? src.Members.Sum(m => m.Cost) : 0)); CreateMap<SquadFilterDto, SquadFilter>()
               .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
               .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
               .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
+
             CreateMap<GitRepoDto, GitRepo>()
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.Application, opt => opt.Ignore())
