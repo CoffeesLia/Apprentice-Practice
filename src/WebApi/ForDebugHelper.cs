@@ -80,8 +80,8 @@ namespace Stellantis.ProjectName.WebApi
                 context.Applications.AddRange(
                     new ApplicationData("Portal AMS") { AreaId = 7, ResponsibleId = 1, ProductOwner = "", ConfigurationItem = "", SquadId = 1},
                     new ApplicationData("eLog") { AreaId = 2, ResponsibleId = 2, ProductOwner = "", ConfigurationItem = "", SquadId = 2 },
-                    new ApplicationData("Suite PD") { AreaId = 4, ResponsibleId = 4, ProductOwner = "", ConfigurationItem = "", SquadId = 1 },
-                    new ApplicationData("Finance Tracker") { AreaId = 6, ResponsibleId = 6, ProductOwner = "Carlos Silva", ConfigurationItem = "FT-Config", SquadId = 1 },
+                    new ApplicationData("Suite PD") { AreaId = 4, ResponsibleId = 4, ProductOwner = "", ConfigurationItem = "", SquadId = 3 },
+                    new ApplicationData("Finance Tracker") { AreaId = 6, ResponsibleId = 6, ProductOwner = "Carlos Silva", ConfigurationItem = "FT-Config", SquadId = 4 },
                     new ApplicationData("HR Portal") { AreaId = 8, ResponsibleId = 8, ProductOwner = "Fernanda Oliveira", ConfigurationItem = "HRP-Config" },
                     new ApplicationData("Marketing Dashboard") { AreaId = 10, ResponsibleId = 10, ProductOwner = "Bruno Almeida", ConfigurationItem = "MD-Config" },
                     new ApplicationData("Sales CRM") { AreaId = 14, ResponsibleId = 14, ProductOwner = "Rodrigo Martins", ConfigurationItem = "CRM-Config" },
@@ -169,7 +169,7 @@ namespace Stellantis.ProjectName.WebApi
                     new Member { Name = "Cecília", Email = "cecilia@stellantis.com", Role = "Developer", Cost = 1000, SquadId = 2 },
                     new Member { Name = "João Silva", Email = "joao.silva@stellantis.com", Role = "Developer", Cost = 1200, SquadId = 1 },
                     new Member { Name = "Maria Oliveira", Email = "maria.oliveira@stellantis.com", Role = "Tester", Cost = 1100, SquadId = 4 },
-                    new Member { Name = "Pedro Santos", Email = "pedro.santos@stellantis.com", Role = "Scrum Master", Cost = 1500, SquadId = 3 },
+                    new Member { Name = "Pedro Santos", Email = "pedro.santos@stellantis.com", Role = "Scrum Master", Cost = 1500, SquadId = 3 }, //10
                     new Member { Name = "Ana Costa", Email = "ana.costa@stellantis.com", Role = "Product Owner", Cost = 1600, SquadId = 5 },
                     new Member { Name = "Lucas Almeida", Email = "lucas.almeida@stellantis.com", Role = "Developer", Cost = 1300, SquadId = 6 },
                     new Member { Name = "Carla Mendes", Email = "carla.mendes@stellantis.com", Role = "UX Designer", Cost = 1400, SquadId = 2 },
