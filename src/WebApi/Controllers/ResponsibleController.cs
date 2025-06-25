@@ -27,15 +27,6 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             return await GetAsync<ResponsibleVm>(id).ConfigureAwait(false);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetListAsync([FromQuery] ResponsibleFilterDto filterDto)
-        {
-            ResponsibleFilter filter = Mapper.Map<ResponsibleFilter>(filterDto);
-            PagedResult<Responsible> pagedResult = await ((IResponsibleService)Service).GetListAsync(filter!).ConfigureAwait(false);
-            PagedResultVm<ResponsibleVm> result = Mapper.Map<PagedResultVm<ResponsibleVm>>(pagedResult);
-            return Ok(result);
-        }
-
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] ResponsibleDto itemDto)
         {
@@ -46,6 +37,15 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         public override async Task<IActionResult> DeleteAsync(int id)
         {
             return await base.DeleteAsync(id).ConfigureAwait(false);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetListAsync([FromQuery] ResponsibleFilterDto filterDto)
+        {
+            ResponsibleFilter filter = Mapper.Map<ResponsibleFilter>(filterDto);
+            PagedResult<Responsible> pagedResult = await ((IResponsibleService)Service).GetListAsync(filter!).ConfigureAwait(false);
+            PagedResultVm<ResponsibleVm> result = Mapper.Map<PagedResultVm<ResponsibleVm>>(pagedResult);
+            return Ok(result);
         }
     }
 }
