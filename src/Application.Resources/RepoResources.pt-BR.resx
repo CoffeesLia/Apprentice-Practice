@@ -120,19 +120,22 @@
   <data name="NameIsRequired" xml:space="preserve">
     <value>O Nome é obrigatório.</value>
   </data>
+  <data name="NameAlreadyExists" xml:space="preserve">
+    <value>O Nome já existe.</value>
+  </data>
+  <data name="NameValidateLength" xml:space="preserve">
+    <value>O Nome de ter entre {0} e {1} caracteres.</value>
+  </data>
+  <data name="UrlAlreadyExists" xml:space="preserve">
+    <value>A Url já existe.</value>
+  </data>
   <data name="UrlIsRequired" xml:space="preserve">
-    <value>O Url é obrigatório</value>
+    <value>A Url é obrigatória.</value>
+  </data>
+  <data name="ApplicationIdIsRequired" xml:space="preserve">
+    <value>O Id da Aplicação é obrigatório.</value>
   </data>
   <data name="DescriptionIsRequired" xml:space="preserve">
     <value>A Descrição é obrigatória.</value>
-  </data>
-  <data name="ApplicationIdIsRequired" xml:space="preserve">
-    <value>O Id da aplicação é obrigatória.</value>
-  </data>
-  <data name="AlreadyExists" xml:space="preserve">
-    <value>Já existe.</value>
-  </data>
-  <data name="NotFound" xml:space="preserve">
-    <value>Nâo encontrado.</value>
   </data>
 </root>

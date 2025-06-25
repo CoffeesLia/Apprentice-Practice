@@ -21,7 +21,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data
         public ISquadRepository SquadRepository { get; } = new SquadRepository(context);
         public IServiceDataRepository ServiceDataRepository { get; } = new ServiceDataRepository(context);
         public IManagerRepository ManagerRepository { get; } = new ManagerRepository(context);
-        public IGitRepoRepository GitRepoRepository { get; } = new GitRepoRepository(context);
+        public IRepoRepository RepoRepository { get; } = new RepoRepository(context);
 
         public void BeginTransaction()
         {
