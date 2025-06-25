@@ -72,6 +72,30 @@ namespace Infrastructure.Tests.Data.Repositories
             Assert.Equal(manager, result);
         }
 
+        // Verifica se o método UpdateAsync atualiza entidades e salva as mudanças.
+        [Fact]
+        public async Task UpdateAsyncShouldUpdateEntitiesAndSaveChanges()
+        {
+            // Arrange
+            var managers = new List<Manager>
+            {
+                new() { Id = 1, Name = "Manager 1", Email = "manager1@email.com" },
+                new() { Id = 2, Name = "Manager 2", Email = "manager2@email.com" }
+            };
+
+            var dbSetMock = CreateMockDbSet(managers);
+            _contextMock.Setup(c => c.Set<Manager>()).Returns(dbSetMock.Object);
+
+            dbSetMock.Setup(s => s.UpdateRange(It.IsAny<IEnumerable<Manager>>())).Verifiable();
+
+            // Act
+            await _repository.UpdateAsync(managers);
+
+            // Assert
+            dbSetMock.Verify(s => s.UpdateRange(It.Is<IEnumerable<Manager>>(l => l.SequenceEqual(managers))), Times.Once);
+            _contextMock.Verify(c => c.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+        }
+
         // Verifica se o método GetListAsync retorna um resultado paginado quando o filtro corresponde.
         [Fact]
         public async Task GetListAsyncShouldReturnPagedResultWhenFilterMatches()

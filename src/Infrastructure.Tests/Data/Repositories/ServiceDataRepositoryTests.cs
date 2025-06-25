@@ -72,6 +72,25 @@ namespace Infrastructure.Tests.Data.Repositories
             Assert.Equal(serviceData, result);
         }
 
+        // Verifica se o método UpdateAsync atualiza a entidade e salva as mudanças.
+        [Fact]
+        public async Task UpdateAsyncShouldUpdateEntityAndSaveChanges()
+        {
+            // Arrange
+            var serviceData = new ServiceData { Id = 1, Name = "Service 1" };
+            var dbSetMock = new Mock<DbSet<ServiceData>>();
+            _contextMock.Setup(c => c.Set<ServiceData>()).Returns(dbSetMock.Object);
+
+            dbSetMock.Setup(s => s.Update(It.IsAny<ServiceData>())).Verifiable();
+
+            // Act
+            await _repository.UpdateAsync(serviceData);
+
+            // Assert
+            dbSetMock.Verify(s => s.Update(serviceData), Times.Once);
+            _contextMock.Verify(c => c.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+        }
+
         // Verifica se o método GetListAsync retorna um resultado paginado quando o filtro corresponde.
         [Fact]
         public async Task GetListAsyncShouldReturnPagedResultWhenFilterMatches()
