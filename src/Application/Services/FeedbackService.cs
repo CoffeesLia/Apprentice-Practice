@@ -15,7 +15,6 @@ namespace Stellantis.ProjectName.Application.Services
         private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(FeedbackResources));
         protected override IFeedbackRepository Repository => UnitOfWork.FeedbackRepository;
 
-
         public override async Task<OperationResult> CreateAsync(Feedback item)
         {
             ArgumentNullException.ThrowIfNull(item);
@@ -59,6 +58,14 @@ namespace Stellantis.ProjectName.Application.Services
             }
 
             return await base.CreateAsync(item).ConfigureAwait(false);
+        }
+
+        public new async Task<OperationResult> GetItemAsync(int id)
+        {
+            var Feedback = await Repository.GetByIdAsync(id).ConfigureAwait(false);
+            return Feedback != null
+             ? OperationResult.Complete()
+                : OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
         }
 
         public override async Task<OperationResult> UpdateAsync(Feedback item)
@@ -131,25 +138,6 @@ namespace Stellantis.ProjectName.Application.Services
             return await base.UpdateAsync(existingFeedbacks).ConfigureAwait(false);
         }
 
-        public async Task<IEnumerable<Member>> GetMembersByApplicationIdAsync(int applicationId)
-        {
-            return await Repository.GetMembersByApplicationIdAsync(applicationId);
-        }
-
-        public new async Task<OperationResult> GetItemAsync(int id)
-        {
-            var Feedback = await Repository.GetByIdAsync(id).ConfigureAwait(false);
-            return Feedback != null
-             ? OperationResult.Complete()
-                : OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
-        }
-
-        public async Task<PagedResult<Feedback>> GetListAsync(FeedbackFilter filter)
-        {
-            filter ??= new FeedbackFilter();
-            return await UnitOfWork.FeedbackRepository.GetListAsync(filter).ConfigureAwait(false);
-        }
-
         public override async Task<OperationResult> DeleteAsync(int id)
         {
             var item = await Repository.GetByIdAsync(id).ConfigureAwait(false);
@@ -160,5 +148,15 @@ namespace Stellantis.ProjectName.Application.Services
             return await base.DeleteAsync(item).ConfigureAwait(false);
         }
 
+        public async Task<PagedResult<Feedback>> GetListAsync(FeedbackFilter filter)
+        {
+            filter ??= new FeedbackFilter();
+            return await UnitOfWork.FeedbackRepository.GetListAsync(filter).ConfigureAwait(false);
+        }
+
+        public async Task<IEnumerable<Member>> GetMembersByApplicationIdAsync(int applicationId)
+        {
+            return await Repository.GetMembersByApplicationIdAsync(applicationId);
+        }
     }
 }
