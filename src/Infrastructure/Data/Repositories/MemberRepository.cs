@@ -2,8 +2,8 @@
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
-using System.Linq.Expressions;
-using LinqKit;
+using System.Linq;
+using System.Threading.Tasks;
 
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
@@ -12,46 +12,50 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         : RepositoryBase<Member, Context>(context), IMemberRepository
     {
 
+        public async Task<Member?> GetByIdAsync(int id)
+        {
+            return await Context.Set<Member>().FindAsync(id).ConfigureAwait(false);
+        }
 
         public async Task<PagedResult<Member>> GetListAsync(MemberFilter membersFilter)
         {
-            ArgumentNullException.ThrowIfNull(membersFilter, nameof(membersFilter));
+            membersFilter ??= new MemberFilter();
 
             // Garantir valores padrão para paginação
-            ExpressionStarter<Member> filters = PredicateBuilder.New<Member>(true);
-            membersFilter.PageSize = membersFilter.PageSize <= 0 ? 1 : membersFilter.PageSize;
+            membersFilter.Page = membersFilter.Page > 0 ? membersFilter.Page : 1;
+            membersFilter.PageSize = membersFilter.PageSize > 0 ? membersFilter.PageSize : 10;
+
+            IQueryable<Member> query = Context.Set<Member>();
 
             if (!string.IsNullOrEmpty(membersFilter.Name))
             {
-                filters = filters.And(a => a.Name != null && a.Name.Contains(membersFilter.Name));
+                query = query.Where(a => a.Name != null && a.Name.Contains(membersFilter.Name));
             }
 
             if (!string.IsNullOrEmpty(membersFilter.Email))
             {
-                filters = filters.And(a => a.Email != null && a.Email.Contains(membersFilter.Email));
+                query = query.Where(a => a.Email != null && a.Email.Contains(membersFilter.Email));
             }
 
             if (!string.IsNullOrEmpty(membersFilter.Role))
             {
-                filters = filters.And(a => a.Role != null && a.Role.Contains(membersFilter.Role));
+                query = query.Where(a => a.Role != null && a.Role.Contains(membersFilter.Role));
             }
 
             if (membersFilter.Id > 0)
-                filters = filters.And(a => a.Id == membersFilter.Id);
+                query = query.Where(a => a.Id == membersFilter.Id);
 
             if (membersFilter.SquadId > 0)
-                filters = filters.And(a => a.SquadId == membersFilter.SquadId);
+                query = query.Where(a => a.SquadId == membersFilter.SquadId);
 
 
             if (membersFilter.Cost > 0)
-                filters = filters.And(a => a.Cost == membersFilter.Cost);
+                query = query.Where(a => a.Cost == membersFilter.Cost);
 
 
-            return await GetListAsync(filter: filters, page: membersFilter.Page, sort: membersFilter.Sort, sortDir: membersFilter.SortDir,
-                includeProperties: $"{nameof(Member.Squads)}").ConfigureAwait(false);      
+            return await GetPagedResultAsync(query, membersFilter.Page, membersFilter.PageSize)
+                .ConfigureAwait(false);
         }
-
-
 
 
         private static async Task<PagedResult<Member>> GetPagedResultAsync(IQueryable<Member> query, int page, int pageSize)
@@ -68,16 +72,11 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             };
         }
 
-        public async Task<Member?> GetByIdAsync(int id)
-        {
-            return await Context.Set<Member>().FindAsync(id).ConfigureAwait(false);
-        }
-
         public async Task<bool> IsEmailUnique(string email, int? excludeId = null)
         {
             var query = Context.Set<Member>().Where(m => m.Email == email);
 
-            if (excludeId.HasValue && excludeId.Value > 0) 
+            if (excludeId.HasValue && excludeId.Value > 0)
             {
                 query = query.Where(m => m.Id != excludeId.Value);
             }
