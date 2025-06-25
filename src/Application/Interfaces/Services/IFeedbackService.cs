@@ -4,5 +4,5 @@ using Stellantis.ProjectName.Domain.Entities;
 
 public interface IFeedbackService : IEntityServiceBase<Feedback>
 {
-    Task<PagedResult<Feedback>> GetListAsync(FeedbackFilter filter);
+    Task<PagedResult<Feedback>> GetListAsync(FeedbackFilter feedbackFilter);
 }

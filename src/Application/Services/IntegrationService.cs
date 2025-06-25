@@ -19,30 +19,20 @@ namespace Stellantis.ProjectName.Application.Services
         {
             ArgumentNullException.ThrowIfNull(item);
 
-            if (await Repository.VerifyNameExistsAsync(item.Name).ConfigureAwait(false))
-            {
-                return OperationResult.Conflict(Localizer[IntegrationResources.NameIsRequired]);
-            }
-
             var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
             if (!validationResult.IsValid)
             {
                 return OperationResult.InvalidData(validationResult);
             }
 
-            if (!await IsIntegrationNameUniqueAsync(item.Name).ConfigureAwait(false))
+            if (await Repository.VerifyNameExistsAsync(item.Name).ConfigureAwait(false))
             {
-                return OperationResult.Conflict(IntegrationResources.AlreadyExists);
+                return OperationResult.InvalidData(validationResult);
             }
 
             if (await Repository.VerifyDescriptionExistsAsync(item.Description).ConfigureAwait(false))
             {
-                return OperationResult.Conflict(Localizer[IntegrationResources.DescriptionIsRequired]);
-            }
-
-            if (!await Repository.VerifyApplicationIdExistsAsync(item.ApplicationDataId).ConfigureAwait(false))
-            {
-                return OperationResult.Conflict(Localizer[IntegrationResources.ApplicationIsRequired]);
+                return OperationResult.InvalidData(validationResult);
             }
 
             await Repository.CreateAsync(item).ConfigureAwait(false);
@@ -81,10 +71,6 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.InvalidData(validationResult);
             }
 
-            if (!await IsIntegrationNameUniqueAsync(item.Name).ConfigureAwait(false))
-            {
-                return OperationResult.Conflict(IntegrationResources.AlreadyExists);
-            }
             if (await Repository.VerifyDescriptionExistsAsync(item.Description).ConfigureAwait(false))
             {
                 return OperationResult.InvalidData(validationResult);
@@ -94,29 +80,8 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.InvalidData(validationResult);
             }
 
-            var existingIntegration = await Repository.GetByIdAsync(item.Id).ConfigureAwait(false);
-            if (existingIntegration == null)
-            {
-                return OperationResult.NotFound(Localizer[IntegrationResources.MessageNotFound]);
-            }
-            await Repository.UpdateAsync(existingIntegration).ConfigureAwait(false);
+            await Repository.UpdateAsync(item).ConfigureAwait(false);
             return OperationResult.Complete(Localizer[IntegrationResources.UpdatedSuccessfully]);
-        }
-
-        public async Task<bool> IsIntegrationNameUniqueAsync(string name)
-        {
-            var filter = new IntegrationFilter
-            {
-                Name = name
-            };
-            var integration = await GetListAsync(filter).ConfigureAwait(false);
-
-            if (integration == null || integration.Result == null)
-            {
-                return true;
-            }
-
-            return !integration.Result.Any(a => a.Name == name);
         }
 
         public async Task<PagedResult<Integration>> GetListAsync(IntegrationFilter filter)

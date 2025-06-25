@@ -78,10 +78,10 @@ namespace Stellantis.ProjectName.WebApi
 
                 // Applications
                 context.Applications.AddRange(
-                    new ApplicationData("Portal AMS") { AreaId = 7, ResponsibleId = 1, ProductOwner = "", ConfigurationItem = "" },
-                    new ApplicationData("eLog") { AreaId = 2, ResponsibleId = 2, ProductOwner = "", ConfigurationItem = "" },
-                    new ApplicationData("Suite PD") { AreaId = 4, ResponsibleId = 4, ProductOwner = "", ConfigurationItem = "" },
-                    new ApplicationData("Finance Tracker") { AreaId = 6, ResponsibleId = 6, ProductOwner = "Carlos Silva", ConfigurationItem = "FT-Config" },
+                    new ApplicationData("Portal AMS") { AreaId = 7, ResponsibleId = 1, ProductOwner = "", ConfigurationItem = "", SquadId = 1},
+                    new ApplicationData("eLog") { AreaId = 2, ResponsibleId = 2, ProductOwner = "", ConfigurationItem = "", SquadId = 2 },
+                    new ApplicationData("Suite PD") { AreaId = 4, ResponsibleId = 4, ProductOwner = "", ConfigurationItem = "", SquadId = 1 },
+                    new ApplicationData("Finance Tracker") { AreaId = 6, ResponsibleId = 6, ProductOwner = "Carlos Silva", ConfigurationItem = "FT-Config", SquadId = 1 },
                     new ApplicationData("HR Portal") { AreaId = 8, ResponsibleId = 8, ProductOwner = "Fernanda Oliveira", ConfigurationItem = "HRP-Config" },
                     new ApplicationData("Marketing Dashboard") { AreaId = 10, ResponsibleId = 10, ProductOwner = "Bruno Almeida", ConfigurationItem = "MD-Config" },
                     new ApplicationData("Sales CRM") { AreaId = 14, ResponsibleId = 14, ProductOwner = "Rodrigo Martins", ConfigurationItem = "CRM-Config" },
@@ -142,6 +142,20 @@ namespace Stellantis.ProjectName.WebApi
                     new Squad { Name = "AI Innovators", Description = "Trabalham com inteligência artificial e aprendizado de máquina." },
                     new Squad { Name = "UX Designers", Description = "Focados em design e experiência do usuário." },
                     new Squad { Name = "Full Stack Heroes", Description = "Squad versátil com habilidades em frontend e backend." }
+                );
+
+                // Integrações
+                context.Integrations.AddRange(
+                    new Integration("Balão Mágico", "Bombardiro crocodilo") { ApplicationDataId = 1 },
+                    new Integration("Finance Sync", "Integração entre sistemas financeiros e ERP") { ApplicationDataId = 4 },
+                    new Integration("HR Connector", "Sincronização de dados de RH com sistemas externos") { ApplicationDataId = 5 },
+                    new Integration("Salesforce Bridge", "Integração de oportunidades de vendas com Salesforce") { ApplicationDataId = 7 },
+                    new Integration("Marketing Data Feed", "Importação de leads de campanhas de marketing") { ApplicationDataId = 6 },
+                    new Integration("Supplier API", "Integração com fornecedores externos para atualização de estoque") { ApplicationDataId = 9 },
+                    new Integration("Quality Gateway", "Envio de dados de qualidade para sistemas de auditoria") { ApplicationDataId = 8 },
+                    new Integration("AMS Notifier", "Notificações automáticas do Portal AMS para usuários") { ApplicationDataId = 1 },
+                    new Integration("Engineering Sync", "Integração de ferramentas de engenharia com repositórios") { ApplicationDataId = 10 },
+                    new Integration("eLog Importer", "Importação de dados logísticos do sistema eLog") { ApplicationDataId = 2 }
                 );
 
                 // Membros

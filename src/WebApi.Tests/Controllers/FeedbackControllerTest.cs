@@ -35,12 +35,21 @@
 //                .ForEach(b => _fixture.Behaviors.Remove(b));
 //            _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 //            _fixture.Customize<FeedbackDto>(c => c
+//                .With(dto => dto.Status, () => _fixture.Create<Stellantis.ProjectName.WebApi.Dto.FeedbackStatus>()));
+//            _fixture = new Fixture();
+//            _fixture.Behaviors
+//                .OfType<ThrowingRecursionBehavior>()
+//                .ToList()
+//                .ForEach(b => _fixture.Behaviors.Remove(b));
+//            _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+//            _fixture.Customize<FeedbackDto>(c => c
 //                .With(dto => dto.Status,
 //    _fixture.Customize<FeedbackDto>(c => c
 //        .With(dto => dto.Status,
 //              () => _fixture.Create<FeedbackStatus>()));
-//                      () => _fixture.Create<FeedbackStatus>().ToString()));
+//            () => _fixture.Create<FeedbackStatus>().ToString()));
 
+//            var feedbackDtoString = _fixture.Create<FeedbackDto>().ToString();
 
 //            _controller = new FeedbackController(_serviceMock.Object, mapper, localizerFactory);
 //        }

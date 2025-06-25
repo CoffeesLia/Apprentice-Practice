@@ -18,34 +18,52 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             ExpressionStarter<Incident> filters = PredicateBuilder.New<Incident>(true);
             filter.Page = filter.Page <= 0 ? 1 : filter.Page;
 
-            // Filtro por ID do incidente
+            // Filtros existentes...
             if (filter.Id > 0)
-            {
                 filters = filters.And(x => x.Id == filter.Id);
-            }
-            // Filtro por título
             if (!string.IsNullOrWhiteSpace(filter.Title))
-            {
                 filters = filters.And(x => x.Title.Contains(filter.Title, StringComparison.OrdinalIgnoreCase));
-            }
-            // Filtro por ID da aplicação
             if (filter.ApplicationId > 0)
-            {
                 filters = filters.And(x => x.ApplicationId == filter.ApplicationId);
-            }
-            // Filtro por status
+            if (filter.MemberId > 0)
+                filters = filters.And(x => x.Members.Any(m => m.Id == filter.MemberId));
             if (filter.Status.HasValue)
-            {
                 filters = filters.And(x => x.Status == filter.Status.Value);
-            }
-            // Retorna a lista paginada com os filtros aplicados
-            return await GetListAsync(
+
+            // Busca paginada incluindo Application
+            var pagedResult = await GetListAsync(
                 filter: filters,
                 page: filter.Page,
                 sort: filter.Sort,
                 sortDir: filter.SortDir,
                 includeProperties: nameof(Incident.Application)
             ).ConfigureAwait(false);
+
+            // Preenche os membros do squad para cada incidente retornado
+            var applicationIds = pagedResult.Result.Select(i => i.ApplicationId).Distinct().ToList();
+            var applications = await Context.Applications
+                .Where(a => applicationIds.Contains(a.Id))
+                .ToListAsync();
+
+            var squadIds = applications.Select(a => a.SquadId).Distinct().ToList();
+            var squadMembers = await Context.Members
+                .Where(m => squadIds.Contains(m.SquadId))
+                .ToListAsync();
+
+            foreach (var incident in pagedResult.Result)
+            {
+                var app = applications.FirstOrDefault(a => a.Id == incident.ApplicationId);
+                if (app != null)
+                {
+                    incident.Members = squadMembers.Where(m => m.SquadId == app.SquadId).ToList();
+                }
+                else
+                {
+                    incident.Members = new List<Member>();
+                }
+            }
+
+            return pagedResult;
         }
 
         public async Task<Incident?> GetByIdAsync(int id)
@@ -76,7 +94,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             if (application == null) return Enumerable.Empty<Member>();
 
-            return application.Squads.SelectMany(s => s.Members).Distinct().ToList();
+            return application.Squads.Members?.Distinct().ToList() ?? Enumerable.Empty<Member>();
         }
 
         // Consulta todos os incidentes vinculados a uma aplicação específica.

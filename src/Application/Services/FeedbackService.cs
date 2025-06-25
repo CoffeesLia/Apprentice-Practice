@@ -37,10 +37,9 @@ namespace Stellantis.ProjectName.Application.Services
             // Validar se os membros estão nos squads da aplicação
             if (item.Members.Count > 0)
             {
-                var validMemberIds = application.Squads
-                    .SelectMany(s => s.Members)
-                    .Select(m => m.Id)
-                    .ToHashSet();
+                var validMemberIds = application.Squads.Members
+                 .Select(m => m.Id)
+                 .ToHashSet();
 
                 var invalidMemberIds = item.Members
                     .Where(m => !validMemberIds.Contains(m.Id))
@@ -90,10 +89,9 @@ namespace Stellantis.ProjectName.Application.Services
             // Valida membros se existirem
             if (item.Members.Count > 0)
             {
-                var validMemberIds = application.Squads
-                    .SelectMany(s => s.Members)
-                    .Select(m => m.Id)
-                    .ToHashSet();
+                var validMemberIds = application.Squads.Members
+                .Select(m => m.Id)
+                .ToHashSet();
 
                 var invalidMemberIds = item.Members
                     .Where(m => !validMemberIds.Contains(m.Id))

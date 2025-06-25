@@ -1,3 +1,4 @@
+
 namespace Stellantis.ProjectName.Domain.Entities
 {
     public class ApplicationData(string name) : EntityBase
@@ -10,11 +11,10 @@ namespace Stellantis.ProjectName.Domain.Entities
         public string? Description { get; set; }
         public required string ProductOwner { get; set; }
         public required string ConfigurationItem { get; set; }
+        public int SquadId { get; set; }
         public bool External { get; set; }
-        public ICollection<Squad> Squads { get; } = [];
+        public Squad Squads { get; set; }
         public ICollection<Repo> Repos { get; } = [];
         public ICollection<DocumentData> Documents { get; } = [];
-
-
     }
 }
