@@ -21,6 +21,24 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             return await Context.Set<Manager>().FindAsync(id).ConfigureAwait(false);
         }
 
+        public new async Task UpdateAsync(IEnumerable<Manager> entities, bool saveChanges = true)
+        {
+            await base.UpdateAsync(entities, saveChanges).ConfigureAwait(false);
+        }
+
+        public async Task DeleteAsync(int id, bool saveChanges = true)
+        {
+            Manager? entity = await GetByIdAsync(id).ConfigureAwait(false);
+            if (entity != null)
+            {
+                Context.Set<Manager>().Remove(entity);
+                if (saveChanges)
+                {
+                    await SaveChangesAsync().ConfigureAwait(false);
+                }
+            }
+        }
+
         public async Task<PagedResult<Manager>> GetListAsync(ManagerFilter managerFilter)
         {
             managerFilter ??= new ManagerFilter();
@@ -53,19 +71,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 Page = page,
                 PageSize = pageSize
             };
-        }
-
-        public async Task DeleteAsync(int id, bool saveChanges = true)
-        {
-            Manager? entity = await GetByIdAsync(id).ConfigureAwait(false);
-            if (entity != null)
-            {
-                Context.Set<Manager>().Remove(entity);
-                if (saveChanges)
-                {
-                    await SaveChangesAsync().ConfigureAwait(false);
-                }
-            }
         }
 
         public async Task<bool> VerifyManagerExistsAsync(int id)

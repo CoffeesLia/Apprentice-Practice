@@ -1,6 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using FluentValidation;
-using FluentValidation.Results;
+﻿using FluentValidation;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
@@ -37,6 +35,14 @@ namespace Stellantis.ProjectName.Application.Services
             }
 
             return await base.CreateAsync(squad).ConfigureAwait(false);
+        }
+
+        public new async Task<OperationResult> GetItemAsync(int id)
+        {
+            var squad = await Repository.GetByIdAsync(id).ConfigureAwait(false);
+            return squad != null
+               ? OperationResult.Complete()
+               : OperationResult.NotFound(_localizer[nameof(SquadResources.SquadNotFound)]);
         }
 
         public override async Task<OperationResult> UpdateAsync(Squad squad)
@@ -85,14 +91,6 @@ namespace Stellantis.ProjectName.Application.Services
         {
             squadFilter ??= new SquadFilter();
             return await Repository.GetListAsync(squadFilter).ConfigureAwait(false);
-        }
-
-        public new async Task<OperationResult> GetItemAsync(int id)
-        {
-            var squad = await Repository.GetByIdAsync(id).ConfigureAwait(false);
-            return squad != null
-               ? OperationResult.Complete()
-               : OperationResult.NotFound(_localizer[nameof(SquadResources.SquadNotFound)]);
         }
 
         public async Task<decimal> GetTotalCostAsync(int squadId)

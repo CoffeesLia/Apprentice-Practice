@@ -117,7 +117,7 @@ namespace Infrastructure.Tests.Data.Repositories
         [InlineData(IncidentStatus.Cancelled)]
         [InlineData(IncidentStatus.Closed)]
         [InlineData(IncidentStatus.Reopened)]
-        public async Task GetListAsync_FilterByStatus_ReturnsOnlyMatchingStatus(IncidentStatus status)
+        public async Task GetListAsyncFilterByStatusReturnsOnlyMatchingStatus(IncidentStatus status)
         {
             // Arrange
             var fixture = new Fixture();

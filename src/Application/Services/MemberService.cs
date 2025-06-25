@@ -76,12 +76,6 @@ namespace Stellantis.ProjectName.Application.Services
             return await base.UpdateAsync(item).ConfigureAwait(false);
         }
 
-        public async Task<PagedResult<Member>> GetListAsync(MemberFilter membersFilter)
-        {
-            membersFilter ??= new MemberFilter();
-            return await Repository.GetListAsync(membersFilter).ConfigureAwait(false);
-        }
-
         public override async Task<OperationResult> DeleteAsync(int id)
         {
             var item = await Repository.GetByIdAsync(id).ConfigureAwait(false);
@@ -91,6 +85,12 @@ namespace Stellantis.ProjectName.Application.Services
             }
 
             return await base.DeleteAsync(item).ConfigureAwait(false);
+        }
+
+        public async Task<PagedResult<Member>> GetListAsync(MemberFilter membersFilter)
+        {
+            membersFilter ??= new MemberFilter();
+            return await Repository.GetListAsync(membersFilter).ConfigureAwait(false);
         }
     }
 }

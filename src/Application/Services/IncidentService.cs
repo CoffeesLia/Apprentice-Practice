@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces;
+using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Models.Filters;
@@ -14,7 +15,6 @@ namespace Stellantis.ProjectName.Application.Services
     {
         private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(IncidentResource));
         protected override IIncidentRepository Repository => UnitOfWork.IncidentRepository;
-
 
         public override async Task<OperationResult> CreateAsync(Incident item)
         {
@@ -58,6 +58,14 @@ namespace Stellantis.ProjectName.Application.Services
             }
 
             return await base.CreateAsync(item).ConfigureAwait(false);
+        }
+
+        public new async Task<OperationResult> GetItemAsync(int id)
+        {
+            var incident = await Repository.GetByIdAsync(id).ConfigureAwait(false);
+            return incident != null
+             ? OperationResult.Complete()
+                : OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
         }
 
         public override async Task<OperationResult> UpdateAsync(Incident item)
@@ -125,25 +133,6 @@ namespace Stellantis.ProjectName.Application.Services
             return await base.UpdateAsync(existingIncident).ConfigureAwait(false);
         }
 
-        public async Task<IEnumerable<Member>> GetMembersByApplicationIdAsync(int applicationId)
-        {
-            return await Repository.GetMembersByApplicationIdAsync(applicationId);
-        }
-
-        public new async Task<OperationResult> GetItemAsync(int id)
-        {
-            var incident = await Repository.GetByIdAsync(id).ConfigureAwait(false);
-            return incident != null
-             ? OperationResult.Complete()
-                : OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
-        }
-
-        public async Task<PagedResult<Incident>> GetListAsync(IncidentFilter incidentFilter)
-        {
-            incidentFilter ??= new IncidentFilter();
-            return await UnitOfWork.IncidentRepository.GetListAsync(incidentFilter).ConfigureAwait(false);
-        }
-
         public override async Task<OperationResult> DeleteAsync(int id)
         {
             var item = await Repository.GetByIdAsync(id).ConfigureAwait(false);
@@ -154,5 +143,15 @@ namespace Stellantis.ProjectName.Application.Services
             return await base.DeleteAsync(item).ConfigureAwait(false);
         }
 
+        public async Task<PagedResult<Incident>> GetListAsync(IncidentFilter incidentFilter)
+        {
+            incidentFilter ??= new IncidentFilter();
+            return await UnitOfWork.IncidentRepository.GetListAsync(incidentFilter).ConfigureAwait(false);
+        }
+
+        public async Task<IEnumerable<Member>> GetMembersByApplicationIdAsync(int applicationId)
+        {
+            return await Repository.GetMembersByApplicationIdAsync(applicationId);
+        }
     }
 }

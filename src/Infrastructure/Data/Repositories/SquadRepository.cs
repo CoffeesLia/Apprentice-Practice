@@ -40,10 +40,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 }
             }
         }
-        public async Task<bool> VerifyNameAlreadyExistsAsync(string name)
-        {
-            return await Context.Squads.AnyAsync(s => s.Name == name).ConfigureAwait(false);
-        }
 
         public async Task<PagedResult<Squad>> GetListAsync(SquadFilter squadFilter)
         {
@@ -70,6 +66,11 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             }
 
             return pagedResult;
+        }
+
+        public async Task<bool> VerifyNameAlreadyExistsAsync(string name)
+        {
+            return await Context.Squads.AnyAsync(s => s.Name == name).ConfigureAwait(false);
         }
 
         public async Task<bool> VerifySquadExistsAsync(int id)

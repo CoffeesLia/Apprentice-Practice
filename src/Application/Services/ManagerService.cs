@@ -44,12 +44,6 @@ namespace Stellantis.ProjectName.Application.Services
                : OperationResult.NotFound(_localizer[nameof(ManagerResources.ManagerNotFound)]);
         }
 
-        public async Task<PagedResult<Manager>> GetListAsync(ManagerFilter managerFilter)
-        {
-            managerFilter ??= new ManagerFilter();
-            return await Repository.GetListAsync(managerFilter).ConfigureAwait(false);
-        }
-
         public override async Task<OperationResult> UpdateAsync(Manager manager)
         {
             if (manager == null)
@@ -89,6 +83,12 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.NotFound(_localizer[nameof(ManagerResources.ManagerNotFound)]);
             }
             return await base.DeleteAsync(id).ConfigureAwait(false);
+        }
+
+        public async Task<PagedResult<Manager>> GetListAsync(ManagerFilter managerFilter)
+        {
+            managerFilter ??= new ManagerFilter();
+            return await Repository.GetListAsync(managerFilter).ConfigureAwait(false);
         }
 
         public async Task<OperationResult> VerifyManagerExistsAsync(int id)

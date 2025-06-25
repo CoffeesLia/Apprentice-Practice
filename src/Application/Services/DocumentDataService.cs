@@ -19,7 +19,6 @@ namespace Stellantis.ProjectName.Application.Services
         protected override IDocumentRepository Repository =>
             UnitOfWork.DocumentDataRepository;
 
-
         public override async Task<OperationResult> CreateAsync(DocumentData item)
         {
             ArgumentNullException.ThrowIfNull(item);
@@ -66,7 +65,6 @@ namespace Stellantis.ProjectName.Application.Services
             }
 
             return await base.UpdateAsync(item).ConfigureAwait(false);
-
         }
 
         public override async Task<OperationResult> DeleteAsync(int id)

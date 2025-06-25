@@ -8,6 +8,11 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
     public class RepoRepository(Context context) : RepositoryBase<Repo, Context>(context), IRepoRepository
     {
+        public async Task<Repo?> GetByIdAsync(int id)
+        {
+            return await Context.Set<Repo>().FindAsync(id).ConfigureAwait(false);
+        }
+
         public async Task DeleteAsync(int id, bool saveChanges = true)
         {
 
@@ -20,12 +25,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                     await SaveChangesAsync().ConfigureAwait(false);
                 }
             }
-        }
-
-
-        public async Task<Repo?> GetByIdAsync(int id)
-        {
-            return await Context.Set<Repo>().FindAsync(id).ConfigureAwait(false);
         }
 
         public async Task<PagedResult<Repo>> GetListAsync(RepoFilter repofilter)
@@ -53,7 +52,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                             && (!id.HasValue || a.Id != id))
                 .ConfigureAwait(false);
         }
-
 
         public async Task<bool> IsUrlUniqueAsync(Uri url, int applicationId, int? id = null)
         {

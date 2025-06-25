@@ -18,7 +18,6 @@ namespace Stellantis.ProjectName.Application.Services
         protected override IApplicationDataRepository Repository =>
             UnitOfWork.ApplicationDataRepository;
 
-
         public override async Task<OperationResult> CreateAsync(ApplicationData item)
         {
             ArgumentNullException.ThrowIfNull(item);
@@ -34,7 +33,6 @@ namespace Stellantis.ProjectName.Application.Services
             {
                 return OperationResult.Conflict(_localizer[nameof(ApplicationDataResources.AlreadyExists)]);
             }
-
 
             return await base.CreateAsync(item).ConfigureAwait(false);
         }
@@ -52,22 +50,6 @@ namespace Stellantis.ProjectName.Application.Services
                 applicationData.Area
             };
             return OperationResult.Complete(result.ToString() ?? string.Empty);
-        }
-
-        public async Task<bool> IsApplicationNameUniqueAsync(string name, int? id = null)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                return false;
-            }
-
-            var existingItems = await Repository.GetListAsync(new ApplicationFilter { Name = name }).ConfigureAwait(false);
-            if (existingItems?.Result == null)
-            {
-                return true;
-            }
-
-            return !existingItems.Result.Any(e => e.Id != id);
         }
 
         public override async Task<OperationResult> UpdateAsync(ApplicationData item)
@@ -90,13 +72,6 @@ namespace Stellantis.ProjectName.Application.Services
             return await base.UpdateAsync(item).ConfigureAwait(false);
         }
 
-        public async Task<PagedResult<ApplicationData>> GetListAsync(ApplicationFilter applicationFilter)
-        {
-            applicationFilter ??= new ApplicationFilter();
-
-            return await UnitOfWork.ApplicationDataRepository.GetListAsync(applicationFilter).ConfigureAwait(false);
-        }
-
         public override async Task<OperationResult> DeleteAsync(int id)
         {
             var item = await Repository.GetFullByIdAsync(id).ConfigureAwait(false);
@@ -106,6 +81,29 @@ namespace Stellantis.ProjectName.Application.Services
             }
 
             return await base.DeleteAsync(item).ConfigureAwait(false);
+        }
+
+        public async Task<PagedResult<ApplicationData>> GetListAsync(ApplicationFilter applicationFilter)
+        {
+            applicationFilter ??= new ApplicationFilter();
+
+            return await UnitOfWork.ApplicationDataRepository.GetListAsync(applicationFilter).ConfigureAwait(false);
+        }
+
+        public async Task<bool> IsApplicationNameUniqueAsync(string name, int? id = null)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return false;
+            }
+
+            var existingItems = await Repository.GetListAsync(new ApplicationFilter { Name = name }).ConfigureAwait(false);
+            if (existingItems?.Result == null)
+            {
+                return true;
+            }
+
+            return !existingItems.Result.Any(e => e.Id != id);
         }
 
         public async Task<bool> IsResponsibleFromArea(int areaId, int responsibleId)
@@ -119,7 +117,5 @@ namespace Stellantis.ProjectName.Application.Services
 
             return responsible.AreaId == areaId;
         }
-
-
     }
 }

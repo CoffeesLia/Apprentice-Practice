@@ -50,12 +50,6 @@ namespace Stellantis.ProjectName.Application.Services
                : OperationResult.NotFound(_localizer[nameof(ServiceDataResources.ServiceNotFound)]);
         }
 
-        public async Task<PagedResult<ServiceData>> GetListAsync(ServiceDataFilter serviceFilter)
-        {
-            serviceFilter ??= new ServiceDataFilter();
-            return await Repository.GetListAsync(serviceFilter).ConfigureAwait(false);
-        }
-
         public override async Task<OperationResult> UpdateAsync(ServiceData service)
         {
             if (service == null)
@@ -101,6 +95,12 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.NotFound(_localizer[nameof(ServiceDataResources.ServiceNotFound)]);
             }
             return await base.DeleteAsync(id).ConfigureAwait(false);
+        }
+
+        public async Task<PagedResult<ServiceData>> GetListAsync(ServiceDataFilter serviceFilter)
+        {
+            serviceFilter ??= new ServiceDataFilter();
+            return await Repository.GetListAsync(serviceFilter).ConfigureAwait(false);
         }
 
         public async Task<OperationResult> VerifyServiceExistsAsync(int id)
