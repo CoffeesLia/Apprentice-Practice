@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
-using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Dto;
@@ -29,14 +28,6 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             return await GetAsync<FeedbackVm>(id).ConfigureAwait(false);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetListAsync([FromQuery] FeedbackFilterDto filterDto)
-        {
-            FeedbackFilter filter = Mapper.Map<FeedbackFilter>(filterDto);
-            PagedResult<Feedback> result = await Service.GetListAsync(filter).ConfigureAwait(false);
-            return Ok(Mapper.Map<PagedResultVm<FeedbackVm>>(result));
-        }
-
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] FeedbackDto itemDto)
         {
@@ -49,5 +40,12 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             return await base.DeleteAsync(id).ConfigureAwait(false);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetListAsync([FromQuery] FeedbackFilterDto filterDto)
+        {
+            FeedbackFilter filter = Mapper.Map<FeedbackFilter>(filterDto);
+            PagedResult<Feedback> result = await Service.GetListAsync(filter).ConfigureAwait(false);
+            return Ok(Mapper.Map<PagedResultVm<FeedbackVm>>(result));
+        }
     }
 }

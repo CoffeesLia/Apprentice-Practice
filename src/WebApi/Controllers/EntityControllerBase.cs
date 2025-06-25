@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
@@ -40,6 +40,19 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             };
         }
 
+        protected async Task<ActionResult> GetAsync<TEntityVm>(int id) where TEntityVm : EntityVmBase
+        {
+            TEntity? item = await Service.GetItemAsync(id);
+
+            if (item == null)
+            {
+                return NotFound();
+            }
+
+            TEntityVm result = Mapper.Map<TEntityVm>(item);
+            return Ok(result);
+        }
+
         protected async Task<IActionResult> UpdateBaseAsync<TEntityVm>(int id, TEntityDto itemDto) where TEntityVm : EntityVmBase
         {
             if (itemDto == null)
@@ -59,19 +72,6 @@ namespace Stellantis.ProjectName.WebApi.Controllers
                 OperationStatus.InvalidData => UnprocessableEntity(result),
                 _ => BadRequest(result)
             };
-        }
-
-        protected async Task<ActionResult> GetAsync<TEntityVm>(int id) where TEntityVm : EntityVmBase
-        {
-            TEntity? item = await Service.GetItemAsync(id);
-
-            if (item == null)
-            {
-                return NotFound();
-            }
-
-            TEntityVm result = Mapper.Map<TEntityVm>(item);
-            return Ok(result);
         }
 
         [HttpDelete("{id}")]
