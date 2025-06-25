@@ -20,25 +20,21 @@ namespace Stellantis.ProjectName.Application.Services
         {
             ArgumentNullException.ThrowIfNull(item);
 
-            // Validação do objeto pelo FluentValidation
             var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
             if (!validationResult.IsValid)
             {
                 return OperationResult.InvalidData(validationResult);
             }
 
-            // Verificar se a aplicação existe
-            var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(item.ApplicationId).ConfigureAwait(false); ;
+            var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(item.ApplicationId).ConfigureAwait(false);
             if (application == null)
             {
                 return OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
             }
 
-            // Validar se os membros estão nos squads da aplicação
-
             if (item.Members != null && item.Members.Count > 0)
             {
-                var validMemberIds = application?.Squads?.Members?.Select(m => m.Id).ToHashSet() ?? new HashSet<int>();
+                var validMemberIds = application?.Squads?.Members?.Select(m => m.Id).ToHashSet() ?? [];
                 var invalidMemberIds = item.Members
                     .Where(m => !validMemberIds.Contains(m.Id))
                     .Select(m => m.Id)
@@ -49,7 +45,6 @@ namespace Stellantis.ProjectName.Application.Services
                     return OperationResult.Conflict(_localizer[nameof(FeedbackResources.InvalidMembers)]);
                 }
             }
-
 
             item.CreatedAt = DateTime.UtcNow;
             if (item.Status == default)
@@ -64,33 +59,29 @@ namespace Stellantis.ProjectName.Application.Services
         {
             ArgumentNullException.ThrowIfNull(item);
 
-            // Validação do objeto pelo FluentValidation
             var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
             if (!validationResult.IsValid)
             {
                 return OperationResult.InvalidData(validationResult);
             }
 
-            // Verificar se o feedbacke existe
-            var existing = await Repository.GetByIdAsync(item.Id).ConfigureAwait(false);
-            if (existing == null)
+            var existingFeedback = await Repository.GetByIdAsync(item.Id).ConfigureAwait(false);
+            if (existingFeedback == null)
             {
                 return OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
             }
 
-            // Verifica se a aplicação existe
-            var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(item.ApplicationId).ConfigureAwait(false); ;
+            var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(item.ApplicationId).ConfigureAwait(false);
             if (application == null)
             {
                 return OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
             }
 
-            // Valida membros se existirem
             if (item.Members.Count > 0)
             {
                 var validMemberIds = application.Squads.Members
-               .Select(m => m.Id)
-               .ToHashSet();
+                    .Select(m => m.Id)
+                    .ToHashSet();
 
                 var invalidMemberIds = item.Members
                     .Where(m => !validMemberIds.Contains(m.Id))
@@ -99,35 +90,33 @@ namespace Stellantis.ProjectName.Application.Services
 
                 if (invalidMemberIds.Count > 0)
                 {
-                    return OperationResult.Conflict(_localizer[nameof(Resources.InvalidMembers)]);
+                    return OperationResult.Conflict(_localizer[nameof(FeedbackResources.InvalidMembers)]);
                 }
 
-                existing.Members = item.Members;
+                existingFeedback.Members = item.Members;
             }
 
-            // Atualiza dados básicos
-            existing.Title = item.Title;
-            existing.Description = item.Description;
-            existing.ApplicationId = item.ApplicationId;
+            existingFeedback.Title = item.Title;
+            existingFeedback.Description = item.Description;
+            existingFeedback.ApplicationId = item.ApplicationId;
 
-            // Controle de status e datas
-            if (item.Status == FeedbackStatus.Closed && existing.ClosedAt == null)
+            if (item.Status == FeedbackStatus.Closed && existingFeedback.ClosedAt == null)
             {
-                existing.ClosedAt = DateTime.UtcNow;
+                existingFeedback.ClosedAt = DateTime.UtcNow;
             }
             else if (item.Status == FeedbackStatus.Reopened)
             {
-                    existing.ClosedAt = null;
+                existingFeedback.ClosedAt = null;
             }
 
-            existing.Status = item.Status;
+            existingFeedback.Status = item.Status;
 
             return await base.UpdateAsync(existingFeedback).ConfigureAwait(false);
         }
 
         public async Task<IEnumerable<Member>> GetMembersByApplicationIdAsync(int applicationId)
         {
-            return await Repository.GetMembersByApplicationIdAsync(applicationId);
+            return await Repository.GetMembersByApplicationIdAsync(applicationId).ConfigureAwait(false);
         }
 
         public new async Task<OperationResult> GetItemAsync(int id)

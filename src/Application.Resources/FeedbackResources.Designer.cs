@@ -22,7 +22,7 @@ namespace Stellantis.ProjectName.Application.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class FeedbackResources {
+    public class FeedbackResources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Stellantis.ProjectName.Application.Resources.FeedbackResources", typeof(FeedbackResources).Assembly);
@@ -51,7 +51,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -61,36 +61,36 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Application not found..
+        ///   Looks up a localized string similar to Application is required..
         /// </summary>
-        internal static string ApplicationRequired {
+        public static string ApplicationRequired {
             get {
                 return ResourceManager.GetString("ApplicationRequired", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Description is required..
         /// </summary>
-        internal static string DescriptionRequired {
+        public static string DescriptionRequired {
             get {
                 return ResourceManager.GetString("DescriptionRequired", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid members..
+        ///   Looks up a localized string similar to  One or more specified members do not belong to the application&apos;s squads.
         /// </summary>
-        internal static string InvalidMembers {
+        public static string InvalidMembers {
             get {
                 return ResourceManager.GetString("InvalidMembers", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Title required..
+        ///   Looks up a localized string similar to Title is required.  .
         /// </summary>
-        internal static string TitleRequired {
+        public static string TitleRequired {
             get {
                 return ResourceManager.GetString("TitleRequired", resourceCulture);
             }

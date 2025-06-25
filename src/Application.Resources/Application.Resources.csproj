@@ -155,8 +155,11 @@
     <EmbeddedResource Update="DocumentDataResources.resx">
       <Generator></Generator>
     </EmbeddedResource>
+    <EmbeddedResource Update="FeedbackResources.pt-BR.resx">
+      <Generator></Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="FeedbackResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>FeedbackResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="FilterResources.resx">
