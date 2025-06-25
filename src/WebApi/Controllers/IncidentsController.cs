@@ -11,7 +11,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [ApiController]
     [Route("api/incidents")]
-    public class IncidentsController(IIncidentService service, IMapper mapper, IStringLocalizerFactory localizerFactory)
+    public sealed class IncidentsController(IIncidentService service, IMapper mapper, IStringLocalizerFactory localizerFactory)
         : EntityControllerBase<Incident, IncidentDto>(service, mapper, localizerFactory)
     {
         [HttpPost]
@@ -26,15 +26,6 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             return await GetAsync<IncidentVm>(id).ConfigureAwait(false);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetListAsync([FromQuery] IncidentFilterDto filterDto)
-        {
-            IncidentFilter filter = Mapper.Map<IncidentFilter>(filterDto);
-            PagedResult<Incident> pagedResult = await ((IIncidentService)Service).GetListAsync(filter!).ConfigureAwait(false);
-            PagedResultVm<IncidentVm> result = Mapper.Map<PagedResultVm<IncidentVm>>(pagedResult);
-            return Ok(result);
-        }
-
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] IncidentDto itemDto)
         {
@@ -47,5 +38,13 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             return await base.DeleteAsync(id).ConfigureAwait(false);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetListAsync([FromQuery] IncidentFilterDto filterDto)
+        {
+            IncidentFilter filter = Mapper.Map<IncidentFilter>(filterDto);
+            PagedResult<Incident> pagedResult = await ((IIncidentService)Service).GetListAsync(filter!).ConfigureAwait(false);
+            PagedResultVm<IncidentVm> result = Mapper.Map<PagedResultVm<IncidentVm>>(pagedResult);
+            return Ok(result);
+        }
     }
 }

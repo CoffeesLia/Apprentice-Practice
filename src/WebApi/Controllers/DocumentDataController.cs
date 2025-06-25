@@ -16,18 +16,29 @@ namespace Stellantis.ProjectName.WebApi.Controllers
     {
         protected override IDocumentService Service => (IDocumentService)base.Service;
 
-
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] DocumentDto itemDto)
         {
             return await CreateBaseAsync<DocumentVm>(itemDto).ConfigureAwait(false);
         }
 
-
         [HttpGet("{id}")]
         public async Task<ActionResult> GetAsync(int id)
         {
             return await GetAsync<DocumentVm>(id).ConfigureAwait(false);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateAsync(int id, [FromBody] DocumentDto itemDto)
+        {
+            return await UpdateBaseAsync<DocumentVm>(id, itemDto).ConfigureAwait(false);
+        }
+
+        [HttpDelete("{id}")]
+        public override async Task<IActionResult> DeleteAsync(int id)
+        {
+            IActionResult result = await base.DeleteAsync(id).ConfigureAwait(false);
+            return result;
         }
 
         [HttpGet]
@@ -37,21 +48,5 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             PagedResult<DocumentData> result = await Service.GetListAsync(filter).ConfigureAwait(false);
             return Ok(Mapper.Map<PagedResultVm<DocumentVm>>(result));
         }
-
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAsync(int id, [FromBody] DocumentDto itemDto)
-        {
-            return await UpdateBaseAsync<DocumentVm>(id, itemDto).ConfigureAwait(false);
-        }
-
-
-        [HttpDelete("{id}")]
-        public override async Task<IActionResult> DeleteAsync(int id)
-        {
-            IActionResult result = await base.DeleteAsync(id).ConfigureAwait(false);
-            return result;
-        }
-
     }
 }

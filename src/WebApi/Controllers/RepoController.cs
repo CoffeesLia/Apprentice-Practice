@@ -23,21 +23,11 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             return await CreateBaseAsync<RepoVm>(itemDto).ConfigureAwait(false);
         }
 
-
         [HttpGet("{id}")]
         public async Task<ActionResult> GetAsync(int id)
         {
             return await GetAsync<RepoVm>(id).ConfigureAwait(false);
         }
-
-        [HttpGet]
-        public async Task<IActionResult> GetListAsync([FromQuery] RepoFilterDto filterDto)
-        {
-            RepoFilter filter = Mapper.Map<RepoFilter>(filterDto);
-            PagedResult<Repo> result = await Service.GetListAsync(filter).ConfigureAwait(false);
-            return Ok(Mapper.Map<PagedResultVm<RepoVm>>(result));
-        }
-
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] RepoDto itemDto)
@@ -53,5 +43,12 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             return result;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetListAsync([FromQuery] RepoFilterDto filterDto)
+        {
+            RepoFilter filter = Mapper.Map<RepoFilter>(filterDto);
+            PagedResult<Repo> result = await Service.GetListAsync(filter).ConfigureAwait(false);
+            return Ok(Mapper.Map<PagedResultVm<RepoVm>>(result));
+        }
     }
 }
