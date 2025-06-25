@@ -18,7 +18,6 @@ namespace Stellantis.ProjectName.Application.Services
         protected override IRepoRepository Repository =>
             UnitOfWork.RepoRepository;
 
-
         public override async Task<OperationResult> CreateAsync(Repo item)
         {
             ArgumentNullException.ThrowIfNull(item);
@@ -45,18 +44,6 @@ namespace Stellantis.ProjectName.Application.Services
             }
 
             return await base.CreateAsync(item).ConfigureAwait(false);
-        }
-
-        public async Task<bool> VerifyAplicationsExistsAsync(int id)
-        {
-            return await Repository.GetByIdAsync(id).ConfigureAwait(false) != null;
-        }
-
-        public async Task<PagedResult<Repo>> GetListAsync(RepoFilter filter)
-        {
-            filter ??= new RepoFilter();
-
-            return await UnitOfWork.RepoRepository.GetListAsync(filter).ConfigureAwait(false);
         }
 
         public override async Task<OperationResult> UpdateAsync(Repo item)
@@ -86,12 +73,23 @@ namespace Stellantis.ProjectName.Application.Services
             }
 
             return await base.UpdateAsync(item).ConfigureAwait(false);
-
         }
 
         public override async Task<OperationResult> DeleteAsync(int id)
         {
             return await base.DeleteAsync(id).ConfigureAwait(false);
+        }
+
+        public async Task<PagedResult<Repo>> GetListAsync(RepoFilter filter)
+        {
+            filter ??= new RepoFilter();
+
+            return await UnitOfWork.RepoRepository.GetListAsync(filter).ConfigureAwait(false);
+        }
+
+        public async Task<bool> VerifyAplicationsExistsAsync(int id)
+        {
+            return await Repository.GetByIdAsync(id).ConfigureAwait(false) != null;
         }
     }
 }

@@ -8,6 +8,11 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
     public class IntegrationRepository(Context context) : RepositoryBase<Integration, Context>(context), IIntegrationRepository
     {
+        public async Task<Integration?> GetByIdAsync(int id)
+        {
+            return await Context.Set<Integration>().FindAsync(id).ConfigureAwait(false);
+        }
+
         public async Task DeleteAsync(int id, bool saveChanges = true)
         {
             var integration = await GetByIdAsync(id).ConfigureAwait(false);
@@ -19,11 +24,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                     await Context.SaveChangesAsync().ConfigureAwait(false);
                 }
             }
-        }
-
-        public async Task<Integration?> GetByIdAsync(int id)
-        {
-            return await Context.Set<Integration>().FindAsync(id).ConfigureAwait(false);
         }
 
         public async Task<PagedResult<Integration>> GetListAsync(IntegrationFilter filter)

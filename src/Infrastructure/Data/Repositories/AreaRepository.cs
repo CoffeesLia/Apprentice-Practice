@@ -8,6 +8,11 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
     public class AreaRepository(Context context) : RepositoryBase<Area, Context>(context), IAreaRepository
     {
+        public async Task<Area?> GetByIdAsync(int id)
+        {
+            return await Context.Set<Area>().FindAsync(id).ConfigureAwait(false);
+        }
+
         public async Task DeleteAsync(int id, bool saveChanges = true)
         {
             Area? entity = await GetByIdAsync(id).ConfigureAwait(false);
@@ -19,11 +24,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                     await SaveChangesAsync().ConfigureAwait(false);
                 }
             }
-        }
-
-        public async Task<Area?> GetByIdAsync(int id)
-        {
-            return await Context.Set<Area>().FindAsync(id).ConfigureAwait(false);
         }
 
         public async Task<PagedResult<Area>> GetListAsync(AreaFilter filter)

@@ -39,18 +39,6 @@ namespace Stellantis.ProjectName.Application.Services
             return OperationResult.Complete(Localizer[IntegrationResources.MessageSucess]);
         }
 
-        public new async Task<OperationResult> DeleteAsync(int id)
-        {
-            var integration = await Repository.GetByIdAsync(id).ConfigureAwait(false);
-            if (integration == null)
-            {
-                return OperationResult.NotFound(Localizer[IntegrationResources.MessageNotFound]);
-            }
-
-            await Repository.DeleteAsync(id).ConfigureAwait(false);
-            return OperationResult.Complete(Localizer[IntegrationResources.DeletedSuccessfully]);
-        }
-
         public new async Task<OperationResult> GetItemAsync(int id)
         {
             var integration = await Repository.GetByIdAsync(id).ConfigureAwait(false);
@@ -82,6 +70,18 @@ namespace Stellantis.ProjectName.Application.Services
 
             await Repository.UpdateAsync(item).ConfigureAwait(false);
             return OperationResult.Complete(Localizer[IntegrationResources.UpdatedSuccessfully]);
+        }
+
+        public new async Task<OperationResult> DeleteAsync(int id)
+        {
+            var integration = await Repository.GetByIdAsync(id).ConfigureAwait(false);
+            if (integration == null)
+            {
+                return OperationResult.NotFound(Localizer[IntegrationResources.MessageNotFound]);
+            }
+
+            await Repository.DeleteAsync(id).ConfigureAwait(false);
+            return OperationResult.Complete(Localizer[IntegrationResources.DeletedSuccessfully]);
         }
 
         public async Task<PagedResult<Integration>> GetListAsync(IntegrationFilter filter)

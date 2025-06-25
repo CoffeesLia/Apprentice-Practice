@@ -8,6 +8,24 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
     public class ResponsibleRepository(Context context) : RepositoryBase<Responsible, Context>(context), IResponsibleRepository
     {
+        public async Task<Responsible?> GetByIdAsync(int id)
+        {
+            return await Context.Set<Responsible>().FindAsync(id).ConfigureAwait(false);
+        }
+
+        public async Task DeleteAsync(int id, bool saveChanges = true)
+        {
+            Responsible? entity = await GetByIdAsync(id).ConfigureAwait(false);
+            if (entity != null)
+            {
+                Context.Set<Responsible>().Remove(entity);
+                if (saveChanges)
+                {
+                    await SaveChangesAsync().ConfigureAwait(false);
+                }
+            }
+        }
+
         public async Task<PagedResult<Responsible>> GetListAsync(ResponsibleFilter filter)
         {
             ArgumentNullException.ThrowIfNull(filter);
@@ -42,25 +60,5 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         {
             return await Context.Set<Responsible>().AnyAsync(r => r.Email == email).ConfigureAwait(false);
         }
-
-        public async Task DeleteAsync(int id, bool saveChanges = true)
-        {
-            Responsible? entity = await GetByIdAsync(id).ConfigureAwait(false);
-            if (entity != null)
-            {
-                Context.Set<Responsible>().Remove(entity);
-                if (saveChanges)
-                {
-                    await SaveChangesAsync().ConfigureAwait(false);
-                }
-            }
-        }
-
-        public async Task<Responsible?> GetByIdAsync(int id)
-        {
-            return await Context.Set<Responsible>().FindAsync(id).ConfigureAwait(false);
-        }
-
-
     }
 }

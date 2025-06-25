@@ -8,6 +8,11 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
     public class DocumentDataRepository(Context context) : RepositoryBase<DocumentData, Context>(context), IDocumentRepository
     {
+        public async Task<DocumentData?> GetByIdAsync(int id)
+        {
+            return await Context.Set<DocumentData>().FindAsync(id).ConfigureAwait(false);
+        }
+
         public async Task DeleteAsync(int id, bool saveChanges = true)
         {
 
@@ -20,12 +25,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                     await SaveChangesAsync().ConfigureAwait(false);
                 }
             }
-        }
-
-
-        public async Task<DocumentData?> GetByIdAsync(int id)
-        {
-            return await Context.Set<DocumentData>().FindAsync(id).ConfigureAwait(false);
         }
 
         public async Task<PagedResult<DocumentData>> GetListAsync(DocumentDataFilter documentFilter)
