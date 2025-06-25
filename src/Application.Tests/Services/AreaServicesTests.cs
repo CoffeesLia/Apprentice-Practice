@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using AutoFixture;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces;
@@ -274,7 +274,7 @@ namespace Application.Tests.Services
         public async Task UpdateAsyncShouldReturnInvalidDataWhenManagerIsNull()
         {
             // Arrange
-            Area area = new("Area com Manager inv�lido") { Id = 1, ManagerId = 999 };
+            Area area = new("Area com Manager inválido") { Id = 1, ManagerId = 999 };
             _areaRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(area.Name)).ReturnsAsync(false);
             _areaRepositoryMock.Setup(r => r.GetByIdAsync(area.Id)).ReturnsAsync(area);
 
@@ -299,6 +299,15 @@ namespace Application.Tests.Services
             _areaRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(area.Name)).ReturnsAsync(true);
             _areaRepositoryMock.Setup(r => r.GetByIdAsync(area.Id)).ReturnsAsync(area);
 
+            var pagedResult = new PagedResult<Area>
+            {
+                Result = new List<Area> { new Area("Existing Name") { Id = 2, ManagerId = 123 } },
+                Page = 1,
+                PageSize = 10,
+                Total = 1
+            };
+            _areaRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<AreaFilter>())).ReturnsAsync(pagedResult);
+
             var manager = new Manager { Name = "Gerente", Id = 123, Email = "gerente@email.com" };
             var managerRepositoryMock = new Mock<IManagerRepository>();
             managerRepositoryMock.Setup(m => m.GetByIdAsync(area.ManagerId)).ReturnsAsync(manager);
@@ -319,6 +328,15 @@ namespace Application.Tests.Services
             _areaRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(area.Name)).ReturnsAsync(false);
             _areaRepositoryMock.Setup(r => r.GetByIdAsync(area.Id)).ReturnsAsync(area);
             _areaRepositoryMock.Setup(r => r.UpdateAsync(area, true)).Returns(Task.CompletedTask);
+
+            var pagedResult = new PagedResult<Area>
+            {
+                Result = new List<Area>(),
+                Page = 1,
+                PageSize = 10,
+                Total = 0
+            };
+            _areaRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<AreaFilter>())).ReturnsAsync(pagedResult);
 
             var manager = new Manager { Name = "Gerente", Id = 123, Email = "gerente@email.com" };
             var managerRepositoryMock = new Mock<IManagerRepository>();
