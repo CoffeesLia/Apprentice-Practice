@@ -98,6 +98,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>ManagerResources.resx</DependentUpon>
     </Compile>
+    <Compile Update="RepoResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RepoResources.resx</DependentUpon>
+    </Compile>
     <Compile Update="ResponsibleResource.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -186,6 +191,13 @@
     <EmbeddedResource Update="FeedbackResources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>FeedbackResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="RepoResources.pt-BR.resx">
+      <Generator></Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="RepoResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>RepoResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="ServiceDataResources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

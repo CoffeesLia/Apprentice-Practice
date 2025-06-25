@@ -1,6 +1,6 @@
 ﻿namespace Stellantis.ProjectName.WebApi.Dto.Filters
 {
-    public class GitRepoFilterDto : FilterDto
+    public class RepoFilterDto : FilterDto
     {
         public string? Name { get; set; }
         public string? Description { get; set; }
