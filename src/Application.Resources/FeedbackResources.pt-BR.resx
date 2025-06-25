@@ -118,15 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ApplicationRequired" xml:space="preserve">
-    <value>Aplicação obrigatória.</value>
+    <value>A aplicação é obrigatória.</value>
   </data>
   <data name="DescriptionRequired" xml:space="preserve">
-    <value>Descrição obrigatória.</value>
+    <value>A descrição é obrigatória.</value>
   </data>
   <data name="InvalidMembers" xml:space="preserve">
-    <value>Membro Inválido.</value>
+    <value>Um ou mais membros específicados não pertencem ao squad do aplicativo.</value>
   </data>
   <data name="TitleRequired" xml:space="preserve">
-    <value>Título obrigatório.</value>
+    <value>O título é obrigatório.</value>
   </data>
 </root>

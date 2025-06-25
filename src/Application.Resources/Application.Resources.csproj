@@ -88,6 +88,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>DataServiceResources.resx</DependentUpon>
     </Compile>
+    <Compile Update="FeedbackResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>FeedbackResources.resx</DependentUpon>
+    </Compile>
     <Compile Update="FilterResources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -107,11 +112,6 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>ResponsibleResource.resx</DependentUpon>
-    </Compile>
-    <Compile Update="FeedbackResources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>FeedbackResources.resx</DependentUpon>
     </Compile>
     <Compile Update="ServiceDataResources.Designer.cs">
       <DesignTime>True</DesignTime>
@@ -155,6 +155,13 @@
     <EmbeddedResource Update="DocumentDataResources.resx">
       <Generator></Generator>
     </EmbeddedResource>
+    <EmbeddedResource Update="FeedbackResources.pt-BR.resx">
+      <Generator></Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="FeedbackResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>FeedbackResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Update="FilterResources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>FilterValidatorResource.Designer.cs</LastGenOutput>
@@ -171,9 +178,6 @@
       <DependentUpon>GeneralResources.resx</DependentUpon>
       <Generator></Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="FeedbackResources.pt-BR.resx">
-      <Generator></Generator>
-    </EmbeddedResource>
     <EmbeddedResource Update="IncidentResource.pt-br.resx">
       <Generator></Generator>
     </EmbeddedResource>
@@ -187,10 +191,6 @@
     <EmbeddedResource Update="Messages - Copy %282%29.pt-br.resx">
       <SubType>Designer</SubType>
       <DependentUpon>Messages.resx</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="FeedbackResources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>FeedbackResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="RepoResources.pt-BR.resx">
       <Generator></Generator>

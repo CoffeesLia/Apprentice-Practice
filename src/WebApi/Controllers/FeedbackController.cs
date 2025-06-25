@@ -12,11 +12,9 @@ namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [ApiController]
     [Route("api/feedbacks")]
-    public class FeedbackController(IFeedbackService service, IMapper mapper, IStringLocalizerFactory localizerFactory)
+    public class FeedbacksControllerBase(IFeedbackService service, IMapper mapper, IStringLocalizerFactory localizerFactory)
         : EntityControllerBase<Feedback, FeedbackDto>(service, mapper, localizerFactory)
     {
-        protected override IFeedbackService Service => (IFeedbackService)base.Service;
-
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] FeedbackDto itemDto)
         {
@@ -27,6 +25,15 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         public async Task<ActionResult<FeedbackVm>> GetAsync(int id)
         {
             return await GetAsync<FeedbackVm>(id).ConfigureAwait(false);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetListAsync([FromQuery] FeedbackFilterDto filterDto)
+        {
+            FeedbackFilter filter = Mapper.Map<FeedbackFilter>(filterDto);
+            PagedResult<Feedback> pagedResult = await ((IFeedbackService)Service).GetListAsync(filter!).ConfigureAwait(false);
+            PagedResultVm<FeedbackVm> result = Mapper.Map<PagedResultVm<FeedbackVm>>(pagedResult);
+            return Ok(result);
         }
 
         [HttpPut("{id}")]
@@ -41,12 +48,5 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             return await base.DeleteAsync(id).ConfigureAwait(false);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetListAsync([FromQuery] FeedbackFilterDto filterDto)
-        {
-            FeedbackFilter filter = Mapper.Map<FeedbackFilter>(filterDto);
-            PagedResult<Feedback> result = await Service.GetListAsync(filter).ConfigureAwait(false);
-            return Ok(Mapper.Map<PagedResultVm<FeedbackVm>>(result));
-        }
     }
 }

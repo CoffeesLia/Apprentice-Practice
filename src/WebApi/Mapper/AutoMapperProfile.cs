@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
-using Stellantis.ProjectName.Infrastructure.Data.Repositories;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.ViewModels;
@@ -84,8 +83,8 @@ namespace Stellantis.ProjectName.WebApi.Mapper
             CreateMap<FeedbackFilterDto, FeedbackFilter>()
              .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
             CreateMap<Feedback, FeedbackVm>()
-             .ForMember(dest => dest.FeedbackStatus, opt => opt.MapFrom(src => src.Status.ToString()))
-             .ForMember(dest => dest.MemberIds, opt => opt.Ignore())
+             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+             .ForMember(dest => dest.Members, opt => opt.Ignore())
              .ForMember(dest => dest.Application, opt => opt.MapFrom(src => src.Application));
 
             CreateMap<IncidentDto, Incident>()
@@ -145,24 +144,22 @@ namespace Stellantis.ProjectName.WebApi.Mapper
               .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
               .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
               .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
+
             CreateMap<RepoDto, Repo>()
-                .ForMember(x => x.ApplicationData, opt => opt.Ignore())
-                .ForMember(x => x.Id, x => x.Ignore())
-                .ForMember(x => x.ApplicationId, opt => opt.Ignore())
-                .ForMember(x => x.Name, opt => opt.MapFrom(src => src.Name))
-                .ForMember(x => x.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.ApplicationData, opt => opt.Ignore())
                 .ForMember(x => x.Url, opt => opt.MapFrom(src => src.Url));
 
             CreateMap<Repo, RepoVm>()
-                .ForMember(x => x.Name, opt => opt.MapFrom(src => src.Name))
-                .ForMember(x => x.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.ApplicationData, opt => opt.MapFrom(src => src.ApplicationData))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(x => x.Url, opt => opt.MapFrom(src => src.Url));
 
             CreateMap<RepoFilterDto, RepoFilter>()
+                .ForMember(x => x.Url, opt => opt.MapFrom(src => src.Url))
                 .ForMember(x => x.Name, opt => opt.MapFrom(src => src.Name))
-                .ForMember(x => x.Description, opt => opt.MapFrom(src => src.Description))
-                .ForMember(x => x.Url, opt => opt.MapFrom(src => src.Url));
-            CreateMap<PagedResult<Repo>, PagedResultVm<RepoVm>>();
+                .ForMember(x => x.ApplicationId, opt => opt.MapFrom(src => src.ApplicationId));
+
 
             CreateMap<MemberDto, Member>()
                .ForMember(dest => dest.Id, opt => opt.Ignore())
