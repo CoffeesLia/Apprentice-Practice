@@ -10,6 +10,24 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
     public class IncidentRepository(Context context)
         : RepositoryBase<Incident, Context>(context), IIncidentRepository
     {
+        public async Task<Incident?> GetByIdAsync(int id)
+        {
+            return await Context.Set<Incident>().FindAsync(id).ConfigureAwait(false);
+        }
+
+        public async Task DeleteAsync(int id, bool saveChanges = true)
+        {
+            Incident? entity = await GetByIdAsync(id).ConfigureAwait(false);
+            if (entity != null)
+            {
+                Context.Set<Incident>().Remove(entity);
+                if (saveChanges)
+                {
+                    await SaveChangesAsync().ConfigureAwait(false);
+                }
+            }
+        }
+
         public async Task<PagedResult<Incident>> GetListAsync(IncidentFilter filter)
         {
             ArgumentNullException.ThrowIfNull(filter);
@@ -66,24 +84,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             return pagedResult;
         }
 
-        public async Task<Incident?> GetByIdAsync(int id)
-        {
-            return await Context.Set<Incident>().FindAsync(id).ConfigureAwait(false);
-        }
-
-        public async Task DeleteAsync(int id, bool saveChanges = true)
-        {
-            Incident? entity = await GetByIdAsync(id).ConfigureAwait(false);
-            if (entity != null)
-            {
-                Context.Set<Incident>().Remove(entity);
-                if (saveChanges)
-                {
-                    await SaveChangesAsync().ConfigureAwait(false);
-                }
-            }
-        }
-
         // Implementação no IncidentRepository
         public async Task<IEnumerable<Member>> GetMembersByApplicationIdAsync(int applicationId)
         {
@@ -105,7 +105,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 .Where(i => i.ApplicationId == applicationId)
                 .ToListAsync()
                 .ConfigureAwait(false);
-
         }
 
         // Consulta todos os incidentes em que um membro está envolvido.
@@ -116,7 +115,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 .Where(i => i.Members.Any(m => m.Id == memberId))
                 .ToListAsync()
                 .ConfigureAwait(false);
-
         }
 
         // Consulta todos os incidentes com um determinado status.
@@ -126,7 +124,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 .Where(i => i.Status == status)
                 .ToListAsync()
                 .ConfigureAwait(false);
-
         }
     }
 }

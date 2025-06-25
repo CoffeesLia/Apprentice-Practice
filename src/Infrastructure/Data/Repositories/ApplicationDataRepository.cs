@@ -9,11 +9,22 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
     public class ApplicationDataRepository(Context context) : RepositoryBase<ApplicationData, Context>(context), IApplicationDataRepository
     {
-  
-
         public async Task<ApplicationData?> GetByIdAsync(int id)
         {
             return await Context.Set<ApplicationData>().FindAsync(id).ConfigureAwait(false);
+        }
+
+        public async Task DeleteAsync(int id, bool saveChanges = true)
+        {
+            ApplicationData? entity = await GetByIdAsync(id).ConfigureAwait(false);
+            if (entity != null)
+            {
+                Context.Set<ApplicationData>().Remove(entity);
+                if (saveChanges)
+                {
+                    await SaveChangesAsync().ConfigureAwait(false);
+                }
+            }
         }
 
         public async Task<PagedResult<ApplicationData>> GetListAsync(ApplicationFilter applicationFilter)
@@ -53,9 +64,8 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             }
 
             return await GetListAsync(filter: filters, page: applicationFilter.Page, sort: applicationFilter.Sort, sortDir: applicationFilter.SortDir,
-    includeProperties: $"{nameof(ApplicationData.Area)},{nameof(ApplicationData.Squads)}"
-).ConfigureAwait(false);
-
+                includeProperties: $"{nameof(ApplicationData.Area)},{nameof(ApplicationData.Squads)}"
+            ).ConfigureAwait(false);
         }
 
 
@@ -72,13 +82,13 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                        .Include(x => x.Area)
                        .FirstOrDefaultAsync(x => x.Id == id)
                        .ConfigureAwait(false);
-
         }
 
         public async Task<bool> IsResponsibleFromArea(int areaId, int responsibleId)
         {
             return await Context.Set<Responsible>().AnyAsync(r => r.Id == responsibleId && r.AreaId == areaId).ConfigureAwait(false);
         }
+
         public async Task<List<ApplicationData>> GetListAsync(Expression<Func<ApplicationData, bool>> filter)
         {
             return await Context.Set<ApplicationData>()
@@ -86,19 +96,5 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 .ToListAsync()
                 .ConfigureAwait(false);
         }
-
-        public async Task DeleteAsync(int id, bool saveChanges = true)
-        {
-            ApplicationData? entity = await GetByIdAsync(id).ConfigureAwait(false);
-            if (entity != null)
-            {
-                Context.Set<ApplicationData>().Remove(entity);
-                if (saveChanges)
-                {
-                    await SaveChangesAsync().ConfigureAwait(false);
-                }
-            }
-        }
-
     }
 }

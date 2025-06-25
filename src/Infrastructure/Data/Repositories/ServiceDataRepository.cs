@@ -21,6 +21,24 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             return await Context.Set<ServiceData>().FindAsync(id).ConfigureAwait(false);
         }
 
+        public new async Task UpdateAsync(ServiceData entity, bool saveChanges = true)
+        {
+            await base.UpdateAsync(entity, saveChanges).ConfigureAwait(false);
+        }
+
+        public async Task DeleteAsync(int id, bool saveChanges = true)
+        {
+            ServiceData? entity = await GetByIdAsync(id).ConfigureAwait(false);
+            if (entity != null)
+            {
+                Context.Set<ServiceData>().Remove(entity);
+                if (saveChanges)
+                {
+                    await SaveChangesAsync().ConfigureAwait(false);
+                }
+            }
+        }
+
         public async Task<PagedResult<ServiceData>> GetListAsync(ServiceDataFilter serviceFilter)
         {
             serviceFilter ??= new ServiceDataFilter();
@@ -53,19 +71,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 Page = page,
                 PageSize = pageSize
             };
-        }
-
-        public async Task DeleteAsync(int id, bool saveChanges = true)
-        {
-            ServiceData? entity = await GetByIdAsync(id).ConfigureAwait(false);
-            if (entity != null)
-            {
-                Context.Set<ServiceData>().Remove(entity);
-                if (saveChanges)
-                {
-                    await SaveChangesAsync().ConfigureAwait(false);
-                }
-            }
         }
 
         public async Task<bool> VerifyServiceExistsAsync(int id)
