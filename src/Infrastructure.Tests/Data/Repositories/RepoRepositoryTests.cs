@@ -33,26 +33,22 @@ namespace Infrastructure.Tests.Data.Repositories
         [Fact]
         public async Task GetListAsyncWhenCalled()
         {
-            // Arrange
+            // Arrange  
             var applicationId = 1;
             var name = _fixture.Create<string>();
-            var url = _fixture.Create<Uri>();
 
             RepoFilter filter = new()
             {
-
                 Name = name,
-                Url = url,
                 ApplicationId = applicationId
             };
 
-
             await _context.SaveChangesAsync();
 
-            // Act
+            // Act  
             PagedResult<Repo> result = await _repository.GetListAsync(filter);
 
-            // Assert
+            // Assert  
             Assert.Equal(filter.Page, result.Page);
             Assert.Equal(filter.PageSize, result.PageSize);
         }
@@ -72,6 +68,7 @@ namespace Infrastructure.Tests.Data.Repositories
             var repo = new Repo
             {
                 Name = _fixture.Create<string>(),
+                Description = "ValidDescription",
                 Url = new Uri("https://example.com/" + _fixture.Create<string>()),
                 ApplicationId = 1
             };
@@ -93,6 +90,7 @@ namespace Infrastructure.Tests.Data.Repositories
             var repo = new Repo
             {
                 Name = _fixture.Create<string>(),
+                Description = "ValidDescription",
                 Url = new Uri("https://example.com/" + _fixture.Create<string>()),
                 ApplicationId = 1
             };
@@ -118,12 +116,13 @@ namespace Infrastructure.Tests.Data.Repositories
             var applicationId = _fixture.Create<int>();
 
             var repo = new Repo
-        {
+            {
                 Name = name,
+                Description = "ValidDescription",
                 Url = new Uri("https://example.com/" + _fixture.Create<string>()),
                 ApplicationId = 1
             };
-            await _repository.CreateAsync(repo);    
+            await _repository.CreateAsync(repo);
 
             // Act
             var exists = await _repository.IsRepoNameUniqueAsync(name, applicationId);
@@ -173,12 +172,11 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task IsUrlUniqueAsyncShouldReturnFalseIfNotExists()
         {
             // Arrange
-            var name = _fixture.Create<string>();
             var applicationId = _fixture.Create<int>();
             var url = new Uri("https://example.com/" + _fixture.Create<string>());
 
             // Act
-            var exists = await _repository.IsRepoNameUniqueAsync(name, applicationId);
+            var exists = await _repository.IsUrlUniqueAsync(url, applicationId);
 
             // Assert
             Assert.False(exists);
@@ -212,22 +210,22 @@ namespace Infrastructure.Tests.Data.Repositories
 
             isDisposed = true;
         }
+
+        [Fact]
+        public async Task VerifyDescriptionExistsAsyncShouldReturnTrueWhenDescriptionExists()
+        {
+            // Arrange  
+            Repo repo = _fixture.Create<Repo>();
+            await _context.Set<Repo>().AddAsync(repo);
+            await _context.SaveChangesAsync();
+
+            // Act  
+            bool result = await _repository.VerifyDescriptionExistsAsync(repo.Description);
+
+            // Assert  
+            Assert.True(result);
+        }
     }
+
 }
-
-
-//[Fact]
-//public async Task VerifyDescriptionExistsAsyncShouldReturnTrueWhenDescriptionExists()
-//{
-//    // Arrange  
-//    Repo repo = _fixture.Create<Repo>();
-//    await _context.Set<Repo>().AddAsync(repo);
-//    await _context.SaveChangesAsync();
-
-//    // Act  
-//    bool result = await _repository.VerifyDescriptionExistsAsync(repo.Description);
-
-//    // Assert  
-//    Assert.True(result);
-//}
 

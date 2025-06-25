@@ -12,23 +12,23 @@ namespace Stellantis.ProjectName.Application.Validators
         public RepoValidator(IStringLocalizerFactory localizerFactory)
         {
             ArgumentNullException.ThrowIfNull(localizerFactory);
-            var localizer = localizerFactory.Create(typeof(GitResource));
+            var localizer = localizerFactory.Create(typeof(RepoResources ));
 
             RuleFor(repo => repo.Name)
                 .NotNull()
-                .NotEmpty().WithMessage(localizer[nameof(GitResource.NameIsRequired)]);
+                .NotEmpty().WithMessage(localizer[nameof(RepoResources .NameIsRequired)]);
 
             RuleFor(repo => repo.Description)
                 .NotNull()
-                .NotEmpty().WithMessage(localizer[nameof(GitResource.DescriptionIsRequired)]);
+                .NotEmpty().WithMessage(localizer[nameof(RepoResources .DescriptionIsRequired)]);
 
             RuleFor(repo => repo.Url)
                 .NotNull()
-                .NotEmpty().WithMessage(localizer[nameof(GitResource.UrlIsRequired)]);
+                .NotEmpty().WithMessage(localizer[nameof(RepoResources .UrlIsRequired)]);
 
             RuleFor(repo => repo.ApplicationId)
                 .NotNull()
-                .NotEmpty().WithMessage(localizer[nameof(GitResource.ApplicationIdIsRequired)]);
+                .NotEmpty().WithMessage(localizer[nameof(RepoResources .ApplicationIdIsRequired)]);
 
             RuleFor(x => x.Name)
             .Length(MinimumLegth, MaximumLength)

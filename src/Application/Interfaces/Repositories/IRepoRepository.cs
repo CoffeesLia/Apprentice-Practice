@@ -7,7 +7,7 @@ namespace Stellantis.ProjectName.Application.Interfaces.Repositories
     {
         Task<PagedResult<Repo>> GetListAsync(RepoFilter repofilter);
         Task<bool> IsRepoNameUniqueAsync(string Name, int applicationId, int? id = null);
-        Task<bool> IsUrlUniqueAsync(Uri url, int applicationId, int? id = null));
+        Task<bool> IsUrlUniqueAsync(Uri url, int applicationId, int? id = null);
         Task<bool> VerifyDescriptionExistsAsync(string description);
     }
 }

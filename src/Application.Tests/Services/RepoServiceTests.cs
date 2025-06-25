@@ -109,12 +109,12 @@ namespace Application.Tests.Services
         public async Task CreateAsyncDuplicateNameReturnsConflict()
         {
             var repo = new Repo { Name = "Doc", Url = new Uri("https://exemplo.com"), ApplicationId = 1, Description = "ValidDescription" };
-;
+
                 _repoRepositoryMock.Setup(r => r.IsRepoNameUniqueAsync(repo.Name, repo.ApplicationId, null)).ReturnsAsync(true);
             var result = await _repoService.CreateAsync(repo);
 
             Assert.Equal(OperationStatus.Conflict, result.Status);
-            Assert.Equal(RepoResources.AlreadyExists, result.Message);
+            Assert.Equal(RepoResources.NameAlreadyExists, result.Message);
         }
 
         [Fact]
@@ -131,7 +131,7 @@ namespace Application.Tests.Services
             var result = await _repoService.CreateAsync(repo);
 
             Assert.Equal(OperationStatus.Conflict, result.Status);
-            Assert.Equal(RepoResources.AlreadyExists, result.Message);
+            Assert.Equal(RepoResources.UrlAlreadyExists, result.Message);
         }
 
 
@@ -168,7 +168,7 @@ namespace Application.Tests.Services
             var result = await _repoService.UpdateAsync(repo);
 
             Assert.Equal(OperationStatus.Conflict, result.Status);
-            Assert.Equal(RepoResources.AlreadyExists, result.Message);
+            Assert.Equal(RepoResources.NameAlreadyExists, result.Message);
         }
 
 
@@ -189,18 +189,23 @@ namespace Application.Tests.Services
             var result = await _repoService.UpdateAsync(repo);
 
             Assert.Equal(OperationStatus.Conflict, result.Status);
-            Assert.Equal(RepoResources.AlreadyExists, result.Message);
+            Assert.Equal(RepoResources.NameAlreadyExists, result.Message);
 
         }
 
         [Fact]
         public async Task UpdateAsyncInvalidValidationReturnsInvalidData()
         {
-            var repo = new Repo { Name = "Doc", Url = new Uri("https://exemplo.com"), ApplicationId = 1, Description = "ValidDescription" };
-            var validationResult = new FluentValidation.Results.ValidationResult(
-                new[] { new FluentValidation.Results.ValidationFailure("Name", "Required") }
-            );
-            // Força o validador a retornar inválido
+            // Corrected the syntax error in the initialization of the `repo` object.  
+            var repo = new Repo
+            {
+                Name = "Doc",
+                Url = new Uri("https://exemplo.com"),
+                ApplicationId = 1,
+                Description = "ValidDescription"
+            };
+
+            // Força o validador a retornar inválido  
             var localizer = Helpers.LocalizerFactorHelper.Create();
             var validator = new RepoValidator(localizer);
             var service = new RepoService(_unitOfWorkMock.Object, localizer, validator);

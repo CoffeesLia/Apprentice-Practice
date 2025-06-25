@@ -28,27 +28,27 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             return await Context.Set<Repo>().FindAsync(id).ConfigureAwait(false);
         }
 
-        public async Task<PagedResult<Repo>> GetListAsync(RepoFilter documentFilter)
+        public async Task<PagedResult<Repo>> GetListAsync(RepoFilter repofilter)
         {
-            ArgumentNullException.ThrowIfNull(documentFilter);
+            ArgumentNullException.ThrowIfNull(repofilter);
 
             var filters = PredicateBuilder.New<Repo>(true);
-            documentFilter.Page = documentFilter.Page <= 0 ? 1 : documentFilter.Page;
-            if (!string.IsNullOrWhiteSpace(documentFilter.Name))
-                filters = filters.And(x => x.Name.Contains(documentFilter.Name));
-            if (documentFilter.Url != null)
-                filters = filters.And(x => x.Url == documentFilter.Url);
-            if (documentFilter.ApplicationId > 0)
-                filters = filters.And(x => x.ApplicationId == documentFilter.ApplicationId);
+            repofilter.Page = repofilter.Page <= 0 ? 1 : repofilter.Page;
+            if (!string.IsNullOrWhiteSpace(repofilter.Name))
+                filters = filters.And(x => x.Name.Contains(repofilter.Name));
+            if (repofilter.Url != null)
+                filters = filters.And(x => x.Url == repofilter.Url);
+            if (repofilter.ApplicationId > 0)
+                filters = filters.And(x => x.ApplicationId == repofilter.ApplicationId);
 
-            return await GetListAsync(filter: filters, page: documentFilter.Page, sort: documentFilter.Sort, sortDir: documentFilter.SortDir, includeProperties: nameof(Repo.ApplicationData)
+            return await GetListAsync(filter: filters, page: repofilter.Page, sort: repofilter.Sort, sortDir: repofilter.SortDir, includeProperties: nameof(Repo.ApplicationData)
              ).ConfigureAwait(false);
         }
 
-        public async Task<bool> IsRepoNameUniqueAsync(string name, int applicationId, int? id = null)
+        public async Task<bool> IsRepoNameUniqueAsync(string Name, int applicationId, int? id = null)
         {
             return await Context.Set<Repo>()
-                .AnyAsync(a => a.Name == name
+                .AnyAsync(a => a.Name == Name
                             && a.ApplicationId == applicationId
                             && (!id.HasValue || a.Id != id))
                 .ConfigureAwait(false);

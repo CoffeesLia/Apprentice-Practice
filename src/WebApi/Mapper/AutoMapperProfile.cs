@@ -140,7 +140,7 @@ namespace Stellantis.ProjectName.WebApi.Mapper
               .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
             CreateMap<RepoDto, Repo>()
                 .ForMember(x => x.Id, x => x.Ignore())
-                .ForMember(x => x.Application, opt => opt.Ignore())
+                .ForMember(x => x.ApplicationId, opt => opt.Ignore())
                 .ForMember(x => x.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(x => x.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(x => x.Url, opt => opt.MapFrom(src => src.Url));

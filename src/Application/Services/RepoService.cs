@@ -72,12 +72,12 @@ namespace Stellantis.ProjectName.Application.Services
 
             if (await Repository.IsRepoNameUniqueAsync(item.Name!, item.ApplicationId).ConfigureAwait(false))
             {
-                return OperationResult.Conflict(_localizer[nameof(RepoResources.AlreadyExists)]);
+                return OperationResult.Conflict(_localizer[nameof(RepoResources.NameAlreadyExists)]);
             }
 
             if (await Repository.IsUrlUniqueAsync(item.Url!, item.ApplicationId).ConfigureAwait(false))
             {
-                return OperationResult.Conflict(_localizer[nameof(RepoResources.AlreadyExists)]);
+                return OperationResult.Conflict(_localizer[nameof(RepoResources.UrlAlreadyExists)]);
             }
 
             if (await Repository.VerifyDescriptionExistsAsync(item.Description).ConfigureAwait(false))
