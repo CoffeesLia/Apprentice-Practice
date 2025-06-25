@@ -2,14 +2,14 @@
 {
     public class FeedbackVm : EntityVmBase
     {
-        public new int Id { get; set; } // Use the 'new' keyword to explicitly hide the inherited member  
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
         public DateTime? ClosedAt { get; set; }
-        public string FeedbackStatus { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
         public int ApplicationId { get; set; }
-        public required ApplicationVm Application { get; set; }
-        public IEnumerable<int> MemberIds { get; set; } = [];
+        public ApplicationVm? Application { get; set; }
+        public int MemberId { get; set; }
+        public ICollection<MemberVm> Members { get; set; }
     }
 }
