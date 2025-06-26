@@ -30,6 +30,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{DC044F71-B0F2-4B10-9D12-8BB9C0CAE0B8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{5C00679F-10B8-4AC4-A766-9ADA2D580380}"
+	ProjectSection(SolutionItems) = preProject
+		Application.Resources\DocumentDataResources.Designer.cs = Application.Resources\DocumentDataResources.Designer.cs
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.Tests", "Domain.Tests\Domain.Tests.csproj", "{D5150684-16C9-44C7-8A26-24A97ADEFDCA}"
 EndProject

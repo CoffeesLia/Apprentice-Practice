@@ -19,6 +19,7 @@ namespace Stellantis.ProjectName.Domain.Entities
         public FeedbackStatus Status { get; set; }
         public int ApplicationId { get; set; }
         public ApplicationData Application { get; set; } = null!;
-        public ICollection<Member> Members { get; set; } = [];
+        public int MemberId { get; set; }
+        public ICollection<Member> Members { get; set; }
     }
 }

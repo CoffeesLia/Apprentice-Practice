@@ -12,7 +12,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data
         public DbSet<Integration> Integrations { get; set; }
         public DbSet<ApplicationData> Applications { get; set; }
         public DbSet<Feedback> Feedbacks { get; set; }
-        public DbSet<GitRepo> Repositories { get; set; }
+        public DbSet<Repo> Repositories { get; set; }
         public DbSet<ServiceData> Services { get; set; }
         public DbSet<Manager> Managers { get; set; }
         public DbSet<Incident> Incidents { get; set; }

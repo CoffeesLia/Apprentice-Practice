@@ -22,14 +22,14 @@ namespace Stellantis.ProjectName.Application.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class GitResource {
+    public class RepoResources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal GitResource() {
+        internal RepoResources() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Stellantis.ProjectName.Application.Resources.GitResource", typeof(GitResource).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Stellantis.ProjectName.Application.Resources.RepoResources", typeof(RepoResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,34 +61,34 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Already Exists..
-        /// </summary>
-        public static string AlreadyExists {
-            get {
-                return ResourceManager.GetString("AlreadyExists", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Application Id is required..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Application Id is required.
         /// </summary>
         public static string ApplicationIdIsRequired {
             get {
                 return ResourceManager.GetString("ApplicationIdIsRequired", resourceCulture);
             }
         }
-
+        
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Description is required..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Description is required.
         /// </summary>
         public static string DescriptionIsRequired {
             get {
                 return ResourceManager.GetString("DescriptionIsRequired", resourceCulture);
             }
         }
-
+        
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Name is required..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Name already exists..
+        /// </summary>
+        public static string NameAlreadyExists {
+            get {
+                return ResourceManager.GetString("NameAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Name is required.
         /// </summary>
         public static string NameIsRequired {
             get {
@@ -97,16 +97,25 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Repository not found..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a The name must be between {0} and {1} characters long..
         /// </summary>
-        public static string NotFound {
+        public static string NameValidateLength {
             get {
-                return ResourceManager.GetString("NotFound", resourceCulture);
+                return ResourceManager.GetString("NameValidateLength", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Url is required..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Url already exists..
+        /// </summary>
+        public static string UrlAlreadyExists {
+            get {
+                return ResourceManager.GetString("UrlAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Url is required.
         /// </summary>
         public static string UrlIsRequired {
             get {

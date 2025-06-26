@@ -10,6 +10,24 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
     public class FeedbackRepository(Context context)
         : RepositoryBase<Feedback, Context>(context), IFeedbackRepository
     {
+        public async Task<Feedback?> GetByIdAsync(int id)
+        {
+            return await Context.Set<Feedback>().FindAsync(id).ConfigureAwait(false);
+        }
+
+        public async Task DeleteAsync(int id, bool saveChanges = true)
+        {
+            Feedback? entity = await GetByIdAsync(id).ConfigureAwait(false);
+            if (entity != null)
+            {
+                Context.Set<Feedback>().Remove(entity);
+                if (saveChanges)
+                {
+                    await SaveChangesAsync().ConfigureAwait(false);
+                }
+            }
+        }
+
         public async Task<PagedResult<Feedback>> GetListAsync(FeedbackFilter filter)
         {
             ArgumentNullException.ThrowIfNull(filter);
@@ -45,24 +63,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 includeProperties: nameof(Feedback.Application)
             ).ConfigureAwait(false);
         }
-
-        public async Task<Feedback?> GetByIdAsync(int id)
-        {
-            return await Context.Set<Feedback>().FindAsync(id).ConfigureAwait(false);
-        }
-
-        public async Task DeleteAsync(int id, bool saveChanges = true)
-        {
-            Feedback? entity = await GetByIdAsync(id).ConfigureAwait(false);
-            if (entity != null)
-            {
-                Context.Set<Feedback>().Remove(entity);
-                if (saveChanges)
-                {
-                    await SaveChangesAsync().ConfigureAwait(false);
-                }
-            }
-        }
+        
         public async Task<IEnumerable<Member>> GetMembersByApplicationIdAsync(int applicationId)
         {
             var application = await Context.Set<AppDomain.ApplicationData>()
@@ -74,6 +75,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             return application.Squads.Members?.Distinct() ?? Enumerable.Empty<Member>();
         }
+
         public async Task<IEnumerable<Feedback>> GetByApplicationIdAsync(int applicationId)
         {
             return await Context.Set<Feedback>()
@@ -81,7 +83,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 .Where(i => i.ApplicationId == applicationId)
                 .ToListAsync()
                 .ConfigureAwait(false);
-
         }
 
         // Consulta todos os feedbackses em que um membro está envolvido.
@@ -92,7 +93,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 .Where(i => i.Members.Any(m => m.Id == memberId))
                 .ToListAsync()
                 .ConfigureAwait(false);
-
         }
 
         public async Task<IEnumerable<Feedback>> GetByStatusAsync(FeedbackStatus statusFeedbacks)
@@ -101,7 +101,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 .Where(i => i.Status == statusFeedbacks)
                 .ToListAsync()
                 .ConfigureAwait(false);
-
         }
     }
 }

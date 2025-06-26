@@ -22,16 +22,22 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             return await CreateBaseAsync<ServiceDataVm>(itemDto).ConfigureAwait(false);
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ServiceDataVm>> GetAsync(int id)
+        {
+            return await GetAsync<ServiceDataVm>(id).ConfigureAwait(false);
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] ServiceDataDto itemDto)
         {
             return await UpdateBaseAsync<ServiceDataVm>(id, itemDto).ConfigureAwait(false);
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ServiceDataVm>> GetAsync(int id)
+        [HttpDelete("{id}")]
+        public override async Task<IActionResult> DeleteAsync(int id)
         {
-            return await GetAsync<ServiceDataVm>(id).ConfigureAwait(false);
+            return await base.DeleteAsync(id).ConfigureAwait(false);
         }
 
         [HttpGet]
@@ -41,12 +47,6 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             PagedResult<ServiceData> pagedResult = await Service.GetListAsync(filter!).ConfigureAwait(false);
             PagedResultVm<ServiceDataVm> result = Mapper.Map<PagedResultVm<ServiceDataVm>>(pagedResult);
             return Ok(result);
-        }
-
-        [HttpDelete("{id}")]
-        public override async Task<IActionResult> DeleteAsync(int id)
-        {
-            return await base.DeleteAsync(id).ConfigureAwait(false);
         }
     }
 }

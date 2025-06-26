@@ -80,8 +80,8 @@ namespace Stellantis.ProjectName.WebApi
                 context.Applications.AddRange(
                     new ApplicationData("Portal AMS") { AreaId = 7, ResponsibleId = 1, ProductOwner = "", ConfigurationItem = "", SquadId = 1},
                     new ApplicationData("eLog") { AreaId = 2, ResponsibleId = 2, ProductOwner = "", ConfigurationItem = "", SquadId = 2 },
-                    new ApplicationData("Suite PD") { AreaId = 4, ResponsibleId = 4, ProductOwner = "", ConfigurationItem = "", SquadId = 1 },
-                    new ApplicationData("Finance Tracker") { AreaId = 6, ResponsibleId = 6, ProductOwner = "Carlos Silva", ConfigurationItem = "FT-Config", SquadId = 1 },
+                    new ApplicationData("Suite PD") { AreaId = 4, ResponsibleId = 4, ProductOwner = "", ConfigurationItem = "", SquadId = 3 },
+                    new ApplicationData("Finance Tracker") { AreaId = 6, ResponsibleId = 6, ProductOwner = "Carlos Silva", ConfigurationItem = "FT-Config", SquadId = 4 },
                     new ApplicationData("HR Portal") { AreaId = 8, ResponsibleId = 8, ProductOwner = "Fernanda Oliveira", ConfigurationItem = "HRP-Config" },
                     new ApplicationData("Marketing Dashboard") { AreaId = 10, ResponsibleId = 10, ProductOwner = "Bruno Almeida", ConfigurationItem = "MD-Config" },
                     new ApplicationData("Sales CRM") { AreaId = 14, ResponsibleId = 14, ProductOwner = "Rodrigo Martins", ConfigurationItem = "CRM-Config" },
@@ -112,19 +112,20 @@ namespace Stellantis.ProjectName.WebApi
                 );
 
                 context.Repositories.AddRange(
-                    new GitRepo("elog") { ApplicationId = 2, Name = "eLog", Description = "Site da plataforma eLog.", Url = new Uri("https://gitlab.fcalatam.com/fca/supply-chain/ELOG") },
-                    new GitRepo("Cities's Web API") { ApplicationId = 2, Name = "Cities's Web API", Description = "Web API que retorna os dados das cidades.", Url = new Uri("https://gitlab.fcalatam.com/fca/supply-chain/e-log/city-api") },
-                    new GitRepo("finance-tracker") { ApplicationId = 4, Name = "Finance Tracker", Description = "Repositório do sistema de rastreamento financeiro.", Url = new Uri("https://gitlab.fcalatam.com/fca/finance/finance-tracker") },
-                    new GitRepo("hr-portal") { ApplicationId = 5, Name = "HR Portal", Description = "Portal de gerenciamento de recursos humanos.", Url = new Uri("https://gitlab.fcalatam.com/fca/hr/hr-portal") },
-                    new GitRepo("marketing-dashboard") { ApplicationId = 6, Name = "Marketing Dashboard", Description = "Painel de análise de marketing.", Url = new Uri("https://gitlab.fcalatam.com/fca/marketing/marketing-dashboard") },
-                    new GitRepo("sales-crm") { ApplicationId = 7, Name = "Sales CRM", Description = "Sistema de gerenciamento de relacionamento com clientes.", Url = new Uri("https://gitlab.fcalatam.com/fca/sales/sales-crm") },
-                    new GitRepo("quality-control-system") { ApplicationId = 8, Name = "Quality Control System", Description = "Ferramenta de controle de qualidade.", Url = new Uri("https://gitlab.fcalatam.com/fca/quality/quality-control-system") },
-                    new GitRepo("supplier-chain-manager") { ApplicationId = 9, Name = "Supplier Chain Manager", Description = "Gerenciador da cadeia de fornecedores.", Url = new Uri("https://gitlab.fcalatam.com/fca/supply-chain/supplier-chain-manager") },
-                    new GitRepo("engineering-tools") { ApplicationId = 10, Name = "Engineering Tools", Description = "Ferramentas para suporte à engenharia.", Url = new Uri("https://gitlab.fcalatam.com/fca/engineering/engineering-tools") },
-                    new GitRepo("ams-portal") { ApplicationId = 11, Name = "AMS Portal", Description = "Portal de gerenciamento AMS.", Url = new Uri("https://gitlab.fcalatam.com/fca/ams/ams-portal") },
-                    new GitRepo("architecture-planner") { ApplicationId = 12, Name = "Architecture Planner", Description = "Planejador de arquitetura.", Url = new Uri("https://gitlab.fcalatam.com/fca/architecture/architecture-planner") },
-                    new GitRepo("integration-hub") { ApplicationId = 13, Name = "Integration Hub", Description = "Hub de integração para serviços.", Url = new Uri("https://gitlab.fcalatam.com/fca/integration/integration-hub") }
+                    new Repo { ApplicationId = 2, Name = "eLog", Description = "Site da plataforma eLog.", Url = new Uri("https://gitlab.fcalatam.com/fca/supply-chain/ELOG") },
+                    new Repo { ApplicationId = 2, Name = "Cities's Web API", Description = "Web API que retorna os dados das cidades.", Url = new Uri("https://gitlab.fcalatam.com/fca/supply-chain/e-log/city-api") },
+                    new Repo { ApplicationId = 4, Name = "Finance Tracker", Description = "Repositório do sistema de rastreamento financeiro.", Url = new Uri("https://gitlab.fcalatam.com/fca/finance/finance-tracker") },
+                    new Repo { ApplicationId = 5, Name = "HR Portal", Description = "Portal de gerenciamento de recursos humanos.", Url = new Uri("https://gitlab.fcalatam.com/fca/hr/hr-portal") },
+                    new Repo { ApplicationId = 6, Name = "Marketing Dashboard", Description = "Painel de análise de marketing.", Url = new Uri("https://gitlab.fcalatam.com/fca/marketing/marketing-dashboard") },
+                    new Repo { ApplicationId = 7, Name = "Sales CRM", Description = "Sistema de gerenciamento de relacionamento com clientes.", Url = new Uri("https://gitlab.fcalatam.com/fca/sales/sales-crm") },
+                    new Repo { ApplicationId = 8, Name = "Quality Control System", Description = "Ferramenta de controle de qualidade.", Url = new Uri("https://gitlab.fcalatam.com/fca/quality/quality-control-system") },
+                    new Repo { ApplicationId = 9, Name = "Supplier Chain Manager", Description = "Gerenciador da cadeia de fornecedores.", Url = new Uri("https://gitlab.fcalatam.com/fca/supply-chain/supplier-chain-manager") },
+                    new Repo { ApplicationId = 10, Name = "Engineering Tools", Description = "Ferramentas para suporte à engenharia.", Url = new Uri("https://gitlab.fcalatam.com/fca/engineering/engineering-tools") },
+                    new Repo { ApplicationId = 11, Name = "AMS Portal", Description = "Portal de gerenciamento AMS.", Url = new Uri("https://gitlab.fcalatam.com/fca/ams/ams-portal") },
+                    new Repo { ApplicationId = 12, Name = "Architecture Planner", Description = "Planejador de arquitetura.", Url = new Uri("https://gitlab.fcalatam.com/fca/architecture/architecture-planner") },
+                    new Repo { ApplicationId = 13, Name = "Integration Hub", Description = "Hub de integração para serviços.", Url = new Uri("https://gitlab.fcalatam.com/fca/integration/integration-hub") }
                 );
+
 
                 // Squads
                 context.Squads.AddRange(
@@ -168,7 +169,7 @@ namespace Stellantis.ProjectName.WebApi
                     new Member { Name = "Cecília", Email = "cecilia@stellantis.com", Role = "Developer", Cost = 1000, SquadId = 2 },
                     new Member { Name = "João Silva", Email = "joao.silva@stellantis.com", Role = "Developer", Cost = 1200, SquadId = 1 },
                     new Member { Name = "Maria Oliveira", Email = "maria.oliveira@stellantis.com", Role = "Tester", Cost = 1100, SquadId = 4 },
-                    new Member { Name = "Pedro Santos", Email = "pedro.santos@stellantis.com", Role = "Scrum Master", Cost = 1500, SquadId = 3 },
+                    new Member { Name = "Pedro Santos", Email = "pedro.santos@stellantis.com", Role = "Scrum Master", Cost = 1500, SquadId = 3 }, //10
                     new Member { Name = "Ana Costa", Email = "ana.costa@stellantis.com", Role = "Product Owner", Cost = 1600, SquadId = 5 },
                     new Member { Name = "Lucas Almeida", Email = "lucas.almeida@stellantis.com", Role = "Developer", Cost = 1300, SquadId = 6 },
                     new Member { Name = "Carla Mendes", Email = "carla.mendes@stellantis.com", Role = "UX Designer", Cost = 1400, SquadId = 2 },

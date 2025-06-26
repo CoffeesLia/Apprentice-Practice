@@ -17,6 +17,19 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             return await Context.Set<Member>().FindAsync(id).ConfigureAwait(false);
         }
 
+        public async Task DeleteAsync(int id, bool saveChanges = true)
+        {
+            Member? entity = await GetByIdAsync(id).ConfigureAwait(false);
+            if (entity != null)
+            {
+                Context.Set<Member>().Remove(entity);
+                if (saveChanges)
+                {
+                    await SaveChangesAsync().ConfigureAwait(false);
+                }
+            }
+        }
+
         public async Task<PagedResult<Member>> GetListAsync(MemberFilter membersFilter)
         {
             membersFilter ??= new MemberFilter();
@@ -83,19 +96,5 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             return !await query.AnyAsync().ConfigureAwait(false);
         }
-
-        public async Task DeleteAsync(int id, bool saveChanges = true)
-        {
-            Member? entity = await GetByIdAsync(id).ConfigureAwait(false);
-            if (entity != null)
-            {
-                Context.Set<Member>().Remove(entity);
-                if (saveChanges)
-                {
-                    await SaveChangesAsync().ConfigureAwait(false);
-                }
-            }
-        }
-
     }
 }

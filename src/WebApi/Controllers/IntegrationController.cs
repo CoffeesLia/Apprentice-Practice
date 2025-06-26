@@ -9,44 +9,45 @@ using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.ViewModels;
 
-namespace Stellantis.ProjectName.WebApi.Controllers;
-
-[ApiController]
-[Route("api/integrations")]
-[Authorize]
-public sealed class IntegrationController(IIntegrationService service, IMapper mapper, IStringLocalizerFactory localizerFactory) : EntityControllerBase<Integration, IntegrationDto>(service, mapper, localizerFactory)
-
+namespace Stellantis.ProjectName.WebApi.Controllers
 {
-    protected override IIntegrationService Service => (IIntegrationService)base.Service;
 
-    [HttpPost]
-    public async Task<IActionResult> CreateAsync([FromBody] IntegrationDto itemDto)
+    [ApiController]
+    [Route("api/integrations")]
+    [Authorize]
+    public sealed class IntegrationController(IIntegrationService service, IMapper mapper, IStringLocalizerFactory localizerFactory) : EntityControllerBase<Integration, IntegrationDto>(service, mapper, localizerFactory)
     {
-        return await CreateBaseAsync<IntegrationVm>(itemDto).ConfigureAwait(false);
-    }
+        protected override IIntegrationService Service => (IIntegrationService)base.Service;
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<IntegrationVm>> GetAsync(int id)
-    {
-        return await GetAsync<IntegrationVm>(id).ConfigureAwait(false);
-    }
+        [HttpPost]
+        public async Task<IActionResult> CreateAsync([FromBody] IntegrationDto itemDto)
+        {
+            return await CreateBaseAsync<IntegrationVm>(itemDto).ConfigureAwait(false);
+        }
 
-    [HttpGet]
-    public async Task<IActionResult> GetListAsync([FromQuery] IntegrationFilterDto filterDto)
-    {
-        var filter = Mapper.Map<IntegrationFilter>(filterDto);
-        var result = await Service.GetListAsync(filter).ConfigureAwait(false);
-        return Ok(Mapper.Map<PagedResultVm<IntegrationVm>>(result));
-    }
+        [HttpGet("{id}")]
+        public async Task<ActionResult<IntegrationVm>> GetAsync(int id)
+        {
+            return await GetAsync<IntegrationVm>(id).ConfigureAwait(false);
+        }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateBaseAsync(int id, [FromBody] IntegrationDto itemDto)
-    {
-        return await UpdateBaseAsync<IntegrationVm>(id, itemDto).ConfigureAwait(false);
-    }
-    [HttpDelete("{id}")]
-    public override async Task<IActionResult> DeleteAsync(int id)
-    {
-        return await base.DeleteAsync(id).ConfigureAwait(false);
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateBaseAsync(int id, [FromBody] IntegrationDto itemDto)
+        {
+            return await UpdateBaseAsync<IntegrationVm>(id, itemDto).ConfigureAwait(false);
+        }
+        [HttpDelete("{id}")]
+        public override async Task<IActionResult> DeleteAsync(int id)
+        {
+            return await base.DeleteAsync(id).ConfigureAwait(false);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetListAsync([FromQuery] IntegrationFilterDto filterDto)
+        {
+            var filter = Mapper.Map<IntegrationFilter>(filterDto);
+            var result = await Service.GetListAsync(filter).ConfigureAwait(false);
+            return Ok(Mapper.Map<PagedResultVm<IntegrationVm>>(result));
+        }
     }
 }

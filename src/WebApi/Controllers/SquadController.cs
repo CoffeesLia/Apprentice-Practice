@@ -6,9 +6,7 @@ using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
-using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.WebApi.ViewModels;
-using System.Collections.ObjectModel;
 
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
@@ -26,16 +24,22 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             return await CreateBaseAsync<SquadVm>(itemDto).ConfigureAwait(false);
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<SquadVm>> GetAsync(int id)
+        {
+            return await GetAsync<SquadVm>(id).ConfigureAwait(false);
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] SquadDto itemDto)
         {
             return await UpdateBaseAsync<SquadVm>(id, itemDto).ConfigureAwait(false);
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<SquadVm>> GetAsync(int id)
+        [HttpDelete("{id}")]
+        public override async Task<IActionResult> DeleteAsync(int id)
         {
-            return await GetAsync<SquadVm>(id).ConfigureAwait(false);
+            return await base.DeleteAsync(id).ConfigureAwait(false);
         }
 
         [HttpGet]
@@ -45,12 +49,6 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             PagedResult<Squad> pagedResult = await Service.GetListAsync(filter!).ConfigureAwait(false);
             PagedResultVm<SquadVm> result = Mapper.Map<PagedResultVm<SquadVm>>(pagedResult);
             return Ok(result);
-        }
-
-        [HttpDelete("{id}")]
-        public override async Task<IActionResult> DeleteAsync(int id)
-        {
-            return await base.DeleteAsync(id).ConfigureAwait(false);
         }
     }
 }

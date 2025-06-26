@@ -37,12 +37,6 @@ namespace Stellantis.ProjectName.Application.Services
             return await base.CreateAsync(item).ConfigureAwait(false);
         }
 
-        public async Task<PagedResult<Responsible>> GetListAsync(ResponsibleFilter responsibleFilter)
-        {
-            responsibleFilter ??= new ResponsibleFilter();
-            return await UnitOfWork.ResponsibleRepository.GetListAsync(responsibleFilter).ConfigureAwait(false);
-        }
-
         public new async Task<OperationResult> GetItemAsync(int id)
         {
             var responsible = await Repository.GetByIdAsync(id).ConfigureAwait(false);
@@ -89,5 +83,10 @@ namespace Stellantis.ProjectName.Application.Services
             return await base.DeleteAsync(item).ConfigureAwait(false);
         }
 
+        public async Task<PagedResult<Responsible>> GetListAsync(ResponsibleFilter responsibleFilter)
+        {
+            responsibleFilter ??= new ResponsibleFilter();
+            return await UnitOfWork.ResponsibleRepository.GetListAsync(responsibleFilter).ConfigureAwait(false);
+        }
     }
 }
