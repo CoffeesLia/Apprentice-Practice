@@ -66,7 +66,7 @@ namespace WebApi.Tests.Controllers
             // Arrange
             var squad = _fixture.Create<Squad>();
             var squadVm = _mapper.Map<SquadVm>(squad);
-            _squadServiceMock.Setup(s => s.GetItemAsync(squad.Id)).ReturnsAsync(squad);
+            _squadServiceMock.Setup(s => s.GetSquadWithCostAsync(squad.Id)).ReturnsAsync(squad);
 
             // Act
             var result = await _controller.GetAsync(squad.Id);
