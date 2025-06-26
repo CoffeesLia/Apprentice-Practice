@@ -125,5 +125,15 @@ namespace Stellantis.ProjectName.Application.Services
             }
             return OperationResult.Complete();
         }
+
+        public async Task<Squad?> GetSquadWithCostAsync(int id)
+        {
+            var squad = await Repository.GetByIdAsync(id).ConfigureAwait(false);
+            if (squad == null)
+                return null;
+
+            squad.Cost = await GetTotalCostAsync(id);
+            return squad;
+        }
     }
 }

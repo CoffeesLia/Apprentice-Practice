@@ -27,7 +27,12 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<SquadVm>> GetAsync(int id)
         {
-            return await GetAsync<SquadVm>(id).ConfigureAwait(false);
+            var squad = await Service.GetSquadWithCostAsync(id).ConfigureAwait(false);
+            if (squad == null)
+                return NotFound();
+
+            var squadVm = Mapper.Map<SquadVm>(squad);
+            return Ok(squadVm);
         }
 
         [HttpPut("{id}")]
