@@ -89,7 +89,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         {
             var query = Context.Set<Member>().Where(m => m.Email == email);
 
-            if (excludeId.HasValue && excludeId.Value > 0) 
+            if (excludeId.HasValue && excludeId.Value > 0)
             {
                 query = query.Where(m => m.Id != excludeId.Value);
             }

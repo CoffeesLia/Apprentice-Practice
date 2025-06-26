@@ -30,6 +30,15 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             return await GetAsync<MemberVm>(id).ConfigureAwait(false);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetListAsync([FromQuery] MemberFilterDto filterDto)
+        {
+            MemberFilter filter = Mapper.Map<MemberFilter>(filterDto);
+            PagedResult<Member> pagedResult = await Service.GetListAsync(filter!).ConfigureAwait(false);
+            PagedResultVm<MemberVm> result = Mapper.Map<PagedResultVm<MemberVm>>(pagedResult);
+            return Ok(result);
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] MemberDto itemDto)
         {
@@ -40,15 +49,6 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         public override async Task<IActionResult> DeleteAsync(int id)
         {
             return await base.DeleteAsync(id).ConfigureAwait(false);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetListAsync([FromQuery] MemberFilterDto filterDto)
-        {
-            MemberFilter filter = Mapper.Map<MemberFilter>(filterDto);
-            PagedResult<Member> pagedResult = await Service.GetListAsync(filter!).ConfigureAwait(false);
-            PagedResultVm<MemberVm> result = Mapper.Map<PagedResultVm<MemberVm>>(pagedResult);
-            return Ok(result);
-        }
+        }       
     }
 }
