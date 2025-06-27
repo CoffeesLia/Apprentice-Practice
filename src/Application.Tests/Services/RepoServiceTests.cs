@@ -48,14 +48,15 @@ namespace Application.Tests.Services
 
 
         [Fact]
-        public async Task CreateAsyncShouldReturnInvalidDataNameVali()
+        public async Task CreateAsyncShouldReturnInvalidDataNameValid()
         {
             // Arrange
             var repo = new Repo
             {
                 Name = "o",
                 Url = new Uri("https://exemplo.com"),
-                Description = "ValidDescription"
+                Description = "ValidDescription",
+                ApplicationId = 1 // Adicione esta linha
             };
 
             // Act
@@ -63,7 +64,15 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
-            Assert.Equal(string.Format(CultureInfo.InvariantCulture, RepoResources.NameValidateLength, RepoValidator.MinimumLegth, ApplicationDataValidator.MaximumLength), result.Errors.First());
+            Assert.Equal(
+                string.Format(
+                    CultureInfo.InvariantCulture,
+                    RepoResources.NameValidateLength,
+                    RepoValidator.MinimumLegth,
+                    ApplicationDataValidator.MaximumLength
+                ),
+                result.Errors.First()
+            );
         }
 
         [Fact]
@@ -178,43 +187,51 @@ namespace Application.Tests.Services
             var repo = new Repo { Name = "Doc", Url = new Uri("https://exemplo.com"), ApplicationId = 1, Description = "ValidDescription" };
             _repoRepositoryMock
                 .Setup(r => r.IsRepoNameUniqueAsync(repo.Name, repo.ApplicationId, null))
-                .ReturnsAsync(false); // Nome é único (não existe)
+                .ReturnsAsync(false); 
 
             _repoRepositoryMock
                 .Setup(r => r.IsUrlUniqueAsync(repo.Url, repo.ApplicationId, null))
-                .ReturnsAsync(true); // URL NÃO é única (já existe)
+                .ReturnsAsync(true); 
             _repoRepositoryMock
                 .Setup(r => r.GetByIdAsync(repo.Id))
                 .ReturnsAsync(repo);
             var result = await _repoService.UpdateAsync(repo);
 
             Assert.Equal(OperationStatus.Conflict, result.Status);
-            Assert.Equal(RepoResources.NameAlreadyExists, result.Message);
+            Assert.Equal(RepoResources.UrlAlreadyExists, result.Message);
 
         }
 
         [Fact]
         public async Task UpdateAsyncInvalidValidationReturnsInvalidData()
         {
-            // Corrected the syntax error in the initialization of the `repo` object.  
             var repo = new Repo
             {
+                Id = 1,
                 Name = "Doc",
                 Url = new Uri("https://exemplo.com"),
                 ApplicationId = 1,
                 Description = "ValidDescription"
             };
 
-            // Força o validador a retornar inválido  
-            var localizer = Helpers.LocalizerFactorHelper.Create();
-            var validator = new RepoValidator(localizer);
-            var service = new RepoService(_unitOfWorkMock.Object, localizer, validator);
+            _repoRepositoryMock.Setup(r => r.GetByIdAsync(repo.Id)).ReturnsAsync(repo);
+
+            // Mock do validador para forçar resultado inválido
+            var validationResult = new ValidationResult(new List<ValidationFailure>
+            {
+                new("Name", "Nome inválido")
+            });
+            var validatorMock = new Mock<IValidator<Repo>>();
+            validatorMock.Setup(v => v.ValidateAsync(repo, It.IsAny<CancellationToken>()))
+                         .ReturnsAsync(validationResult);
+
+            var service = new RepoService(_unitOfWorkMock.Object, Helpers.LocalizerFactorHelper.Create(), validatorMock.Object);
 
             var result = await service.UpdateAsync(repo);
 
             Assert.Equal(OperationStatus.InvalidData, result.Status);
+            Assert.Contains("Nome inválido", result.Errors);
         }
-
 
         [Fact]
         public async Task DeleteAsyncRepoExistsReturnsSuccess()

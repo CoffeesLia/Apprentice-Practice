@@ -150,14 +150,14 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task IsUrlUniqueAsyncShouldReturnTrueIfExists()
         {
             // Arrange
-            var applicationId = _fixture.Create<int>();
-            var url = new Uri("https://example.com/" + _fixture.Create<string>());
+            var applicationId = 2;
+            var url = new Uri("https://example.com/rep2");
             var repo = new Repo
             {
                 Name = "Rep2",
                 Description = "ValidDescription",
-                Url = new Uri("https://example.com/rep2"),
-                ApplicationId = 2
+                Url = url,
+                ApplicationId = applicationId
             };
             await _repository.CreateAsync(repo);
 
