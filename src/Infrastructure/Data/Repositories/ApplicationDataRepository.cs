@@ -38,6 +38,12 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 filters = filters.And(x => x.Name != null && x.Name.Contains(applicationFilter.Name));
             }
 
+
+            if (applicationFilter.Id > 0)
+            {
+                filters = filters.And(x => x.Id == applicationFilter.Id);
+            }
+
             if (applicationFilter.AreaId > 0)
             {
                 filters = filters.And(x => x.AreaId == applicationFilter.AreaId);
