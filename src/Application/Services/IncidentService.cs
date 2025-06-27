@@ -28,17 +28,16 @@ namespace Stellantis.ProjectName.Application.Services
             }
 
             // Verificar se a aplicação existe
-            var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(item.ApplicationId).ConfigureAwait(false); ;
+            var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(item.ApplicationId).ConfigureAwait(false);
             if (application == null)
             {
                 return OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
             }
 
             // Validar se os membros estão nos squads da aplicação
-
             if (item.Members != null && item.Members.Count > 0)
             {
-                var validMemberIds = application?.Squads?.Members?.Select(m => m.Id).ToHashSet() ?? new HashSet<int>();
+                var validMemberIds = application.Squads?.Members?.Select(m => m.Id).ToHashSet() ?? new HashSet<int>();
                 var invalidMemberIds = item.Members
                     .Where(m => !validMemberIds.Contains(m.Id))
                     .Select(m => m.Id)
@@ -50,8 +49,9 @@ namespace Stellantis.ProjectName.Application.Services
                 }
             }
 
-
+            // Corrija aqui: sempre defina a data de criação
             item.CreatedAt = DateTime.UtcNow;
+
             if (item.Status == default)
             {
                 item.Status = IncidentStatus.Open;
@@ -59,6 +59,7 @@ namespace Stellantis.ProjectName.Application.Services
 
             return await base.CreateAsync(item).ConfigureAwait(false);
         }
+
 
         public new async Task<OperationResult> GetItemAsync(int id)
         {
@@ -87,51 +88,23 @@ namespace Stellantis.ProjectName.Application.Services
             }
 
             // Verifica se a aplicação existe
-            var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(item.ApplicationId).ConfigureAwait(false); ;
+            var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(item.ApplicationId).ConfigureAwait(false);
             if (application == null)
             {
                 return OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
             }
 
-            // Valida membros se existirem
-            if (item.Members.Count > 0)
+            // Corrija aqui: sempre defina a data de criação
+            item.CreatedAt = DateTime.UtcNow;
+
+            if (item.Status == default)
             {
-                var validMemberIds = application.Squads.Members
-               .Select(m => m.Id)
-               .ToHashSet();
-
-                var invalidMemberIds = item.Members
-                    .Where(m => !validMemberIds.Contains(m.Id))
-                    .Select(m => m.Id)
-                    .ToList();
-
-                if (invalidMemberIds.Count > 0)
-                {
-                    return OperationResult.Conflict(_localizer[nameof(IncidentResource.InvalidMembers)]);
-                }
-
-                existingIncident.Members = item.Members;
+                item.Status = IncidentStatus.Open;
             }
 
-            // Atualiza dados básicos
-            existingIncident.Title = item.Title;
-            existingIncident.Description = item.Description;
-            existingIncident.ApplicationId = item.ApplicationId;
-
-            // Controle de status e datas
-            if (item.Status == IncidentStatus.Closed && existingIncident.ClosedAt == null)
-            {
-                existingIncident.ClosedAt = DateTime.UtcNow;
-            }
-            else if (item.Status == IncidentStatus.Reopened)
-            {
-                existingIncident.ClosedAt = null;
-            }
-
-            existingIncident.Status = item.Status;
-
-            return await base.UpdateAsync(existingIncident).ConfigureAwait(false);
+            return await base.UpdateAsync(item).ConfigureAwait(false);
         }
+
 
         public override async Task<OperationResult> DeleteAsync(int id)
         {
