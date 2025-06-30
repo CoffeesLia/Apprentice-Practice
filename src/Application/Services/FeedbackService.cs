@@ -157,7 +157,7 @@ namespace Stellantis.ProjectName.Application.Services
 
         public async Task<IEnumerable<Member>> GetMembersByApplicationIdAsync(int applicationId)
         {
-            return await Repository.GetMembersByApplicationIdAsync(applicationId);
+            return await Repository.GetMembersByApplicationIdAsync(applicationId).ConfigureAwait(false);
         }
     }
 }

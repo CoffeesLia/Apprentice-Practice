@@ -32,49 +32,58 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         {
             ArgumentNullException.ThrowIfNull(filter);
 
+            // Inicializa os filtros dinâmicos
             ExpressionStarter<Feedback> filters = PredicateBuilder.New<Feedback>(true);
             filter.Page = filter.Page <= 0 ? 1 : filter.Page;
 
+            // Filtros existentes...
             if (filter.Id > 0)
-            {
                 filters = filters.And(x => x.Id == filter.Id);
-            }
             if (!string.IsNullOrWhiteSpace(filter.Title))
-            {
                 filters = filters.And(x => x.Title.Contains(filter.Title, StringComparison.OrdinalIgnoreCase));
-            }
             if (filter.ApplicationId > 0)
-            {
                 filters = filters.And(x => x.ApplicationId == filter.ApplicationId);
-            }
-            // Filtro por status
+            if (filter.MemberId > 0)
+                filters = filters.And(x => x.Members.Any(m => m.Id == filter.MemberId));
             if (filter.Status.HasValue)
-            {
                 filters = filters.And(x => x.Status == filter.Status.Value);
-            }
-            // Retorna a lista paginada com os filtros aplicados
-            var sortProperty = !string.IsNullOrWhiteSpace(filter.Sort) ? filter.Sort : nameof(Feedback.Id);
 
-            return await GetListAsync(
+            // Busca paginada incluindo Application
+            var pagedResult = await GetListAsync(
                 filter: filters,
                 page: filter.Page,
                 sort: filter.Sort,
                 sortDir: filter.SortDir,
                 includeProperties: nameof(Feedback.Application)
             ).ConfigureAwait(false);
+
+            foreach (var feedback in pagedResult.Result)
+            {
+                var member = await Context.Members
+                    .FirstOrDefaultAsync(m => m.Id == feedback.MemberId)
+                    .ConfigureAwait(false);
+
+                feedback.Members = member != null ? new List<Member> { member } : new List<Member>();
+            }
+
+
+            return pagedResult;
         }
-        
-        public async Task<IEnumerable<Member>> GetMembersByApplicationIdAsync(int applicationId)
+
+        // Implementação no FeedbackRepository
+        public Task<IEnumerable<Member>> GetMembersByApplicationIdAsync(int applicationId)
         {
-            var application = await Context.Set<AppDomain.ApplicationData>()
-                            .Include(a => a.Squads)
-                    .ThenInclude(s => s.Members)
-                .FirstOrDefaultAsync(a => a.Id == applicationId);
+            var application = Context.Applications.FirstOrDefault(a => a.Id == applicationId);
+            if (application == null)
+                return Task.FromResult<IEnumerable<Member>>(Enumerable.Empty<Member>());
 
-            if (application == null) return Enumerable.Empty<Member>();
+            var members = Context.Members
+                .Where(m => m.SquadId == application.SquadId)
+                .ToList();
 
-            return application.Squads.Members?.Distinct() ?? Enumerable.Empty<Member>();
+            return Task.FromResult<IEnumerable<Member>>(members);
         }
+
 
         public async Task<IEnumerable<Feedback>> GetByApplicationIdAsync(int applicationId)
         {
@@ -85,7 +94,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 .ConfigureAwait(false);
         }
 
-        // Consulta todos os feedbackses em que um membro está envolvido.
         public async Task<IEnumerable<Feedback>> GetByMemberIdAsync(int memberId)
         {
             return await Context.Set<Feedback>()
@@ -95,10 +103,10 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 .ConfigureAwait(false);
         }
 
-        public async Task<IEnumerable<Feedback>> GetByStatusAsync(FeedbackStatus statusFeedbacks)
+        public async Task<IEnumerable<Feedback>> GetByStatusAsync(FeedbackStatus status)
         {
             return await Context.Set<Feedback>()
-                .Where(i => i.Status == statusFeedbacks)
+                .Where(i => i.Status == status)
                 .ToListAsync()
                 .ConfigureAwait(false);
         }
