@@ -35,7 +35,7 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             var filterDto = _fixture.Create<IntegrationFilterDto>();
-            var pagedResult = _fixture.Create<PagedResult<Integration>>();
+            var pagedResult = new PagedResult<Integration> { Result = [], Page = 0, PageSize = 0, Total = 0 };
             _serviceMock.Setup(s => s.GetListAsync(It.IsAny<IntegrationFilter>())).ReturnsAsync(pagedResult);
 
             // Act
@@ -98,17 +98,19 @@ namespace WebApi.Tests.Controllers
         [Fact]
         public async Task GetAsyncShouldReturnOkResultWhenIntegrationExists()
         {
-            // Arrange
+            // Arrange  
             var integrationId = _fixture.Create<int>();
-            var integration = _fixture.Build<Integration>()
-                                       .With(i => i.Id, integrationId)
-                                       .Create();
+            var integration = new Integration("Test Name", "Test Description")
+            {
+                Id = integrationId,
+                ApplicationDataId = 1
+            };
             _serviceMock.Setup(s => s.GetItemAsync(integrationId)).ReturnsAsync(integration);
 
-            // Act
+            // Act  
             var result = await _controller.GetAsync(integrationId);
 
-            // Assert
+            // Assert  
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
             var returnValue = Assert.IsType<IntegrationVm>(okResult.Value);
             Assert.Equal(integration.Id, returnValue.Id);
@@ -151,7 +153,17 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange  
             var filterDto = _fixture.Create<IntegrationFilterDto>();
-            var pagedResult = _fixture.Create<PagedResult<Integration>>();
+
+            // Configuração para evitar referências circulares
+            _fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList()
+                .ForEach(b => _fixture.Behaviors.Remove(b));
+            _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+
+            var pagedResult = _fixture.Build<PagedResult<Integration>>()
+                                      .Without(pr => pr.Result) 
+                                      .Create();
+            pagedResult.Result = _fixture.CreateMany<Integration>(5).ToList();
+
             _serviceMock.Setup(s => s.GetListAsync(It.IsAny<IntegrationFilter>())).ReturnsAsync(pagedResult);
 
             // Act  

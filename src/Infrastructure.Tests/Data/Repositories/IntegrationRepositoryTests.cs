@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
@@ -27,11 +28,20 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task GetByIdAsyncWhenIdExists()
         {
             // Arrange
-            var integration = _fixture.Create<Integration>();
+            var fixture = new Fixture();
+            fixture.Behaviors.Remove(new ThrowingRecursionBehavior());
+            fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+
+            var integration = fixture.Build<Integration>()
+                                     .Without(i => i.ApplicationData)
+                                     .Create();
+
             await _context.Set<Integration>().AddAsync(integration);
             await _context.SaveChangesAsync();
+
             // Act
             var result = await _repository.GetByIdAsync(integration.Id);
+
             // Assert
             Assert.NotNull(result);
             Assert.Equal(integration.Id, result.Id);
@@ -52,22 +62,34 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task DeleteAsyncWhenCalled()
         {
             // Arrange
-            var integration = _fixture.Create<Integration>();
+            var fixture = new Fixture();
+            fixture.Behaviors.Remove(new ThrowingRecursionBehavior());
+            fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+
+            var integration = fixture.Build<Integration>()
+                                     .Without(i => i.ApplicationData)
+                                     .Create();
+
             await _context.Set<Integration>().AddAsync(integration);
             await _context.SaveChangesAsync();
+
             // Act
             await _repository.DeleteAsync(integration.Id);
+
             // Assert
             var result = await _context.Set<Integration>().FindAsync(integration.Id);
             Assert.Null(result);
         }
-
+        
 
         [Fact]
         public async Task VerifyNameExistsAsyncShouldReturnTrueWhenNameExists()
         {
             // Arrange  
-            var repo = _fixture.Create<Integration>();
+            var repo = new Integration("Test Name", "Test Description")
+            {
+                ApplicationDataId = 1,
+            };
             await _context.Set<Integration>().AddAsync(repo);
             await _context.SaveChangesAsync();
 
@@ -82,7 +104,10 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task CreateAsyncWhenCalled()
         {
             // Arrange
-            var integration = _fixture.Create<Integration>();
+            var integration = new Integration("Test Name", "Test Description")
+            {
+                ApplicationDataId = 1
+            };
             // Act
             await _repository.CreateAsync(integration);
             // Assert
@@ -94,7 +119,10 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task GetListAsyncReturnFilterName()
         {
             // Arrange
-            var integration = _fixture.Create<Integration>();
+            var integration = new Integration("Test Integration", "Test Description")
+            {
+                ApplicationDataId = 1
+            };
             await _context.Set<Integration>().AddAsync(integration);
             await _context.SaveChangesAsync();
             var filter = new IntegrationFilter { Name = integration.Name, Page = 1, PageSize = 10, ApplicationDataId = integration.ApplicationDataId };
@@ -108,12 +136,24 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task GetListAsyncWhenCalled()
         {
             // Arrange  
+            _fixture.Behaviors.Remove(new ThrowingRecursionBehavior());
+            _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+
             var integration = _fixture.Create<Integration>();
             await _context.Set<Integration>().AddAsync(integration);
             await _context.SaveChangesAsync();
-            var filter = new IntegrationFilter { Page = 1, PageSize = 10, Name = null, ApplicationDataId = integration.ApplicationDataId };
+
+            var filter = new IntegrationFilter
+            {
+                Page = 1,
+                PageSize = 10,
+                Name = null,
+                ApplicationDataId = integration.ApplicationDataId
+            };
+
             // Act  
             var result = await _repository.GetListAsync(filter);
+
             // Assert  
             Assert.NotNull(result);
             Assert.NotEmpty(result.Result);
@@ -122,17 +162,25 @@ namespace Infrastructure.Tests.Data.Repositories
         [Fact]
         public async Task UpdateAsyncWhenCalled()
         {
-            // Arrange
-            var integration = _fixture.Create<Integration>();
+            // Arrange  
+            var integration = new Integration("Original Name", "Original Description")
+            {
+                ApplicationDataId = 1
+            };
+
             await _context.Set<Integration>().AddAsync(integration);
             await _context.SaveChangesAsync();
-            integration.Name = "Updated Name";
-            // Act
+
+            // Atualiza o nome da entidade para o valor esperado
+            integration.Name = IntegrationResources.UpdatedSuccessfully;
+
+            // Act  
             await _repository.UpdateAsync(integration);
-            // Assert
+
+            // Assert  
             var result = await _context.Set<Integration>().FindAsync(integration.Id);
             Assert.NotNull(result);
-            Assert.Equal("Updated Name", result.Name);
+            Assert.Equal(IntegrationResources.UpdatedSuccessfully, result.Name);
         }
 
         [Fact]
@@ -153,7 +201,10 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task VerifyDescriptionExistsAsyncItWhenDescriptionExists()
         {
             // Arrange  
-            var integration = _fixture.Create<Integration>();
+            var integration = new Integration("Test Name", "Test Description")
+            {
+                ApplicationDataId = 1
+            };
             await _context.Set<Integration>().AddAsync(integration);
             await _context.SaveChangesAsync();
 
