@@ -30,7 +30,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] IncidentDto itemDto)
         {
-            return await base.UpdateBaseAsync<IncidentVm>(id, itemDto).ConfigureAwait(false);
+            return await UpdateBaseAsync<IncidentVm>(id, itemDto).ConfigureAwait(false);
         }
 
         [HttpDelete("{id}")]

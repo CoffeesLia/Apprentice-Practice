@@ -95,7 +95,6 @@ namespace Stellantis.ProjectName.Application.Services
 
         public async Task<decimal> GetTotalCostAsync(int squadId)
         {
-            // Esperar ana rqauqel terminar para ver se vai funcionar isso aqui
             var members = await UnitOfWork.MemberRepository.GetListAsync(
                 new MemberFilter { SquadId = squadId }
             ).ConfigureAwait(false);

@@ -47,7 +47,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             squadFilter.Page = squadFilter.Page <= 0 ? 1 : squadFilter.Page;
 
-            // Inclui os membros no carregamento
             IQueryable<Squad> query = Context.Squads
                 .Include(s => s.Members);
 
@@ -58,7 +57,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             var pagedResult = await GetListAsync(query, squadFilter.Sort, squadFilter.SortDir, squadFilter.Page, squadFilter.PageSize).ConfigureAwait(false);
 
-            // Preenche o custo total em cada squad (se existir a propriedade Cost)
             foreach (var squad in pagedResult.Result)
             {
                 if (squad.Members != null)

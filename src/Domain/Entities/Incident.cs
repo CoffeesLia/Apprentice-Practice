@@ -21,6 +21,6 @@ namespace Stellantis.ProjectName.Domain.Entities
         public ApplicationData Application { get; set; } = null!;
         public int MemberId { get; set; }
 
-        public ICollection<Member> Members { get; set; }
+        public virtual ICollection<Member> Members { get; set; } = new List<Member>();
     }
 }
