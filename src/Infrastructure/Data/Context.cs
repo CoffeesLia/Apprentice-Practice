@@ -17,6 +17,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data
         public DbSet<Manager> Managers { get; set; }
         public DbSet<Incident> Incidents { get; set; }
         public DbSet<DocumentData> Documents { get; set; }
+        public DbSet<ChatMessage> ChatMessages { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

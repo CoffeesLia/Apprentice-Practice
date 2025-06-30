@@ -16,6 +16,46 @@ namespace Stellantis.ProjectName.WebApi
                 Context context = scope.ServiceProvider.GetRequiredService<Context>();
                 await context.Database.EnsureCreatedAsync().ConfigureAwait(false);
 
+
+                // Mensagens de chat
+                context.ChatMessages.AddRange(
+                    new ChatMessage
+                    {
+                        Id = Guid.NewGuid(),
+                        User = "Matheus",
+                        Message = "Bom dia, Elite Debuggers!",
+                        SentAt = DateTime.UtcNow.AddMinutes(-10)
+                    },
+                    new ChatMessage
+                    {
+                        Id = Guid.NewGuid(),
+                        User = "Matheus",
+                        Message = "O Squad está quebrando a develop!",
+                        SentAt = DateTime.UtcNow.AddMinutes(-8)
+                    },
+                    new ChatMessage
+                    {
+                        Id = Guid.NewGuid(),
+                        User = "Jardel",
+                        Message = "Oh my God!",
+                        SentAt = DateTime.UtcNow.AddMinutes(-8)
+                    },
+                    new ChatMessage
+                    {
+                        Id = Guid.NewGuid(),
+                        User = "Matheus",
+                        Message = "API: https://gitlab.fcalatam.com/fca/ams/portal/api",
+                        SentAt = DateTime.UtcNow.AddMinutes(-8)
+                    },
+                    new ChatMessage
+                    {
+                        Id = Guid.NewGuid(),
+                        User = "Matheus",
+                        Message = "WEB: https://gitlab.fcalatam.com/fca/ams/portal/web",
+                        SentAt = DateTime.UtcNow.AddMinutes(-8)
+                    }
+                );
+
                 // Áreas
                 context.Areas.AddRange(
                     new Area("AMS") { ManagerId = 1 },
