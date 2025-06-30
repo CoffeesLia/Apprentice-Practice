@@ -35,7 +35,7 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             var filterDto = _fixture.Create<IntegrationFilterDto>();
-            var pagedResult = _fixture.Create<PagedResult<Integration>>();
+            var pagedResult = new PagedResult<Integration> { Result = [], Page = 0, PageSize = 0, Total = 0 };
             _serviceMock.Setup(s => s.GetListAsync(It.IsAny<IntegrationFilter>())).ReturnsAsync(pagedResult);
 
             // Act
@@ -46,7 +46,6 @@ namespace WebApi.Tests.Controllers
             var returnValue = Assert.IsType<PagedResultVm<IntegrationVm>>(okResult.Value);
             Assert.Equal(pagedResult.Result.Count(), returnValue.Result.Count());
         }
-
         [Fact]
         public async Task GetListAsyncShouldReturnEmptyResultWhenNoIntegrationsExist()
         {
@@ -99,10 +98,8 @@ namespace WebApi.Tests.Controllers
         public async Task GetAsyncShouldReturnOkResultWhenIntegrationExists()
         {
             // Arrange
-            var integrationId = _fixture.Create<int>();
-            var integration = _fixture.Build<Integration>()
-                                       .With(i => i.Id, integrationId)
-                                       .Create();
+            var integrationId = 1;
+            var integration = new Integration("Test Integration", "Test Description") { ApplicationDataId = 1 };
             _serviceMock.Setup(s => s.GetItemAsync(integrationId)).ReturnsAsync(integration);
 
             // Act
@@ -151,7 +148,7 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange  
             var filterDto = _fixture.Create<IntegrationFilterDto>();
-            var pagedResult = _fixture.Create<PagedResult<Integration>>();
+            var pagedResult = new PagedResult<Integration> { Result = [], Page = 0, PageSize = 0, Total = 0 };
             _serviceMock.Setup(s => s.GetListAsync(It.IsAny<IntegrationFilter>())).ReturnsAsync(pagedResult);
 
             // Act  
@@ -165,6 +162,29 @@ namespace WebApi.Tests.Controllers
             Assert.Equal(pagedResult.PageSize, returnValue.PageSize);
             Assert.Equal(pagedResult.Total, returnValue.Total);
             Assert.Equal(pagedResult.Result.Count(), returnValue.Result.Count());
+        }
+        [Fact]
+        public async Task UpdateAsyncShouldReturnOkResultWhenIntegrationIsUpdated()
+        {
+            // Arrange
+            var integrationId = 1;
+            var integration = new Integration("Name", "Description")
+            {
+                ApplicationDataId = 1
+            };
+            var integrationDto = new IntegrationDto
+            {
+                Name = "Updated Name",
+                Description = "Updated Description",
+                ApplicationDataId = 1
+            };
+            _serviceMock.Setup(s => s.UpdateAsync(It.IsAny<Integration>())).ReturnsAsync(OperationResult.Complete());
+            _serviceMock.Setup(s => s.GetItemAsync(integrationId)).ReturnsAsync(integration);
+
+            // Act
+            var result = await _controller.UpdateBaseAsync(integrationId, integrationDto);
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
         }
     }
 }

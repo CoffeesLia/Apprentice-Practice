@@ -27,7 +27,7 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task GetByIdAsyncWhenIdExists()
         {
             // Arrange
-            var integration = _fixture.Create<Integration>();
+            var integration = new Integration("Test Integration", "Test Description") { ApplicationDataId = 1 };
             await _context.Set<Integration>().AddAsync(integration);
             await _context.SaveChangesAsync();
             // Act
@@ -52,7 +52,7 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task DeleteAsyncWhenCalled()
         {
             // Arrange
-            var integration = _fixture.Create<Integration>();
+            var integration = new Integration("Test name", "Test Description") { ApplicationDataId = 1 };
             await _context.Set<Integration>().AddAsync(integration);
             await _context.SaveChangesAsync();
             // Act
@@ -67,7 +67,7 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task VerifyNameExistsAsyncShouldReturnTrueWhenNameExists()
         {
             // Arrange  
-            var repo = _fixture.Create<Integration>();
+            var repo = new Integration("Test Name", "Test Description") { ApplicationDataId = 1 };
             await _context.Set<Integration>().AddAsync(repo);
             await _context.SaveChangesAsync();
 
@@ -82,7 +82,7 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task CreateAsyncWhenCalled()
         {
             // Arrange
-            var integration = _fixture.Create<Integration>();
+            var integration = new Integration("Test Name", "Test Descriptions") { ApplicationDataId = 1 };
             // Act
             await _repository.CreateAsync(integration);
             // Assert
@@ -94,7 +94,7 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task GetListAsyncReturnFilterName()
         {
             // Arrange
-            var integration = _fixture.Create<Integration>();
+            var integration = new Integration("Test Name", "Test Description") { ApplicationDataId = 1 };
             await _context.Set<Integration>().AddAsync(integration);
             await _context.SaveChangesAsync();
             var filter = new IntegrationFilter { Name = integration.Name, Page = 1, PageSize = 10, ApplicationDataId = integration.ApplicationDataId };
@@ -108,7 +108,7 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task GetListAsyncWhenCalled()
         {
             // Arrange  
-            var integration = _fixture.Create<Integration>();
+            var integration = new Integration("Test Name", "Description Name") { ApplicationDataId = 1 };
             await _context.Set<Integration>().AddAsync(integration);
             await _context.SaveChangesAsync();
             var filter = new IntegrationFilter { Page = 1, PageSize = 10, Name = null, ApplicationDataId = integration.ApplicationDataId };
@@ -123,7 +123,7 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task UpdateAsyncWhenCalled()
         {
             // Arrange
-            var integration = _fixture.Create<Integration>();
+            var integration = new Integration("Test Name", "Test Description") { ApplicationDataId = 1 };
             await _context.Set<Integration>().AddAsync(integration);
             await _context.SaveChangesAsync();
             integration.Name = "Updated Name";
@@ -153,7 +153,7 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task VerifyDescriptionExistsAsyncItWhenDescriptionExists()
         {
             // Arrange  
-            var integration = _fixture.Create<Integration>();
+            var integration = new Integration("Test Name", "Test Description") { ApplicationDataId = 1 };
             await _context.Set<Integration>().AddAsync(integration);
             await _context.SaveChangesAsync();
 
