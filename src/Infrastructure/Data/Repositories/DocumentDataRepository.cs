@@ -45,7 +45,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         }
 
 
-        public async Task<bool> IsDocumentNameUniqueAsync(string name, int applicationId, int? id = null)
+        public async Task<bool> NameAlreadyExists(string name, int applicationId, int? id = null)
         {
             return await Context.Set<DocumentData>()
                 .AnyAsync(a => a.Name == name
@@ -55,7 +55,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         }
 
 
-        public async Task<bool> IsUrlUniqueAsync(Uri url, int applicationId, int? id = null)
+        public async Task<bool> UrlAlreadyExists(Uri url, int applicationId, int? id = null)
         {
             return await Context.Set<DocumentData>().AnyAsync(a => a.Url == url
                            && a.ApplicationId == applicationId
