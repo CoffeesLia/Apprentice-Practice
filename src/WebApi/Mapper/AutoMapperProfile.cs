@@ -220,6 +220,14 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));
             CreateMap<PagedResult<Manager>, PagedResultVm<ManagerVm>>();
+
+            CreateMap<KnowledgeDto, Knowledge>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.Member, opt => opt.Ignore())
+                .ForMember(dest => dest.Application, opt => opt.Ignore());
+            CreateMap<Knowledge, KnowledgeVm>();
+            CreateMap<KnowledgeFilterDto, KnowledgeFilter>();
+
         }
     }
 }

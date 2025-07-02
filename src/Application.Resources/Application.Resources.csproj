@@ -98,6 +98,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>FilterResources.resx</DependentUpon>
     </Compile>
+    <Compile Update="KnowledgeResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>KnowledgeResource.resx</DependentUpon>
+    </Compile>
     <Compile Update="ManagerResources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -183,6 +188,14 @@
     </EmbeddedResource>
     <EmbeddedResource Update="IncidentResource.resx">
       <Generator></Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="KnowledgeResource.pt-BR.resx">
+      <LastGenOutput>KnowledgeResource.pt-BR.Designer.cs</LastGenOutput>
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="KnowledgeResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>KnowledgeResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="ManagerResources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
