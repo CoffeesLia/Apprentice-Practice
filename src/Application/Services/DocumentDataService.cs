@@ -30,12 +30,12 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.InvalidData(validationResult);
             }
 
-            if (await Repository.IsDocumentNameUniqueAsync(item.Name!, item.ApplicationId).ConfigureAwait(false))
+            if (await Repository.NameAlreadyExists(item.Name!, item.ApplicationId).ConfigureAwait(false))
             {
                 return OperationResult.Conflict(_localizer[nameof(DocumentDataResources.NameAlreadyExists)]);
             }
 
-            if (await Repository.IsUrlUniqueAsync(item.Url!, item.ApplicationId).ConfigureAwait(false))
+            if (await Repository.UrlAlreadyExists(item.Url!, item.ApplicationId).ConfigureAwait(false))
             {
                 return OperationResult.Conflict(_localizer[nameof(DocumentDataResources.UrlAlreadyExists)]);
             }
@@ -54,12 +54,12 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.InvalidData(validationResult);
             }
 
-            if (await Repository.IsDocumentNameUniqueAsync(item.Name!, item.ApplicationId).ConfigureAwait(false))
+            if (await Repository.NameAlreadyExists(item.Name!, item.ApplicationId, item.Id).ConfigureAwait(false))
             {
                 return OperationResult.Conflict(_localizer[nameof(DocumentDataResources.NameAlreadyExists)]);
             }
 
-            if (await Repository.IsUrlUniqueAsync(item.Url!, item.ApplicationId).ConfigureAwait(false))
+            if (await Repository.UrlAlreadyExists(item.Url!, item.ApplicationId, item.Id).ConfigureAwait(false))
             {
                 return OperationResult.Conflict(_localizer[nameof(DocumentDataResources.UrlAlreadyExists)]);
             }
