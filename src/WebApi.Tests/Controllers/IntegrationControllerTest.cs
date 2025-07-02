@@ -1,277 +1,194 @@
 using AutoFixture;
-using Microsoft.EntityFrameworkCore;
+using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Moq;
+using Stellantis.ProjectName.Application.Interfaces.Services;
+using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Models.Filters;
-using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
-using Stellantis.ProjectName.Infrastructure.Data;
-using Stellantis.ProjectName.Infrastructure.Data.Repositories;
-using System.Data.Entity.Infrastructure;
+using Stellantis.ProjectName.WebApi.Controllers;
+using Stellantis.ProjectName.WebApi.Dto;
+using Stellantis.ProjectName.WebApi.Dto.Filters;
+using Stellantis.ProjectName.WebApi.Mapper;
+using Stellantis.ProjectName.WebApi.ViewModels;
+using WebApi.Tests.Helpers;
 
-namespace Infrastructure.Tests.Data.Repositories
+namespace WebApi.Tests.Controllers
 {
-    public class IntegrationRepositoryTests : IDisposable, IDbAsyncEnumerable
+    public class IntegrationControllerTests
     {
-        private readonly Context _context;
-        private readonly IntegrationRepository _repository;
+        private readonly Mock<IIntegrationService> _serviceMock;
+        private readonly IntegrationController _controller;
         private readonly Fixture _fixture = new();
-        private bool _disposed;
-        public IntegrationRepositoryTests()
+
+        public IntegrationControllerTests()
         {
-            var options = new DbContextOptionsBuilder<Context>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-                .Options;
-            _context = new Context(options);
-            _repository = new IntegrationRepository(_context);
+            _serviceMock = new Mock<IIntegrationService>();
+            var mapperConfiguration = new MapperConfiguration(x => { x.AddProfile<AutoMapperProfile>(); });
+            var mapper = mapperConfiguration.CreateMapper();
+            var localizerFactor = LocalizerFactorHelper.Create();
+            _controller = new IntegrationController(_serviceMock.Object, mapper, localizerFactor);
         }
 
         [Fact]
-        public async Task GetByIdAsyncWhenIdExists()
-        {
-            // Arrange
-            var fixture = new Fixture();
-            fixture.Behaviors.Remove(new ThrowingRecursionBehavior());
-            fixture.Behaviors.Add(new OmitOnRecursionBehavior());
-
-            var integration = fixture.Build<Integration>()
-                                     .Without(i => i.ApplicationData)
-                                     .Create();
-
-            await _context.Set<Integration>().AddAsync(integration);
-            await _context.SaveChangesAsync();
-
-            // Act
-            var result = await _repository.GetByIdAsync(integration.Id);
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal(integration.Id, result.Id);
-        }
-
-        [Fact]
-        public async Task GetByIdAsyncWhenIdDoesNotExist()
-        {
-            // Arrange
-            var id = _fixture.Create<int>();
-            // Act
-            var result = await _repository.GetByIdAsync(id);
-            // Assert
-            Assert.Null(result);
-        }
-
-        [Fact]
-        public async Task DeleteAsyncWhenCalled()
-        {
-            // Arrange
-            var fixture = new Fixture();
-            fixture.Behaviors.Remove(new ThrowingRecursionBehavior());
-            fixture.Behaviors.Add(new OmitOnRecursionBehavior());
-
-            var integration = fixture.Build<Integration>()
-                                     .Without(i => i.ApplicationData)
-                                     .Create();
-
-            await _context.Set<Integration>().AddAsync(integration);
-            await _context.SaveChangesAsync();
-
-            // Act
-            await _repository.DeleteAsync(integration.Id);
-
-            // Assert
-            var result = await _context.Set<Integration>().FindAsync(integration.Id);
-            Assert.Null(result);
-        }
-        
-
-        [Fact]
-        public async Task VerifyNameExistsAsyncShouldReturnTrueWhenNameExists()
+        public async Task GetListAsyncShouldReturnPagedResultWhenIntegrationsExist()
         {
             // Arrange  
-            var repo = new Integration("Test Name", "Test Description")
-            {
-                ApplicationDataId = 1,
-            };
-            await _context.Set<Integration>().AddAsync(repo);
-            await _context.SaveChangesAsync();
+            var filterDto = _fixture.Create<IntegrationFilterDto>();
+            var pagedResult = new PagedResult<Integration> { Result = [], Page = 0, PageSize = 0, Total = 0 };
+            _serviceMock.Setup(s => s.GetListAsync(It.IsAny<IntegrationFilter>())).ReturnsAsync(pagedResult);
 
             // Act  
-            var result = await _repository.VerifyNameExistsAsync(repo.Name);
+            var result = await _controller.GetListAsync(filterDto);
 
             // Assert  
-            Assert.True(result);
+            Assert.IsType<OkObjectResult>(result);
+            var returnValue = Assert.IsType<PagedResultVm<IntegrationVm>>(((OkObjectResult)result).Value);
+            Assert.Equal(pagedResult.Result.Count(), returnValue.Result.Count());
+        }
+        [Fact]
+        public async Task GetListAsyncShouldReturnEmptyResultWhenNoIntegrationsExist()
+        {
+            // Arrange  
+            var filterDto = _fixture.Create<IntegrationFilterDto>();
+            var pagedResult = new PagedResult<Integration> { Result = [], Page = 0, PageSize = 0, Total = 0 };
+            _serviceMock.Setup(s => s.GetListAsync(It.IsAny<IntegrationFilter>())).ReturnsAsync(pagedResult);
+
+            // Act  
+            var result = await _controller.GetListAsync(filterDto);
+
+            // Assert  
+            var returnValue = Assert.IsType<PagedResultVm<IntegrationVm>>(((OkObjectResult)result).Value);
+            Assert.Empty(returnValue.Result);
         }
 
         [Fact]
-        public async Task CreateAsyncWhenCalled()
+        public async Task DeleteAsyncShouldReturnNoContentResultWhenIntegrationIsDeleted()
         {
             // Arrange
-            var integration = new Integration("Test Name", "Test Description")
+            var integrationId = _fixture.Create<int>();
+            _serviceMock.Setup(s => s.DeleteAsync(It.IsAny<int>())).ReturnsAsync(OperationResult.Complete());
+
+            // Act
+            var result = await _controller.DeleteAsync(integrationId);
+
+            // Assert
+            Assert.IsType<NoContentResult>(result);
+        }
+
+        [Fact]
+        public async Task CreateAsyncShouldReturnCreatedResultWhenIntegrationIsCreated()
+        {
+            // Arrange
+            var integrationDto = new IntegrationDto { Name = "Test Integration", Description = "Test Description", ApplicationDataId = 1 };
+            var integration = new Integration("Test Integration", "Test Description") { ApplicationDataId = 1 };
+            _serviceMock.Setup(s => s.CreateAsync(It.IsAny<Integration>())).ReturnsAsync(OperationResult.Complete());
+
+            // Act
+            var result = await _controller.CreateAsync(integrationDto);
+
+            // Assert
+            var createdResult = Assert.IsType<CreatedAtActionResult>(result);
+            Assert.Equal("GET", createdResult.ActionName);
+            var integrationVm = Assert.IsType<IntegrationVm>(createdResult.Value);
+            Assert.Equal(integration.Id, integrationVm.Id);
+        }
+        [Fact]
+        public async Task GetAsyncShouldReturnOkResultWhenIntegrationExists()
+        {
+            // Arrange
+            var integrationId = 1;
+            var integration = new Integration("Test Integration", "Test Description") { ApplicationDataId = 1 };
+            _serviceMock.Setup(s => s.GetItemAsync(integrationId)).ReturnsAsync(integration);
+
+            // Act
+            var result = await _controller.GetAsync(integrationId);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var returnValue = Assert.IsType<IntegrationVm>(okResult.Value);
+            Assert.Equal(integration.Id, returnValue.Id);
+        }
+        [Fact]
+        public async Task GetAsyncShouldReturnNotFoundResultWhenIntegrationDoesNotExist()
+        {
+            // Arrange
+            var integrationId = _fixture.Create<int>();
+            _serviceMock.Setup(s => s.GetItemAsync(integrationId)).ReturnsAsync((Integration)null!);
+            // Act
+            var result = await _controller.GetAsync(integrationId);
+            // Assert
+            Assert.IsType<NotFoundResult>(result.Result);
+        }
+        [Fact]
+        public void IntegrationVmShouldSetPropertiesCorrectly()
+        {
+            // Arrange  
+            var name = "Test Name";
+            var description = "Test Description";
+            var applicationDataId = 123;
+
+            // Act  
+            var integrationVm = new IntegrationVm
+            {
+                Name = name,
+                Description = description,
+                ApplicationDataId = applicationDataId
+            };
+
+            // Assert  
+            Assert.Equal(name, integrationVm.Name);
+            Assert.Equal(description, integrationVm.Description);
+            Assert.Equal(applicationDataId, integrationVm.ApplicationDataId);
+        }
+
+        [Fact]
+        public async Task GetListAsyncReturnList()
+        {
+            // Arrange  
+            var filterDto = _fixture.Create<IntegrationFilterDto>();
+            var pagedResult = new PagedResult<Integration> { Result = [], Page = 0, PageSize = 0, Total = 0 };
+            _serviceMock.Setup(s => s.GetListAsync(It.IsAny<IntegrationFilter>())).ReturnsAsync(pagedResult);
+
+            // Act  
+            var result = await _controller.GetListAsync(filterDto);
+
+            // Assert  
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var returnValue = Assert.IsType<PagedResultVm<IntegrationVm>>(okResult.Value);
+            Assert.NotNull(returnValue);
+            Assert.Equal(pagedResult.Page, returnValue.Page);
+            Assert.Equal(pagedResult.PageSize, returnValue.PageSize);
+            Assert.Equal(pagedResult.Total, returnValue.Total);
+            Assert.Equal(pagedResult.Result.Count(), returnValue.Result.Count());
+        }
+        [Fact]
+        public async Task UpdateAsyncShouldReturnOkResultWhenIntegrationIsUpdated()
+        {
+            // Arrange  
+            var integrationId = 1;
+            var integration = new Integration("Name", "Description")
             {
                 ApplicationDataId = 1
             };
-            // Act
-            await _repository.CreateAsync(integration);
-            // Assert
-            var result = await _context.Set<Integration>().FindAsync(integration.Id);
-            Assert.NotNull(result);
-            Assert.Equal(integration.Name, result.Name);
-        }
-        [Fact]
-        public async Task GetListAsyncReturnFilterName()
-        {
-            // Arrange
-            var integration = new Integration("Test Integration", "Test Description")
+            var integrationDto = new IntegrationDto
             {
+                Name = "Updated Name",
+                Description = "Updated Description",
                 ApplicationDataId = 1
             };
-            await _context.Set<Integration>().AddAsync(integration);
-            await _context.SaveChangesAsync();
-            var filter = new IntegrationFilter { Name = integration.Name, Page = 1, PageSize = 10, ApplicationDataId = integration.ApplicationDataId };
-            // Act
-            var result = await _repository.GetListAsync(filter);
-            // Assert
-            Assert.NotNull(result);
-            Assert.NotEmpty(result.Result);
-        }
-        [Fact]
-        public async Task GetListAsyncWhenCalled()
-        {
-            // Arrange  
-            _fixture.Behaviors.Remove(new ThrowingRecursionBehavior());
-            _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
-
-            var integration = _fixture.Create<Integration>();
-            await _context.Set<Integration>().AddAsync(integration);
-            await _context.SaveChangesAsync();
-
-            var filter = new IntegrationFilter
-            {
-                Page = 1,
-                PageSize = 10,
-                Name = null,
-                ApplicationDataId = integration.ApplicationDataId
-            };
+            _serviceMock.Setup(s => s.UpdateAsync(It.IsAny<Integration>())).ReturnsAsync(OperationResult.Complete());
+            _serviceMock.Setup(s => s.GetItemAsync(integrationId)).ReturnsAsync(integration);
 
             // Act  
-            var result = await _repository.GetListAsync(filter);
+            var result = await _controller.UpdateBaseAsync(integrationId, integrationDto);
 
             // Assert  
-            Assert.NotNull(result);
-            Assert.NotEmpty(result.Result);
-        }
-
-        [Fact]
-        public async Task UpdateAsyncWhenCalled()
-        {
-            // Arrange  
-            var integration = new Integration("Original Name", "Original Description")
-            {
-                ApplicationDataId = 1
-            };
-
-            await _context.Set<Integration>().AddAsync(integration);
-            await _context.SaveChangesAsync();
-
-            // Atualiza o nome da entidade para o valor esperado
-            integration.Name = IntegrationResources.UpdatedSuccessfully;
-
-            // Act  
-            await _repository.UpdateAsync(integration);
-
-            // Assert  
-            var result = await _context.Set<Integration>().FindAsync(integration.Id);
-            Assert.NotNull(result);
-            Assert.Equal(IntegrationResources.UpdatedSuccessfully, result.Name);
-        }
-
-        [Fact]
-        public async Task VerifyDescriptionExistsAsyncItWhenDescriptionDoesNotExist()
-        {
-            // Arrange  
-            var description = _fixture.Create<string>();
-
-            // Act  
-            var result = await _repository.VerifyDescriptionExistsAsync(description);
-
-            // Assert  
-            Assert.False(result);
-        }
-
-
-        [Fact]
-        public async Task VerifyDescriptionExistsAsyncItWhenDescriptionExists()
-        {
-            // Arrange  
-            var integration = new Integration("Test Name", "Test Description")
-            {
-                ApplicationDataId = 1
-            };
-            await _context.Set<Integration>().AddAsync(integration);
-            await _context.SaveChangesAsync();
-
-            // Act  
-            var result = await _repository.VerifyDescriptionExistsAsync(integration.Description);
-
-            // Assert  
-            Assert.True(result);
-        }
-
-        [Fact]
-        public async Task VerifyApplicationIdExistsAsyncWhenApplicationDoesNotExist()
-        {
-            // Arrange  
-            var id = _fixture.Create<int>();
-            // Act  
-            var result = await _repository.VerifyApplicationIdExistsAsync(id);
-            // Assert  
-            Assert.False(result);
-        }
-
-        [Fact]
-        public async Task CreateAsyncWithNullEntityThrowsException()
-        {
-            // Act & Assert
-            await Assert.ThrowsAsync<ArgumentNullException>(() => _repository.CreateAsync((Integration)null!));
-        }
-
-        [Fact]
-        public async Task UpdateAsyncWithNullEntityThrowsException()
-        {
-            // Act & Assert
-            await Assert.ThrowsAsync<ArgumentNullException>(() =>
-            {
-                return _repository.UpdateAsync((Integration)null!);
-            });
-        }
-
-
-        [Fact]
-        public async Task DeleteAsyncWithNullEntityThrowsException()
-        {
-            // Act & Assert
-            await Assert.ThrowsAsync<ArgumentNullException>(() => _repository.DeleteAsync((Integration)null!));
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    _context.Dispose();
-                }
-                _disposed = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        public IDbAsyncEnumerator GetAsyncEnumerator()
-        {
-            throw new NotImplementedException();
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var returnValue = Assert.IsType<IntegrationVm>(okResult.Value);
+            Assert.Equal(integrationDto.Name, returnValue.Name);
+            Assert.Equal(integrationDto.Description, returnValue.Description);
+            Assert.Equal(integrationDto.ApplicationDataId, returnValue.ApplicationDataId);
         }
     }
 }
