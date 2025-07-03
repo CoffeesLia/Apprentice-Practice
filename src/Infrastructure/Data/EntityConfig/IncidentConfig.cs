@@ -34,10 +34,10 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Restrict); // Evita exclusão em cascata
 
-            builder.HasMany(i => i.Members) // Configura o relacionamento com Members
-                .WithOne() // Sem navegação inversa explícita
-                .HasForeignKey(m => m.SquadId)
-                .OnDelete(DeleteBehavior.Restrict); // Evita exclusão em cascata
+            builder
+                .HasMany(i => i.Members)
+                .WithMany() // ou .WithMany(m => m.Incidents) se houver navegação reversa
+                .UsingEntity(j => j.ToTable("IncidentMembers"));
         }
     }
 }
