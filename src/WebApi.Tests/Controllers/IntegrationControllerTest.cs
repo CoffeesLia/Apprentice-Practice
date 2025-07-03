@@ -1,4 +1,4 @@
-﻿using AutoFixture;
+using AutoFixture;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -33,34 +33,32 @@ namespace WebApi.Tests.Controllers
         [Fact]
         public async Task GetListAsyncShouldReturnPagedResultWhenIntegrationsExist()
         {
-            // Arrange
-            var filterDto = _fixture.Create<IntegrationFilterDto>();
-            var pagedResult = _fixture.Create<PagedResult<Integration>>();
-            _serviceMock.Setup(s => s.GetListAsync(It.IsAny<IntegrationFilter>())).ReturnsAsync(pagedResult);
-
-            // Act
-            var result = await _controller.GetListAsync(filterDto);
-
-            // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnValue = Assert.IsType<PagedResultVm<IntegrationVm>>(okResult.Value);
-            Assert.Equal(pagedResult.Result.Count(), returnValue.Result.Count());
-        }
-
-        [Fact]
-        public async Task GetListAsyncShouldReturnEmptyResultWhenNoIntegrationsExist()
-        {
-            // Arrange
+            // Arrange  
             var filterDto = _fixture.Create<IntegrationFilterDto>();
             var pagedResult = new PagedResult<Integration> { Result = [], Page = 0, PageSize = 0, Total = 0 };
             _serviceMock.Setup(s => s.GetListAsync(It.IsAny<IntegrationFilter>())).ReturnsAsync(pagedResult);
 
-            // Act
+            // Act  
             var result = await _controller.GetListAsync(filterDto);
 
-            // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnValue = Assert.IsType<PagedResultVm<IntegrationVm>>(okResult.Value);
+            // Assert  
+            Assert.IsType<OkObjectResult>(result);
+            var returnValue = Assert.IsType<PagedResultVm<IntegrationVm>>(((OkObjectResult)result).Value);
+            Assert.Equal(pagedResult.Result.Count(), returnValue.Result.Count());
+        }
+        [Fact]
+        public async Task GetListAsyncShouldReturnEmptyResultWhenNoIntegrationsExist()
+        {
+            // Arrange  
+            var filterDto = _fixture.Create<IntegrationFilterDto>();
+            var pagedResult = new PagedResult<Integration> { Result = [], Page = 0, PageSize = 0, Total = 0 };
+            _serviceMock.Setup(s => s.GetListAsync(It.IsAny<IntegrationFilter>())).ReturnsAsync(pagedResult);
+
+            // Act  
+            var result = await _controller.GetListAsync(filterDto);
+
+            // Assert  
+            var returnValue = Assert.IsType<PagedResultVm<IntegrationVm>>(((OkObjectResult)result).Value);
             Assert.Empty(returnValue.Result);
         }
 
@@ -83,7 +81,7 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             var integrationDto = new IntegrationDto { Name = "Test Integration", Description = "Test Description", ApplicationDataId = 1 };
-            var integration = new Integration("Test Integration", "Test Description") {  ApplicationDataId = 1 };
+            var integration = new Integration("Test Integration", "Test Description") { ApplicationDataId = 1 };
             _serviceMock.Setup(s => s.CreateAsync(It.IsAny<Integration>())).ReturnsAsync(OperationResult.Complete());
 
             // Act
@@ -99,10 +97,8 @@ namespace WebApi.Tests.Controllers
         public async Task GetAsyncShouldReturnOkResultWhenIntegrationExists()
         {
             // Arrange
-            var integrationId = _fixture.Create<int>();
-            var integration = _fixture.Build<Integration>()
-                                       .With(i => i.Id, integrationId)
-                                       .Create();
+            var integrationId = 1;
+            var integration = new Integration("Test Integration", "Test Description") { ApplicationDataId = 1 };
             _serviceMock.Setup(s => s.GetItemAsync(integrationId)).ReturnsAsync(integration);
 
             // Act
@@ -151,7 +147,7 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange  
             var filterDto = _fixture.Create<IntegrationFilterDto>();
-            var pagedResult = _fixture.Create<PagedResult<Integration>>();
+            var pagedResult = new PagedResult<Integration> { Result = [], Page = 0, PageSize = 0, Total = 0 };
             _serviceMock.Setup(s => s.GetListAsync(It.IsAny<IntegrationFilter>())).ReturnsAsync(pagedResult);
 
             // Act  
@@ -165,6 +161,34 @@ namespace WebApi.Tests.Controllers
             Assert.Equal(pagedResult.PageSize, returnValue.PageSize);
             Assert.Equal(pagedResult.Total, returnValue.Total);
             Assert.Equal(pagedResult.Result.Count(), returnValue.Result.Count());
+        }
+        [Fact]
+        public async Task UpdateAsyncShouldReturnOkResultWhenIntegrationIsUpdated()
+        {
+            // Arrange  
+            var integrationId = 1;
+            var integration = new Integration("Name", "Description")
+            {
+                ApplicationDataId = 1
+            };
+            var integrationDto = new IntegrationDto
+            {
+                Name = "Updated Name",
+                Description = "Updated Description",
+                ApplicationDataId = 1
+            };
+            _serviceMock.Setup(s => s.UpdateAsync(It.IsAny<Integration>())).ReturnsAsync(OperationResult.Complete());
+            _serviceMock.Setup(s => s.GetItemAsync(integrationId)).ReturnsAsync(integration);
+
+            // Act  
+            var result = await _controller.UpdateBaseAsync(integrationId, integrationDto);
+
+            // Assert  
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var returnValue = Assert.IsType<IntegrationVm>(okResult.Value);
+            Assert.Equal(integrationDto.Name, returnValue.Name);
+            Assert.Equal(integrationDto.Description, returnValue.Description);
+            Assert.Equal(integrationDto.ApplicationDataId, returnValue.ApplicationDataId);
         }
     }
 }

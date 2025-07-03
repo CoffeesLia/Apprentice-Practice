@@ -99,7 +99,7 @@ namespace Application.Tests.Services
         public async Task CreateAsyncValidDocumentReturnsComplete()
         {
             var document = new DocumentData { Name = "Doc", Url = new Uri("https://exemplo.com"), ApplicationId = 1 };
-            _documentRepositoryMock.Setup(r => r.IsDocumentNameUniqueAsync(document.Name, document.ApplicationId, null)).ReturnsAsync(false); _documentRepositoryMock.Setup(r => r.IsDocumentNameUniqueAsync(document.Name, document.ApplicationId, null)).ReturnsAsync(false);
+            _documentRepositoryMock.Setup(r => r.NameAlreadyExists(document.Name, document.ApplicationId, null)).ReturnsAsync(false); _documentRepositoryMock.Setup(r => r.NameAlreadyExists(document.Name, document.ApplicationId, null)).ReturnsAsync(false);
             var result = await _documentService.CreateAsync(document);
 
             Assert.Equal(OperationStatus.Success, result.Status);
@@ -109,7 +109,7 @@ namespace Application.Tests.Services
         public async Task CreateAsyncDuplicateNameReturnsConflict()
         {
             var document = new DocumentData { Name = "Doc", Url = new Uri("https://exemplo.com"), ApplicationId = 1 };
-            _documentRepositoryMock.Setup(r => r.IsDocumentNameUniqueAsync(document.Name, document.ApplicationId, null)).ReturnsAsync(true);
+            _documentRepositoryMock.Setup(r => r.NameAlreadyExists(document.Name, document.ApplicationId, null)).ReturnsAsync(true);
             var result = await _documentService.CreateAsync(document);
 
             Assert.Equal(OperationStatus.Conflict, result.Status);
@@ -121,11 +121,11 @@ namespace Application.Tests.Services
         {
             var document = new DocumentData { Name = "Doc", Url = new Uri("https://exemplo.com"), ApplicationId = 1 };
             _documentRepositoryMock
-              .Setup(r => r.IsDocumentNameUniqueAsync(document.Name, document.ApplicationId, null))
+              .Setup(r => r.NameAlreadyExists(document.Name, document.ApplicationId, null))
               .ReturnsAsync(false); // Nome é único (não existe)
 
             _documentRepositoryMock
-                .Setup(r => r.IsUrlUniqueAsync(document.Url, document.ApplicationId, null))
+                .Setup(r => r.UrlAlreadyExists(document.Url, document.ApplicationId, null))
                 .ReturnsAsync(true); // URL NÃO é única (já existe)
             var result = await _documentService.CreateAsync(document);
 
@@ -141,11 +141,11 @@ namespace Application.Tests.Services
             var document = new DocumentData { Name = "Doc", Url = new Uri("https://exemplo.com"), ApplicationId = 1 };
 
             _documentRepositoryMock
-                .Setup(r => r.IsDocumentNameUniqueAsync(document.Name, document.ApplicationId, document.Id))
+                .Setup(r => r.NameAlreadyExists(document.Name, document.ApplicationId, document.Id))
                 .ReturnsAsync(true);
 
             _documentRepositoryMock
-                .Setup(r => r.IsUrlUniqueAsync(document.Url, document.ApplicationId, document.Id))
+                .Setup(r => r.UrlAlreadyExists(document.Url, document.ApplicationId, document.Id))
                 .ReturnsAsync(true);
 
             _documentRepositoryMock
@@ -162,7 +162,7 @@ namespace Application.Tests.Services
         public async Task UpdateAsyncDuplicateNameReturnsConflict()
         {
             var document = new DocumentData { Name = "Doc", Url = new Uri("https://exemplo.com"), ApplicationId = 1 };
-            _documentRepositoryMock.Setup(r => r.IsDocumentNameUniqueAsync(document.Name, document.ApplicationId, null)).ReturnsAsync(true);
+            _documentRepositoryMock.Setup(r => r.NameAlreadyExists(document.Name, document.ApplicationId, null)).ReturnsAsync(true);
 
             var result = await _documentService.UpdateAsync(document);
 
@@ -176,11 +176,11 @@ namespace Application.Tests.Services
         {
             var document = new DocumentData { Name = "Doc", Url = new Uri("https://exemplo.com"), ApplicationId = 1 };
             _documentRepositoryMock
-                .Setup(r => r.IsDocumentNameUniqueAsync(document.Name, document.ApplicationId, null))
+                .Setup(r => r.NameAlreadyExists(document.Name, document.ApplicationId, null))
                 .ReturnsAsync(false); // Nome é único (não existe)
 
             _documentRepositoryMock
-                .Setup(r => r.IsUrlUniqueAsync(document.Url, document.ApplicationId, null))
+                .Setup(r => r.UrlAlreadyExists(document.Url, document.ApplicationId, null))
                 .ReturnsAsync(true); // URL NÃO é única (já existe)
             _documentRepositoryMock
                 .Setup(r => r.GetByIdAsync(document.Id))

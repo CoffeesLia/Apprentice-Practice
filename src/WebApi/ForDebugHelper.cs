@@ -16,6 +16,53 @@ namespace Stellantis.ProjectName.WebApi
                 Context context = scope.ServiceProvider.GetRequiredService<Context>();
                 await context.Database.EnsureCreatedAsync().ConfigureAwait(false);
 
+
+                // Mensagens de chat
+                context.ChatMessages.AddRange(
+                    new ChatMessage
+                    {
+                        Id = Guid.NewGuid(),
+                        User = "Matheus",
+                        Message = "Bom dia, Elite Debuggers!",
+                        SentAt = DateTime.UtcNow.AddMinutes(-10)
+                    },
+                    new ChatMessage
+                    {
+                        Id = Guid.NewGuid(),
+                        User = "Matheus",
+                        Message = "O Squad está quebrando a develop!",
+                        SentAt = DateTime.UtcNow.AddMinutes(-8)
+                    },
+                    new ChatMessage
+                    {
+                        Id = Guid.NewGuid(),
+                        User = "Jardel",
+                        Message = "Oh my God!",
+                        SentAt = DateTime.UtcNow.AddMinutes(-8)
+                    },
+                    new ChatMessage
+                    {
+                        Id = Guid.NewGuid(),
+                        User = "Matheus",
+                        Message = "API: https://gitlab.fcalatam.com/fca/ams/portal/api",
+                        SentAt = DateTime.UtcNow.AddMinutes(-8)
+                    },
+                    new ChatMessage
+                    {
+                        Id = Guid.NewGuid(),
+                        User = "Matheus",
+                        Message = "WEB: https://gitlab.fcalatam.com/fca/ams/portal/web",
+                        SentAt = DateTime.UtcNow.AddMinutes(-8)
+                    },
+                    new ChatMessage
+                    {
+                        Id = Guid.NewGuid(),
+                        User = "Welton",
+                        Message = "Amo vocês, meus Young Talents!",
+                        SentAt = DateTime.UtcNow.AddMinutes(-10)
+                    }
+                );
+
                 // Áreas
                 context.Areas.AddRange(
                     new Area("AMS") { ManagerId = 1 },
@@ -129,9 +176,9 @@ namespace Stellantis.ProjectName.WebApi
 
                 // Squads
                 context.Squads.AddRange(
+                    new Squad { Name = "Elite Debuggers", Description = "Jovens Aprendizes." },
                     new Squad { Name = "All Java", Description = "Reposnável pelos projetos em Java." },
                     new Squad { Name = "Barramento", Description = "Reposnável pelas integrações." },
-                    new Squad { Name = "Elite Debuggers", Description = "Jovens Aprendizes." },
                     new Squad { Name = "Frontend Masters", Description = "Especialistas em desenvolvimento frontend." },
                     new Squad { Name = "Backend Builders", Description = "Focados em soluções backend robustas." },
                     new Squad { Name = "Data Wizards", Description = "Responsáveis por análise e manipulação de dados." },
@@ -146,7 +193,7 @@ namespace Stellantis.ProjectName.WebApi
 
                 // Integrações
                 context.Integrations.AddRange(
-                    new Integration("Balão Mágico", "Bombardiro crocodilo") { ApplicationDataId = 1 },
+                    new Integration("Tralalero Tralala", "Bombardiro crocodilo") { ApplicationDataId = 1 },
                     new Integration("Finance Sync", "Integração entre sistemas financeiros e ERP") { ApplicationDataId = 4 },
                     new Integration("HR Connector", "Sincronização de dados de RH com sistemas externos") { ApplicationDataId = 5 },
                     new Integration("Salesforce Bridge", "Integração de oportunidades de vendas com Salesforce") { ApplicationDataId = 7 },
@@ -160,7 +207,7 @@ namespace Stellantis.ProjectName.WebApi
 
                 // Membros
                 context.Members.AddRange(
-                    new Member { Name = "Matheus", Email = "matheus@stellantis.com", Role = "Developer", Cost = 1000, SquadId = 2 },
+                    new Member { Name = "Matheus", Email = "matheus@stellantis.com", Role = "Developer", Cost = 1000, SquadId = 1 },
                     new Member { Name = "Patricia", Email = "patricia@stellantis.com", Role = "Developer", Cost = 1000, SquadId = 1 },
                     new Member { Name = "Jardel", Email = "jardel@stellantis.com", Role = "Developer", Cost = 1000, SquadId = 4 },
                     new Member { Name = "Vitória", Email = "vitoria@stellantis.com", Role = "Developer", Cost = 1000, SquadId = 3 },

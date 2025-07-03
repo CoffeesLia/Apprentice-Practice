@@ -126,7 +126,7 @@ namespace Infrastructure.Tests.Data.Repositories
             await _repository.CreateAsync(document);
 
             // Act
-            var exists = await _repository.IsDocumentNameUniqueAsync(name, applicationId);
+            var exists = await _repository.NameAlreadyExists(name, applicationId);
 
             // Assert
             Assert.False(exists);
@@ -141,7 +141,7 @@ namespace Infrastructure.Tests.Data.Repositories
 
 
             // Act
-            var exists = await _repository.IsDocumentNameUniqueAsync(name, applicationId);
+            var exists = await _repository.NameAlreadyExists(name, applicationId);
 
             // Assert
             Assert.False(exists);
@@ -162,7 +162,7 @@ namespace Infrastructure.Tests.Data.Repositories
             await _repository.CreateAsync(document);
 
             // Act
-            var exists = await _repository.IsUrlUniqueAsync(url, applicationId);
+            var exists = await _repository.UrlAlreadyExists(url, applicationId);
 
             // Assert
             Assert.True(exists);
@@ -177,7 +177,7 @@ namespace Infrastructure.Tests.Data.Repositories
             var url = new Uri("https://example.com/" + _fixture.Create<string>());
 
             // Act
-            var exists = await _repository.IsDocumentNameUniqueAsync(name, applicationId);
+            var exists = await _repository.NameAlreadyExists(name, applicationId);
 
             // Assert
             Assert.False(exists);

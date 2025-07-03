@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
@@ -11,6 +11,7 @@ using Stellantis.ProjectName.IoC;
 using Stellantis.ProjectName.WebApi;
 using Stellantis.ProjectName.WebApi.Extensions;
 using Stellantis.ProjectName.WebApi.Filters;
+using Stellantis.ProjectName.WebApi.Hubs;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +46,7 @@ builder.Services.Configure<ApiBehaviorOptions>(p =>
 builder.Services.ConfigureDependencyInjection();
 builder.Services.RegisterMapper();
 
+builder.Services.AddSignalR();
 
 
 string? databaseType = configuration["DatabaseType"];
@@ -87,7 +89,9 @@ builder.Services.AddCors(options =>
         policy
             .AllowAnyOrigin()
             .AllowAnyMethod()
-            .AllowAnyHeader();
+            .AllowAnyHeader()
+            .WithOrigins("http://localhost:3000")
+            .AllowCredentials();
     });
 });
 
@@ -114,5 +118,6 @@ app.UseRequestLocalization(localizationOptions);
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
+app.MapHub<ChatHub>("/chathub");
 app.UsePathBase("/");
 await app.RunAsync().ConfigureAwait(false);
