@@ -19,8 +19,6 @@ namespace Stellantis.ProjectName.Domain.Entities
         public IncidentStatus Status { get; set; }
         public int ApplicationId { get; set; }
         public ApplicationData Application { get; set; } = null!;
-        public int MemberId { get; set; }
-
         public virtual ICollection<Member> Members { get; set; } = new List<Member>();
     }
 }

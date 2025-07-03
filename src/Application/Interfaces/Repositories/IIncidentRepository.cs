@@ -14,8 +14,5 @@ namespace Stellantis.ProjectName.Application.Interfaces.Repositories
 
         // Consulta todos os incidentes em que um membro está envolvido.
         Task<IEnumerable<Incident>> GetByMemberIdAsync(int memberId);
-
-        // Consulta todos os incidentes com um determinado status.
-        Task<IEnumerable<Incident>> GetByStatusAsync(IncidentStatus status);
     }
 }
