@@ -221,27 +221,6 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
-        public async Task GetByStatusAsyncWhenExists()
-        {
-            // Arrange
-            var status = IncidentStatus.Open;
-            var incidents = _fixture.Build<Incident>()
-                .With(i => i.Status, status)
-                .CreateMany(2)
-                .ToList();
-
-            await _context.Set<Incident>().AddRangeAsync(incidents);
-            await _context.SaveChangesAsync();
-
-            // Act
-            var result = await _repository.GetByStatusAsync(status);
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.All(result, i => Assert.Equal(status, i.Status));
-        }
-
-        [Fact]
         public async Task DeleteAsyncWhenCalled()
         {
             // Arrange

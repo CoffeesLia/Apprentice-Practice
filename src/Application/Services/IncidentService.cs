@@ -98,7 +98,7 @@ namespace Stellantis.ProjectName.Application.Services
         {
             var incident = await Repository.GetByIdAsync(id).ConfigureAwait(false);
             return incident != null
-                ? OperationResult.Success(incident)
+                ? OperationResult.Complete()
                 : OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
         }
 
