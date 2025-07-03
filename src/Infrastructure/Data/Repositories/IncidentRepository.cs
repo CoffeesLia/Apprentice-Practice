@@ -18,19 +18,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 .ConfigureAwait(false);
         }
 
-        public async Task DeleteAsync(int id, bool saveChanges = true)
-        {
-            Incident? entity = await GetByIdAsync(id).ConfigureAwait(false);
-            if (entity != null)
-            {
-                Context.Set<Incident>().Remove(entity);
-                if (saveChanges)
-                {
-                    await SaveChangesAsync().ConfigureAwait(false);
-                }
-            }
-        }
-
         public async Task<PagedResult<Incident>> GetListAsync(IncidentFilter filter)
         {
             ArgumentNullException.ThrowIfNull(filter);
@@ -61,7 +48,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             return pagedResult;
         }
 
-        // Implementação no IncidentRepository
         public Task<IEnumerable<Member>> GetMembersByApplicationIdAsync(int applicationId)
         {
             var application = Context.Applications.FirstOrDefault(a => a.Id == applicationId);
@@ -75,34 +61,17 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             return Task.FromResult<IEnumerable<Member>>(members);
         }
 
-
-        // Consulta todos os incidentes vinculados a uma aplicação específica.
-        public async Task<IEnumerable<Incident>> GetByApplicationIdAsync(int applicationId)
+        public async Task DeleteAsync(int id, bool saveChanges = true)
         {
-            return await Context.Set<Incident>()
-                .Include(i => i.Members)
-                .Where(i => i.ApplicationId == applicationId)
-                .ToListAsync()
-                .ConfigureAwait(false);
-        }
-
-        // Consulta todos os incidentes em que um membro está envolvido.
-        public async Task<IEnumerable<Incident>> GetByMemberIdAsync(int memberId)
-        {
-            return await Context.Set<Incident>()
-                .Include(i => i.Application)
-                .Where(i => i.Members.Any(m => m.Id == memberId))
-                .ToListAsync()
-                .ConfigureAwait(false);
-        }
-
-        // Consulta todos os incidentes com um determinado status.
-        public async Task<IEnumerable<Incident>> GetByStatusAsync(IncidentStatus status)
-        {
-            return await Context.Set<Incident>()
-                .Where(i => i.Status == status)
-                .ToListAsync()
-                .ConfigureAwait(false);
+            Incident? entity = await GetByIdAsync(id).ConfigureAwait(false);
+            if (entity != null)
+            {
+                Context.Set<Incident>().Remove(entity);
+                if (saveChanges)
+                {
+                    await SaveChangesAsync().ConfigureAwait(false);
+                }
+            }
         }
     }
 }

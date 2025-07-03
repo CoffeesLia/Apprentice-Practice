@@ -68,15 +68,6 @@ namespace Stellantis.ProjectName.Application.Services
             return await base.CreateAsync(item).ConfigureAwait(false);
         }
 
-
-        public new async Task<OperationResult> GetItemAsync(int id)
-        {
-            var incident = await Repository.GetByIdAsync(id).ConfigureAwait(false);
-            return incident != null
-             ? OperationResult.Complete()
-                : OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
-        }
-
         public override async Task<OperationResult> UpdateAsync(Incident item)
         {
             ArgumentNullException.ThrowIfNull(item);
@@ -117,19 +108,15 @@ namespace Stellantis.ProjectName.Application.Services
             {
                 item.Status = IncidentStatus.Open;
             }
-
             return await base.UpdateAsync(item).ConfigureAwait(false);
         }
 
-
-        public override async Task<OperationResult> DeleteAsync(int id)
+        public new async Task<OperationResult> GetItemAsync(int id)
         {
-            var item = await Repository.GetByIdAsync(id).ConfigureAwait(false);
-            if (item == null)
-            {
-                return OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
-            }
-            return await base.DeleteAsync(item).ConfigureAwait(false);
+            var incident = await Repository.GetByIdAsync(id).ConfigureAwait(false);
+            return incident != null
+                ? OperationResult.Complete()
+                : OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
         }
 
         public async Task<PagedResult<Incident>> GetListAsync(IncidentFilter incidentFilter)
@@ -141,6 +128,16 @@ namespace Stellantis.ProjectName.Application.Services
         public async Task<IEnumerable<Member>> GetMembersByApplicationIdAsync(int applicationId)
         {
             return await Repository.GetMembersByApplicationIdAsync(applicationId);
+        }
+
+        public override async Task<OperationResult> DeleteAsync(int id)
+        {
+            var item = await Repository.GetByIdAsync(id).ConfigureAwait(false);
+            if (item == null)
+            {
+                return OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
+            }
+            return await base.DeleteAsync(item).ConfigureAwait(false);
         }
     }
 }

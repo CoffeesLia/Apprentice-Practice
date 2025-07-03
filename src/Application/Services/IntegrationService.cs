@@ -27,12 +27,12 @@ namespace Stellantis.ProjectName.Application.Services
 
             if (await Repository.VerifyNameExistsAsync(item.Name).ConfigureAwait(false))
             {
-                return OperationResult.InvalidData(validationResult);
+              return OperationResult.Conflict(Localizer[IntegrationResources.MessageConflict]);
             }
 
             if (await Repository.VerifyDescriptionExistsAsync(item.Description).ConfigureAwait(false))
             {
-                return OperationResult.InvalidData(validationResult);
+                return OperationResult.Conflict(Localizer[IntegrationResources.MessageConflict]);
             }
 
             await Repository.CreateAsync(item).ConfigureAwait(false);
@@ -61,11 +61,11 @@ namespace Stellantis.ProjectName.Application.Services
 
             if (await Repository.VerifyDescriptionExistsAsync(item.Description).ConfigureAwait(false))
             {
-                return OperationResult.InvalidData(validationResult);
+                return OperationResult.Conflict(Localizer[IntegrationResources.MessageConflict]);
             }
             if (await Repository.VerifyNameExistsAsync(item.Name).ConfigureAwait(false))
             {
-                return OperationResult.InvalidData(validationResult);
+                return OperationResult.Conflict(Localizer[IntegrationResources.MessageConflict]);
             }
 
             await Repository.UpdateAsync(item).ConfigureAwait(false);

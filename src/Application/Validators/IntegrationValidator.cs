@@ -11,15 +11,16 @@ namespace Stellantis.ProjectName.Application.Validators
         {
             ArgumentNullException.ThrowIfNull(localizerFactory);
             var localizer = localizerFactory.Create(typeof(IntegrationResources));
+
             RuleFor(x => x.Name)
                 .NotNull()
                 .NotEmpty()
                 .WithMessage(localizer[nameof(IntegrationResources.NameIsRequired)]);
 
             RuleFor(x => x.Description)
-               .NotNull()
-               .NotEmpty()
-               .WithMessage(localizer[nameof(IntegrationResources.DescriptionIsRequired)]);
+                .NotNull()
+                .NotEmpty()
+                .WithMessage(localizer[nameof(IntegrationResources.DescriptionIsRequired)]);
 
         }
     }

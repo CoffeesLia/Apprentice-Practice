@@ -81,6 +81,17 @@ namespace Stellantis.ProjectName.Application.Resources
         }
 
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Message Conflict
+        /// </summary>
+        public static string MessageConflict
+        {
+            get
+            {
+                return ResourceManager.GetString("MessageConflict", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Message Not Found.
         /// </summary>
         public static string MessageNotFound
