@@ -95,5 +95,16 @@ namespace Stellantis.ProjectName.Application.Resources {
                 return ResourceManager.GetString("TitleRequired", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Status is required.  .
+        /// </summary>
+        public static string StatusRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("StatusRequired", resourceCulture);
+            }
+        }
     }
 }
