@@ -9,24 +9,24 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
         public void Configure(EntityTypeBuilder<Incident> builder)
         {
             ArgumentNullException.ThrowIfNull(builder);
-            builder.ToTable("Incident"); // Nome da tabela no banco de dados
-            builder.HasKey(i => i.Id); // Chave primária
+            builder.ToTable("Incident"); 
+            builder.HasKey(i => i.Id); 
 
             builder.Property(i => i.Title)
                 .IsRequired()
-                .HasMaxLength(200); // Tamanho máximo do título
+                .HasMaxLength(200); 
 
             builder.Property(i => i.Description)
-                .IsRequired(); // Descrição é obrigatória
+                .IsRequired(); 
 
             builder.Property(i => i.ApplicationId)
-                .IsRequired(); // ApplicationId é obrigatório
+                .IsRequired(); 
 
             builder.Property(i => i.CreatedAt)
-                .IsRequired(); // Data de criação é obrigatória
+                .IsRequired(); 
 
             builder.Property(i => i.Status)
-                .IsRequired(); // Status é obrigatório
+                .IsRequired();
 
             builder.HasOne(i => i.Application) // Configura o relacionamento com ApplicationData
                 .WithMany() // Sem propriedade de navegação explícita
