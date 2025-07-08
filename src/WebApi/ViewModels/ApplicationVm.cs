@@ -9,9 +9,9 @@ namespace Stellantis.ProjectName.WebApi.ViewModels
         public int SquadId { get; set; }
         public int AreaId { get; set; }
         public SquadVm Squads { get; set; }
+        public ResponsibleVm Responsible { get; set; } = null!;
         public AreaVm Area { get; set; } = null!;
         public string? Description { get; set; }
-        public required string ProductOwner { get; set; }
         public required string ConfigurationItem { get; set; }
         public bool External { get; set; }
     }

@@ -30,7 +30,6 @@ namespace Domain.Tests
             // Arrange
             var applicationData = new ApplicationData("Test Application Data")
             {
-                ProductOwner = "Test Product Owner",
                 ConfigurationItem = "Test Configuration Item"
             };
             // Act
@@ -46,7 +45,6 @@ namespace Domain.Tests
             var area = new Area("Test Area");
             var application = new ApplicationData("Application")
             {
-                ProductOwner = "Test Product Owner",
                 ConfigurationItem = "Test Configuration Item"
             };
 
@@ -62,7 +60,6 @@ namespace Domain.Tests
             // Arrange
             var applicationData = new ApplicationData("Test Application Data")
             {
-                ProductOwner = "Test Product Owner",
                 ConfigurationItem = "Test Configuration Item"
             };
             var integration = new Integration("Name", "Description");
@@ -77,7 +74,6 @@ namespace Domain.Tests
             // Arrange
             var applicationData = new ApplicationData("Test Application Data")
             {
-                ProductOwner = "Test Product Owner",
                 ConfigurationItem = "Test Configuration Item"
             };
             var integration = new Integration("Name", "Description") { ApplicationData = applicationData };
