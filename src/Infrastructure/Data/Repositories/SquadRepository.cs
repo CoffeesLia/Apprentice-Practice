@@ -2,6 +2,7 @@
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
+using System.Globalization;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
@@ -52,7 +53,8 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             if (!string.IsNullOrEmpty(squadFilter.Name))
             {
-                query = query.Where(s => s.Name != null && s.Name.Contains(squadFilter.Name));
+                var nameFilter = squadFilter.Name;
+                query = query.Where(s => s.Name != null && s.Name.Contains(nameFilter, StringComparison.OrdinalIgnoreCase));
             }
 
             var pagedResult = await GetListAsync(query, squadFilter.Sort, squadFilter.SortDir, squadFilter.Page, squadFilter.PageSize).ConfigureAwait(false);
