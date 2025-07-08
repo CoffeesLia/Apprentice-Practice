@@ -20,6 +20,19 @@ namespace Stellantis.ProjectName.Application.Services
         {
             ArgumentNullException.ThrowIfNull(item);
 
+            // Se vier apenas os IDs dos membros (ex: [{ Id = 1 }, { Id = 2 }]), busque os membros completos
+            if (item.Members != null && item.Members.Count > 0)
+            {
+                var memberIds = item.Members.Select(m => m.Id).ToList();
+                var pagedMembers = await UnitOfWork.MemberRepository
+                    .GetListAsync(m => memberIds.Contains(m.Id)).ConfigureAwait(false);
+                item.Members = pagedMembers.Result.ToList();
+            }
+            else
+            {
+                item.Members = new List<Member>();
+            }
+
             // Validação do objeto pelo FluentValidation
             var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
             if (!validationResult.IsValid)
@@ -34,12 +47,12 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
             }
 
-            // Validar se os membros estão nos squads da aplicação
+            // Validar se os membros estão no squad da aplicação
             if (item.Members != null && item.Members.Count > 0)
             {
-                var validMemberIds = application.Squads?.Members?.Select(m => m.Id).ToHashSet() ?? new HashSet<int>();
+                var squadId = application.SquadId;
                 var invalidMemberIds = item.Members
-                    .Where(m => !validMemberIds.Contains(m.Id))
+                    .Where(m => m.SquadId != squadId)
                     .Select(m => m.Id)
                     .ToList();
 
@@ -49,29 +62,24 @@ namespace Stellantis.ProjectName.Application.Services
                 }
             }
 
-            // Corrija aqui: sempre defina a data de criação
             item.CreatedAt = DateTime.UtcNow;
-
-            if (item.Status == default)
-            {
-                item.Status = IncidentStatus.Open;
-            }
+            item.Status = IncidentStatus.Open; // Sempre inicia como Open
 
             return await base.CreateAsync(item).ConfigureAwait(false);
-        }
-
-
-        public new async Task<OperationResult> GetItemAsync(int id)
-        {
-            var incident = await Repository.GetByIdAsync(id).ConfigureAwait(false);
-            return incident != null
-             ? OperationResult.Complete()
-                : OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
         }
 
         public override async Task<OperationResult> UpdateAsync(Incident item)
         {
             ArgumentNullException.ThrowIfNull(item);
+
+            // Busca os membros completos a partir dos IDs
+            if (item.Members != null && item.Members.Count > 0)
+            {
+                var memberIds = item.Members.Select(m => m.Id).ToList();
+                var pagedMembers = await UnitOfWork.MemberRepository
+                    .GetListAsync(m => memberIds.Contains(m.Id)).ConfigureAwait(false);
+                item.Members = pagedMembers.Result.ToList();
+            }
 
             // Validação do objeto pelo FluentValidation
             var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
@@ -94,26 +102,21 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
             }
 
-            // Corrija aqui: sempre defina a data de criação
             item.CreatedAt = DateTime.UtcNow;
 
             if (item.Status == default)
             {
                 item.Status = IncidentStatus.Open;
             }
-
             return await base.UpdateAsync(item).ConfigureAwait(false);
         }
 
-
-        public override async Task<OperationResult> DeleteAsync(int id)
+        public new async Task<OperationResult> GetItemAsync(int id)
         {
-            var item = await Repository.GetByIdAsync(id).ConfigureAwait(false);
-            if (item == null)
-            {
-                return OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
-            }
-            return await base.DeleteAsync(item).ConfigureAwait(false);
+            var incident = await Repository.GetByIdAsync(id).ConfigureAwait(false);
+            return incident != null
+                ? OperationResult.Complete()
+                : OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
         }
 
         public async Task<PagedResult<Incident>> GetListAsync(IncidentFilter incidentFilter)
@@ -125,6 +128,16 @@ namespace Stellantis.ProjectName.Application.Services
         public async Task<IEnumerable<Member>> GetMembersByApplicationIdAsync(int applicationId)
         {
             return await Repository.GetMembersByApplicationIdAsync(applicationId);
+        }
+
+        public override async Task<OperationResult> DeleteAsync(int id)
+        {
+            var item = await Repository.GetByIdAsync(id).ConfigureAwait(false);
+            if (item == null)
+            {
+                return OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
+            }
+            return await base.DeleteAsync(item).ConfigureAwait(false);
         }
     }
 }

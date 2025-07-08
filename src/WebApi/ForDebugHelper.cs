@@ -1,7 +1,6 @@
 ﻿#if DEBUG
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
-using Stellantis.ProjectName.WebApi.ViewModels;
 
 namespace Stellantis.ProjectName.WebApi
 {
@@ -53,6 +52,13 @@ namespace Stellantis.ProjectName.WebApi
                         User = "Matheus",
                         Message = "WEB: https://gitlab.fcalatam.com/fca/ams/portal/web",
                         SentAt = DateTime.UtcNow.AddMinutes(-8)
+                    },
+                    new ChatMessage
+                    {
+                        Id = Guid.NewGuid(),
+                        User = "Welton",
+                        Message = "Amo vocês, meus Young Talents!",
+                        SentAt = DateTime.UtcNow.AddMinutes(-10)
                     }
                 );
 
@@ -169,9 +175,9 @@ namespace Stellantis.ProjectName.WebApi
 
                 // Squads
                 context.Squads.AddRange(
+                    new Squad { Name = "Elite Debuggers", Description = "Jovens Aprendizes." },
                     new Squad { Name = "All Java", Description = "Reposnável pelos projetos em Java." },
                     new Squad { Name = "Barramento", Description = "Reposnável pelas integrações." },
-                    new Squad { Name = "Elite Debuggers", Description = "Jovens Aprendizes." },
                     new Squad { Name = "Frontend Masters", Description = "Especialistas em desenvolvimento frontend." },
                     new Squad { Name = "Backend Builders", Description = "Focados em soluções backend robustas." },
                     new Squad { Name = "Data Wizards", Description = "Responsáveis por análise e manipulação de dados." },
@@ -186,7 +192,7 @@ namespace Stellantis.ProjectName.WebApi
 
                 // Integrações
                 context.Integrations.AddRange(
-                    new Integration("Balão Mágico", "Bombardiro crocodilo") { ApplicationDataId = 1 },
+                    new Integration("Tralalero Tralala", "Bombardiro crocodilo") { ApplicationDataId = 1 },
                     new Integration("Finance Sync", "Integração entre sistemas financeiros e ERP") { ApplicationDataId = 4 },
                     new Integration("HR Connector", "Sincronização de dados de RH com sistemas externos") { ApplicationDataId = 5 },
                     new Integration("Salesforce Bridge", "Integração de oportunidades de vendas com Salesforce") { ApplicationDataId = 7 },
@@ -200,7 +206,7 @@ namespace Stellantis.ProjectName.WebApi
 
                 // Membros
                 context.Members.AddRange(
-                    new Member { Name = "Matheus", Email = "matheus@stellantis.com", Role = "Developer", Cost = 1000, SquadId = 2 },
+                    new Member { Name = "Matheus", Email = "matheus@stellantis.com", Role = "Developer", Cost = 1000, SquadId = 1 },
                     new Member { Name = "Patricia", Email = "patricia@stellantis.com", Role = "Developer", Cost = 1000, SquadId = 1 },
                     new Member { Name = "Jardel", Email = "jardel@stellantis.com", Role = "Developer", Cost = 1000, SquadId = 4 },
                     new Member { Name = "Vitória", Email = "vitoria@stellantis.com", Role = "Developer", Cost = 1000, SquadId = 3 },
@@ -218,6 +224,7 @@ namespace Stellantis.ProjectName.WebApi
                     new Member { Name = "Bruno Rocha", Email = "bruno.rocha@stellantis.com", Role = "Developer", Cost = 1200, SquadId = 3 },
                     new Member { Name = "Juliana Martins", Email = "juliana.martins@stellantis.com", Role = "Business Analyst", Cost = 1400, SquadId = 5 }
                 );
+                await context.SaveChangesAsync().ConfigureAwait(false);
 
                 context.Feedbacks.AddRange(
                     new Feedback { Title = "Melhora no design do Portal AMS", Description = "O design do site está muito simples, talvez modernizar as cores e fontes ajudasse.", CreatedAt = DateTime.UtcNow.AddDays(-7), ApplicationId = 1, Status = FeedbackStatus.Open }, // Feedback aberto
@@ -239,7 +246,8 @@ namespace Stellantis.ProjectName.WebApi
                         Description = "Erro ao acessar o portal AMS.",
                         CreatedAt = DateTime.UtcNow.AddDays(-5),
                         Status = IncidentStatus.Open,
-                        ApplicationId = 1
+                        ApplicationId = 1,
+                        Members = context.Members.Where(m => m.Id == 1 || m.Id == 2).ToList()
                     },
                     new Incident
                     {
@@ -247,7 +255,8 @@ namespace Stellantis.ProjectName.WebApi
                         Description = "O sistema eLog está fora do ar.",
                         CreatedAt = DateTime.UtcNow.AddDays(-2),
                         Status = IncidentStatus.InProgress,
-                        ApplicationId = 2
+                        ApplicationId = 2,
+                        Members = context.Members.Where(m => m.Id == 3).ToList()
                     },
                     new Incident
                     {
@@ -256,25 +265,20 @@ namespace Stellantis.ProjectName.WebApi
                         CreatedAt = DateTime.UtcNow.AddDays(-10),
                         ClosedAt = DateTime.UtcNow.AddDays(-1),
                         Status = IncidentStatus.Closed,
-                        ApplicationId = 4
+                        ApplicationId = 4,
+                        Members = context.Members.Where(m => m.Id == 4 || m.Id == 5).ToList()
                     },
-                     new Incident
-                     {
-                         Title = "Chamado reaberto no HR Portal",
-                         Description = "Problema voltou a ocorrer no HR Portal.",
-                         CreatedAt = DateTime.UtcNow.AddDays(-8),
-                         Status = IncidentStatus.Reopened,
-                         ApplicationId = 5
-                     },
                     new Incident
                     {
-                        Title = "Incidente cancelado no Marketing Dashboard",
-                        Description = "Incidente foi cancelado pelo solicitante.",
-                        CreatedAt = DateTime.UtcNow.AddDays(-6),
-                        Status = IncidentStatus.Cancelled,
-                        ApplicationId = 6
+                        Title = "Chamado reaberto no HR Portal",
+                        Description = "Problema voltou a ocorrer no HR Portal.",
+                        CreatedAt = DateTime.UtcNow.AddDays(-8),
+                        Status = IncidentStatus.Reopened,
+                        ApplicationId = 5,
+                        Members = context.Members.Where(m => m.Id == 4 || m.Id == 5).ToList()
                     }
                 );
+
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }

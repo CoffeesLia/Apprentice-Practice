@@ -103,8 +103,13 @@ namespace Stellantis.ProjectName.Application.Services
                 return true;
             }
 
-            return !existingItems.Result.Any(e => e.Id != id);
+            // Comparação exata, ignorando maiúsculas/minúsculas
+            return !existingItems.Result.Any(e =>
+                e.Id != id &&
+                string.Equals(e.Name, name, StringComparison.OrdinalIgnoreCase)
+            );
         }
+
 
         public async Task<bool> IsResponsibleFromArea(int areaId, int responsibleId)
         {

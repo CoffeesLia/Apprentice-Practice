@@ -141,13 +141,4 @@
   <data name="DescriptionValidateLength" xml:space="preserve">
     <value>A descrição deve ter entre 3 e 255 caracteres.</value>
   </data>
-  <data name="ApplicationsNotFound  " xml:space="preserve">
-    <value>Nenhuma aplicação encontrada com os IDs fornecidos.</value>
-  </data>
-  <data name="ApplicationIdsCannotBeEmpty" xml:space="preserve">
-    <value>A lista de IDs de aplicações não pode estar vazia.</value>
-  </data>
-  <data name="ApplicationsLinkedSuccessfully" xml:space="preserve">
-    <value>Aplicações vinculadas ao Squad com sucesso.</value>
-  </data>
 </root>
