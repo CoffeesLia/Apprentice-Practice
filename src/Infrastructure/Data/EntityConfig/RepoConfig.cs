@@ -28,7 +28,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
 
             builder.Property(d => d.Description)
                 .IsRequired()
-                .HasMaxLength(2000);
+                .HasMaxLength(5000);
 
             builder.HasOne(d => d.ApplicationData)
                 .WithMany()

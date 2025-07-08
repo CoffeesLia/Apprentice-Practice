@@ -10,12 +10,11 @@ using Stellantis.ProjectName.WebApi.ViewModels;
 
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
-    [Route("api/repos")]
+    [Route("api/repo")]
 
     public sealed class RepoController(IRepoService service, IMapper mapper, IStringLocalizerFactory localizerFactory) : EntityControllerBase<Repo, RepoDto>(service, mapper, localizerFactory)
     {
         protected override IRepoService Service => (IRepoService)base.Service;
-
 
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] RepoDto itemDto)
@@ -34,7 +33,6 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         {
             return await UpdateBaseAsync<RepoVm>(id, itemDto).ConfigureAwait(false);
         }
-
 
         [HttpDelete("{id}")]
         public override async Task<IActionResult> DeleteAsync(int id)
