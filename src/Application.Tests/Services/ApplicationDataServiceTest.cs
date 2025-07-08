@@ -42,7 +42,6 @@ namespace Application.Tests.Services
             // Arrange
             ApplicationData applicationData = new("u")
             {
-                ProductOwner = "TestOwner",
                 ConfigurationItem = "TestConfig"
             };
 
@@ -60,7 +59,6 @@ namespace Application.Tests.Services
             // Arrange
             ApplicationData applicationData = new(string.Empty)
             {
-                ProductOwner = "TestOwner",
                 ConfigurationItem = "TestConfig"
             };
 
@@ -80,7 +78,6 @@ namespace Application.Tests.Services
             // Arrange
             ApplicationData applicationData = new("NameValid")
             {
-                ProductOwner = "TestOwner",
                 ConfigurationItem = string.Empty
             };
 
@@ -100,7 +97,6 @@ namespace Application.Tests.Services
             // Arrange
             ApplicationData applicationData = new("NameValid")
             {
-                ProductOwner = string.Empty,
                 ConfigurationItem = "TestConfig"
             };
 
@@ -140,7 +136,6 @@ namespace Application.Tests.Services
             // Arrange
             ApplicationData applicationData = new("TestApp")
             {
-                ProductOwner = "TestOwner",
                 ConfigurationItem = "TestConfig"
             };
             ValidationResult validationResult = new([new ValidationFailure("Name", "Name is required")]);
@@ -163,7 +158,6 @@ namespace Application.Tests.Services
             // Arrange
             ApplicationData applicationData = new("TestApp")
             {
-                ProductOwner = "TestOwner",
                 ConfigurationItem = "TestConfig"
             };
 
@@ -172,7 +166,6 @@ namespace Application.Tests.Services
                     new("TestApp")
                     {
                         Id = 1,
-                        ProductOwner = "TestOwner",
                         ConfigurationItem = "TestConfig"
                     }
                 ];
@@ -197,7 +190,6 @@ namespace Application.Tests.Services
             {
                 ResponsibleId = 1,
                 AreaId = 1,
-                ProductOwner = "TestOwner",
                 ConfigurationItem = "TestConfig",
                 External = true
             };
@@ -227,7 +219,6 @@ namespace Application.Tests.Services
             // Arrange
             ApplicationData applicationData = new("TestApp")
             {
-                ProductOwner = "TestOwner",
                 ConfigurationItem = "TestConfig"
             };
 
@@ -267,7 +258,6 @@ namespace Application.Tests.Services
                 Id = 1,
                 AreaId = 1,
                 ResponsibleId = 1,
-                ProductOwner = "TestOwner",
                 ConfigurationItem = "TestConfig"
             };
 
@@ -294,7 +284,6 @@ namespace Application.Tests.Services
                 Id = 1,
                 AreaId = 1,
                 ResponsibleId = 1,
-                ProductOwner = "TestOwner",
                 ConfigurationItem = "TestConfig"
             };
 
@@ -303,7 +292,6 @@ namespace Application.Tests.Services
                     new("TestApp")
                     {
                         Id = 2,
-                        ProductOwner = "TestOwner",
                         ConfigurationItem = "TestConfig"
                     }
                 ];
@@ -328,7 +316,6 @@ namespace Application.Tests.Services
                 Id = 1,
                 AreaId = 1,
                 ResponsibleId = 1,
-                ProductOwner = "TestOwner",
                 ConfigurationItem = "TestConfig"
             };
 
@@ -366,8 +353,8 @@ namespace Application.Tests.Services
             ApplicationFilter applicationFilter = new() { Name = "TestApp" };
             List<ApplicationData> applicationDataList =
             [
-                new("TestApp1") { Id = 1, AreaId = 1, ProductOwner = "Owner1", ConfigurationItem = "Config1" },
-                new("TestApp2") { Id = 2, AreaId = 2, ProductOwner = "Owner2", ConfigurationItem = "Config2" }
+                new("TestApp1") { Id = 1, AreaId = 1,  ConfigurationItem = "Config1" },
+                new("TestApp2") { Id = 2, AreaId = 2, ConfigurationItem = "Config2" }
             ];
             PagedResult<ApplicationData> pagedResult = new()
             {
@@ -410,7 +397,6 @@ namespace Application.Tests.Services
             {
                 Id = 1,
                 AreaId = 1,
-                ProductOwner = "TestOwner",
                 ConfigurationItem = "TestConfig"
             };
 
@@ -457,7 +443,6 @@ namespace Application.Tests.Services
             // Arrange
             ApplicationData applicationData = new("ValidName")
             {
-                ProductOwner = "TestOwner",
                 ConfigurationItem = "TestConfig",
                 Description = new StringBuilder(501).Insert(0, "a", 501).ToString(),
                 ResponsibleId = 1,

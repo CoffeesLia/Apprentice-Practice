@@ -18,8 +18,8 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(x => x.Area, opt => opt.Ignore())
                 .ForMember(dest => dest.Documents, opt => opt.Ignore())
                 .ForMember(x => x.Integration, opt => opt.Ignore())
+                .ForMember(x => x.Responsible, opt => opt.Ignore())
                 .ForMember(x => x.Description, opt => opt.MapFrom(src => src.Description))
-                .ForMember(x => x.ProductOwner, opt => opt.MapFrom(src => src.ProductOwner))
                 .ForMember(x => x.ConfigurationItem, opt => opt.MapFrom(src => src.ConfigurationItem))
                 .ForMember(x => x.External, opt => opt.MapFrom(src => src.External))
                 .ForMember(x => x.ResponsibleId, opt => opt.MapFrom(src => src.ResponsibleId))
@@ -28,17 +28,17 @@ namespace Stellantis.ProjectName.WebApi.Mapper
 
             CreateMap<ApplicationData, ApplicationVm>()
                 .ForMember(dest => dest.Squads, opt => opt.MapFrom(src => src.Squads))
+                .ForMember(dest => dest.Responsible, opt => opt.MapFrom(src => src.Responsible))
                 .ForMember(dest => dest.Area, opt => opt.MapFrom(src => src.Area))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
-                .ForMember(dest => dest.ProductOwner, opt => opt.MapFrom(src => src.ProductOwner))
                 .ForMember(dest => dest.ConfigurationItem, opt => opt.MapFrom(src => src.ConfigurationItem))
                 .ForMember(dest => dest.External, opt => opt.MapFrom(src => src.External));
 
             CreateMap<ApplicationDataFilterDto, ApplicationFilter>()
                 .ForMember(x => x.SquadId, opt => opt.MapFrom(src => src.SquadId))
                 .ForMember(x => x.AreaId, opt => opt.MapFrom(src => src.AreaId))
-                .ForMember(x => x.External, opt => opt.MapFrom(src => src.External))
-                .ForMember(x => x.ProductOwner, opt => opt.MapFrom(src => src.ProductOwner));
+                .ForMember(x => x.ResponsibleId, opt => opt.MapFrom(src => src.ResponsibleId))
+                .ForMember(x => x.External, opt => opt.MapFrom(src => src.External));
 
             CreateMap<AreaDto, Area>()
                  .ForMember(x => x.Id, x => x.Ignore())

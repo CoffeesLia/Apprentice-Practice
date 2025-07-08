@@ -82,7 +82,6 @@ namespace WebApi.Tests.Controllers
                     Id = 1,
                     Name = "App1",
                     Area = new AreaVm(),   
-                    ProductOwner = "Owner1",
                     ConfigurationItem = "Config1",
                     External = false
                 }

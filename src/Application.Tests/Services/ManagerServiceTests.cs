@@ -92,7 +92,6 @@ namespace Application.Tests.Services
                 {
                     Id = 1,
                     ConfigurationItem = "Valid Configuration Item",
-                    ProductOwner = "Valid Product Owner"
                 });
 
             _managerRepositoryMock
@@ -129,7 +128,6 @@ namespace Application.Tests.Services
                 {
                     Id = 1,
                     ConfigurationItem = "Valid Configuration Item",
-                    ProductOwner = "Valid Product Owner"
                 });
 
             _managerRepositoryMock.Setup(r => r.VerifyNameExistsAsync(manager.Name))
