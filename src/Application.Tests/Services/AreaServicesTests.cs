@@ -86,6 +86,30 @@ namespace Application.Tests.Services
         }
 
         [Fact]
+        public async Task CreateAsyncShouldReturnConflictWhenIsAreaNameUniqueAsyncReturnsFalse()
+        {
+            // Arrange
+            Area area = new("Área Duplicada") { ManagerId = 123 };
+
+            // Mock para garantir que o nome NÃO é único
+            var areaServiceMock = new Mock<AreaService>(_unitOfWorkMock.Object, Helpers.LocalizerFactorHelper.Create(), new AreaValidator(Helpers.LocalizerFactorHelper.Create())) { CallBase = true };
+            areaServiceMock.Setup(s => s.IsAreaNameUniqueAsync(area.Name, null)).ReturnsAsync(false);
+
+            // Mock do manager válido
+            var manager = new Manager { Name = "Gerente", Id = 123, Email = "gerente@email.com" };
+            var managerRepositoryMock = new Mock<IManagerRepository>();
+            managerRepositoryMock.Setup(m => m.GetByIdAsync(area.ManagerId)).ReturnsAsync(manager);
+            _unitOfWorkMock.Setup(u => u.ManagerRepository).Returns(managerRepositoryMock.Object);
+
+            // Act
+            OperationResult result = await areaServiceMock.Object.CreateAsync(area);
+
+            // Assert
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal(AreaResources.AlreadyExists, result.Message);
+        }
+
+        [Fact]
         public async Task CreateAsyncShouldReturnConflictWhenNameAlreadyExists()
         {
             // Arrange
