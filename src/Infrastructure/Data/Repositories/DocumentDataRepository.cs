@@ -40,7 +40,8 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             if (documentFilter.ApplicationId > 0)
                 filters = filters.And(x => x.ApplicationId == documentFilter.ApplicationId);
 
-            return await GetListAsync(filter: filters, page: documentFilter.Page, sort: documentFilter.Sort, sortDir: documentFilter.SortDir, includeProperties: nameof(DocumentData.ApplicationData)
+            return await GetListAsync(filter: filters, page: documentFilter.Page, pageSize: documentFilter.PageSize,
+ sort: documentFilter.Sort, sortDir: documentFilter.SortDir, includeProperties: nameof(DocumentData.ApplicationData)
              ).ConfigureAwait(false);
         }
 
