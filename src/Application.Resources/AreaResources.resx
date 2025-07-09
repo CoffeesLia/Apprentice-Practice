@@ -135,4 +135,7 @@
   <data name="AreaInvalidManagerId" xml:space="preserve">
     <value>Area invalid manager id.</value>
   </data>
+  <data name="ManagerUnavailable" xml:space="preserve">
+    <value>This manager is already linked to another area.</value>
+  </data>
 </root>
