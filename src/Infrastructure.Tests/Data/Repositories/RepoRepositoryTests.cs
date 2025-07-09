@@ -1,10 +1,12 @@
-﻿using System.Runtime.InteropServices;
-using AutoFixture;
+﻿using AutoFixture;
 using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
+using System;
+using System.Runtime.InteropServices;
+using System.Security.Policy;
 
 namespace Infrastructure.Tests.Data.Repositories
 {
@@ -33,22 +35,27 @@ namespace Infrastructure.Tests.Data.Repositories
         [Fact]
         public async Task GetListAsyncWhenCalled()
         {
-            // Arrange  
-            var applicationId = 1;
+            // Arrange
             var name = _fixture.Create<string>();
+            var description = _fixture.Create<string>();
+            var url = new Uri("https://example.com/" + _fixture.Create<string>());
+            var applicationId = 1;
 
             RepoFilter filter = new()
             {
                 Name = name,
+                Description = description,
+                Url = url,
                 ApplicationId = applicationId
             };
 
+
             await _context.SaveChangesAsync();
 
-            // Act  
+            // Act
             PagedResult<Repo> result = await _repository.GetListAsync(filter);
 
-            // Assert  
+            // Assert
             Assert.Equal(filter.Page, result.Page);
             Assert.Equal(filter.PageSize, result.PageSize);
         }
@@ -62,13 +69,13 @@ namespace Infrastructure.Tests.Data.Repositories
 
 
         [Fact]
-        public async Task CreateAndGetByIdAsyncShouldPersistAndReturnRepo()
+        public async Task CreateAndGetByIdAsyncShouldPersistAndReturnDocument()
         {
             // Arrange
             var repo = new Repo
             {
                 Name = _fixture.Create<string>(),
-                Description = "ValidDescription",
+                Description = _fixture.Create<string>(),
                 Url = new Uri("https://example.com/" + _fixture.Create<string>()),
                 ApplicationId = 1
             };
@@ -84,13 +91,13 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
-        public async Task DeleteAsyncShouldRemoveRepo()
+        public async Task DeleteAsyncShouldRemoveDocument()
         {
             // Arrange
             var repo = new Repo
             {
                 Name = _fixture.Create<string>(),
-                Description = "ValidDescription",
+                Description = _fixture.Create<string>(),
                 Url = new Uri("https://example.com/" + _fixture.Create<string>()),
                 ApplicationId = 1
             };
@@ -104,12 +111,8 @@ namespace Infrastructure.Tests.Data.Repositories
             Assert.Null(result);
         }
 
-
-
-
-
         [Fact]
-        public async Task IsRepoNameUniqueAsyncShouldReturnFalseIfExists()
+        public async Task IsDocumentNameUniqueAsyncShouldReturnFalseIfExists()
         {
             // Arrange
             var name = _fixture.Create<string>();
@@ -117,22 +120,22 @@ namespace Infrastructure.Tests.Data.Repositories
 
             var repo = new Repo
             {
-                Name = name,
-                Description = "ValidDescription",
+                Name = _fixture.Create<string>(),
+                Description = _fixture.Create<string>(),
                 Url = new Uri("https://example.com/" + _fixture.Create<string>()),
                 ApplicationId = 1
             };
             await _repository.CreateAsync(repo);
 
             // Act
-            var exists = await _repository.IsRepoNameUniqueAsync(name, applicationId);
+            var exists = await _repository.NameAlreadyExists(name, applicationId);
 
             // Assert
             Assert.False(exists);
         }
 
         [Fact]
-        public async Task IsRepoNameUniqueAsyncShouldReturnFalseIfNotExists()
+        public async Task IsDocumentNameUniqueAsyncShouldReturnFalseIfNotExists()
         {
             // Arrange
             var name = _fixture.Create<string>();
@@ -140,7 +143,7 @@ namespace Infrastructure.Tests.Data.Repositories
 
 
             // Act
-            var exists = await _repository.IsRepoNameUniqueAsync(name, applicationId);
+            var exists = await _repository.NameAlreadyExists(name, applicationId);
 
             // Assert
             Assert.False(exists);
@@ -150,19 +153,19 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task IsUrlUniqueAsyncShouldReturnTrueIfExists()
         {
             // Arrange
-            var applicationId = 2;
-            var url = new Uri("https://example.com/rep2");
+            var applicationId = _fixture.Create<int>();
+            var url = new Uri("https://example.com/" + _fixture.Create<string>());
             var repo = new Repo
             {
-                Name = "Rep2",
-                Description = "ValidDescription",
+                Name = _fixture.Create<string>(),
+                Description = _fixture.Create<string>(),
                 Url = url,
-                ApplicationId = applicationId
+                ApplicationId = applicationId 
             };
             await _repository.CreateAsync(repo);
 
             // Act
-            var exists = await _repository.IsUrlUniqueAsync(url, applicationId);
+            var exists = await _repository.UrlAlreadyExists(url, applicationId);
 
             // Assert
             Assert.True(exists);
@@ -172,11 +175,12 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task IsUrlUniqueAsyncShouldReturnFalseIfNotExists()
         {
             // Arrange
+            var name = _fixture.Create<string>();
             var applicationId = _fixture.Create<int>();
             var url = new Uri("https://example.com/" + _fixture.Create<string>());
 
             // Act
-            var exists = await _repository.IsUrlUniqueAsync(url, applicationId);
+            var exists = await _repository.NameAlreadyExists(name, applicationId);
 
             // Assert
             Assert.False(exists);
@@ -197,11 +201,9 @@ namespace Infrastructure.Tests.Data.Repositories
 
             if (disposing)
             {
-                // free managed resources
                 _context?.Dispose();
             }
 
-            // free native resources if there are any.
             if (nativeResource != IntPtr.Zero)
             {
                 Marshal.FreeHGlobal(nativeResource);
@@ -210,22 +212,5 @@ namespace Infrastructure.Tests.Data.Repositories
 
             isDisposed = true;
         }
-
-        [Fact]
-        public async Task VerifyDescriptionExistsAsyncShouldReturnTrueWhenDescriptionExists()
-        {
-            // Arrange  
-            Repo repo = _fixture.Create<Repo>();
-            await _context.Set<Repo>().AddAsync(repo);
-            await _context.SaveChangesAsync();
-
-            // Act  
-            bool result = await _repository.VerifyDescriptionExistsAsync(repo.Description);
-
-            // Assert  
-            Assert.True(result);
-        }
     }
-
 }
-
