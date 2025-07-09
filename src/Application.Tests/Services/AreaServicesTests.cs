@@ -69,6 +69,23 @@ namespace Application.Tests.Services
         }
 
         [Fact]
+        public async Task CreateAsyncShouldReturnConflictWhenAreaNameAlreadyExists()
+        {
+            // Arrange
+            Area area = new("Área Existente") { ManagerId = 1 };
+            _areaRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(area.Name)).ReturnsAsync(true);
+
+            // Não sobrescreva o mock do ManagerRepository, pois já está configurado no construtor
+
+            // Act
+            OperationResult result = await _areaService.CreateAsync(area);
+
+            // Assert
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal(AreaResources.AlreadyExists, result.Message);
+        }
+
+        [Fact]
         public async Task CreateAsyncShouldReturnConflictWhenNameAlreadyExists()
         {
             // Arrange
@@ -94,7 +111,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
-            Assert.Equal(AreaResources.AlreadyExists, result.Message);
+            Assert.Equal(AreaResources.ManagerUnavailable, result.Message);
         }
 
         [Fact]
@@ -123,6 +140,16 @@ namespace Application.Tests.Services
             // Arrange
             Area area = new("Test Area") { ManagerId = 123 };
             _areaRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(area.Name)).ReturnsAsync(false);
+
+            var emptyPagedResult = new PagedResult<Area>
+            {
+                Result = new List<Area>(),
+                Page = 1,
+                PageSize = 10,
+                Total = 0
+            };
+            _areaRepositoryMock.Setup(r => r.GetListAsync(It.Is<AreaFilter>(f => f.ManagerId == area.ManagerId)))
+                .ReturnsAsync(emptyPagedResult);
 
             var manager = new Manager { Name = "Gerente", Id = 123, Email = "gerente@email.com" };
             var managerRepositoryMock = new Mock<IManagerRepository>();
