@@ -222,7 +222,7 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                         : new List<Member>()
                 ));
             CreateMap<Incident, IncidentVm>()
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => (int)src.Status))
                 .ForMember(dest => dest.Application, opt => opt.MapFrom(src => src.Application))
                 .ForMember(dest => dest.Members, opt => opt.MapFrom(src => src.Members));
 
