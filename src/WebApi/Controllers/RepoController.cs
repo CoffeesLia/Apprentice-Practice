@@ -10,7 +10,7 @@ using Stellantis.ProjectName.WebApi.ViewModels;
 
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
-    [Route("api/repo")]
+    [Route("api/repos")]
 
     public sealed class RepoController(IRepoService service, IMapper mapper, IStringLocalizerFactory localizerFactory) : EntityControllerBase<Repo, RepoDto>(service, mapper, localizerFactory)
     {

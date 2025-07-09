@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
@@ -34,7 +35,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             var filters = PredicateBuilder.New<Repo>(true);
             repoFilter.Page = repoFilter.Page <= 0 ? 1 : repoFilter.Page;
             if (!string.IsNullOrWhiteSpace(repoFilter.Name))
-                filters = filters.And(x => x.Name.Contains(repoFilter.Name));
+                filters = filters.And(a => a.Name != null && a.Name.Contains(repoFilter.Name, StringComparison.OrdinalIgnoreCase));
             if (repoFilter.Url != null)
                 filters = filters.And(x => x.Url == repoFilter.Url);
             if (repoFilter.ApplicationId > 0)
