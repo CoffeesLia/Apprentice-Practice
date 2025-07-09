@@ -208,7 +208,6 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(dest => dest.Application, opt => opt.Ignore())
                 .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
                 .ForMember(dest => dest.ClosedAt, opt => opt.Ignore())
-                .ForMember(dest => dest.Status, opt => opt.Ignore())
                 .ForMember(dest => dest.Members, opt => opt.MapFrom(src =>
                     src.MemberIds != null
                         ? src.MemberIds.Select(id => new Member
