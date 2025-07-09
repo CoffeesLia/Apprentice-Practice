@@ -186,7 +186,7 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.Conflict, result.Status);
         }
 
-      
+
 
         [Fact]
         public async Task UpdateAsyncReturnsConflictWhenNameAlreadyExists()
@@ -197,7 +197,7 @@ namespace Application.Tests.Services
             var validatorMock = new Mock<IValidator<Squad>>();
             validatorMock.Setup(v => v.ValidateAsync(squad, default)).ReturnsAsync(validationResult);
 
-            var existingSquad = new Squad { Id = 1, Name = "Existing Squad" };
+            var existingSquad = new Squad { Id = 1, Name = "Old Squad" };
             _squadRepositoryMock.Setup(r => r.GetByIdAsync(squad.Id)).ReturnsAsync(existingSquad);
             _squadRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(squad.Name!)).ReturnsAsync(true);
 

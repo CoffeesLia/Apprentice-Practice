@@ -7,7 +7,7 @@
         public string? Name { get; set; }
         public int AreaId { get; set; }
         public bool? External { get; set; }
-        public string? ProductOwner { get; set; }
+        public int ResponsibleId { get; set; }
         public string? ConfigurationItem { get; set; }
     }
 }

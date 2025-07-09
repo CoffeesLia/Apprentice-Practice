@@ -1,7 +1,6 @@
 ﻿#if DEBUG
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
-using Stellantis.ProjectName.WebApi.ViewModels;
 
 namespace Stellantis.ProjectName.WebApi
 {
@@ -125,19 +124,19 @@ namespace Stellantis.ProjectName.WebApi
 
                 // Applications
                 context.Applications.AddRange(
-                    new ApplicationData("Portal AMS") { AreaId = 7, ResponsibleId = 1, ProductOwner = "", ConfigurationItem = "", SquadId = 1},
-                    new ApplicationData("eLog") { AreaId = 2, ResponsibleId = 2, ProductOwner = "", ConfigurationItem = "", SquadId = 2 },
-                    new ApplicationData("Suite PD") { AreaId = 4, ResponsibleId = 4, ProductOwner = "", ConfigurationItem = "", SquadId = 3 },
-                    new ApplicationData("Finance Tracker") { AreaId = 6, ResponsibleId = 6, ProductOwner = "Carlos Silva", ConfigurationItem = "FT-Config", SquadId = 4 },
-                    new ApplicationData("HR Portal") { AreaId = 8, ResponsibleId = 8, ProductOwner = "Fernanda Oliveira", ConfigurationItem = "HRP-Config" },
-                    new ApplicationData("Marketing Dashboard") { AreaId = 10, ResponsibleId = 10, ProductOwner = "Bruno Almeida", ConfigurationItem = "MD-Config" },
-                    new ApplicationData("Sales CRM") { AreaId = 14, ResponsibleId = 14, ProductOwner = "Rodrigo Martins", ConfigurationItem = "CRM-Config" },
-                    new ApplicationData("Quality Control System") { AreaId = 1, ResponsibleId = 13, ProductOwner = "Ana Paula", ConfigurationItem = "QCS-Config" },
-                    new ApplicationData("Supplier Chain Manager") { AreaId = 16, ResponsibleId = 5, ProductOwner = "Mariana Silva", ConfigurationItem = "SCM-Config" },
-                    new ApplicationData("Engineering Tools") { AreaId = 4, ResponsibleId = 4, ProductOwner = "Leonardo Souza", ConfigurationItem = "ET-Config" },
-                    new ApplicationData("Integration Hub") { AreaId = 9, ResponsibleId = 9, ProductOwner = "Juliana Costa", ConfigurationItem = "IH-Config" },
-                    new ApplicationData("AMS Portal") { AreaId = 1, ResponsibleId = 1, ProductOwner = "Luciene Miranda", ConfigurationItem = "AMS-Config" },
-                    new ApplicationData("Architecture Planner") { AreaId = 2, ResponsibleId = 2, ProductOwner = "Gabriel Torres", ConfigurationItem = "AP-Config" }
+                    new ApplicationData("Portal AMS") { AreaId = 7, ResponsibleId = 1, ConfigurationItem = "", SquadId = 1},
+                    new ApplicationData("eLog") { AreaId = 2, ResponsibleId = 2, ConfigurationItem = "", SquadId = 2 },
+                    new ApplicationData("Suite PD") { AreaId = 4, ResponsibleId = 4, ConfigurationItem = "", SquadId = 3 },
+                    new ApplicationData("Finance Tracker") { AreaId = 6, ResponsibleId = 6, ConfigurationItem = "FT-Config", SquadId = 4},
+                    new ApplicationData("HR Portal") { AreaId = 8, ResponsibleId = 8, ConfigurationItem = "HRP-Config" },
+                    new ApplicationData("Marketing Dashboard") { AreaId = 10, ResponsibleId = 10, ConfigurationItem = "MD-Config" },
+                    new ApplicationData("Sales CRM") { AreaId = 14, ResponsibleId = 14, ConfigurationItem = "CRM-Config" },
+                    new ApplicationData("Quality Control System") { AreaId = 1, ResponsibleId = 13, ConfigurationItem = "QCS-Config" },
+                    new ApplicationData("Supplier Chain Manager") { AreaId = 16, ResponsibleId = 5, ConfigurationItem = "SCM-Config" },
+                    new ApplicationData("Engineering Tools") { AreaId = 4, ResponsibleId = 4, ConfigurationItem = "ET-Config" },
+                    new ApplicationData("Integration Hub") { AreaId = 9, ResponsibleId = 9, ConfigurationItem = "IH-Config" },
+                    new ApplicationData("AMS Portal") { AreaId = 1, ResponsibleId = 1, ConfigurationItem = "AMS-Config" },
+                    new ApplicationData("Architecture Planner") { AreaId = 2, ResponsibleId = 2, ConfigurationItem = "AP-Config" }
                 );
 
                 // Serviços
@@ -225,6 +224,7 @@ namespace Stellantis.ProjectName.WebApi
                     new Member { Name = "Bruno Rocha", Email = "bruno.rocha@stellantis.com", Role = "Developer", Cost = 1200, SquadId = 3 },
                     new Member { Name = "Juliana Martins", Email = "juliana.martins@stellantis.com", Role = "Business Analyst", Cost = 1400, SquadId = 5 }
                 );
+                await context.SaveChangesAsync().ConfigureAwait(false);
 
                 context.Feedbacks.AddRange(
                     new Feedback { Title = "Melhora no design do Portal AMS", Description = "O design do site está muito simples, talvez modernizar as cores e fontes ajudasse.", CreatedAt = DateTime.UtcNow.AddDays(-7), ApplicationId = 1, Status = FeedbackStatus.Open }, // Feedback aberto
@@ -246,7 +246,8 @@ namespace Stellantis.ProjectName.WebApi
                         Description = "Erro ao acessar o portal AMS.",
                         CreatedAt = DateTime.UtcNow.AddDays(-5),
                         Status = IncidentStatus.Open,
-                        ApplicationId = 1
+                        ApplicationId = 1,
+                        Members = context.Members.Where(m => m.Id == 1 || m.Id == 2).ToList()
                     },
                     new Incident
                     {
@@ -254,7 +255,8 @@ namespace Stellantis.ProjectName.WebApi
                         Description = "O sistema eLog está fora do ar.",
                         CreatedAt = DateTime.UtcNow.AddDays(-2),
                         Status = IncidentStatus.InProgress,
-                        ApplicationId = 2
+                        ApplicationId = 2,
+                        Members = context.Members.Where(m => m.Id == 3).ToList()
                     },
                     new Incident
                     {
@@ -263,25 +265,20 @@ namespace Stellantis.ProjectName.WebApi
                         CreatedAt = DateTime.UtcNow.AddDays(-10),
                         ClosedAt = DateTime.UtcNow.AddDays(-1),
                         Status = IncidentStatus.Closed,
-                        ApplicationId = 4
+                        ApplicationId = 4,
+                        Members = context.Members.Where(m => m.Id == 4 || m.Id == 5).ToList()
                     },
-                     new Incident
-                     {
-                         Title = "Chamado reaberto no HR Portal",
-                         Description = "Problema voltou a ocorrer no HR Portal.",
-                         CreatedAt = DateTime.UtcNow.AddDays(-8),
-                         Status = IncidentStatus.Reopened,
-                         ApplicationId = 5
-                     },
                     new Incident
                     {
-                        Title = "Incidente cancelado no Marketing Dashboard",
-                        Description = "Incidente foi cancelado pelo solicitante.",
-                        CreatedAt = DateTime.UtcNow.AddDays(-6),
-                        Status = IncidentStatus.Cancelled,
-                        ApplicationId = 6
+                        Title = "Chamado reaberto no HR Portal",
+                        Description = "Problema voltou a ocorrer no HR Portal.",
+                        CreatedAt = DateTime.UtcNow.AddDays(-8),
+                        Status = IncidentStatus.Reopened,
+                        ApplicationId = 5,
+                        Members = context.Members.Where(m => m.Id == 4 || m.Id == 5).ToList()
                     }
                 );
+
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }

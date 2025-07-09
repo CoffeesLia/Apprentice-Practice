@@ -92,7 +92,6 @@ namespace Application.Tests.Services
                 {
                     Id = 1,
                     ConfigurationItem = "Valid Configuration Item",
-                    ProductOwner = "Valid Product Owner"
                 });
 
             _serviceRepositoryMock
@@ -150,7 +149,6 @@ namespace Application.Tests.Services
                 {
                     Id = 1,
                     ConfigurationItem = "Valid Configuration Item",
-                    ProductOwner = "Valid Product Owner"
                 });
 
             _serviceRepositoryMock.Setup(r => r.VerifyNameExistsAsync(serviceData.Name))

@@ -40,14 +40,12 @@ namespace Infrastructure.Tests.Data.Repositories
                 Page = 1,
                 PageSize = 10,
                 AreaId = 1,
-                ProductOwner = "DefaultOwner",
                 ConfigurationItem = "DefaultConfigItem"
             };
             const int Count = 10;
             List<ApplicationData> applicationDataList = [.. Enumerable.Range(1, Count).Select(i => new ApplicationData($"Name {i}")
             {
                 AreaId = filter.AreaId,
-                ProductOwner = "DefaultOwner",
                 ConfigurationItem = "DefaultConfigItem"
             })];
 
@@ -73,14 +71,12 @@ namespace Infrastructure.Tests.Data.Repositories
             {
                 Page = 1,
                 Name = _fixture.Create<string>(),
-                ProductOwner = "DefaultOwner",
                 ConfigurationItem = "DefaultConfigItem"
             };
             const int Count = 10;
             IEnumerable<ApplicationData> applicationDataList = _fixture
                 .Build<ApplicationData>()
                 .With(x => x.Name, filter.Name)
-                .With(x => x.ProductOwner, filter.ProductOwner)
                 .With(x => x.ConfigurationItem, filter.ConfigurationItem)
                 .CreateMany<ApplicationData>(Count);
 
@@ -88,7 +84,6 @@ namespace Infrastructure.Tests.Data.Repositories
             applicationDataList = _fixture
                 .Build<ApplicationData>()
                 .With(x => x.Name, _fixture.Create<string>())
-                .With(x => x.ProductOwner, "DefaultOwner")
                 .With(x => x.ConfigurationItem, "DefaultConfigItem")
                 .CreateMany<ApplicationData>(Count);
             await _context.Set<ApplicationData>().AddRangeAsync(applicationDataList);
@@ -175,7 +170,6 @@ namespace Infrastructure.Tests.Data.Repositories
             {
                 Page = 1,
                 PageSize = 10,
-                ProductOwner = "Owner",
                 ConfigurationItem = "ConfigItem",
                 External = true
             };
@@ -183,7 +177,6 @@ namespace Infrastructure.Tests.Data.Repositories
             List<ApplicationData> applicationDataList = [.. Enumerable.Range(1, Count).Select(i => new ApplicationData($"Name {i}")
             {
                 AreaId = 1,
-                ProductOwner = filter.ProductOwner,
                 ConfigurationItem = filter.ConfigurationItem,
                 External = filter.External.Value
             })];
@@ -198,7 +191,6 @@ namespace Infrastructure.Tests.Data.Repositories
             Assert.Equal(Count, list.Total);
             Assert.All(list.Result, item =>
             {
-                Assert.Equal(filter.ProductOwner, item.ProductOwner);
                 Assert.Equal(filter.ConfigurationItem, item.ConfigurationItem);
                 Assert.Equal(filter.External, item.External);
             });
@@ -255,7 +247,6 @@ namespace Infrastructure.Tests.Data.Repositories
                 .Select(i => new ApplicationData($"App {i}")
                 {
                     AreaId = i <= expectedCount ? areaId : areaId + 1,
-                    ProductOwner = "Owner",
                     ConfigurationItem = "Config"
                 }).ToList();
 

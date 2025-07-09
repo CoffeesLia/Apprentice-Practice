@@ -52,7 +52,6 @@ namespace Domain.Tests
             Area area = new("Test Area");
             ApplicationData application = new("Application")
             {
-                ProductOwner = "Owner",
                 ConfigurationItem = "ConfigItem"
             };
 
