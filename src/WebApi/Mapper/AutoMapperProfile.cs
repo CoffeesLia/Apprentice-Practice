@@ -75,17 +75,32 @@ namespace Stellantis.ProjectName.WebApi.Mapper
 
             CreateMap<FeedbackDto, Feedback>()
               .ForMember(dest => dest.Id, opt => opt.Ignore())
-              .ForMember(dest => dest.Members, opt => opt.Ignore())
               .ForMember(dest => dest.Application, opt => opt.Ignore())
               .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
               .ForMember(dest => dest.ClosedAt, opt => opt.Ignore())
-              .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
-            CreateMap<FeedbackFilterDto, FeedbackFilter>()
-             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
+              .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+              .ForMember(dest => dest.Members, opt => opt.MapFrom(src =>
+                src.MemberId != null
+                    ? src.MemberId.Select(id => new Member
+                    {
+                        Id = id,
+                        Name = string.Empty,
+                        Role = string.Empty,
+                        Email = string.Empty,
+                        Cost = 0,
+                        SquadId = 0
+                    }).ToList()
+                        : new List<Member>()
+                ));
             CreateMap<Feedback, FeedbackVm>()
              .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
-             .ForMember(dest => dest.Members, opt => opt.Ignore())
-             .ForMember(dest => dest.Application, opt => opt.MapFrom(src => src.Application));
+             .ForMember(dest => dest.Application, opt => opt.MapFrom(src => src.Application))
+             .ForMember(dest => dest.Members, opt => opt.MapFrom(src => src.Members));
+            CreateMap<FeedbackFilterDto, FeedbackFilter>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+                .ForMember(dest => dest.MemberId, opt => opt.MapFrom(src => src.MemberId))
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
+            CreateMap<PagedResult<Feedback>, PagedResultVm<FeedbackVm>>();
 
             CreateMap<IntegrationFilterDto, IntegrationFilter>()
             .ForMember(x => x.Name, opt => opt.MapFrom(src => src.Name))
