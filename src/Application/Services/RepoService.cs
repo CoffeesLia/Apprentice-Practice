@@ -54,14 +54,29 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.InvalidData(validationResult);
             }
 
-            if (await Repository.NameAlreadyExists(item.Name!, item.ApplicationId, item.Id).ConfigureAwait(false))
+            var existingRepo = await Repository.GetByIdAsync(item.Id).ConfigureAwait(false);
+            if (existingRepo is null)
             {
-                return OperationResult.Conflict(_localizer[nameof(RepoResources.NameAlreadyExists)]);
+                return OperationResult.NotFound(_localizer[nameof(RepoResources.NotFound)]);
             }
 
-            if (await Repository.UrlAlreadyExists(item.Url!, item.ApplicationId, item.Id).ConfigureAwait(false))
+            var normalizedExistingName = existingRepo.Name.Trim();
+            var normalizedNewName = item.Name.Trim();
+
+            if (!string.Equals(normalizedExistingName, normalizedNewName, StringComparison.OrdinalIgnoreCase))
             {
-                return OperationResult.Conflict(_localizer[nameof(RepoResources.UrlAlreadyExists)]);
+                if (await Repository.NameAlreadyExists(normalizedNewName, item.ApplicationId, item.Id).ConfigureAwait(false))
+                {
+                    return OperationResult.Conflict(_localizer[nameof(RepoResources.NameAlreadyExists)]);
+                }
+            }
+
+            if (existingRepo.Url != item.Url)
+            {
+                if (await Repository.UrlAlreadyExists(item.Url!, item.ApplicationId, item.Id).ConfigureAwait(false))
+                {
+                    return OperationResult.Conflict(_localizer[nameof(RepoResources.UrlAlreadyExists)]);
+                }
             }
 
             return await base.UpdateAsync(item).ConfigureAwait(false);
