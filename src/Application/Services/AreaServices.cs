@@ -33,7 +33,7 @@ namespace Stellantis.ProjectName.Application.Services
             }
 
             var areasWithSameManager = await Repository.GetListAsync(new AreaFilter { ManagerId = item.ManagerId }).ConfigureAwait(false);
-            if (areasWithSameManager.Result.Any())
+            if (areasWithSameManager?.Result?.Any() == true)
             {
                 return OperationResult.Conflict(_localizer[nameof(AreaResources.ManagerUnavailable)]);
             }
