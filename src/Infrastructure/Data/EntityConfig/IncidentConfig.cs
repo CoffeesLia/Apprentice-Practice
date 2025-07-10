@@ -35,9 +35,26 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
                 .OnDelete(DeleteBehavior.Restrict); // Evita exclusão em cascata
 
             builder
-                .HasMany(i => i.Members)
-                .WithMany() // ou .WithMany(m => m.Incidents) se houver navegação reversa
-                .UsingEntity(j => j.ToTable("IncidentMembers"));
+    .HasMany(i => i.Members)
+    .WithMany()
+    .UsingEntity<Dictionary<string, object>>(
+        "IncidentMembers",
+        right => right
+            .HasOne<Member>()
+            .WithMany()
+            .HasForeignKey("MemberId")
+            .OnDelete(DeleteBehavior.Cascade),
+        left => left
+            .HasOne<Incident>() // ou a entidade correspondente
+            .WithMany()
+            .HasForeignKey("IncidentId")
+            .OnDelete(DeleteBehavior.Cascade),
+        join =>
+        {
+            join.HasKey("IncidentId", "MemberId");
+            join.ToTable("IncidentMembers");
+        });
+
         }
     }
 }

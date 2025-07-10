@@ -19,6 +19,6 @@ namespace Stellantis.ProjectName.Domain.Entities
         public DateTime? ClosedAt { get; set; }
         public FeedbackStatus Status { get; set; }
         public ApplicationData Application { get; set; } = null!;
-        public ICollection<Member> Members { get; set; }
+        public virtual ICollection<Member> Members { get; set; } = new List<Member>();
     }
 }
