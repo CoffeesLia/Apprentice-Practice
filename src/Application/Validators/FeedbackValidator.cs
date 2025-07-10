@@ -18,6 +18,10 @@ namespace Stellantis.ProjectName.Application.Validators
             RuleFor(i => i.Description)
                 .NotEmpty().WithMessage(localizer[nameof(FeedbackResources.DescriptionRequired)]);
 
+            RuleFor(i => i.Status)
+            .IsInEnum()
+            .WithMessage(localizer[nameof(FeedbackResources.StatusRequired)]);
+
             RuleFor(i => i.ApplicationId)
                 .GreaterThan(0).WithMessage(localizer[nameof(FeedbackResources.ApplicationRequired)]);
         }

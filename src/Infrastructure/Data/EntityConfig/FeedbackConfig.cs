@@ -35,9 +35,8 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasMany(i => i.Members)
-                .WithOne()
-                .HasForeignKey(m => m.SquadId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .WithMany()
+                .UsingEntity(j => j.ToTable("FeedbackMembers"));
         }
     }
 }
