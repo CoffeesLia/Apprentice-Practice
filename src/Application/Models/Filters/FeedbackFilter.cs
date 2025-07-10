@@ -6,7 +6,7 @@ namespace Stellantis.ProjectName.Application.Models.Filters
     {
         public int Id { get; set; }
         public string? Title { get; set; }
-        public int MemberId { get; set; }
+        public List<int> MemberId { get; set; }
         public int ApplicationId { get; set; }
         public FeedbackStatus? Status { get; set; }
     }

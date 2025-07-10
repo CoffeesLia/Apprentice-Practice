@@ -9,7 +9,6 @@
         public string Status { get; set; } = string.Empty;
         public int ApplicationId { get; set; }
         public ApplicationVm? Application { get; set; }
-        public int MemberId { get; set; }
         public ICollection<MemberVm> Members { get; set; }
     }
 }
