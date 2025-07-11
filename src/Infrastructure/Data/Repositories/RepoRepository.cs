@@ -59,13 +59,12 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 .ConfigureAwait(false);
         }
 
-        public async Task<bool> UrlAlreadyExists(Uri url, int applicationId, int? id = null)
+        public async Task<bool> UrlAlreadyExists(Uri url, int? id = null)
         {
-            return await Context.Set<Repo>()
-                .AnyAsync(a => a.Url == url
-                            && a.ApplicationId == applicationId
-                            && (!id.HasValue || a.Id != id))
-                .ConfigureAwait(false);
+            var query = Context.Set<Repo>().Where(r => r.Url == url);
+            if (id.HasValue)
+                query = query.Where(r => r.Id != id.Value);
+            return await query.AnyAsync();
         }
     }
 }
