@@ -16,16 +16,40 @@ namespace Stellantis.ProjectName.Application.Validators
             var localizer = localizerFactory.Create(typeof(RepoResources));
 
             RuleFor(x => x.Name)
-            .NotNull()
-            .NotEmpty()
-            .WithMessage(localizer[nameof(RepoResources.NameIsRequired)]);
+                .NotNull()
+                .NotEmpty()
+                .WithMessage(localizer[nameof(RepoResources.NameIsRequired)]);
             RuleFor(x => x.Name)
-             .Length(MinimumLegth, MaximumLength)
-             .WithMessage(localizer[nameof(RepoResources.NameValidateLength), MinimumLegth, MaximumLength]);
+                .Length(MinimumLegth, MaximumLength)
+                .WithMessage(localizer[nameof(RepoResources.NameValidateLength), MinimumLegth, MaximumLength]);
             RuleFor(x => x.Url)
                 .NotNull()
                 .NotEmpty()
-                .WithMessage(localizer[nameof(RepoResources.UrlIsRequired)]);
+                .WithMessage(localizer[nameof(RepoResources.UrlIsRequired)])
+                .Must(url => BeAValidCustomUrl(url.ToString()))
+                .WithMessage(localizer["A URL deve conter 'www.' e possuir pelo menos dois pontos no host (ex: 'exemplo.com.br')."]);
+        }
+
+        private static bool BeAValidCustomUrl(string url)
+        {
+            if (string.IsNullOrEmpty(url))
+                return false;
+
+            try
+            {
+                var uri = new Uri(url);
+                var host = uri.Host.ToUpperInvariant();
+
+                if (!host.Contains("WWW.", StringComparison.Ordinal))
+                    return false;
+
+                int dotCount = host.Count(c => c == '.');
+                return dotCount >= 2;
+            }
+            catch (UriFormatException)
+            {
+                return false;
+            }
         }
     }
 }

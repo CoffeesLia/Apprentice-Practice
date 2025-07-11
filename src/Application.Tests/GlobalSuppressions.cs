@@ -14,3 +14,4 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Performance", "CA1863:Use 'CompositeFormat'", Justification = "<Pendente>", Scope = "member", Target = "~M:Application.Tests.Services.ApplicationDataServiceTest.CreateAsyncShouldReturnInvalidDataWhenDescriptionExceedsMaxLength~System.Threading.Tasks.Task")]
 [assembly: SuppressMessage("Maintainability", "CA1515:Considere tornar internos os tipos públicos", Justification = "<Pendente>", Scope = "type", Target = "~T:Application.Tests.DummyEntity")]
 [assembly: SuppressMessage("Maintainability", "CA1515:Considere tornar internos os tipos públicos", Justification = "<Pendente>", Scope = "type", Target = "~T:Application.Tests.DummyEntityService")]
+[assembly: SuppressMessage("Performance", "CA1863:Use 'CompositeFormat'", Justification = "<Pendente>", Scope = "member", Target = "~M:Application.Tests.Services.RepoServiceTest.CreateAsyncShouldReturnInvalidDataNameVali~System.Threading.Tasks.Task")]

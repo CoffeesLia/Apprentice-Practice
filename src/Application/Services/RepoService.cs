@@ -35,7 +35,6 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.Conflict(_localizer[nameof(RepoResources.NameAlreadyExists)]);
             }
 
-            // Validação global da URL
             if (await Repository.UrlAlreadyExists(item.Url!).ConfigureAwait(false))
             {
                 return OperationResult.Conflict(_localizer[nameof(RepoResources.UrlAlreadyExists)]);
@@ -70,7 +69,6 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.Conflict(_localizer[nameof(RepoResources.NameAlreadyExists)]);
             }
 
-            // Validação global da URL (ignora o próprio registro)
             if (existingRepo.Url != item.Url && await Repository.UrlAlreadyExists(item.Url!, item.Id).ConfigureAwait(false))
             {
                 return OperationResult.Conflict(_localizer[nameof(RepoResources.UrlAlreadyExists)]);
