@@ -34,9 +34,19 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasMany(i => i.Members)
+            builder
+                .HasMany(i => i.Members)
                 .WithMany()
-                .UsingEntity(j => j.ToTable("FeedbackMembers"));
+                .UsingEntity<Dictionary<string, object>>(
+                    "FeedbackMembers", 
+                    right => right.HasOne<Member>().WithMany().HasForeignKey("MemberId").OnDelete(DeleteBehavior.Cascade),
+                    left => left.HasOne<Feedback>().WithMany().HasForeignKey("FeedbackId").OnDelete(DeleteBehavior.Cascade),
+                    join =>
+                    {
+                        join.HasKey("FeedbackId", "MemberId");
+                        join.ToTable("FeedbackMembers");
+                    }
+                );
         }
     }
 }
