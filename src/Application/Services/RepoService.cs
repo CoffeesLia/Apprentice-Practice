@@ -63,20 +63,15 @@ namespace Stellantis.ProjectName.Application.Services
             var normalizedExistingName = existingRepo.Name.Trim();
             var normalizedNewName = item.Name.Trim();
 
-            if (!string.Equals(normalizedExistingName, normalizedNewName, StringComparison.OrdinalIgnoreCase))
+            if (!string.Equals(normalizedExistingName, normalizedNewName, StringComparison.OrdinalIgnoreCase) && await 
+                Repository.NameAlreadyExists(normalizedNewName, item.ApplicationId, item.Id).ConfigureAwait(false))
             {
-                if (await Repository.NameAlreadyExists(normalizedNewName, item.ApplicationId, item.Id).ConfigureAwait(false))
-                {
-                    return OperationResult.Conflict(_localizer[nameof(RepoResources.NameAlreadyExists)]);
-                }
+                return OperationResult.Conflict(_localizer[nameof(RepoResources.NameAlreadyExists)]);
             }
 
-            if (existingRepo.Url != item.Url)
+            if (existingRepo.Url != item.Url && await Repository.UrlAlreadyExists(item.Url!, item.ApplicationId, item.Id).ConfigureAwait(false))
             {
-                if (await Repository.UrlAlreadyExists(item.Url!, item.ApplicationId, item.Id).ConfigureAwait(false))
-                {
-                    return OperationResult.Conflict(_localizer[nameof(RepoResources.UrlAlreadyExists)]);
-                }
+                return OperationResult.Conflict(_localizer[nameof(RepoResources.UrlAlreadyExists)]);
             }
 
             return await base.UpdateAsync(item).ConfigureAwait(false);
