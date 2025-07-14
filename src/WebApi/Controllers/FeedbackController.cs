@@ -12,7 +12,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [ApiController]
     [Route("api/feedbacks")]
-    public class FeedbacksController(IFeedbackService service, IMapper mapper, IStringLocalizerFactory localizerFactory)
+    public sealed class FeedbacksController(IFeedbackService service, IMapper mapper, IStringLocalizerFactory localizerFactory)
         : EntityControllerBase<Feedback, FeedbackDto>(service, mapper, localizerFactory)
     {
         [HttpPost]

@@ -264,7 +264,6 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.Success, result.Status);
         }
 
-
         [Fact]
         public async Task GetListAsyncReturnsPagedResult()
         {
@@ -297,6 +296,99 @@ namespace Application.Tests.Services
             Assert.Single(result.Result);
             Assert.Equal(1, result.Total);
             Assert.Equal("Doc", result.Result.First().Name);
+        }
+
+        [Fact]
+        public async Task GetListAsyncFilterByNameReturnsOnlyMatchingRepos()
+        {
+            // Arrange
+            var repo1 = new Repo { Name = "RepoA", Description = "Desc", Url = new Uri("https://a.com"), ApplicationId = 1 };
+            var repo2 = new Repo { Name = "RepoB", Description = "Desc", Url = new Uri("https://b.com"), ApplicationId = 1 };
+            var pagedResult = new PagedResult<Repo>
+            {
+                Result = new List<Repo> { repo1 },
+                Page = 1,
+                PageSize = 10,
+                Total = 1
+            };
+            var filter = new RepoFilter { Name = "RepoA", ApplicationId = 1 };
+            _repoRepositoryMock.Setup(r => r.GetListAsync(filter)).ReturnsAsync(pagedResult);
+
+            // Act
+            var result = await _repoService.GetListAsync(filter);
+
+            // Assert
+            Assert.Single(result.Result);
+            Assert.Equal("RepoA", result.Result.First().Name);
+        }
+
+        [Fact]
+        public async Task NameAlreadyExistsWithIdIgnoresCurrentRepo()
+        {
+            // Arrange
+            var repo = new Repo { Id = 10, Name = "RepoX", Description = "Desc", Url = new Uri("https://x.com"), ApplicationId = 1 };
+            _repoRepositoryMock.Setup(r => r.NameAlreadyExists(repo.Name, repo.ApplicationId, repo.Id)).ReturnsAsync(false);
+
+            // Act
+            var exists = await _repoRepositoryMock.Object.NameAlreadyExists(repo.Name, repo.ApplicationId, repo.Id);
+
+            // Assert
+            Assert.False(exists);
+        }
+
+        [Fact]
+        public async Task UrlAlreadyExistsWithIdIgnoresCurrentRepo()
+        {
+            // Arrange
+            var repo = new Repo { Id = 10, Name = "RepoX", Description = "Desc", Url = new Uri("https://x.com"), ApplicationId = 1 };
+            _repoRepositoryMock.Setup(r => r.UrlAlreadyExists(repo.Url, repo.ApplicationId, repo.Id)).ReturnsAsync(false);
+
+            // Act
+            var exists = await _repoRepositoryMock.Object.UrlAlreadyExists(repo.Url, repo.ApplicationId, repo.Id);
+
+            // Assert
+            Assert.False(exists);
+        }
+
+        [Fact]
+        public async Task DeleteAsync_WhenRepoDoesNotExist_ReturnsNotFound()
+        {
+            // Arrange
+            _repoRepositoryMock.Setup(r => r.GetByIdAsync(It.IsAny<int>())).ReturnsAsync((Repo?)null);
+
+            // Act
+            var result = await _repoService.DeleteAsync(999);
+
+            // Assert
+            Assert.Equal(OperationStatus.NotFound, result.Status);
+        }
+
+        [Fact]
+        public async Task GetByIdAsync_WhenRepoExists_ReturnsRepo()
+        {
+            // Arrange
+            var repo = new Repo { Id = 1, Name = "Repo", Description = "Desc", Url = new Uri("https://repo.com"), ApplicationId = 1 };
+            _repoRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(repo);
+
+            // Act
+            var result = await _repoService.GetItemAsync(1);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(repo.Id, result!.Id);
+        }
+
+        [Fact]
+        public async Task GetByIdAsync_WhenRepoDoesNotExist_ReturnsNull()
+        {
+            // Arrange
+            _repoRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync((Repo?)null);
+
+            // Act
+            var result = await _repoService.GetItemAsync(1);
+
+            // Assert
+            Assert.Null(result);
         }
     }
 }

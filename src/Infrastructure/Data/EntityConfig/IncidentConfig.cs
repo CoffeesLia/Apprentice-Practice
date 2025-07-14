@@ -36,8 +36,26 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
 
             builder
                 .HasMany(i => i.Members)
-                .WithMany() // ou .WithMany(m => m.Incidents) se houver navegação reversa
-                .UsingEntity(j => j.ToTable("IncidentMembers"));
+                .WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "IncidentMembers",
+                    right => right
+                        .HasOne<Member>()
+                        .WithMany()
+                        .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Cascade),
+                    left => left
+                        .HasOne<Incident>()
+                        .WithMany()
+                        .HasForeignKey("IncidentId")
+                        .OnDelete(DeleteBehavior.Cascade),
+                    join =>
+                    {
+                        join.HasKey("IncidentId", "MemberId");
+                        join.ToTable("IncidentMembers");
+                    }
+                );
+
         }
     }
 }

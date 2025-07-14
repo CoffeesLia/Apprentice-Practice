@@ -6,6 +6,6 @@ namespace Stellantis.ProjectName.Application.Interfaces.Services
 {
     public interface IFeedbackService : IEntityServiceBase<Feedback>
     {
-        Task<PagedResult<Feedback>> GetListAsync(FeedbackFilter feedbackFilter);
+        Task<PagedResult<Feedback>> GetListAsync(FeedbackFilter filter);
     }
 }

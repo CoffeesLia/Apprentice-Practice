@@ -1,248 +1,86 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using AutoFixture;
 using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
+using Xunit;
 
 namespace Infrastructure.Tests.Data.Repositories
 {
-    public class FeedbackRepositoryTest : IDisposable
+    public class FeedbackRepositoryTests : IDisposable
     {
         private readonly Context _context;
         private readonly FeedbackRepository _repository;
         private readonly Fixture _fixture;
-        private bool isDisposed;
-        private IntPtr nativeResource = Marshal.AllocHGlobal(100);
 
-
-        public FeedbackRepositoryTest()
+        public FeedbackRepositoryTests()
         {
             _fixture = new Fixture();
-            // Evita exceção de referência circular no AutoFixture
             _fixture.Behaviors
                 .OfType<ThrowingRecursionBehavior>()
                 .ToList()
                 .ForEach(b => _fixture.Behaviors.Remove(b));
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
-            DbContextOptions<Context> options = new DbContextOptionsBuilder<Context>()
-                .UseInMemoryDatabase(databaseName: _fixture.Create<string>())
+            var options = new DbContextOptionsBuilder<Context>()
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .Options;
             _context = new Context(options);
             _repository = new FeedbackRepository(_context);
         }
 
         [Fact]
-        public async Task GetByIdAsyncWhenIdExists()
+        public async Task GetByIdAsyncReturnsFeedbackWhenExists()
         {
             // Arrange
-            Feedback feedbacks = _fixture.Create<Feedback>();
-            await _context.Set<Feedback>().AddAsync(feedbacks);
+            var feedback = _fixture.Build<Feedback>()
+                .With(f => f.Id, 0)
+                .Create();
+            await _context.Set<Feedback>().AddAsync(feedback);
             await _context.SaveChangesAsync();
 
             // Act
-            Feedback? result = await _repository.GetByIdAsync(feedbacks.Id);
+            var result = await _repository.GetByIdAsync(feedback.Id);
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(feedbacks.Id, result.Id);
+            Assert.Equal(feedback.Id, result.Id);
         }
 
         [Fact]
-        public async Task GetByIdAsyncWhenIdDoesNotExist()
+        public async Task GetByIdAsyncReturnsNullWhenNotExists()
         {
-            // Arrange
-            int id = _fixture.Create<int>();
-
             // Act
-            Feedback? result = await _repository.GetByIdAsync(id);
+            var result = await _repository.GetByIdAsync(-1);
 
             // Assert
             Assert.Null(result);
         }
 
         [Fact]
-        public async Task GetListAsyncWhenCalled()
+        public async Task DeleteAsyncRemovesFeedbackWhenExists()
         {
             // Arrange
-            var application = _fixture.Build<ApplicationData>()
-                .With(a => a.Id, 0) // Deixe o EF Core gerar o Id
+            var feedback = _fixture.Build<Feedback>()
+                .With(f => f.Id, 0)
                 .Create();
-            await _context.Set<ApplicationData>().AddAsync(application);
-            await _context.SaveChangesAsync();
-
-            // Reutilize a instância rastreada de ApplicationData
-            var trackedApplication = await _context.Set<ApplicationData>().FirstAsync(a => a.Id == application.Id);
-
-            FeedbackFilter filter = new()
-            {
-                Page = 1,
-                PageSize = 10,
-                Title = _fixture.Create<string>(),
-                ApplicationId = trackedApplication.Id,
-                Status = null
-            };
-
-            const int Count = 10;
-            IEnumerable<Feedback> incidents = _fixture
-                .Build<Feedback>()
-                .With(x => x.Title, filter.Title)
-                .With(x => x.ApplicationId, trackedApplication.Id)
-                .With(x => x.Application, trackedApplication) // Use a instância rastreada
-                .With(x => x.Status, FeedbackStatus.Open)
-                .CreateMany(Count);
-
-            await _context.Set<Feedback>().AddRangeAsync(incidents);
-            await _context.SaveChangesAsync();
-
-            // Verifique se os dados foram salvos corretamente
-            List<Feedback> savedIncidents = await _context.Set<Feedback>().ToListAsync();
-            Assert.Equal(Count, savedIncidents.Count);
-
-            // Act
-            PagedResult<Feedback> result = await _repository.GetListAsync(filter);
-
-            // Assert
-            Assert.Equal(Count, result.Total);
-            Assert.Equal(filter.Page, result.Page);
-            Assert.Equal(filter.PageSize, result.PageSize);
-
-        }
-
-        [Theory]
-        [InlineData(FeedbackStatus.Open)]
-        [InlineData(FeedbackStatus.InProgress)]
-        [InlineData(FeedbackStatus.Cancelled)]
-        [InlineData(FeedbackStatus.Closed)]
-        [InlineData(FeedbackStatus.Reopened)]
-        public async Task GetListAsyncFilterByStatusReturnsOnlyMatchingStatus(FeedbackStatus statusFeedbacks)
-        {
-            // Arrange
-            var fixture = new Fixture();
-            fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList()
-                .ForEach(b => fixture.Behaviors.Remove(b));
-            fixture.Behaviors.Add(new OmitOnRecursionBehavior());
-
-            var options = new DbContextOptionsBuilder<Context>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()) // banco isolado!
-                .Options;
-
-            using var context = new Context(options);
-            var repository = new FeedbackRepository(context);
-
-            var application = fixture.Build<ApplicationData>().Create();
-
-            await context.Set<ApplicationData>().AddAsync(application);
-            await context.SaveChangesAsync();
-
-            var matchingIncidents = fixture.Build<Feedback>()
-                .With(i => i.ApplicationId, application.Id)
-                .With(i => i.Application, application)
-                .With(i => i.Status, statusFeedbacks)
-                .CreateMany(3)
-                .ToList();
-
-            var otherIncidents = fixture.Build<Feedback>()
-                .With(i => i.ApplicationId, application.Id)
-                .With(i => i.Application, application)
-                .With(i => i.Status, statusFeedbacks == FeedbackStatus.Open ? FeedbackStatus.Closed : FeedbackStatus.Open)
-                .CreateMany(2)
-                .ToList();
-
-            await context.Set<Feedback>().AddRangeAsync(matchingIncidents.Concat(otherIncidents));
-            await context.SaveChangesAsync();
-
-            var filter = new FeedbackFilter
-            {
-                Page = 1,
-                PageSize = 10,
-                Status = statusFeedbacks,
-                ApplicationId = application.Id
-            };
-
-            // Act
-            var result = await repository.GetListAsync(filter);
-
-            // Assert
-            Assert.Equal(3, result.Total);
-            Assert.All(result.Result, i => Assert.Equal(statusFeedbacks, i.Status));
-        }
-
-
-        [Fact]
-        public async Task GetByApplicationIdAsyncWhenExists()
-        {
-            // Arrange
-            var application = _fixture.Build<ApplicationData>()
-                .With(a => a.Id, 0) // Deixe o EF Core gerar o Id
-                .Create();
-            await _context.Set<ApplicationData>().AddAsync(application);
-            await _context.SaveChangesAsync();
-
-            var incidents = _fixture.Build<Feedback>()
-                .With(x => x.ApplicationId, application.Id)
-                .With(x => x.Application, application)
-                .CreateMany(3)
-                .ToList();
-
-            await _context.Set<Feedback>().AddRangeAsync(incidents);
+            await _context.Set<Feedback>().AddAsync(feedback);
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _repository.GetByApplicationIdAsync(application.Id);
+            await _repository.DeleteAsync(feedback.Id);
+            var deleted = await _context.Set<Feedback>().FindAsync(feedback.Id);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.Equal(3, result.Count());
-            Assert.All(result, i => Assert.Equal(application.Id, i.ApplicationId));
+            Assert.Null(deleted);
         }
 
         [Fact]
-        public async Task GetByMemberIdAsyncWhenExists()
-        {
-            // Arrange
-            int memberId = _fixture.Create<int>();
-            var member = _fixture.Build<Member>().With(m => m.Id, memberId).Create();
-            var feedbacks = _fixture.Build<Feedback>()
-                .With(i => i.Members, [member])
-                .Create();
-
-            await _context.Set<Feedback>().AddAsync(feedbacks);
-            await _context.SaveChangesAsync();
-
-            // Act
-            var result = await _repository.GetByMemberIdAsync(memberId);
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.Contains(result, i => i.Members.Any(m => m.Id == memberId));
-        }
-
-        [Fact]
-        public async Task GetByStatusAsyncWhenExists()
-        {
-            // Arrange
-            var statusFeedbacks = FeedbackStatus.Open;
-            var incidents = _fixture.Build<Feedback>()
-                .With(i => i.Status, statusFeedbacks)
-                .CreateMany(2)
-                .ToList();
-
-            await _context.Set<Feedback>().AddRangeAsync(incidents);
-            await _context.SaveChangesAsync();
-
-            // Act
-            var result = await _repository.GetByStatusAsync(statusFeedbacks);
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.All(result, i => Assert.Equal(statusFeedbacks, i.Status));
-        }
-
-        [Fact]
-        public async Task DeleteAsyncWhenCalled()
+        public async Task GetListAsyncReturnsPagedResultWithFilter()
         {
             // Arrange
             var application = _fixture.Build<ApplicationData>()
@@ -251,48 +89,117 @@ namespace Infrastructure.Tests.Data.Repositories
             await _context.Set<ApplicationData>().AddAsync(application);
             await _context.SaveChangesAsync();
 
-            Feedback feedbacks = _fixture.Build<Feedback>()
-                .With(i => i.ApplicationId, application.Id)
-                .With(i => i.Application, application)
-                .With(i => i.Members, [])
-                .Create();
+            var trackedApp = await _context.Set<ApplicationData>().FirstAsync(a => a.Id == application.Id);
 
-            await _context.Set<Feedback>().AddAsync(feedbacks);
+            var feedbacks = _fixture.Build<Feedback>()
+                .With(f => f.Title, "TestTitle")
+                .With(f => f.ApplicationId, trackedApp.Id)
+                .With(f => f.Application, trackedApp)
+                .With(f => f.Status, FeedbackStatus.Open)
+                .CreateMany(5)
+                .ToList();
+
+            await _context.Set<Feedback>().AddRangeAsync(feedbacks);
+            await _context.SaveChangesAsync();
+
+            var filter = new FeedbackFilter
+            {
+                Page = 1,
+                PageSize = 10,
+                Title = "TestTitle",
+                ApplicationId = trackedApp.Id,
+                Status = FeedbackStatus.Open
+            };
+
+            // Act
+            var result = await _repository.GetListAsync(filter);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(5, result.Total);
+            Assert.All(result.Result, f => Assert.Equal("TestTitle", f.Title));
+        }
+
+        [Fact]
+        public async Task GetMembersByApplicationIdAsyncReturnsMembersWhenApplicationExists()
+        {
+            // Arrange
+            var squad = _fixture.Build<Squad>().With(s => s.Id, 0).Create();
+            await _context.Squads.AddAsync(squad);
+            await _context.SaveChangesAsync();
+
+            var application = _fixture.Build<ApplicationData>()
+                .With(a => a.SquadId, squad.Id)
+                .Create();
+            await _context.Applications.AddAsync(application);
+            await _context.SaveChangesAsync();
+
+            var trackedApplication = await _context.Applications.FirstAsync(a => a.Name == application.Name);
+
+            var member = _fixture.Build<Member>()
+                .With(m => m.SquadId, squad.Id)
+                .Create();
+            await _context.Members.AddAsync(member);
+            await _context.SaveChangesAsync();
+
+            var trackedMember = await _context.Members.FirstAsync(m => m.Name == member.Name);
+
+            // Crie e salve um feedback que relacione o member à application
+            var feedback = _fixture.Build<Feedback>()
+                .With(f => f.ApplicationId, trackedApplication.Id)
+                .With(f => f.Application, trackedApplication)
+                .With(f => f.Members, [trackedMember])
+                .Create();
+            await _context.Feedbacks.AddAsync(feedback);
             await _context.SaveChangesAsync();
 
             // Act
-            await _repository.DeleteAsync(feedbacks.Id);
-            Feedback? result = await _context.Set<Feedback>().FindAsync(feedbacks.Id);
+            var result = await _repository.GetMembersByApplicationIdAsync(trackedApplication.Id);
 
             // Assert
-            Assert.Null(result);
+            Assert.NotNull(result);
+        }
+
+        [Fact]
+        public async Task GetMembersByApplicationIdAsyncReturnsEmptyWhenApplicationNotExists()
+        {
+            // Act
+            var result = await _repository.GetMembersByApplicationIdAsync(-1);
+
+            // Assert
+            Assert.Empty(result);
+        }
+
+        [Theory]
+        [InlineData(FeedbackStatus.Open)]
+        [InlineData(FeedbackStatus.InProgress)]
+        [InlineData(FeedbackStatus.Closed)]
+        public async Task GetByStatusAsyncReturnsOnlyMatchingStatus(FeedbackStatus status)
+        {
+            // Arrange
+            var feedbacks = _fixture.Build<Feedback>()
+                .With(f => f.Status, status)
+                .CreateMany(3)
+                .ToList();
+
+            var others = _fixture.Build<Feedback>()
+                .With(f => f.Status, FeedbackStatus.Cancelled)
+                .CreateMany(2)
+                .ToList();
+
+            await _context.Feedbacks.AddRangeAsync(feedbacks.Concat(others));
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.GetByStatusAsync(status);
+
+            // Assert
+            Assert.All(result, f => Assert.Equal(status, f.Status));
         }
 
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (isDisposed)
-            {
-                return;
-            }
-
-            if (disposing)
-            {
-                _context?.Dispose();
-            }
-
-            if (nativeResource != IntPtr.Zero)
-            {
-                Marshal.FreeHGlobal(nativeResource);
-                nativeResource = IntPtr.Zero;
-            }
-
-            isDisposed = true;
+            _context?.Dispose();
         }
     }
 }

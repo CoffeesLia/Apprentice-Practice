@@ -61,7 +61,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Application Id is required.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Application Id is required..
         /// </summary>
         public static string ApplicationIdIsRequired {
             get {
@@ -70,7 +70,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Description is required.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Description is required..
         /// </summary>
         public static string DescriptionIsRequired {
             get {
@@ -88,7 +88,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Name is required.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Name is required..
         /// </summary>
         public static string NameIsRequired {
             get {
@@ -106,6 +106,15 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Not Found..
+        /// </summary>
+        public static string NotFound {
+            get {
+                return ResourceManager.GetString("NotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Url already exists..
         /// </summary>
         public static string UrlAlreadyExists {
@@ -115,7 +124,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Url is required.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Url is required..
         /// </summary>
         public static string UrlIsRequired {
             get {

@@ -14,12 +14,11 @@ namespace Stellantis.ProjectName.Domain.Entities
     {
         public string Title { get; set; } = null!;
         public string Description { get; set; } = null!;
+        public int ApplicationId { get; set; }       
         public DateTime CreatedAt { get; set; }
         public DateTime? ClosedAt { get; set; }
         public FeedbackStatus Status { get; set; }
-        public int ApplicationId { get; set; }
         public ApplicationData Application { get; set; } = null!;
-        public int MemberId { get; set; }
-        public ICollection<Member> Members { get; set; }
+        public virtual ICollection<Member> Members { get; set; } = [];
     }
 }
