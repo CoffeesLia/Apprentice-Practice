@@ -18,6 +18,6 @@
         public DateTime? ClosedAt { get; set; }
         public FeedbackStatus Status { get; set; }
         public ApplicationData Application { get; set; } = null!;
-        public virtual ICollection<Member> Members { get; } = [];
+        public virtual ICollection<Member> Members { get; set; } = [];
     }
 }

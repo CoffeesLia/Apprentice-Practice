@@ -22,34 +22,34 @@ namespace Stellantis.ProjectName.Application.Validators
             RuleFor(x => x.Name)
                 .Length(MinimumLegth, MaximumLength)
                 .WithMessage(localizer[nameof(RepoResources.NameValidateLength), MinimumLegth, MaximumLength]);
+
             RuleFor(x => x.Url)
                 .NotNull()
                 .NotEmpty()
-                .WithMessage(localizer[nameof(RepoResources.UrlIsRequired)])
-                .Must(url => BeAValidCustomUrl(url.ToString()))
-                .WithMessage(localizer["A URL deve conter 'www.' e possuir pelo menos dois pontos no host (ex: 'exemplo.com.br')."]);
+                .WithMessage(localizer[nameof(RepoResources.UrlIsRequired)]);
+
+            RuleFor(x => x.Url)
+                .Must(url => HasAtLeastTwoDots(url))
+                .WithMessage(localizer[nameof(RepoResources.UrlIsInvalid)]);
+
+            RuleFor(x => x.Url)
+                .Must(url => HasWwwOrHttps(url))
+                .WithMessage(localizer[nameof(RepoResources.UrlIsInvalid)]);
         }
 
-        private static bool BeAValidCustomUrl(string url)
+        private static bool HasAtLeastTwoDots(Uri? url)
         {
-            if (string.IsNullOrEmpty(url))
-                return false;
+            if (url == null || !url.IsAbsoluteUri) return false;
+            var host = url.Host;
+            return host.Count(c => c == '.') >= 2;
+        }
 
-            try
-            {
-                var uri = new Uri(url);
-                var host = uri.Host.ToUpperInvariant();
-
-                if (!host.Contains("WWW.", StringComparison.Ordinal))
-                    return false;
-
-                int dotCount = host.Count(c => c == '.');
-                return dotCount >= 2;
-            }
-            catch (UriFormatException)
-            {
-                return false;
-            }
+        private static bool HasWwwOrHttps(Uri? url)
+        {
+            if (url == null) return false;
+            var host = url.Host.ToUpperInvariant();
+            var scheme = url.Scheme.ToUpperInvariant();
+            return host.Contains("WWW.", StringComparison.Ordinal) || scheme == "HTTPS";
         }
     }
 }
