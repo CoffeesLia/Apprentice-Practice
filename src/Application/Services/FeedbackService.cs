@@ -25,19 +25,28 @@ namespace Stellantis.ProjectName.Application.Services
                 var memberIds = item.Members.Select(m => m.Id).ToList();
                 var pagedMembers = await UnitOfWork.MemberRepository
                     .GetListAsync(m => memberIds.Contains(m.Id)).ConfigureAwait(false);
-                item.Members = [.. pagedMembers.Result];
+
+                item.Members.Clear();
+                if (pagedMembers?.Result != null) 
+                {
+                    foreach (var member in pagedMembers.Result)
+                    {
+                        item.Members.Add(member);
+                    }
+                }
             }
             else
             {
-                item.Members = [];
+                item.Members?.Clear(); 
             }
+
             var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
             if (!validationResult.IsValid)
             {
                 return OperationResult.InvalidData(validationResult);
             }
 
-            var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(item.ApplicationId).ConfigureAwait(false); 
+            var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(item.ApplicationId).ConfigureAwait(false);
             if (application == null)
             {
                 return OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
@@ -57,7 +66,7 @@ namespace Stellantis.ProjectName.Application.Services
                 }
             }
 
-        item.CreatedAt = DateTime.UtcNow;
+            item.CreatedAt = DateTime.UtcNow;
             if (item.Status == default)
             {
                 item.Status = FeedbackStatus.Open;
