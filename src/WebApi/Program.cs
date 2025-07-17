@@ -6,13 +6,13 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Infrastructure.Data;
 using Stellantis.ProjectName.IoC;
 using Stellantis.ProjectName.WebApi;
 using Stellantis.ProjectName.WebApi.Extensions;
 using Stellantis.ProjectName.WebApi.Filters;
 using Stellantis.ProjectName.WebApi.Hubs;
-
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -47,6 +47,7 @@ builder.Services.ConfigureDependencyInjection();
 builder.Services.RegisterMapper();
 
 builder.Services.AddSignalR();
+builder.Services.AddScoped<NotificationService>();
 
 
 string? databaseType = configuration["DatabaseType"];
@@ -118,6 +119,7 @@ app.UseRequestLocalization(localizationOptions);
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
-app.MapHub<ChatHub>("/chathub");
+app.MapHub<ChatHub>("/chat");
+app.MapHub<NotificationHub>("/notification");
 app.UsePathBase("/");
 await app.RunAsync().ConfigureAwait(false);

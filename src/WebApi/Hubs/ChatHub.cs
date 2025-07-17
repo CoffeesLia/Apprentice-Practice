@@ -12,7 +12,7 @@ namespace Stellantis.ProjectName.WebApi.Hubs
         {
             var id = Guid.NewGuid().ToString();
 
-            var chatMessage = new ChatMessage
+            var chatMessage = new Chat
             {
                 Id = Guid.Parse(id),
                 User = user,
