@@ -13,6 +13,7 @@ using Stellantis.ProjectName.WebApi;
 using Stellantis.ProjectName.WebApi.Extensions;
 using Stellantis.ProjectName.WebApi.Filters;
 using Stellantis.ProjectName.WebApi.Hubs;
+
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -47,8 +48,7 @@ builder.Services.ConfigureDependencyInjection();
 builder.Services.RegisterMapper();
 
 builder.Services.AddSignalR();
-builder.Services.AddScoped<NotificationService>();
-
+builder.Services.AddScoped<INotificationService, NotificationService>();
 
 string? databaseType = configuration["DatabaseType"];
 switch (databaseType)
