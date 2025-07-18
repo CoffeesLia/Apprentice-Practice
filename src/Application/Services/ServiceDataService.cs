@@ -35,10 +35,18 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.Conflict(_localizer[nameof(ServiceDataResources.ServiceInvalidApplicationId)]);
             }
 
-            if (await Repository.VerifyNameExistsAsync(service.Name ?? string.Empty).ConfigureAwait(false))
+            if (await Repository.VerifyNameExistsAsync(service.Name).ConfigureAwait(false))
             {
-                return OperationResult.Conflict(_localizer[nameof(ServiceDataResources.ServiceAlreadyExists)]);
+                var serviceWithSameName = await Repository.GetListAsync(
+                    new ServiceDataFilter { Name = service.Name, ApplicationId = service.ApplicationId }
+                ).ConfigureAwait(false);
+
+                if (serviceWithSameName.Result.Any(s => s.Id != service.Id))
+                {
+                    return OperationResult.Conflict(_localizer[nameof(ServiceDataResources.ServiceAlreadyExists)]);
+                }
             }
+
             return await base.CreateAsync(service).ConfigureAwait(false);
         }
 
@@ -77,7 +85,9 @@ namespace Stellantis.ProjectName.Application.Services
 
             if (await Repository.VerifyNameExistsAsync(service.Name).ConfigureAwait(false))
             {
-                var serviceWithSameName = await Repository.GetListAsync(new ServiceDataFilter { Name = service.Name }).ConfigureAwait(false);
+                var serviceWithSameName = await Repository.GetListAsync(
+                    new ServiceDataFilter { Name = service.Name, ApplicationId = service.ApplicationId }
+                ).ConfigureAwait(false);
 
                 if (serviceWithSameName.Result.Any(s => s.Id != service.Id))
                 {
