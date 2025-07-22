@@ -138,4 +138,7 @@
   <data name="DescriptionIsRequired" xml:space="preserve">
     <value>A Descrição é obrigatória.</value>
   </data>
+  <data name="NotFound" xml:space="preserve">
+    <value>Não encontrado</value>
+  </data>
 </root>
