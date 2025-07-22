@@ -16,5 +16,7 @@ namespace Stellantis.ProjectName.Domain.Entities
         public Squad Squads { get; set; }
         public ICollection<Repo> Repos { get; } = [];
         public ICollection<DocumentData> Documents { get; } = [];
+        public ICollection<Knowledge> Knowledges { get; set; } = [];
+
     }
 }

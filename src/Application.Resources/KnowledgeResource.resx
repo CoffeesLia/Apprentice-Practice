@@ -126,6 +126,9 @@
   <data name="AssociationNotFound" xml:space="preserve">
     <value>Association not found.</value>
   </data>
+  <data name="CannotEditOrRemovePastAssociation" xml:space="preserve">
+    <value>It's not allowed to remove past associations.</value>
+  </data>
   <data name="MemberApplicationMustBelongToTheSameSquad" xml:space="preserve">
     <value>Member and application must belong to the same squad.</value>
   </data>
@@ -137,6 +140,12 @@
   </data>
   <data name="OnlyPossibleRemoveIfBelongToTheLeadersSquad" xml:space="preserve">
     <value>It is only possible to remove if both belong to the leader's squad.</value>
+  </data>
+  <data name="OnlySquadLeaderAssociate" xml:space="preserve">
+    <value>OnlySquadLeaderAssociate</value>
+  </data>
+  <data name="OnlySquadLeaderRemove" xml:space="preserve">
+    <value>Only squad leader can remove.</value>
   </data>
   <data name="UnsupportedMembershipUpdate" xml:space="preserve">
     <value>Unsupported membership update.</value>

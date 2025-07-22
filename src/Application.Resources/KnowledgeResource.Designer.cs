@@ -88,6 +88,15 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a It&apos;s not allowed to remove past associations..
+        /// </summary>
+        public static string CannotEditOrRemovePastAssociation {
+            get {
+                return ResourceManager.GetString("CannotEditOrRemovePastAssociation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Member and application must belong to the same squad..
         /// </summary>
         public static string MemberApplicationMustBelongToTheSameSquad {
@@ -120,6 +129,24 @@ namespace Stellantis.ProjectName.Application.Resources {
         public static string OnlyPossibleRemoveIfBelongToTheLeadersSquad {
             get {
                 return ResourceManager.GetString("OnlyPossibleRemoveIfBelongToTheLeadersSquad", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a OnlySquadLeaderAssociate.
+        /// </summary>
+        public static string OnlySquadLeaderAssociate {
+            get {
+                return ResourceManager.GetString("OnlySquadLeaderAssociate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Only squad leader can remove..
+        /// </summary>
+        public static string OnlySquadLeaderRemove {
+            get {
+                return ResourceManager.GetString("OnlySquadLeaderRemove", resourceCulture);
             }
         }
         

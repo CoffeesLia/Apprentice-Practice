@@ -18,13 +18,13 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
 
             // relacionamento com member
             builder.HasOne(k => k.Member)
-                .WithMany()
+                .WithMany(m => m.Knowledges)
                 .HasForeignKey(k => k.MemberId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // relacionamento com application
             builder.HasOne(k => k.Application)
-                .WithMany()
+                .WithMany(a => a.Knowledges)
                 .HasForeignKey(k => k.ApplicationId)
                 .OnDelete(DeleteBehavior.Restrict);
         }

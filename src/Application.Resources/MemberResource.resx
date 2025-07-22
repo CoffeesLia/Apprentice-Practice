@@ -138,4 +138,7 @@
   <data name="MemberCostRequired" xml:space="preserve">
     <value>Member cost is required.</value>
   </data>
+  <data name="LeaderSquadAlreadyExists" xml:space="preserve">
+    <value>Leader Squad already exists in Squad.</value>
+  </data>
 </root>

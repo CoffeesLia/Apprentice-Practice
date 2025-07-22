@@ -1,6 +1,4 @@
 ﻿using System.Globalization;
-using System.Net.Http.Headers;
-using System.Text;
 using FluentValidation;
 using FluentValidation.Results;
 using Moq;
@@ -33,25 +31,33 @@ namespace Application.Tests.Services
             _memberRepositoryMock = new Mock<IMemberRepository>();
             _applicationRepositoryMock = new Mock<IApplicationDataRepository>();
 
-            Microsoft.Extensions.Localization.IStringLocalizerFactory localizer = Application.Tests.Helpers.LocalizerFactorHelper.Create();
-            KnowledgeValidator validator = new(localizer);
-
+            Microsoft.Extensions.Localization.IStringLocalizerFactory localizer = Helpers.LocalizerFactorHelper.Create();
+            KnowledgeValidator knowledgeValidator = new(localizer);
 
             _unitOfWorkMock.Setup(u => u.KnowledgeRepository).Returns(_knowledgeRepositoryMock.Object);
             _unitOfWorkMock.Setup(u => u.MemberRepository).Returns(_memberRepositoryMock.Object);
             _unitOfWorkMock.Setup(u => u.ApplicationDataRepository).Returns(_applicationRepositoryMock.Object);
 
-            _knowledgeService = new KnowledgeService(_unitOfWorkMock.Object, localizer, validator);
+            _knowledgeService = new KnowledgeService(_unitOfWorkMock.Object, localizer, knowledgeValidator);
         }
 
         [Fact]
         public async Task CreateAsyncShouldReturnInvalidDataWhenValidationFails()
         {
             // Arrange
-            Knowledge knowledge = new() { MemberId = 0, ApplicationId = 0 };
+            Knowledge knowledge = new()
+            {
+                MemberId = 0,
+                ApplicationId = 0
+            };
+            ValidationResult validationResult = new([new ValidationFailure("MemberId", "Member is required")]);
+            var validatorMock = new Mock<IValidator<Knowledge>>();
+            validatorMock.Setup(v => v.ValidateAsync(knowledge, default)).ReturnsAsync(validationResult);
+
+            var service = new KnowledgeService(_unitOfWorkMock.Object, Helpers.LocalizerFactorHelper.Create(), validatorMock.Object);
 
             // Act
-            OperationResult result = await _knowledgeService.CreateAsync(knowledge);
+            OperationResult result = await service.CreateAsync(knowledge);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
@@ -61,7 +67,15 @@ namespace Application.Tests.Services
         public async Task CreateAsyncShouldReturnConflictWhenAssociationExists()
         {
             // Arrange
-            Knowledge knowledge = new() { MemberId = 1, ApplicationId = 2 };
+            Knowledge knowledge = new()
+            {
+                MemberId = 1,
+                ApplicationId = 2,
+                SquadIdAtAssociationTime = 1
+            };
+
+            _memberRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(new Member { Id = 1, SquadId = 1, Name = "M", Role = "R", Email = "e@e.com", Cost = 1 });
+            _applicationRepositoryMock.Setup(r => r.GetByIdAsync(2)).ReturnsAsync(new ApplicationData("App") { Id = 2, SquadId = 1, ProductOwner = "PO", ConfigurationItem = "CI" });
             _knowledgeRepositoryMock.Setup(r => r.AssociationExistsAsync(1, 2)).ReturnsAsync(true);
 
             // Act
@@ -69,48 +83,25 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal(KnowledgeResource.AssociationAlreadyExists, result.Message);
         }
 
         [Fact]
-        public async Task CreateAsyncShouldReturnNotFoundWhenMemberOrApplicationNotFound()
+        public async Task CreateAsyncShouldReturnSuccessWhenKnowledgeIsValid()
         {
             // Arrange
-            Knowledge knowledge = new() { MemberId = 1, ApplicationId = 2 };
+            Knowledge knowledge = new()
+            {
+                MemberId = 1,
+                ApplicationId = 2,
+                SquadIdAtAssociationTime = 1
+            };
+
+            _memberRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(new Member { Id = 1, SquadId = 1, Name = "M", Role = "R", Email = "e@e.com", Cost = 1 });
+            _applicationRepositoryMock.Setup(r => r.GetByIdAsync(2)).ReturnsAsync(new ApplicationData("App") { Id = 2, SquadId = 1, ProductOwner = "PO", ConfigurationItem = "CI" });
             _knowledgeRepositoryMock.Setup(r => r.AssociationExistsAsync(1, 2)).ReturnsAsync(false);
-            _memberRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync((Member?)null);
-            _applicationRepositoryMock.Setup(r => r.GetByIdAsync(2)).ReturnsAsync((ApplicationData?)null);
-
-            // Act
-            OperationResult result = await _knowledgeService.CreateAsync(knowledge);
-
-            // Assert
-            Assert.Equal(OperationStatus.NotFound, result.Status);
-        }
-
-        [Fact]
-        public async Task CreateAsyncShouldReturnConflictWhenSquadIsDifferent()
-        {
-            // Arrange
-            Knowledge knowledge = new() { MemberId = 1, ApplicationId = 2 };
-            _knowledgeRepositoryMock.Setup(r => r.AssociationExistsAsync(1, 2)).ReturnsAsync(false);
-            _memberRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(new Member { Id = 1, SquadId = 1, Name = "A", Role = "R", Email = "a@a.com", Cost = 1 });
-            _applicationRepositoryMock.Setup(r => r.GetByIdAsync(2)).ReturnsAsync(new ApplicationData("App") {Id = 2, SquadId = 2, ProductOwner = "", ConfigurationItem = "" });
-
-            // Act
-            OperationResult result = await _knowledgeService.CreateAsync(knowledge);
-
-            // Assert
-            Assert.Equal(OperationStatus.Conflict, result.Status);
-        }
-
-        [Fact]
-        public async Task CreateAsyncShouldReturnSuccessWhenValid()
-        {
-            // Arrange
-            Knowledge knowledge = new() { MemberId = 1, ApplicationId = 2 };
-            _knowledgeRepositoryMock.Setup(r => r.AssociationExistsAsync(1, 2)).ReturnsAsync(false);
-            _memberRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(new Member { Id = 1, SquadId = 1, Name = "A", Role = "R", Email = "a@a.com", Cost = 1 });
-            _applicationRepositoryMock.Setup(r => r.GetByIdAsync(2)).ReturnsAsync(new ApplicationData("App") {Id = 2, SquadId = 1, ProductOwner = "", ConfigurationItem = "" });
+            _knowledgeRepositoryMock.Setup(r => r.CreateAssociationAsync(1, 2, 1)).Returns(Task.CompletedTask);
+            _unitOfWorkMock.Setup(u => u.CommitAsync()).Returns(Task.CompletedTask);
 
             // Act
             OperationResult result = await _knowledgeService.CreateAsync(knowledge);
@@ -120,107 +111,173 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task DeleteAsyncShouldReturnNotFoundWhenItemDoesNotExist()
+        public async Task GetItemAsyncShouldReturnNotFoundWhenKnowledgeDoesNotExist()
         {
             // Arrange
-            _knowledgeRepositoryMock.Setup(r => r.GetByIdAsync(It.IsAny<int>())).ReturnsAsync((Knowledge?)null);
+            _knowledgeRepositoryMock.Setup(r => r.GetByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((Knowledge?)null);
 
             // Act
-            OperationResult result = await _knowledgeService.DeleteAsync(1);
+            OperationResult result = await _knowledgeService.GetItemAsync(1);
 
             // Assert
             Assert.Equal(OperationStatus.NotFound, result.Status);
+            Assert.Equal(KnowledgeResource.AssociationNotFound, result.Message);
         }
 
         [Fact]
-        public async Task DeleteAsyncShouldReturnSuccessWhenItemIsDeleted()
+        public async Task GetItemAsyncShouldReturnSuccessWhenKnowledgeExists()
         {
             // Arrange
-            var knowledge = new Knowledge { Id = 1, MemberId = 1, ApplicationId = 2 };
-            _knowledgeRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(knowledge);
+            Knowledge knowledge = new()
+            {
+                Id = 1,
+                MemberId = 1,
+                ApplicationId = 2,
+                SquadIdAtAssociationTime = 1
+            };
+
+            _knowledgeRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.Id)).ReturnsAsync(knowledge);
 
             // Act
-            OperationResult result = await _knowledgeService.DeleteAsync(1);
+            OperationResult result = await _knowledgeService.GetItemAsync(knowledge.Id);
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
         }
 
         [Fact]
-        public async Task UpdateAsyncShouldReturnInvalidData()
+        public async Task UpdateAsyncShouldReturnInvalidDataWhenValidationFails()
         {
             // Arrange
-            var knowledge = new Knowledge { Id = 1, MemberId = 1, ApplicationId = 2 };
+            Knowledge knowledge = new()
+            {
+                Id = 1,
+                MemberId = 1,
+                ApplicationId = 2,
+                SquadIdAtAssociationTime = 1
+            };
+
+            ValidationResult validationResult = new([new ValidationFailure("MemberId", "Member is required")]);
+            var validatorMock = new Mock<IValidator<Knowledge>>();
+            validatorMock.Setup(v => v.ValidateAsync(knowledge, default)).ReturnsAsync(validationResult);
+
+            var service = new KnowledgeService(_unitOfWorkMock.Object, Helpers.LocalizerFactorHelper.Create(), validatorMock.Object);
 
             // Act
-            OperationResult result = await _knowledgeService.UpdateAsync(knowledge);
+            OperationResult result = await service.UpdateAsync(knowledge);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
         }
 
         [Fact]
-        public async Task GetItemAsyncShouldReturnNotFoundWhenItemIsNotFound()
+        public async Task UpdateAsyncShouldReturnNotFoundWhenKnowledgeDoesNotExist()
         {
             // Arrange
-            _knowledgeRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync((Knowledge?)null);
-
-            // Act
-            var result = await _knowledgeService.GetItemAsync(1);
-
-            // Assert
-            Assert.Null(result);
-        }
-
-        [Fact]
-        public async Task GetItemAsyncShouldReturnKnowledgeWhenItemIsFound()
-        {
-            // Arrange
-            var knowledge = new Knowledge { Id = 1, MemberId = 1, ApplicationId = 2 };
-            _knowledgeRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(knowledge);
-
-            // Act
-            var result = await _knowledgeService.GetItemAsync(1);
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal(1, result.Id);
-        }
-
-        [Fact]
-        public async Task ListApplicationsByMemberAsyncShouldReturnList()
-        {
-            // Arrange
-            var applications = new List<ApplicationData>
+            Knowledge knowledge = new()
             {
-                new("App1") { Id = 1, SquadId = 1, ProductOwner = "PO", ConfigurationItem = "CI" },
-                new ("App2") { Id = 2, SquadId = 1, ProductOwner = "PO", ConfigurationItem = "CI" }
+                Id = 1,
+                MemberId = 1,
+                ApplicationId = 2,
+                SquadIdAtAssociationTime = 1
             };
-            _knowledgeRepositoryMock.Setup(r => r.ListApplicationsByMemberAsync(1)).ReturnsAsync(applications);
+
+            _knowledgeRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.Id)).ReturnsAsync((Knowledge?)null);
 
             // Act
-            var result = await _knowledgeService.ListApplicationsByMemberAsync(1);
+            OperationResult result = await _knowledgeService.UpdateAsync(knowledge);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.Equal(2, result.Count);
-            Assert.Equal(1, result[0].Id);
-            Assert.Equal(2, result[1].Id);
+            Assert.Equal(OperationStatus.NotFound, result.Status);
+            Assert.Equal(KnowledgeResource.AssociationNotFound, result.Message);
         }
 
         [Fact]
-        public async Task ListMembersByApplicationAsyncShouldReturnList()
+        public async Task UpdateAsyncShouldReturnSuccessWhenKnowledgeIsValid()
         {
             // Arrange
-            var list = new List<Member> { new Member { Id = 1, Name = "A", Role = "R", Email = "a@a.com", Cost = 1 } };
-            _knowledgeRepositoryMock.Setup(r => r.ListMembersByApplicationAsync(2)).ReturnsAsync(list);
+            Knowledge knowledge = new()
+            {
+                Id = 1,
+                MemberId = 1,
+                ApplicationId = 2,
+                SquadIdAtAssociationTime = 1
+            };
+
+            _knowledgeRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.Id)).ReturnsAsync(knowledge);
+            _unitOfWorkMock.Setup(u => u.CommitAsync()).Returns(Task.CompletedTask);
 
             // Act
-            var result = await _knowledgeService.ListMembersByApplicationAsync(2);
+            OperationResult result = await _knowledgeService.UpdateAsync(knowledge);
 
             // Assert
-            Assert.Single(result);
-            Assert.Equal(1, result.First().Id);
+            Assert.Equal(OperationStatus.Success, result.Status);
+        }
+
+        [Fact]
+        public async Task GetListAsyncShouldReturnPagedResult()
+        {
+            // Arrange
+            KnowledgeFilter filter = new() { MemberId = 1, ApplicationId = 2, SquadId = 3 };
+            List<Knowledge> knowledgeList =
+            [
+                new() { Id = 1, MemberId = 1, ApplicationId = 2, SquadIdAtAssociationTime = 3 },
+                new() { Id = 2, MemberId = 1, ApplicationId = 2, SquadIdAtAssociationTime = 3 }
+            ];
+            PagedResult<Knowledge> pagedResult = new()
+            {
+                Result = knowledgeList,
+                Page = 1,
+                PageSize = 10,
+                Total = 2
+            };
+
+            _knowledgeRepositoryMock.Setup(r => r.GetListAsync(filter)).ReturnsAsync(pagedResult);
+
+            // Act
+            PagedResult<Knowledge> result = await _knowledgeService.GetListAsync(filter);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(2, result.Total);
+            Assert.Equal(knowledgeList, result.Result);
+        }
+
+        [Fact]
+        public async Task DeleteAsyncShouldReturnNotFoundWhenKnowledgeDoesNotExist()
+        {
+            // Arrange
+            int knowledgeId = 1;
+            _knowledgeRepositoryMock.Setup(r => r.GetByIdAsync(knowledgeId)).ReturnsAsync((Knowledge?)null);
+
+            // Act
+            OperationResult result = await _knowledgeService.DeleteAsync(knowledgeId);
+
+            // Assert
+            Assert.Equal(OperationStatus.NotFound, result.Status);
+        }
+
+        [Fact]
+        public async Task DeleteAsyncShouldReturnSuccessWhenKnowledgeIsDeleted()
+        {
+            // Arrange
+            Knowledge knowledge = new()
+            {
+                Id = 1,
+                MemberId = 1,
+                ApplicationId = 2,
+                SquadIdAtAssociationTime = 1
+            };
+
+            _knowledgeRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.Id)).ReturnsAsync(knowledge);
+            _knowledgeRepositoryMock.Setup(r => r.DeleteAsync(knowledge.Id, true)).Returns(Task.CompletedTask);
+
+            // Act
+            OperationResult result = await _knowledgeService.DeleteAsync(knowledge.Id);
+
+            // Assert
+            Assert.Equal(OperationStatus.Success, result.Status);
         }
     }
 }

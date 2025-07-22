@@ -1,7 +1,10 @@
-﻿using FluentValidation;
+﻿using System.ComponentModel.DataAnnotations;
+using FluentValidation;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Resources;
+using Stellantis.ProjectName.Application.Validators;
 using Stellantis.ProjectName.Domain.Entities;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Stellantis.ProjectName.Application.Validators
 {
@@ -17,7 +20,7 @@ namespace Stellantis.ProjectName.Application.Validators
                 .WithMessage(localizer[nameof(KnowledgeResource.MemberIsRequired)]);
 
             RuleFor(x => x.ApplicationId)
-                .GreaterThan(0)
+            .GreaterThan(0)
                 .WithMessage(localizer[nameof(KnowledgeResource.ApplicationIsRequired)]);
         }
     }

@@ -8,6 +8,6 @@
         public required string Email { get; set; }
         public int SquadId { get; set; }
         public Squad Squads { get; set; }
-
+        public ICollection<Knowledge> Knowledges { get; set; } = [];
     }
 }
