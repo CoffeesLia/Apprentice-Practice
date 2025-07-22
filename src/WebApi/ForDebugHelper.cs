@@ -1,6 +1,7 @@
 ﻿#if DEBUG
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
+using Stellantis.ProjectName.WebApi.Hubs;
 
 namespace Stellantis.ProjectName.WebApi
 {
@@ -18,42 +19,42 @@ namespace Stellantis.ProjectName.WebApi
 
                 // Mensagens de chat
                 context.ChatMessages.AddRange(
-                    new ChatMessage
+                    new Chat
                     {
                         Id = Guid.NewGuid(),
                         User = "Matheus",
                         Message = "Bom dia, Elite Debuggers!",
                         SentAt = DateTime.UtcNow.AddMinutes(-10)
                     },
-                    new ChatMessage
+                    new Chat
                     {
                         Id = Guid.NewGuid(),
                         User = "Matheus",
                         Message = "O Squad está quebrando a develop!",
                         SentAt = DateTime.UtcNow.AddMinutes(-8)
                     },
-                    new ChatMessage
+                    new Chat
                     {
                         Id = Guid.NewGuid(),
                         User = "Jardel",
                         Message = "Oh my God!",
                         SentAt = DateTime.UtcNow.AddMinutes(-8)
                     },
-                    new ChatMessage
+                    new Chat
                     {
                         Id = Guid.NewGuid(),
                         User = "Matheus",
                         Message = "API: https://gitlab.fcalatam.com/fca/ams/portal/api",
                         SentAt = DateTime.UtcNow.AddMinutes(-8)
                     },
-                    new ChatMessage
+                    new Chat
                     {
                         Id = Guid.NewGuid(),
                         User = "Matheus",
                         Message = "WEB: https://gitlab.fcalatam.com/fca/ams/portal/web",
                         SentAt = DateTime.UtcNow.AddMinutes(-8)
                     },
-                    new ChatMessage
+                    new Chat
                     {
                         Id = Guid.NewGuid(),
                         User = "Welton",
@@ -353,6 +354,22 @@ namespace Stellantis.ProjectName.WebApi
                         Status = IncidentStatus.Reopened,
                         ApplicationId = 5,
                         Members = context.Members.Where(m => m.Id == 4 || m.Id == 5).ToList()
+                    }
+                );
+
+                context.Notifications.AddRange(
+                
+                    new Notification
+                    {
+                        UserEmail = "matheus@stellantis.com",
+                        Message = "Bem-vindo ao sistema de notificações!",
+                        SentAt = DateTime.UtcNow.AddMinutes(-30)
+                    },
+                    new Notification
+                    {
+                        UserEmail = "patricia@stellantis.com",
+                        Message = "Você tem um novo incidente atribuído.",
+                        SentAt = DateTime.UtcNow.AddMinutes(-10)
                     }
                 );
 

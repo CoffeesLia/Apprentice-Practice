@@ -2,14 +2,14 @@
 
 namespace Domain.Tests
 {
-    public class ChatMessageTests
+    public class ChatTests
     {
         // Verifica se a propriedade Id é atribuída e lida corretamente.
         [Fact]
         public void IdShouldAllowAssignmentAndRead()
         {
             // Arrange
-            var chatMessage = new ChatMessage();
+            var chatMessage = new Chat();
             var id = Guid.NewGuid();
 
             // Act
@@ -24,7 +24,7 @@ namespace Domain.Tests
         public void UserShouldAllowAssignmentAndRead()
         {
             // Arrange
-            var chatMessage = new ChatMessage();
+            var chatMessage = new Chat();
             var user = "usuario_teste";
 
             // Act
@@ -39,7 +39,7 @@ namespace Domain.Tests
         public void MessageShouldAllowAssignmentAndRead()
         {
             // Arrange
-            var chatMessage = new ChatMessage();
+            var chatMessage = new Chat();
             var message = "Mensagem de teste";
 
             // Act
@@ -54,7 +54,7 @@ namespace Domain.Tests
         public void SentAtShouldAllowAssignmentAndRead()
         {
             // Arrange
-            var chatMessage = new ChatMessage();
+            var chatMessage = new Chat();
             var sentAt = DateTime.UtcNow;
 
             // Act
