@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
+using System;
 
 namespace Stellantis.ProjectName.Application.Validators
 {
@@ -25,31 +26,9 @@ namespace Stellantis.ProjectName.Application.Validators
 
             RuleFor(x => x.Url)
                 .NotNull()
-                .NotEmpty()
-                .WithMessage(localizer[nameof(RepoResources.UrlIsRequired)]);
-
-            RuleFor(x => x.Url)
-                .Must(url => HasAtLeastTwoDots(url))
+                .WithMessage(localizer[nameof(RepoResources.UrlIsRequired)])
+                .Must(url => url != null && Uri.IsWellFormedUriString(url.ToString(), UriKind.Absolute))
                 .WithMessage(localizer[nameof(RepoResources.UrlIsInvalid)]);
-
-            RuleFor(x => x.Url)
-                .Must(url => HasWwwOrHttps(url))
-                .WithMessage(localizer[nameof(RepoResources.UrlIsInvalid)]);
-        }
-
-        private static bool HasAtLeastTwoDots(Uri? url)
-        {
-            if (url == null || !url.IsAbsoluteUri) return false;
-            var host = url.Host;
-            return host.Count(c => c == '.') >= 2;
-        }
-
-        private static bool HasWwwOrHttps(Uri? url)
-        {
-            if (url == null) return false;
-            var host = url.Host.ToUpperInvariant();
-            var scheme = url.Scheme.ToUpperInvariant();
-            return host.Contains("WWW.", StringComparison.Ordinal) || scheme == "HTTPS";
         }
     }
 }
