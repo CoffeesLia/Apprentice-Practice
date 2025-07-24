@@ -79,6 +79,15 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Association found.
+        /// </summary>
+        public static string AssociationFound {
+            get {
+                return ResourceManager.GetString("AssociationFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Association not found..
         /// </summary>
         public static string AssociationNotFound {

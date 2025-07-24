@@ -271,7 +271,9 @@ namespace Application.Tests.Services
             };
 
             _knowledgeRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.Id)).ReturnsAsync(knowledge);
-            _knowledgeRepositoryMock.Setup(r => r.DeleteAsync(knowledge.Id, true)).Returns(Task.CompletedTask);
+            _memberRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.Id)).ReturnsAsync(new Member { Id = knowledge.Id, Role = "SQUAD_LEADER", SquadId = knowledge.SquadIdAtAssociationTime, Name = "Líder", Email = "l@l.com", Cost = 1 });
+            _applicationRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.ApplicationId)).ReturnsAsync(new ApplicationData("App") { Id = knowledge.ApplicationId, SquadId = knowledge.SquadIdAtAssociationTime, ProductOwner = "PO", ConfigurationItem = "CI" });
+
 
             // Act
             OperationResult result = await _knowledgeService.DeleteAsync(knowledge.Id);

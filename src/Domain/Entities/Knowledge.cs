@@ -3,7 +3,6 @@ using System;
 
 namespace Stellantis.ProjectName.Domain.Entities
 
-
 {
     public class Knowledge : EntityBase
     {

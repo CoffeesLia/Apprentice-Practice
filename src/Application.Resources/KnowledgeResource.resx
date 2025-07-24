@@ -123,6 +123,9 @@
   <data name="AssociationAlreadyExists" xml:space="preserve">
     <value>Association already exists.</value>
   </data>
+  <data name="AssociationFound" xml:space="preserve">
+    <value>Association found</value>
+  </data>
   <data name="AssociationNotFound" xml:space="preserve">
     <value>Association not found.</value>
   </data>

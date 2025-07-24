@@ -9,7 +9,7 @@ using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
 
-namespace Stellantis.ProjectName.Application.Services    
+namespace Stellantis.ProjectName.Application.Services
 {
     public class KnowledgeService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<Knowledge> validator)
         : EntityServiceBase<Knowledge>(unitOfWork, localizerFactory, validator), IKnowledgeService
@@ -25,19 +25,15 @@ namespace Stellantis.ProjectName.Application.Services
         {
             ArgumentNullException.ThrowIfNull(item);
 
-        var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
+            var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
             if (!validationResult.IsValid)
-            {
                 return OperationResult.InvalidData(validationResult);
-            }
 
             var member = await UnitOfWork.MemberRepository.GetByIdAsync(item.MemberId).ConfigureAwait(false);
             var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(item.ApplicationId).ConfigureAwait(false);
 
             if (member == null || application == null)
-            {
                 return OperationResult.NotFound(_localizer[nameof(KnowledgeResource.MemberApplicationNotFound)]);
-            }
 
             // membro e aplicação devem pertencer ao mesmo squad
             if (member.SquadId != application.SquadId)
@@ -86,7 +82,17 @@ namespace Stellantis.ProjectName.Application.Services
 
             existing.ApplicationId = item.ApplicationId;
             existing.SquadIdAtAssociationTime = member.SquadId;
-            return await base.UpdateAsync(existing).ConfigureAwait(false);
+            return await base.UpdateAsync(item).ConfigureAwait(false);
+        }
+
+        public new async Task<OperationResult> GetItemAsync(int id)
+        {
+            var knowledge = await Repository.GetByIdAsync(id).ConfigureAwait(false);
+            if (knowledge == null)
+                return OperationResult.NotFound(_localizer[nameof(KnowledgeResource.AssociationNotFound)]);
+
+            // retorna os dados relevantas, caso necesário
+            return OperationResult.Complete(_localizer[nameof(KnowledgeResource.AssociationFound)]);
         }
 
         // remove uma associação pelo ID; busca a associação, caso não exista, rertorna erro; se existir, remove 
@@ -98,6 +104,9 @@ namespace Stellantis.ProjectName.Application.Services
 
             var member = await UnitOfWork.MemberRepository.GetByIdAsync(item.MemberId).ConfigureAwait(false);
             var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(item.ApplicationId).ConfigureAwait(false);
+
+            if (member == null || application == null)
+                return OperationResult.NotFound(_localizer[nameof(KnowledgeResource.MemberApplicationNotFound)]);
 
             // apenas líder do squad pode remover
             var performingUser = await UnitOfWork.MemberRepository.GetByIdAsync(item.Id).ConfigureAwait(false);
