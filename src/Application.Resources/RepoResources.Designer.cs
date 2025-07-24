@@ -106,6 +106,15 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Não encontrado.
+        /// </summary>
+        public static string NotFound {
+            get {
+                return ResourceManager.GetString("NotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Url already exists..
         /// </summary>
         public static string UrlAlreadyExists {

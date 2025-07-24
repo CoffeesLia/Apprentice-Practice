@@ -32,6 +32,12 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.Conflict(_localizer[nameof(AreaResources.AreaInvalidManagerId)]);
             }
 
+            var areasWithSameManager = await Repository.GetListAsync(new AreaFilter { ManagerId = item.ManagerId }).ConfigureAwait(false);
+            if (areasWithSameManager?.Result?.Any() == true)
+            {
+                return OperationResult.Conflict(_localizer[nameof(AreaResources.ManagerUnavailable)]);
+            }
+
             if (!await IsAreaNameUniqueAsync(item.Name).ConfigureAwait(false))
             {
                 return OperationResult.Conflict(_localizer[nameof(AreaResources.AlreadyExists)]);
@@ -69,6 +75,11 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.InvalidData(validationResult);
             }
 
+            var areasWithSameManager = await Repository.GetListAsync(new AreaFilter { ManagerId = area.ManagerId }).ConfigureAwait(false);
+            if (areasWithSameManager.Result.Any(a => a.Id != area.Id))
+            {
+                return OperationResult.Conflict(_localizer[nameof(AreaResources.ManagerUnavailable)]);
+            }
 
             var areasWithSameName = await Repository.GetListAsync(new AreaFilter { Name = area.Name }).ConfigureAwait(false);
             if (areasWithSameName.Result.Any(a => a.Id != area.Id))

@@ -1,7 +1,7 @@
 ﻿#if DEBUG
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
-using Stellantis.ProjectName.WebApi.ViewModels;
+using Stellantis.ProjectName.WebApi.Hubs;
 
 namespace Stellantis.ProjectName.WebApi
 {
@@ -19,42 +19,42 @@ namespace Stellantis.ProjectName.WebApi
 
                 // Mensagens de chat
                 context.ChatMessages.AddRange(
-                    new ChatMessage
+                    new Chat
                     {
                         Id = Guid.NewGuid(),
                         User = "Matheus",
                         Message = "Bom dia, Elite Debuggers!",
                         SentAt = DateTime.UtcNow.AddMinutes(-10)
                     },
-                    new ChatMessage
+                    new Chat
                     {
                         Id = Guid.NewGuid(),
                         User = "Matheus",
                         Message = "O Squad está quebrando a develop!",
                         SentAt = DateTime.UtcNow.AddMinutes(-8)
                     },
-                    new ChatMessage
+                    new Chat
                     {
                         Id = Guid.NewGuid(),
                         User = "Jardel",
                         Message = "Oh my God!",
                         SentAt = DateTime.UtcNow.AddMinutes(-8)
                     },
-                    new ChatMessage
+                    new Chat
                     {
                         Id = Guid.NewGuid(),
                         User = "Matheus",
                         Message = "API: https://gitlab.fcalatam.com/fca/ams/portal/api",
                         SentAt = DateTime.UtcNow.AddMinutes(-8)
                     },
-                    new ChatMessage
+                    new Chat
                     {
                         Id = Guid.NewGuid(),
                         User = "Matheus",
                         Message = "WEB: https://gitlab.fcalatam.com/fca/ams/portal/web",
                         SentAt = DateTime.UtcNow.AddMinutes(-8)
                     },
-                    new ChatMessage
+                    new Chat
                     {
                         Id = Guid.NewGuid(),
                         User = "Welton",
@@ -125,19 +125,19 @@ namespace Stellantis.ProjectName.WebApi
 
                 // Applications
                 context.Applications.AddRange(
-                    new ApplicationData("Portal AMS") { AreaId = 7, ResponsibleId = 1, ProductOwner = "", ConfigurationItem = "", SquadId = 1},
-                    new ApplicationData("eLog") { AreaId = 2, ResponsibleId = 2, ProductOwner = "", ConfigurationItem = "", SquadId = 2 },
-                    new ApplicationData("Suite PD") { AreaId = 4, ResponsibleId = 4, ProductOwner = "", ConfigurationItem = "", SquadId = 3 },
-                    new ApplicationData("Finance Tracker") { AreaId = 6, ResponsibleId = 6, ProductOwner = "Carlos Silva", ConfigurationItem = "FT-Config", SquadId = 4 },
-                    new ApplicationData("HR Portal") { AreaId = 8, ResponsibleId = 8, ProductOwner = "Fernanda Oliveira", ConfigurationItem = "HRP-Config" },
-                    new ApplicationData("Marketing Dashboard") { AreaId = 10, ResponsibleId = 10, ProductOwner = "Bruno Almeida", ConfigurationItem = "MD-Config" },
-                    new ApplicationData("Sales CRM") { AreaId = 14, ResponsibleId = 14, ProductOwner = "Rodrigo Martins", ConfigurationItem = "CRM-Config" },
-                    new ApplicationData("Quality Control System") { AreaId = 1, ResponsibleId = 13, ProductOwner = "Ana Paula", ConfigurationItem = "QCS-Config" },
-                    new ApplicationData("Supplier Chain Manager") { AreaId = 16, ResponsibleId = 5, ProductOwner = "Mariana Silva", ConfigurationItem = "SCM-Config" },
-                    new ApplicationData("Engineering Tools") { AreaId = 4, ResponsibleId = 4, ProductOwner = "Leonardo Souza", ConfigurationItem = "ET-Config" },
-                    new ApplicationData("Integration Hub") { AreaId = 9, ResponsibleId = 9, ProductOwner = "Juliana Costa", ConfigurationItem = "IH-Config" },
-                    new ApplicationData("AMS Portal") { AreaId = 1, ResponsibleId = 1, ProductOwner = "Luciene Miranda", ConfigurationItem = "AMS-Config" },
-                    new ApplicationData("Architecture Planner") { AreaId = 2, ResponsibleId = 2, ProductOwner = "Gabriel Torres", ConfigurationItem = "AP-Config" }
+                    new ApplicationData("Portal AMS") { AreaId = 7, ResponsibleId = 1, ConfigurationItem = "", SquadId = 1 },
+                    new ApplicationData("eLog") { AreaId = 2, ResponsibleId = 2, ConfigurationItem = "", SquadId = 2 },
+                    new ApplicationData("Suite PD") { AreaId = 4, ResponsibleId = 4, ConfigurationItem = "", SquadId = 3 },
+                    new ApplicationData("Finance Tracker") { AreaId = 6, ResponsibleId = 6, ConfigurationItem = "FT-Config", SquadId = 4 },
+                    new ApplicationData("HR Portal") { AreaId = 8, ResponsibleId = 8, ConfigurationItem = "HRP-Config" },
+                    new ApplicationData("Marketing Dashboard") { AreaId = 10, ResponsibleId = 10, ConfigurationItem = "MD-Config" },
+                    new ApplicationData("Sales CRM") { AreaId = 14, ResponsibleId = 14, ConfigurationItem = "CRM-Config" },
+                    new ApplicationData("Quality Control System") { AreaId = 1, ResponsibleId = 13, ConfigurationItem = "QCS-Config" },
+                    new ApplicationData("Supplier Chain Manager") { AreaId = 16, ResponsibleId = 5, ConfigurationItem = "SCM-Config" },
+                    new ApplicationData("Engineering Tools") { AreaId = 4, ResponsibleId = 4, ConfigurationItem = "ET-Config" },
+                    new ApplicationData("Integration Hub") { AreaId = 9, ResponsibleId = 9, ConfigurationItem = "IH-Config" },
+                    new ApplicationData("AMS Portal") { AreaId = 1, ResponsibleId = 1, ConfigurationItem = "AMS-Config" },
+                    new ApplicationData("Architecture Planner") { AreaId = 2, ResponsibleId = 2, ConfigurationItem = "AP-Config" }
                 );
 
                 // Serviços
@@ -225,18 +225,96 @@ namespace Stellantis.ProjectName.WebApi
                     new Member { Name = "Bruno Rocha", Email = "bruno.rocha@stellantis.com", Role = "Developer", Cost = 1200, SquadId = 3 },
                     new Member { Name = "Juliana Martins", Email = "juliana.martins@stellantis.com", Role = "Business Analyst", Cost = 1400, SquadId = 5 }
                 );
+                await context.SaveChangesAsync().ConfigureAwait(false);
 
                 context.Feedbacks.AddRange(
-                    new Feedback { Title = "Melhora no design do Portal AMS", Description = "O design do site está muito simples, talvez modernizar as cores e fontes ajudasse.", CreatedAt = DateTime.UtcNow.AddDays(-7), ApplicationId = 1, Status = FeedbackStatus.Open }, // Feedback aberto
-                    new Feedback { Title = "Dificuldade em encontrar funcionalidades no eLog", Description = "Sinto que algumas funções importantes estão escondidas ou não são intuitivas de achar no menu.", CreatedAt = DateTime.UtcNow.AddDays(-5), ApplicationId = 2, Status = FeedbackStatus.InProgress }, // Feedback em progresso
-                    new Feedback { Title = "Finance Tracker muito rápido, excelente experiência!", Description = "Gostei muito da velocidade de carregamento e da fluidez ao navegar no Finance Tracker. Parabéns!", CreatedAt = DateTime.UtcNow.AddDays(-3), ApplicationId = 4, Status = FeedbackStatus.Closed }, // Feedback já fechado
-                    new Feedback { Title = "Sugestão de nova funcionalidade: integração com calendário no HR Portal", Description = "Seria ótimo se pudéssemos integrar com nosso calendário para agendar tarefas diretamente do HR Portal.", CreatedAt = DateTime.UtcNow.AddDays(-2), ApplicationId = 5, Status = FeedbackStatus.Reopened }, // Feedback reaberto
-                    new Feedback { Title = "Conteúdo desatualizado em algumas seções do Marketing Dashboard", Description = "Notei que algumas informações nas seções de 'Sobre Nós' e 'FAQ' no Marketing Dashboard parecem estar desatualizadas.", CreatedAt = DateTime.UtcNow.AddDays(-1), ApplicationId = 6, Status = FeedbackStatus.Cancelled }, // Feedback cancelado
-                    new Feedback { Title = "Ótimo suporte ao cliente no Sales CRM", Description = "Tive uma dúvida e o atendimento via chat no Sales CRM foi muito rápido e eficiente. Fiquei impressionado!", CreatedAt = DateTime.UtcNow.AddHours(-12), ApplicationId = 7, Status = FeedbackStatus.Closed }, // Outro feedback fechado
-                    new Feedback { Title = "Problema de login intermitente no Quality Control System", Description = "Às vezes, o sistema de controle de qualidade apresenta falha ao tentar fazer login, exigindo várias tentativas.", CreatedAt = DateTime.UtcNow.AddDays(-4), ApplicationId = 8, Status = FeedbackStatus.Open }, // Outro feedback aberto
-                    new Feedback { Title = "Sugestão de melhoria na interface do Supplier Chain Manager", Description = "A interface poderia ser mais limpa e moderna para facilitar a visualização de grandes volumes de dados.", CreatedAt = DateTime.UtcNow.AddDays(-6), ApplicationId = 9, Status = FeedbackStatus.InProgress }, // Outro feedback em progresso
-                    new Feedback { Title = "Ferramentas de Engenharia estão ótimas!", Description = "As Engineering Tools estão muito completas e eficientes para o nosso trabalho diário. Excelente!", CreatedAt = DateTime.UtcNow.AddDays(-8), ApplicationId = 10, Status = FeedbackStatus.Closed } // Mais um feedback fechado
-                );
+                     new Feedback
+                     {
+                         Title = "Melhora no design do Portal AMS",
+                         Description = "O design do site está muito simples, talvez modernizar as cores e fontes ajudasse.",
+                         CreatedAt = DateTime.UtcNow.AddDays(-7),
+                         ApplicationId = 1,
+                         Status = FeedbackStatus.Open,
+                         Members = [.. context.Members.Where(m => m.SquadId == 1)]
+                     },
+                     new Feedback
+                     {
+                         Title = "Dificuldade em encontrar funcionalidades no eLog",
+                         Description = "Sinto que algumas funções importantes estão escondidas ou não são intuitivas de achar no menu.",
+                         CreatedAt = DateTime.UtcNow.AddDays(-5),
+                         ApplicationId = 2, 
+                         Status = FeedbackStatus.InProgress,
+                         Members = [.. context.Members.Where(m => m.SquadId == 2)]
+                     },
+                     new Feedback
+                     {
+                         Title = "Finance Tracker muito rápido, excelente experiência!",
+                         Description = "Gostei muito da velocidade de carregamento e da fluidez ao navegar no Finance Tracker. Parabéns!",
+                         CreatedAt = DateTime.UtcNow.AddDays(-3),
+                         ClosedAt = DateTime.UtcNow.AddDays(-2),
+                         ApplicationId = 4, 
+                         Status = FeedbackStatus.Closed,
+                         Members = [.. context.Members.Where(m => m.SquadId == 4)]
+                     },
+                     new Feedback
+                     {
+                         Title = "Sugestão de nova funcionalidade: integração com calendário no HR Portal",
+                         Description = "Seria ótimo se pudéssemos integrar com nosso calendário para agendar tarefas diretamente do HR Portal.",
+                         CreatedAt = DateTime.UtcNow.AddDays(-2),
+                         ApplicationId = 5, 
+                         Status = FeedbackStatus.Reopened,
+
+                         Members = [.. context.Members.Where(m => m.SquadId == 5)]
+                     },
+                     new Feedback
+                     {
+                         Title = "Conteúdo desatualizado em algumas seções do Marketing Dashboard",
+                         Description = "Notei que algumas informações nas seções de 'Sobre Nós' e 'FAQ' no Marketing Dashboard parecem estar desatualizadas.",
+                         CreatedAt = DateTime.UtcNow.AddDays(-1),
+                         ClosedAt = DateTime.UtcNow,
+                         ApplicationId = 6,
+                         Status = FeedbackStatus.Cancelled,
+                         Members = [.. context.Members.Where(m => m.SquadId == 6)]
+                     },
+                     new Feedback
+                     {
+                         Title = "Ótimo suporte ao cliente no Sales CRM",
+                         Description = "Tive uma dúvida e o atendimento via chat no Sales CRM foi muito rápido e eficiente. Fiquei impressionado!",
+                         CreatedAt = DateTime.UtcNow.AddHours(-12),
+                         ClosedAt = DateTime.UtcNow.AddHours(-10),
+                         ApplicationId = 7, 
+                         Status = FeedbackStatus.Closed,
+                         Members = [.. context.Members.Where(m => m.SquadId == 1)]
+                     },
+                     new Feedback
+                     {
+                         Title = "Problema de login intermitente no Quality Control System",
+                         Description = "Às vezes, o sistema de controle de qualidade apresenta falha ao tentar fazer login, exigindo várias tentativas.",
+                         CreatedAt = DateTime.UtcNow.AddDays(-4),
+                         ApplicationId = 8, 
+                         Status = FeedbackStatus.Open,
+                         Members = [.. context.Members.Where(m => m.SquadId == 3)]
+                     },
+                     new Feedback
+                     {
+                         Title = "Sugestão de melhoria na interface do Supplier Chain Manager",
+                         Description = "A interface poderia ser mais limpa e moderna para facilitar a visualização de grandes volumes de dados.",
+                         CreatedAt = DateTime.UtcNow.AddDays(-6),
+                         ApplicationId = 9, 
+                         Status = FeedbackStatus.InProgress,
+                         Members = [.. context.Members.Where(m => m.SquadId == 5)]
+                     },
+                     new Feedback
+                     {
+                         Title = "Ferramentas de Engenharia estão ótimas!",
+                         Description = "As Engineering Tools estão muito completas e eficientes para o nosso trabalho diário. Excelente!",
+                         CreatedAt = DateTime.UtcNow.AddDays(-8),
+                         ClosedAt = DateTime.UtcNow.AddDays(-7),
+                         ApplicationId = 10,
+                         Status = FeedbackStatus.Closed,
+                         Members = [.. context.Members.Where(m => m.SquadId == 4)]
+                     }
+                 );
 
                 // Incidents
                 context.Incidents.AddRange(
@@ -246,7 +324,8 @@ namespace Stellantis.ProjectName.WebApi
                         Description = "Erro ao acessar o portal AMS.",
                         CreatedAt = DateTime.UtcNow.AddDays(-5),
                         Status = IncidentStatus.Open,
-                        ApplicationId = 1
+                        ApplicationId = 1,
+                        Members = context.Members.Where(m => m.Id == 1 || m.Id == 2).ToList()
                     },
                     new Incident
                     {
@@ -254,7 +333,8 @@ namespace Stellantis.ProjectName.WebApi
                         Description = "O sistema eLog está fora do ar.",
                         CreatedAt = DateTime.UtcNow.AddDays(-2),
                         Status = IncidentStatus.InProgress,
-                        ApplicationId = 2
+                        ApplicationId = 2,
+                        Members = context.Members.Where(m => m.Id == 3).ToList()
                     },
                     new Incident
                     {
@@ -263,25 +343,36 @@ namespace Stellantis.ProjectName.WebApi
                         CreatedAt = DateTime.UtcNow.AddDays(-10),
                         ClosedAt = DateTime.UtcNow.AddDays(-1),
                         Status = IncidentStatus.Closed,
-                        ApplicationId = 4
+                        ApplicationId = 4,
+                        Members = context.Members.Where(m => m.Id == 4 || m.Id == 5).ToList()
                     },
-                     new Incident
-                     {
-                         Title = "Chamado reaberto no HR Portal",
-                         Description = "Problema voltou a ocorrer no HR Portal.",
-                         CreatedAt = DateTime.UtcNow.AddDays(-8),
-                         Status = IncidentStatus.Reopened,
-                         ApplicationId = 5
-                     },
                     new Incident
                     {
-                        Title = "Incidente cancelado no Marketing Dashboard",
-                        Description = "Incidente foi cancelado pelo solicitante.",
-                        CreatedAt = DateTime.UtcNow.AddDays(-6),
-                        Status = IncidentStatus.Cancelled,
-                        ApplicationId = 6
+                        Title = "Chamado reaberto no HR Portal",
+                        Description = "Problema voltou a ocorrer no HR Portal.",
+                        CreatedAt = DateTime.UtcNow.AddDays(-8),
+                        Status = IncidentStatus.Reopened,
+                        ApplicationId = 5,
+                        Members = context.Members.Where(m => m.Id == 4 || m.Id == 5).ToList()
                     }
                 );
+
+                context.Notifications.AddRange(
+                
+                    new Notification
+                    {
+                        UserEmail = "matheus@stellantis.com",
+                        Message = "Bem-vindo ao sistema de notificações!",
+                        SentAt = DateTime.UtcNow.AddMinutes(-30)
+                    },
+                    new Notification
+                    {
+                        UserEmail = "patricia@stellantis.com",
+                        Message = "Você tem um novo incidente atribuído.",
+                        SentAt = DateTime.UtcNow.AddMinutes(-10)
+                    }
+                );
+
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }

@@ -15,7 +15,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         public async Task DeleteAsync(int id, bool saveChanges = true)
         {
-
             Repo? entity = await GetByIdAsync(id).ConfigureAwait(false);
             if (entity != null)
             {
@@ -27,41 +26,44 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             }
         }
 
-        public async Task<PagedResult<Repo>> GetListAsync(RepoFilter repofilter)
+        public async Task<PagedResult<Repo>> GetListAsync(RepoFilter repoFilter)
         {
-            ArgumentNullException.ThrowIfNull(repofilter);
+            ArgumentNullException.ThrowIfNull(repoFilter);
 
             var filters = PredicateBuilder.New<Repo>(true);
-            repofilter.Page = repofilter.Page <= 0 ? 1 : repofilter.Page;
-            if (!string.IsNullOrWhiteSpace(repofilter.Name))
-                filters = filters.And(x => x.Name.Contains(repofilter.Name));
-            if (repofilter.Url != null)
-                filters = filters.And(x => x.Url == repofilter.Url);
-            if (repofilter.ApplicationId > 0)
-                filters = filters.And(x => x.ApplicationId == repofilter.ApplicationId);
+            repoFilter.Page = repoFilter.Page <= 0 ? 1 : repoFilter.Page;
+            if (!string.IsNullOrWhiteSpace(repoFilter.Name))
+                filters = filters.And(a => a.Name != null && a.Name.Contains(repoFilter.Name, StringComparison.OrdinalIgnoreCase));
+            if (!string.IsNullOrWhiteSpace(repoFilter.Description))
+                filters = filters.And(a => a.Description != null && a.Description.Contains(repoFilter.Description, StringComparison.OrdinalIgnoreCase));
+            if (repoFilter.Url != null)
+                filters = filters.And(x => x.Url == repoFilter.Url);
+            if (repoFilter.ApplicationId > 0)
+                filters = filters.And(x => x.ApplicationId == repoFilter.ApplicationId);
 
-            return await GetListAsync(filter: filters, page: repofilter.Page, sort: repofilter.Sort, sortDir: repofilter.SortDir, includeProperties: nameof(Repo.ApplicationData)
-             ).ConfigureAwait(false);
+            return await GetListAsync(
+                filter: filters,
+                page: repoFilter.Page,
+                sort: repoFilter.Sort,
+                sortDir: repoFilter.SortDir,
+                includeProperties: nameof(Repo.ApplicationData)
+            ).ConfigureAwait(false);
         }
 
-        public async Task<bool> IsRepoNameUniqueAsync(string Name, int applicationId, int? id = null)
+        public async Task<bool> NameAlreadyExists(string name, int? id = null)
         {
             return await Context.Set<Repo>()
-                .AnyAsync(a => a.Name == Name
-                            && a.ApplicationId == applicationId
+                .AnyAsync(a => a.Name == name
                             && (!id.HasValue || a.Id != id))
                 .ConfigureAwait(false);
         }
 
-        public async Task<bool> IsUrlUniqueAsync(Uri url, int applicationId, int? id = null)
+        public async Task<bool> UrlAlreadyExists(Uri url, int? id = null)
         {
-            return await Context.Set<Repo>().AnyAsync(a => a.Url == url
-                           && a.ApplicationId == applicationId
-                           && (!id.HasValue || a.Id != id)).ConfigureAwait(false);
-        }
-        public async Task<bool> VerifyDescriptionExistsAsync(string description)
-        {
-            return await Context.Set<Repo>().AnyAsync(repo => repo.Description == description).ConfigureAwait(false);
+            var query = Context.Set<Repo>().Where(r => r.Url == url);
+            if (id.HasValue)
+                query = query.Where(r => r.Id != id.Value);
+            return await query.AnyAsync().ConfigureAwait(false);
         }
     }
 }

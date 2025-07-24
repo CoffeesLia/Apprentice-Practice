@@ -79,6 +79,15 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a This manager is already linked to another area..
+        /// </summary>
+        public static string ManagerUnavailable {
+            get {
+                return ResourceManager.GetString("ManagerUnavailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a The name is required..
         /// </summary>
         public static string NameIsRequired {

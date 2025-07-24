@@ -25,7 +25,7 @@ namespace Stellantis.ProjectName.Application.Validators
             RuleFor(x => x.Description)
                 .MaximumLength(DescriptionMaxLength)
                 .WithMessage(localizer[nameof(ApplicationDataResources.DescriptionValidateLength), DescriptionMaxLength]);
-            RuleFor(x => x.ProductOwner)
+            RuleFor(x => x.ResponsibleId)
                 .NotNull()
                 .NotEmpty()
                 .WithMessage(localizer[nameof(ApplicationDataResources.ProductOwnerRequired)]);

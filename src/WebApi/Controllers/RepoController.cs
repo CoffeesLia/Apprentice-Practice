@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces.Services;
+using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Dto;
@@ -16,11 +17,20 @@ namespace Stellantis.ProjectName.WebApi.Controllers
     {
         protected override IRepoService Service => (IRepoService)base.Service;
 
-
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] RepoDto itemDto)
         {
-            return await CreateBaseAsync<RepoVm>(itemDto).ConfigureAwait(false);
+            var result = await Service.CreateAsync(Mapper.Map<Repo>(itemDto)).ConfigureAwait(false);
+            if (result.Status == OperationStatus.InvalidData)
+                return UnprocessableEntity(result.Errors); 
+            if (result.Status == OperationStatus.Conflict)
+                return Conflict(result.Message); 
+            if (result.Status == OperationStatus.NotFound)
+                return NotFound(result.Message);
+
+            // Sucesso
+            var vm = Mapper.Map<RepoVm>(itemDto);
+            return CreatedAtAction(nameof(GetAsync), new { id = vm.Id }, vm);
         }
 
         [HttpGet("{id}")]
@@ -34,7 +44,6 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         {
             return await UpdateBaseAsync<RepoVm>(id, itemDto).ConfigureAwait(false);
         }
-
 
         [HttpDelete("{id}")]
         public override async Task<IActionResult> DeleteAsync(int id)

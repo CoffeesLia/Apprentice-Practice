@@ -8,10 +8,11 @@ using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
 
+
 namespace Stellantis.ProjectName.Application.Services
 {
     public class RepoService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<Repo> validator)
-            : EntityServiceBase<Repo>(unitOfWork, localizerFactory, validator), IRepoService
+        : EntityServiceBase<Repo>(unitOfWork, localizerFactory, validator), IRepoService
     {
         private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(RepoResources));
 
@@ -29,18 +30,14 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.InvalidData(validationResult);
             }
 
-            if (await Repository.IsRepoNameUniqueAsync(item.Name!, item.ApplicationId).ConfigureAwait(false))
+            if (await Repository.NameAlreadyExists(item.Name!, item.ApplicationId).ConfigureAwait(false))
             {
                 return OperationResult.Conflict(_localizer[nameof(RepoResources.NameAlreadyExists)]);
             }
 
-            if (await Repository.IsUrlUniqueAsync(item.Url!, item.ApplicationId).ConfigureAwait(false))
+            if (await Repository.UrlAlreadyExists(item.Url!).ConfigureAwait(false))
             {
                 return OperationResult.Conflict(_localizer[nameof(RepoResources.UrlAlreadyExists)]);
-            }
-            if (await Repository.VerifyDescriptionExistsAsync(item.Description).ConfigureAwait(false))
-            {
-                return OperationResult.InvalidData(validationResult);
             }
 
             return await base.CreateAsync(item).ConfigureAwait(false);
@@ -57,19 +54,24 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.InvalidData(validationResult);
             }
 
-            if (await Repository.IsRepoNameUniqueAsync(item.Name!, item.ApplicationId).ConfigureAwait(false))
+            var existingRepo = await Repository.GetByIdAsync(item.Id).ConfigureAwait(false);
+            if (existingRepo is null)
+            {
+                return OperationResult.NotFound(_localizer[nameof(RepoResources.NotFound)]);
+            }
+
+            var normalizedExistingName = existingRepo.Name.Trim();
+            var normalizedNewName = item.Name.Trim();
+
+            if (!string.Equals(normalizedExistingName, normalizedNewName, StringComparison.OrdinalIgnoreCase) &&
+                await Repository.NameAlreadyExists(normalizedNewName, item.Id).ConfigureAwait(false))
             {
                 return OperationResult.Conflict(_localizer[nameof(RepoResources.NameAlreadyExists)]);
             }
 
-            if (await Repository.IsUrlUniqueAsync(item.Url!, item.ApplicationId).ConfigureAwait(false))
+            if (existingRepo.Url != item.Url && await Repository.UrlAlreadyExists(item.Url!, item.Id).ConfigureAwait(false))
             {
                 return OperationResult.Conflict(_localizer[nameof(RepoResources.UrlAlreadyExists)]);
-            }
-
-            if (await Repository.VerifyDescriptionExistsAsync(item.Description).ConfigureAwait(false))
-            {
-                return OperationResult.InvalidData(validationResult);
             }
 
             return await base.UpdateAsync(item).ConfigureAwait(false);
@@ -86,11 +88,5 @@ namespace Stellantis.ProjectName.Application.Services
 
             return await UnitOfWork.RepoRepository.GetListAsync(filter).ConfigureAwait(false);
         }
-
-        public async Task<bool> VerifyAplicationsExistsAsync(int id)
-        {
-            return await Repository.GetByIdAsync(id).ConfigureAwait(false) != null;
-        }
     }
 }
-

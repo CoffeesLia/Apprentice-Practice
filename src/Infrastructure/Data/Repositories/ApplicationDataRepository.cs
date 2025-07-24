@@ -54,10 +54,11 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 filters = filters.And(x => x.SquadId == applicationFilter.SquadId);
             }
 
-            if (!string.IsNullOrWhiteSpace(applicationFilter.ProductOwner))
+            if (applicationFilter.ResponsibleId > 0)
             {
-                filters = filters.And(x => x.ProductOwner != null && x.ProductOwner.Contains(applicationFilter.ProductOwner));
+                filters = filters.And(x => x.ResponsibleId == applicationFilter.ResponsibleId);
             }
+         
 
             if (!string.IsNullOrWhiteSpace(applicationFilter.ConfigurationItem))
             {
@@ -69,9 +70,16 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 filters = filters.And(x => x.External == applicationFilter.External.Value);
             }
 
-            return await GetListAsync(filter: filters, page: applicationFilter.Page, sort: applicationFilter.Sort, sortDir: applicationFilter.SortDir,
-                includeProperties: $"{nameof(ApplicationData.Area)},{nameof(ApplicationData.Squads)}"
-            ).ConfigureAwait(false);
+            return await GetListAsync(
+
+             filter: filters,
+             page: applicationFilter.Page,
+             pageSize: applicationFilter.PageSize,
+             sort: applicationFilter.Sort,
+             sortDir: applicationFilter.SortDir,
+             includeProperties: $"{nameof(ApplicationData.Area)},{nameof(ApplicationData.Squads)}"
+           ).ConfigureAwait(false);
+
         }
 
 

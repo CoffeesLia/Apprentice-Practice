@@ -17,8 +17,11 @@ namespace Stellantis.ProjectName.Infrastructure.Data
         public DbSet<Manager> Managers { get; set; }
         public DbSet<Incident> Incidents { get; set; }
         public DbSet<DocumentData> Documents { get; set; }
+        public DbSet<Chat> ChatMessages { get; set; } = null!;
+        public DbSet<Notification> Notifications { get; set; } = null!;
         public DbSet<Knowledge> Knowledges { get; set; }
-        public DbSet<ChatMessage> ChatMessages { get; set; } = null!;
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             ArgumentNullException.ThrowIfNull(modelBuilder);

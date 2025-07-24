@@ -135,4 +135,7 @@
   <data name="AreaInvalidManagerId" xml:space="preserve">
     <value>Id de gerente invalido.</value>
   </data>
+  <data name="ManagerUnavailable" xml:space="preserve">
+    <value>Este gerente já está vinculado a outra área.</value>
+  </data>
 </root>

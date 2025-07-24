@@ -9,11 +9,11 @@ namespace Stellantis.ProjectName.Domain.Entities
         public ICollection<Integration> Integration { get; } = [];
         public int ResponsibleId { get; set; }
         public string? Description { get; set; }
-        public required string ProductOwner { get; set; }
         public required string ConfigurationItem { get; set; }
         public int SquadId { get; set; }
         public bool External { get; set; }
         public Squad Squads { get; set; }
+        public Responsible Responsible { get; set; } = null!;
         public ICollection<Repo> Repos { get; } = [];
         public ICollection<DocumentData> Documents { get; } = [];
         public ICollection<Knowledge> Knowledges { get; set; } = [];

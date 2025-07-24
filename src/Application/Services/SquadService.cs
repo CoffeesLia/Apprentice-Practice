@@ -64,12 +64,14 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.NotFound(_localizer[nameof(SquadResources.SquadNotFound)]);
             }
 
-            if (await Repository.VerifyNameAlreadyExistsAsync(squad.Name!).ConfigureAwait(false))
+            if (!string.Equals(existingSquad.Name, squad.Name, StringComparison.OrdinalIgnoreCase))
             {
-                return OperationResult.Conflict(_localizer[nameof(SquadResources.SquadNameAlreadyExists)]);
+                if (await Repository.VerifyNameAlreadyExistsAsync(squad.Name!).ConfigureAwait(false))
+                {
+                    return OperationResult.Conflict(_localizer[nameof(SquadResources.SquadNameAlreadyExists)]);
+                }
             }
 
-            
             existingSquad.Name = squad.Name;
             existingSquad.Description = squad.Description;
 

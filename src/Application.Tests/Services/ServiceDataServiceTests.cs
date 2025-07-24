@@ -79,6 +79,53 @@ namespace Application.Tests.Services
             Assert.Contains(localizer[nameof(ServiceDataResources.ServiceNameIsRequired)], result.Errors);
         }
 
+        // Verifica se CreateAsync retorna conflito quando é o mesmo nome e aplicação.
+        [Fact]
+        public async Task CreateAsyncShouldNotReturnConflictWhenNameExistsButIsSameService()
+        {
+            // Arrange
+            var serviceData = new ServiceData { Id = 1, Name = "Existing Service", ApplicationId = 1 };
+            var validationResult = new ValidationResult();
+
+            var localizerFactory = LocalizerFactorHelper.Create();
+            var serviceDataValidator = new Mock<IValidator<ServiceData>>();
+            serviceDataValidator.Setup(v => v.ValidateAsync(serviceData, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(validationResult);
+
+            _unitOfWorkMock.Setup(uow => uow.ApplicationDataRepository.GetByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync(new ApplicationData("Valid Application Name")
+                {
+                    Id = 1,
+                    ConfigurationItem = "Valid Configuration Item",
+                });
+
+            _serviceRepositoryMock.Setup(r => r.VerifyNameExistsAsync(serviceData.Name))
+                .ReturnsAsync(true);
+
+            // Retorna apenas o próprio serviço (não há conflito)
+            _serviceRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<ServiceDataFilter>()))
+                .ReturnsAsync(new PagedResult<ServiceData>
+                {
+                    Result =
+                    [
+                new ServiceData { Id = 1, Name = serviceData.Name, ApplicationId = serviceData.ApplicationId }
+                    ]
+                });
+
+            // Simula sucesso no base.CreateAsync
+            var serviceDataService = new ServiceDataService(_unitOfWorkMock.Object, localizerFactory, serviceDataValidator.Object);
+
+            // Act
+            var result = await serviceDataService.CreateAsync(serviceData);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(OperationStatus.Success, result.Status);
+            _serviceRepositoryMock.Verify(r => r.VerifyNameExistsAsync(serviceData.Name), Times.Once);
+            _serviceRepositoryMock.Verify(r => r.GetListAsync(It.Is<ServiceDataFilter>(f => f.Name == serviceData.Name && f.ApplicationId == serviceData.ApplicationId)), Times.Once);
+            _unitOfWorkMock.Verify(uow => uow.ApplicationDataRepository.GetByIdAsync(serviceData.ApplicationId), Times.Once);
+        }
+
         // Verifica se CreateAsync chama o repositório para verificar se o nome já existe.
         [Fact]
         public async Task CreateAsyncShouldCallBaseCreateAsyncWhenAllValidationsPass()
@@ -92,7 +139,6 @@ namespace Application.Tests.Services
                 {
                     Id = 1,
                     ConfigurationItem = "Valid Configuration Item",
-                    ProductOwner = "Valid Product Owner"
                 });
 
             _serviceRepositoryMock
@@ -134,14 +180,14 @@ namespace Application.Tests.Services
 
         // Verifica se CreateAsync retorna conflito quando o nome do serviço já existe.
         [Fact]
-        public async Task CreateAsyncShouldReturnConflictWhenNameExists()
+        public async Task CreateAsyncShouldReturnConflictWhenNameAndApplicationIdExists()
         {
             // Arrange
-            ServiceData serviceData = new() { Name = "Existing Service", ApplicationId = 1 };
-            ValidationResult validationResult = new();
+            var serviceData = new ServiceData { Name = "Existing Service", ApplicationId = 1 };
+            var validationResult = new ValidationResult();
 
-            IStringLocalizerFactory localizerFactory = LocalizerFactorHelper.Create();
-            Mock<IValidator<ServiceData>> serviceDataValidator = new();
+            var localizerFactory = LocalizerFactorHelper.Create();
+            var serviceDataValidator = new Mock<IValidator<ServiceData>>();
             serviceDataValidator.Setup(v => v.ValidateAsync(serviceData, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(validationResult);
 
@@ -150,22 +196,31 @@ namespace Application.Tests.Services
                 {
                     Id = 1,
                     ConfigurationItem = "Valid Configuration Item",
-                    ProductOwner = "Valid Product Owner"
                 });
 
             _serviceRepositoryMock.Setup(r => r.VerifyNameExistsAsync(serviceData.Name))
                 .ReturnsAsync(true);
 
-            ServiceDataService serviceDataService = new(_unitOfWorkMock.Object, localizerFactory, serviceDataValidator.Object);
+            _serviceRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<ServiceDataFilter>()))
+                .ReturnsAsync(new PagedResult<ServiceData>
+                {
+                    Result =
+                    [
+                new ServiceData { Id = 2, Name = serviceData.Name, ApplicationId = serviceData.ApplicationId }
+                    ]
+                });
+
+            var serviceDataService = new ServiceDataService(_unitOfWorkMock.Object, localizerFactory, serviceDataValidator.Object);
 
             // Act
-            OperationResult result = await serviceDataService.CreateAsync(serviceData);
+            var result = await serviceDataService.CreateAsync(serviceData);
 
             // Assert
             Assert.NotNull(result);
             Assert.Equal(OperationStatus.Conflict, result.Status);
             Assert.Contains(ServiceDataResources.ServiceAlreadyExists, result.Message, StringComparison.OrdinalIgnoreCase);
             _serviceRepositoryMock.Verify(r => r.VerifyNameExistsAsync(serviceData.Name), Times.Once);
+            _serviceRepositoryMock.Verify(r => r.GetListAsync(It.Is<ServiceDataFilter>(f => f.Name == serviceData.Name && f.ApplicationId == serviceData.ApplicationId)), Times.Once);
             _unitOfWorkMock.Verify(uow => uow.ApplicationDataRepository.GetByIdAsync(serviceData.ApplicationId), Times.Once);
         }
 
@@ -306,7 +361,7 @@ namespace Application.Tests.Services
             _serviceRepositoryMock.Setup(repo => repo.GetListAsync(It.Is<ServiceDataFilter>(filter => filter.Name == serviceData.Name)))
                 .ReturnsAsync(new PagedResult<ServiceData>
                 {
-                    Result = new List<ServiceData> { conflictingService },
+                    Result = [conflictingService],
                     Page = 1,
                     PageSize = 10,
                     Total = 1
@@ -341,7 +396,7 @@ namespace Application.Tests.Services
             _serviceRepositoryMock.Setup(repo => repo.GetListAsync(It.Is<ServiceDataFilter>(filter => filter.Name == serviceData.Name)))
                 .ReturnsAsync(new PagedResult<ServiceData>
                 {
-                    Result = new List<ServiceData> { serviceData }, 
+                    Result = [serviceData],
                     Page = 1,
                     PageSize = 10,
                     Total = 1
@@ -590,10 +645,11 @@ namespace Application.Tests.Services
         {
             // Arrange
             string expectedDescription = "Test Description";
-            ServiceDataFilter filter = new();
-
-            // Act
-            filter.Description = expectedDescription;
+            ServiceDataFilter filter = new()
+            {
+                // Act
+                Description = expectedDescription
+            };
 
             // Assert
             Assert.Equal(expectedDescription, filter.Description);

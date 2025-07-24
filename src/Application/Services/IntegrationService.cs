@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
@@ -59,18 +60,30 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.InvalidData(validationResult);
             }
 
-            if (await Repository.VerifyDescriptionExistsAsync(item.Description).ConfigureAwait(false))
+            var existingItem = await Repository.GetByIdAsync(item.Id).ConfigureAwait(false);
+            if (existingItem is null)
             {
-                return OperationResult.Conflict(Localizer[IntegrationResources.MessageConflict]);
+                return OperationResult.NotFound(Localizer[IntegrationResources.MessageNotFound]);
             }
-            if (await Repository.VerifyNameExistsAsync(item.Name).ConfigureAwait(false))
+
+            UnitOfWork.IntegrationRepository.DetachEntity(existingItem);
+
+            bool nameUnchanged = item.Name == existingItem.Name;
+            bool descriptionUnchanged = item.Description == existingItem.Description;
+
+            if (nameUnchanged && descriptionUnchanged)
             {
-                return OperationResult.Conflict(Localizer[IntegrationResources.MessageConflict]);
+                return OperationResult.InvalidData(new ValidationResult(new[]
+                {
+                   new ValidationFailure(nameof(item.Name), Localizer[IntegrationResources.MessageConflict]),
+                   new ValidationFailure(nameof(item.Description), Localizer[IntegrationResources.MessageConflict])
+               }));
             }
 
             await Repository.UpdateAsync(item).ConfigureAwait(false);
             return OperationResult.Complete(Localizer[IntegrationResources.UpdatedSuccessfully]);
         }
+
 
         public new async Task<OperationResult> DeleteAsync(int id)
         {

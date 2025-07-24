@@ -9,7 +9,7 @@ using Stellantis.ProjectName.WebApi.Hubs;
 
 namespace WebApi.Tests.Controllers
 {
-    public class ChatHubControllerTests
+    public class ChatControllerTests
     {
         [Fact]
         public async Task GetMessagesReturnsOrderedMessages()
@@ -19,7 +19,7 @@ namespace WebApi.Tests.Controllers
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .Options;
 
-            var messages = new List<ChatMessage>
+            var messages = new List<Chat>
             {
                 new() { Id = Guid.NewGuid(), User = "user1", Message = "msg1", SentAt = DateTime.UtcNow.AddMinutes(-2) },
                 new() { Id = Guid.NewGuid(), User = "user2", Message = "msg2", SentAt = DateTime.UtcNow.AddMinutes(-1) },
@@ -41,7 +41,7 @@ namespace WebApi.Tests.Controllers
 
                 // Assert
                 var okResult = Assert.IsType<OkObjectResult>(result);
-                var returnMessages = Assert.IsType<IEnumerable<ChatMessage>>(okResult.Value, exactMatch: false);
+                var returnMessages = Assert.IsType<IEnumerable<Chat>>(okResult.Value, exactMatch: false);
 
                 var ordered = returnMessages.OrderBy(m => m.SentAt).ToList();
                 Assert.Equal(ordered, [.. returnMessages]);
