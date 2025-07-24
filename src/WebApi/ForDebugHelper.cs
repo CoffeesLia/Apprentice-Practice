@@ -368,7 +368,7 @@ namespace Stellantis.ProjectName.WebApi
                     new Notification
                     {
                         UserEmail = "patricia@stellantis.com",
-                        Message = "Você tem um novo incidente atribuído.",
+                        Message = "Todas as notificações de Incidentes e Feedbacks aparecerão aqui.",
                         SentAt = DateTime.UtcNow.AddMinutes(-10)
                     }
                 );
