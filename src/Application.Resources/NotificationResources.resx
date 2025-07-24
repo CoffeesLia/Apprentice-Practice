@@ -117,22 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ApplicationRequired" xml:space="preserve">
-    <value>Application is required.</value>
+  <data name="IncidentAddMember" xml:space="preserve">
+    <value>Hello {0}, you have been associated with an already created incident: {1}.</value>
   </data>
-  <data name="DescriptionRequired" xml:space="preserve">
-    <value>Description is required.</value>
+  <data name="IncidentCreatedMessage" xml:space="preserve">
+    <value>Hello {0}, a new incident associated with you has been created: {1}.</value>
   </data>
-  <data name="InvalidMembers" xml:space="preserve">
-    <value>One or more specified members do not belong to the application's squads</value>
+  <data name="IncidentRemoveMember" xml:space="preserve">
+    <value>Hello {0}, you are no longer associated with the incident: {1}.</value>
   </data>
-  <data name="NotFound" xml:space="preserve">
-    <value />
-  </data>
-  <data name="StatusRequired" xml:space="preserve">
-    <value>Status is required.</value>
-  </data>
-  <data name="TitleRequired" xml:space="preserve">
-    <value>Title is required.  </value>
+  <data name="IncidentStatusChangedMessage" xml:space="preserve">
+    <value>Hello {0}, the status of the incident '{1}', associated with you, has been changed to: {2}.</value>
   </data>
 </root>

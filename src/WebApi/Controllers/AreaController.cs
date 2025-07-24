@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces.Services;
@@ -40,6 +41,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         }
 
         [HttpGet]
+        // [Authorize(Roles = "Area_List")]
         public async Task<IActionResult> GetListAsync([FromQuery] AreaFilterDto filterDto)
         {
             AreaFilter filter = Mapper.Map<AreaFilter>(filterDto);
