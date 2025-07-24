@@ -130,6 +130,11 @@ namespace Stellantis.ProjectName.Application.Resources {
             get {
                 return ResourceManager.GetString("UrlIsRequired", resourceCulture);
             }
+           }
+        public static string UrlIsInvalid {
+            get {
+                return ResourceManager.GetString("UrlIsInvalid", resourceCulture);
+            }
         }
     }
 }
