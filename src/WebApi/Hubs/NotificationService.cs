@@ -4,22 +4,14 @@ using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
+using Microsoft.Extensions.Localization;
+using Stellantis.ProjectName.Application.Resources;
 
 namespace Stellantis.ProjectName.WebApi.Hubs
 {
-    public class NotificationService : INotificationService
+    public class NotificationService( IHubContext<NotificationHub> HubContext, Context DbContext,
+    IStringLocalizer<NotificationResources> Localizer) : INotificationService
     {
-        private readonly IHubContext<NotificationHub> _hubContext;
-        private readonly Context _dbContext;
-
-        public NotificationService(
-            IHubContext<NotificationHub> hubContext,
-            Context dbContext
-        )
-        {
-            _hubContext = hubContext;
-            _dbContext = dbContext;
-        }
 
         public async Task NotifyMembersAsync(IEnumerable<Member> members, string message)
         {
@@ -27,21 +19,21 @@ namespace Stellantis.ProjectName.WebApi.Hubs
 
             foreach (var member in members)
             {
-                _dbContext.Notifications.Add(new Notification
+                DbContext.Notifications.Add(new Notification
                 {
                     UserEmail = member.Email,
                     Message = message,
                     SentAt = DateTime.UtcNow
                 });
 
-                await _hubContext.Clients.User(member.Email).SendAsync("ReceiveNotification", message).ConfigureAwait(false);
+                await HubContext.Clients.User(member.Email).SendAsync("ReceiveNotification", message).ConfigureAwait(false);
             }
-            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
+            await DbContext.SaveChangesAsync().ConfigureAwait(false);
         }
 
         public async Task<IReadOnlyCollection<Notification>> ListNotificationsAsync(string userEmail)
         {
-            var result = await _dbContext.Notifications
+            var result = await DbContext.Notifications
                 .Where(n => n.UserEmail == userEmail)
                 .ToListAsync()
                 .ConfigureAwait(false);
@@ -50,7 +42,7 @@ namespace Stellantis.ProjectName.WebApi.Hubs
 
         public async Task<IReadOnlyCollection<Notification>> ListAllNotificationsAsync()
         {
-            var result = await _dbContext.Notifications
+            var result = await DbContext.Notifications
                 .ToListAsync()
                 .ConfigureAwait(false);
             return result;
@@ -58,7 +50,7 @@ namespace Stellantis.ProjectName.WebApi.Hubs
 
         public async Task NotifyIncidentCreatedAsync(int incidentId)
         {
-            var incident = await _dbContext.Incidents
+            var incident = await DbContext.Incidents
                 .Include(i => i.Members)
                 .FirstOrDefaultAsync(i => i.Id == incidentId)
                 .ConfigureAwait(false);
@@ -68,14 +60,14 @@ namespace Stellantis.ProjectName.WebApi.Hubs
 
             foreach (var member in incident.Members)
             {
-                var message = $"Olá {member.Name}, um novo incidente associado a você foi criado: {incident.Title}";
-                await NotifyMembersAsync(new[] { member }, message).ConfigureAwait(false);
+                var message = Localizer["IncidentCreatedMessage", member.Name, incident.Title];
+                await NotifyMembersAsync([member], message).ConfigureAwait(false);
             }
         }
 
         public async Task NotifyIncidentStatusChangeAsync(int incidentId)
         {
-            var incident = await _dbContext.Incidents
+            var incident = await DbContext.Incidents
                 .Include(i => i.Members)
                 .FirstOrDefaultAsync(i => i.Id == incidentId)
                 .ConfigureAwait(false);
@@ -85,24 +77,9 @@ namespace Stellantis.ProjectName.WebApi.Hubs
 
             foreach (var member in incident.Members)
             {
-                var message = $"Olá {member.Name}, o status do incidente associado foi alterado para: {incident.Status}";
-                await NotifyMembersAsync(new[] { member }, message).ConfigureAwait(false);
+                var message = Localizer["IncidentStatusChangedMessage", member.Name, incident.Title, incident.Status];
+                await NotifyMembersAsync([member], message).ConfigureAwait(false);
             }
         }
-    }
-
-    public class NotificationResult
-    {
-        public bool IsNotFound { get; }
-        public ReadOnlyCollection<string> Emails { get; }
-
-        private NotificationResult(bool isNotFound, ReadOnlyCollection<string>? emails = null)
-        {
-            IsNotFound = isNotFound;
-            Emails = emails ?? new ReadOnlyCollection<string>([]);
-        }
-
-        public static NotificationResult NotFound() => new(true);
-        public static NotificationResult Success(ReadOnlyCollection<string> emails) => new(false, emails);
     }
 }

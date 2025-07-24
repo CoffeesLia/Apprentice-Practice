@@ -103,6 +103,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>ManagerResources.resx</DependentUpon>
     </Compile>
+    <Compile Update="NotificationResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>NotificationResources.resx</DependentUpon>
+    </Compile>
     <Compile Update="RepoResources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -191,6 +196,10 @@
     <EmbeddedResource Update="Messages - Copy %282%29.pt-br.resx">
       <SubType>Designer</SubType>
       <DependentUpon>Messages.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="NotificationResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>NotificationResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="RepoResources.pt-BR.resx">
       <Generator></Generator>
