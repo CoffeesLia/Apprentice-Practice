@@ -10,10 +10,11 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Services
 {
-    public class IncidentService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<Incident> validator)
+    public class IncidentService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<Incident> validator, INotificationService notificationService)
             : EntityServiceBase<Incident>(unitOfWork, localizerFactory, validator), IIncidentService
     {
         private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(IncidentResource));
+        private readonly INotificationService _notificationService = notificationService;
         protected override IIncidentRepository Repository => UnitOfWork.IncidentRepository;
 
         public override async Task<OperationResult> CreateAsync(Incident item)
@@ -64,7 +65,14 @@ namespace Stellantis.ProjectName.Application.Services
 
             item.CreatedAt = DateTime.UtcNow;
 
-            return await base.CreateAsync(item).ConfigureAwait(false);
+            var result = await base.CreateAsync(item).ConfigureAwait(false);
+
+            if (result.Status == OperationResult.Complete().Status)
+            {
+                await _notificationService.NotifyIncidentCreatedAsync(item.Id).ConfigureAwait(false);
+            }
+
+            return result;
         }
 
         public override async Task<OperationResult> UpdateAsync(Incident item)
@@ -77,6 +85,9 @@ namespace Stellantis.ProjectName.Application.Services
             {
                 return OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
             }
+
+            // Salva o status anterior
+            var previousStatus = existingIncident.Status;
 
             // Atualiza propriedades simples
             existingIncident.Title = item.Title;
@@ -132,7 +143,15 @@ namespace Stellantis.ProjectName.Application.Services
 
             await Repository.UpdateAsync(existingIncident, saveChanges: true).ConfigureAwait(false);
 
-            return OperationResult.Complete();
+            var result = OperationResult.Complete();
+
+            // Só notifica se o status mudou
+            if (result.Status == OperationResult.Complete().Status && previousStatus != item.Status)
+            {
+                await _notificationService.NotifyIncidentStatusChangeAsync(existingIncident.Id).ConfigureAwait(false);
+            }
+
+            return result;
         }
 
         public new async Task<OperationResult> GetItemAsync(int id)

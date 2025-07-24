@@ -27,19 +27,10 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             return await GetAsync<FeedbackVm>(id).ConfigureAwait(false);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetListAsync([FromQuery] FeedbackFilterDto filterDto)
-        {
-            FeedbackFilter filter = Mapper.Map<FeedbackFilter>(filterDto);
-            PagedResult<Feedback> pagedResult = await ((IFeedbackService)Service).GetListAsync(filter!).ConfigureAwait(false);
-            PagedResultVm<FeedbackVm> result = Mapper.Map<PagedResultVm<FeedbackVm>>(pagedResult);
-            return Ok(result);
-        }
-
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] FeedbackDto itemDto)
         {
-            return await base.UpdateBaseAsync<FeedbackVm>(id, itemDto).ConfigureAwait(false);
+            return await UpdateBaseAsync<FeedbackVm>(id, itemDto).ConfigureAwait(false);
         }
 
         [HttpDelete("{id}")]
@@ -48,5 +39,13 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             return await base.DeleteAsync(id).ConfigureAwait(false);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetListAsync([FromQuery] FeedbackFilterDto filterDto)
+        {
+            FeedbackFilter filter = Mapper.Map<FeedbackFilter>(filterDto);
+            PagedResult<Feedback> pagedResult = await ((IFeedbackService)Service).GetListAsync(filter!).ConfigureAwait(false);
+            PagedResultVm<FeedbackVm> result = Mapper.Map<PagedResultVm<FeedbackVm>>(pagedResult);
+            return Ok(result);
+        }
     }
 }
