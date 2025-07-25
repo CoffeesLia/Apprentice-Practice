@@ -1,18 +1,18 @@
-﻿using System.Collections.ObjectModel;
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces.Services;
+using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
-using Microsoft.Extensions.Localization;
-using Stellantis.ProjectName.Application.Resources;
+using System.Net.Mail;
 
 namespace Stellantis.ProjectName.WebApi.Hubs
 {
     public class NotificationService( IHubContext<NotificationHub> HubContext, Context DbContext,
-    IStringLocalizer<NotificationResources> Localizer) : INotificationService
+    IStringLocalizer<NotificationResources> Localizer, IEmailService emailService) : INotificationService
     {
-
+        private readonly IEmailService _emailService = emailService;
         public async Task NotifyMembersAsync(IEnumerable<Member> members, string message)
         {
             ArgumentNullException.ThrowIfNull(members);
@@ -27,6 +27,19 @@ namespace Stellantis.ProjectName.WebApi.Hubs
                 });
 
                 await HubContext.Clients.User(member.Email).SendAsync("ReceiveNotification", message).ConfigureAwait(false);
+
+                try
+                {
+                    await _emailService.SendEmailAsync(member.Email, "Portal AMS - Nova notificação", message).ConfigureAwait(false);
+                }
+                catch (SmtpException smtpEx)
+                {
+                    Console.WriteLine($"Erro SMTP ao enviar e-mail para {member.Email}: {smtpEx.Message}");
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
             }
             await DbContext.SaveChangesAsync().ConfigureAwait(false);
         }
