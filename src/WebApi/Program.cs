@@ -13,6 +13,7 @@ using Stellantis.ProjectName.WebApi;
 using Stellantis.ProjectName.WebApi.Extensions;
 using Stellantis.ProjectName.WebApi.Filters;
 using Stellantis.ProjectName.WebApi.Hubs;
+using Stellantis.ProjectName.WebApi.Services;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -48,6 +49,7 @@ builder.Services.ConfigureDependencyInjection();
 builder.Services.RegisterMapper();
 
 builder.Services.AddSignalR();
+builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 
 string? databaseType = configuration["DatabaseType"];

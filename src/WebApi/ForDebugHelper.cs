@@ -207,7 +207,7 @@ namespace Stellantis.ProjectName.WebApi
 
                 // Membros
                 context.Members.AddRange(
-                    new Member { Name = "Matheus", Email = "matheus@stellantis.com", Role = "Developer", Cost = 1000, SquadId = 1 },
+                    new Member { Name = "Matheus", Email = "matheus.silva3@stellantis.com", Role = "Developer", Cost = 1000, SquadId = 1 },
                     new Member { Name = "Patricia", Email = "patricia@stellantis.com", Role = "Developer", Cost = 1000, SquadId = 1 },
                     new Member { Name = "Jardel", Email = "jardel@stellantis.com", Role = "Developer", Cost = 1000, SquadId = 4 },
                     new Member { Name = "Vitória", Email = "vitoria@stellantis.com", Role = "Developer", Cost = 1000, SquadId = 3 },
