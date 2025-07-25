@@ -117,6 +117,18 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="FeedbackAddMember" xml:space="preserve">
+    <value>Olá {0}, você foi associado a um feedback já criado: {1}.</value>
+  </data>
+  <data name="FeedbackCreatedMessage" xml:space="preserve">
+    <value>Olá {0}, um novo feedback associado a você foi criado: {1}.</value>
+  </data>
+  <data name="FeedbackRemoveMember" xml:space="preserve">
+    <value>Olá {0}, você não está mais associado ao feedback: {1}.</value>
+  </data>
+  <data name="FeedbackStatusChangedMessage" xml:space="preserve">
+    <value>Olá {0}, o status do feedback '{1}', associado a você, foi alterado para: {2}.</value>
+  </data>
   <data name="IncidentAddMember" xml:space="preserve">
     <value>Olá {0}, você foi associado a um incidente já criado: {1}.</value>
   </data>
