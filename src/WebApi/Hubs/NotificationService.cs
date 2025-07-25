@@ -94,5 +94,39 @@ namespace Stellantis.ProjectName.WebApi.Hubs
                 await NotifyMembersAsync([member], message).ConfigureAwait(false);
             }
         }
+
+        public async Task NotifyFeedbackCreatedAsync(int feedbackId)
+        {
+            var feedback = await DbContext.Feedbacks
+                .Include(i => i.Members)
+                .FirstOrDefaultAsync(i => i.Id == feedbackId)
+                .ConfigureAwait(false);
+
+            if (feedback is null || feedback.Members.Count == 0)
+                return;
+
+            foreach (var member in feedback.Members)
+            {
+                var message = Localizer["FeedbackCreatedMessage", member.Name, feedback.Title];
+                await NotifyMembersAsync([member], message).ConfigureAwait(false);
+            }
+        }
+
+        public async Task NotifyFeedbackStatusChangeAsync(int feedbackId)
+        {
+            var feedback = await DbContext.Feedbacks
+                .Include(i => i.Members)
+                .FirstOrDefaultAsync(i => i.Id == feedbackId)
+                .ConfigureAwait(false);
+
+            if (feedback is null || feedback.Members.Count == 0)
+                return;
+
+            foreach (var member in feedback.Members)
+            {
+                var message = Localizer["FeedbackStatusChangedMessage", member.Name, feedback.Title, feedback.Status];
+                await NotifyMembersAsync([member], message).ConfigureAwait(false);
+            }
+        }
     }
 }

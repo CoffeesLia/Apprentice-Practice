@@ -6,6 +6,8 @@ namespace Stellantis.ProjectName.Application.Interfaces.Services
     {
         Task NotifyIncidentCreatedAsync(int incidentId);
         Task NotifyIncidentStatusChangeAsync(int incidentId);
-        Task NotifyMembersAsync(IEnumerable<Member> members, string message); 
+        Task NotifyFeedbackCreatedAsync(int feedbackId);
+        Task NotifyFeedbackStatusChangeAsync(int feedbackId);
+        Task NotifyMembersAsync(IEnumerable<Member> members, string message);
     }
 }

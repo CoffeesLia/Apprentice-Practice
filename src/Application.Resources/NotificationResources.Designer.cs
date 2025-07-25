@@ -61,6 +61,42 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Hello {0}, you have been associated with an already created feedback: {1}..
+        /// </summary>
+        public static string FeedbackAddMember {
+            get {
+                return ResourceManager.GetString("FeedbackAddMember", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Hello {0}, a new feedback associated with you has been created: {1}..
+        /// </summary>
+        public static string FeedbackCreatedMessage {
+            get {
+                return ResourceManager.GetString("FeedbackCreatedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Hello {0}, you are no longer associated with the feedback: {1}..
+        /// </summary>
+        public static string FeedbackRemoveMember {
+            get {
+                return ResourceManager.GetString("FeedbackRemoveMember", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Hello {0}, the status of the feedback &apos;{1}&apos;, associated with you, has been changed to: {2}..
+        /// </summary>
+        public static string FeedbackStatusChangedMessage {
+            get {
+                return ResourceManager.GetString("FeedbackStatusChangedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Hello {0}, you have been associated with an already created incident: {1}..
         /// </summary>
         public static string IncidentAddMember {

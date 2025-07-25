@@ -11,7 +11,7 @@ using Stellantis.ProjectName.Domain.Entities;
 namespace Stellantis.ProjectName.Application.Services
 {
     public class IncidentService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IStringLocalizer<NotificationResources> notificationLocalizer,
- IValidator<Incident> validator, INotificationService notificationService)
+    IValidator<Incident> validator, INotificationService notificationService)
             : EntityServiceBase<Incident>(unitOfWork, localizerFactory, validator), IIncidentService
     {
         private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(IncidentResource));
