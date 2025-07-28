@@ -22,14 +22,14 @@ namespace Stellantis.ProjectName.Application.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class RepoResources {
+    public class NotificationResources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal RepoResources() {
+        internal NotificationResources() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Stellantis.ProjectName.Application.Resources.RepoResources", typeof(RepoResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Stellantis.ProjectName.Application.Resources.NotificationResources", typeof(NotificationResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,79 +61,74 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Application Id is required.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Hello {0}, you have been associated with an already created feedback: {1}..
         /// </summary>
-        public static string ApplicationIdIsRequired {
+        public static string FeedbackAddMember {
             get {
-                return ResourceManager.GetString("ApplicationIdIsRequired", resourceCulture);
+                return ResourceManager.GetString("FeedbackAddMember", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Description is required.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Hello {0}, a new feedback associated with you has been created: {1}..
         /// </summary>
-        public static string DescriptionIsRequired {
+        public static string FeedbackCreatedMessage {
             get {
-                return ResourceManager.GetString("DescriptionIsRequired", resourceCulture);
+                return ResourceManager.GetString("FeedbackCreatedMessage", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Name already exists..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Hello {0}, you are no longer associated with the feedback: {1}..
         /// </summary>
-        public static string NameAlreadyExists {
+        public static string FeedbackRemoveMember {
             get {
-                return ResourceManager.GetString("NameAlreadyExists", resourceCulture);
+                return ResourceManager.GetString("FeedbackRemoveMember", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Name is required.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Hello {0}, the status of the feedback &apos;{1}&apos;, associated with you, has been changed to: {2}..
         /// </summary>
-        public static string NameIsRequired {
+        public static string FeedbackStatusChangedMessage {
             get {
-                return ResourceManager.GetString("NameIsRequired", resourceCulture);
+                return ResourceManager.GetString("FeedbackStatusChangedMessage", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a The name must be between {0} and {1} characters long..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Hello {0}, you have been associated with an already created incident: {1}..
         /// </summary>
-        public static string NameValidateLength {
+        public static string IncidentAddMember {
             get {
-                return ResourceManager.GetString("NameValidateLength", resourceCulture);
+                return ResourceManager.GetString("IncidentAddMember", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Não encontrado.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Hello {0}, a new incident associated with you has been created: {1}..
         /// </summary>
-        public static string NotFound {
+        public static string IncidentCreatedMessage {
             get {
-                return ResourceManager.GetString("NotFound", resourceCulture);
+                return ResourceManager.GetString("IncidentCreatedMessage", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Url already exists..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Hello {0}, you are no longer associated with the incident: {1}..
         /// </summary>
-        public static string UrlAlreadyExists {
+        public static string IncidentRemoveMember {
             get {
-                return ResourceManager.GetString("UrlAlreadyExists", resourceCulture);
+                return ResourceManager.GetString("IncidentRemoveMember", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Url is required.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Hello {0}, the status of the incident &apos;{1}&apos;, associated with you, has been changed to: {2}..
         /// </summary>
-        public static string UrlIsRequired {
+        public static string IncidentStatusChangedMessage {
             get {
-                return ResourceManager.GetString("UrlIsRequired", resourceCulture);
-            }
-           }
-        public static string UrlIsInvalid {
-            get {
-                return ResourceManager.GetString("UrlIsInvalid", resourceCulture);
+                return ResourceManager.GetString("IncidentStatusChangedMessage", resourceCulture);
             }
         }
     }

@@ -117,22 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ApplicationRequired" xml:space="preserve">
-    <value>Application is required.</value>
+  <data name="FeedbackAddMember" xml:space="preserve">
+    <value>Olá {0}, você foi associado a um feedback já criado: {1}.</value>
   </data>
-  <data name="DescriptionRequired" xml:space="preserve">
-    <value>Description is required.</value>
+  <data name="FeedbackCreatedMessage" xml:space="preserve">
+    <value>Olá {0}, um novo feedback associado a você foi criado: {1}.</value>
   </data>
-  <data name="InvalidMembers" xml:space="preserve">
-    <value>One or more specified members do not belong to the application's squads</value>
+  <data name="FeedbackRemoveMember" xml:space="preserve">
+    <value>Olá {0}, você não está mais associado ao feedback: {1}.</value>
   </data>
-  <data name="NotFound" xml:space="preserve">
-    <value />
+  <data name="FeedbackStatusChangedMessage" xml:space="preserve">
+    <value>Olá {0}, o status do feedback '{1}', associado a você, foi alterado para: {2}.</value>
   </data>
-  <data name="StatusRequired" xml:space="preserve">
-    <value>Status is required.</value>
+  <data name="IncidentAddMember" xml:space="preserve">
+    <value>Olá {0}, você foi associado a um incidente já criado: {1}.</value>
   </data>
-  <data name="TitleRequired" xml:space="preserve">
-    <value>Title is required.  </value>
+  <data name="IncidentCreatedMessage" xml:space="preserve">
+    <value>Olá {0}, um novo incidente associado a você foi criado: {1}.</value>
+  </data>
+  <data name="IncidentRemoveMember" xml:space="preserve">
+    <value>Olá {0}, você não está mais associado ao incidente: {1}.</value>
+  </data>
+  <data name="IncidentStatusChangedMessage" xml:space="preserve">
+    <value>Olá {0}, o status do incidente '{1}', associado a você, foi alterado para: {2}.</value>
   </data>
 </root>

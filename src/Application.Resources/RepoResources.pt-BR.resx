@@ -139,9 +139,6 @@
     <value>A Descrição é obrigatória.</value>
   </data>
   <data name="NotFound" xml:space="preserve">
-    <value>Não encontrado.</value>
-  </data>
-  <data name="UrlIsInvalid" xml:space="preserve">
-    <value>A Url é inválida.</value>
+    <value>Não encontrado</value>
   </data>
 </root>
