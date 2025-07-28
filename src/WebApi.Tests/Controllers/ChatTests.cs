@@ -9,7 +9,7 @@ using Stellantis.ProjectName.WebApi.Hubs;
 
 namespace WebApi.Tests.Controllers
 {
-    public class ChatControllerTests
+    public class ChatTests
     {
         [Fact]
         public async Task GetMessagesReturnsOrderedMessages()

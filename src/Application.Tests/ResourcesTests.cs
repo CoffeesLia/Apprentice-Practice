@@ -93,6 +93,17 @@ namespace Application.Tests
         }
 
         [Fact]
+        public void NotificationResourcesAllCultures()
+        {
+            NotificationResources resource = new();
+            Assert.NotNull(resource);
+            NotificationResources.Culture = CultureInfo.InvariantCulture;
+            Assert.Equal(CultureInfo.InvariantCulture, NotificationResources.Culture);
+
+            VerifyAllResources<NotificationResources>(NotificationResources.ResourceManager);
+        }
+
+        [Fact]
         public void ApplicationDataResourcesAllCultures()
         {
             ApplicationDataResources resource = new();

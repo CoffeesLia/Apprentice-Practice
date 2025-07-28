@@ -1,19 +1,15 @@
 ﻿using System.Net.Mail;
-using System.Net;
 using Stellantis.ProjectName.Application.Interfaces.Services;
 
-namespace Stellantis.ProjectName.WebApi.Services
+namespace Stellantis.ProjectName.WebApi.Hubs
 {
-    public class EmailService : IEmailService
+    public class EmailService(Func<ISmtpClient> smtpClientFactory) : IEmailService
     {
+        private readonly Func<ISmtpClient> _smtpClientFactory = smtpClientFactory;
+
         public async Task SendEmailAsync(string recipientEmail, string subject, string body)
         {
-            using var smtp = new SmtpClient("smtp.gmail.com")
-            {
-                Port = 587,
-                Credentials = new NetworkCredential("amsportalproject@gmail.com", "cxbz juic zhfs xmoh"),
-                EnableSsl = true
-            };
+            using var smtp = _smtpClientFactory();
 
             var htmlBody = $@"
                 <div>
