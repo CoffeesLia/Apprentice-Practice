@@ -61,7 +61,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Application Id is required.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Application Id is required..
         /// </summary>
         public static string ApplicationIdIsRequired {
             get {
@@ -70,7 +70,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Description is required.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Description is required..
         /// </summary>
         public static string DescriptionIsRequired {
             get {
@@ -88,7 +88,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Name is required.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Name is required..
         /// </summary>
         public static string NameIsRequired {
             get {
@@ -124,16 +124,20 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Url is required.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Url is invalid..
+        /// </summary>
+        public static string UrlIsInvalid {
+            get {
+                return ResourceManager.GetString("UrlIsInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Url is required..
         /// </summary>
         public static string UrlIsRequired {
             get {
                 return ResourceManager.GetString("UrlIsRequired", resourceCulture);
-            }
-           }
-        public static string UrlIsInvalid {
-            get {
-                return ResourceManager.GetString("UrlIsInvalid", resourceCulture);
             }
         }
     }
