@@ -50,6 +50,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             // Busca paginada incluindo Application
             var pagedResult = await GetListAsync(
                 filter: filters,
+                pageSize: filter.PageSize,
                 page: filter.Page,
                 sort: filter.Sort,
                 sortDir: filter.SortDir,
