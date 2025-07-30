@@ -19,6 +19,8 @@ namespace Stellantis.ProjectName.Infrastructure.Data
         public DbSet<DocumentData> Documents { get; set; }
         public DbSet<Chat> ChatMessages { get; set; } = null!;
         public DbSet<Notification> Notifications { get; set; } = null!;
+        public DbSet<Knowledge> Knowledges { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -26,9 +26,11 @@ namespace Stellantis.ProjectName.Application.Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
-        private static global::System.Globalization.CultureInfo resourceCulture = null;
+        private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+        internal MemberResource() {
+        }
         
         /// <summary>
         ///   Retorna a instância de ResourceManager armazenada em cache usada por essa classe.
@@ -44,6 +46,19 @@ namespace Stellantis.ProjectName.Application.Resources {
             }
         }
         
+        /// <summary>
+        ///   Substitui a propriedade CurrentUICulture do thread atual para todas as
+        ///   pesquisas de recursos que usam essa classe de recurso de tipo de alta segurança.
+        /// </summary>
+        [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
+        public static global::System.Globalization.CultureInfo Culture {
+            get {
+                return resourceCulture;
+            }
+            set {
+                resourceCulture = value;
+            }
+        }
         
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Member cost must be greater than or equal to zero..
@@ -51,6 +66,15 @@ namespace Stellantis.ProjectName.Application.Resources {
         public static string CostMemberLargestEqualZero {
             get {
                 return ResourceManager.GetString("CostMemberLargestEqualZero", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Leader Squad already exists in Squad..
+        /// </summary>
+        public static string LeaderSquadAlreadyExists {
+            get {
+                return ResourceManager.GetString("LeaderSquadAlreadyExists", resourceCulture);
             }
         }
         

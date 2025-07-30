@@ -6,6 +6,7 @@
         public string? Description { get; set; }
         public decimal? Cost { get; set; }
         public ICollection<Member>? Members { get; set; }
+        public ICollection<ApplicationData> Applications { get; set; } = [];
 
     }
 }

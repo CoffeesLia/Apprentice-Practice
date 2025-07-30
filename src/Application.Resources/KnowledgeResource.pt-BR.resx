@@ -117,31 +117,40 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NameIsRequired" xml:space="preserve">
-    <value>O Nome é obrigatório.</value>
+  <data name="ApplicationIsRequired" xml:space="preserve">
+    <value>Aplicação é obrigatória.</value>
   </data>
-  <data name="NameAlreadyExists" xml:space="preserve">
-    <value>O Nome já existe.</value>
+  <data name="AssociationAlreadyExists" xml:space="preserve">
+    <value>Associação já existe.</value>
   </data>
-  <data name="NameValidateLength" xml:space="preserve">
-    <value>O Nome de ter entre {0} e {1} caracteres.</value>
+  <data name="AssociationFound" xml:space="preserve">
+    <value>Associação encontrada. </value>
   </data>
-  <data name="UrlAlreadyExists" xml:space="preserve">
-    <value>A Url já existe.</value>
+  <data name="AssociationNotFound" xml:space="preserve">
+    <value>Associação não encontrada.</value>
   </data>
-  <data name="UrlIsRequired" xml:space="preserve">
-    <value>A Url é obrigatória.</value>
+  <data name="CannotEditOrRemovePastAssociation" xml:space="preserve">
+    <value>Não é permitido remover associações passadas.</value>
   </data>
-  <data name="ApplicationIdIsRequired" xml:space="preserve">
-    <value>O Id da Aplicação é obrigatório.</value>
+  <data name="MemberApplicationMustBelongToTheSameSquad" xml:space="preserve">
+    <value>Membro e aplicação devem pertencer ao mesmo squad.</value>
   </data>
-  <data name="DescriptionIsRequired" xml:space="preserve">
-    <value>A Descrição é obrigatória.</value>
+  <data name="MemberApplicationNotFound" xml:space="preserve">
+    <value>Membro ou aplicação não encontrados.</value>
   </data>
-  <data name="NotFound" xml:space="preserve">
-    <value>Não encontrado</value>
+  <data name="MemberIsRequired" xml:space="preserve">
+    <value>Membro é obrigatório.</value>
   </data>
-  <data name="UrlIsInvalid" xml:space="preserve">
-    <value>A Url é inválida.</value>
+  <data name="OnlyPossibleRemoveIfBelongToTheLeadersSquad" xml:space="preserve">
+    <value>Só é possível remover se ambos pertencerem ao squad do líder.</value>
+  </data>
+  <data name="OnlySquadLeaderAssociate" xml:space="preserve">
+    <value>Apenas o líder do Squad pode associar.</value>
+  </data>
+  <data name="OnlySquadLeaderRemove" xml:space="preserve">
+    <value>Apenas o líder do Squad pode remover.</value>
+  </data>
+  <data name="UnsupportedMembershipUpdate" xml:space="preserve">
+    <value>Atualização de associação não suportada.</value>
   </data>
 </root>

@@ -16,5 +16,9 @@ namespace Stellantis.ProjectName.Domain.Entities
         public Responsible Responsible { get; set; } = null!;
         public ICollection<Repo> Repos { get; } = [];
         public ICollection<DocumentData> Documents { get; } = [];
+        public ICollection<Knowledge> Knowledges { get; set; } = [];
+        public string? ProductOwner { get; set; } 
+
+
     }
 }
