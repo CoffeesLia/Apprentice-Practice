@@ -57,14 +57,14 @@ namespace WebApi.Tests.Controllers
                 Id = knowledgeId,
                 MemberId = 2,
                 ApplicationId = 3,
-                SquadIdAtAssociationTime = 4
+                AssociatedSquadId = 4
             };
             KnowledgeVm knowledgeVm = new()
             {
                 Id = knowledgeId,
                 MemberId = 2,
                 ApplicationId = 3,
-                SquadIdAtAssociationTime = 4
+                AssociatedSquadId = 4
             };
 
             _serviceMock.Setup(s => s.GetItemAsync(knowledgeId)).ReturnsAsync(knowledge);
@@ -80,7 +80,7 @@ namespace WebApi.Tests.Controllers
             Assert.Equal(knowledgeVm.Id, actualVm.Id);
             Assert.Equal(knowledgeVm.MemberId, actualVm.MemberId);
             Assert.Equal(knowledgeVm.ApplicationId, actualVm.ApplicationId);
-            Assert.Equal(knowledgeVm.SquadIdAtAssociationTime, actualVm.SquadIdAtAssociationTime);
+            Assert.Equal(knowledgeVm.AssociatedSquadId, actualVm.AssociatedSquadId);
         }
 
         [Fact]
@@ -116,7 +116,7 @@ namespace WebApi.Tests.Controllers
                         Id = 1,
                         MemberId = 1,
                         ApplicationId = 2,
-                        SquadIdAtAssociationTime = 3
+                        AssociatedSquadId = 3
                     }
                 ],
                 Page = 1,

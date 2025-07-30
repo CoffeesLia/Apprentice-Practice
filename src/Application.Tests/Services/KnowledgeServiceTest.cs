@@ -71,7 +71,7 @@ namespace Application.Tests.Services
             {
                 MemberId = 1,
                 ApplicationId = 2,
-                SquadIdAtAssociationTime = 1
+                AssociatedSquadId = 1
             };
 
             _memberRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(new Member { Id = 1, SquadId = 1, Name = "M", Role = "R", Email = "e@e.com", Cost = 1 });
@@ -94,7 +94,7 @@ namespace Application.Tests.Services
             {
                 MemberId = 1,
                 ApplicationId = 2,
-                SquadIdAtAssociationTime = 1
+                AssociatedSquadId = 1
             };
 
             _memberRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(new Member { Id = 1, SquadId = 1, Name = "M", Role = "R", Email = "e@e.com", Cost = 1 });
@@ -134,7 +134,7 @@ namespace Application.Tests.Services
                 Id = 1,
                 MemberId = 1,
                 ApplicationId = 2,
-                SquadIdAtAssociationTime = 1
+                AssociatedSquadId = 1
             };
 
             _knowledgeRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.Id)).ReturnsAsync(knowledge);
@@ -155,7 +155,7 @@ namespace Application.Tests.Services
                 Id = 1,
                 MemberId = 1,
                 ApplicationId = 2,
-                SquadIdAtAssociationTime = 1
+                AssociatedSquadId = 1
             };
 
             ValidationResult validationResult = new([new ValidationFailure("MemberId", "Member is required")]);
@@ -180,7 +180,7 @@ namespace Application.Tests.Services
                 Id = 1,
                 MemberId = 1,
                 ApplicationId = 2,
-                SquadIdAtAssociationTime = 1
+                AssociatedSquadId = 1
             };
 
             _knowledgeRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.Id)).ReturnsAsync((Knowledge?)null);
@@ -202,7 +202,7 @@ namespace Application.Tests.Services
                 Id = 1,
                 MemberId = 1,
                 ApplicationId = 2,
-                SquadIdAtAssociationTime = 1
+                AssociatedSquadId = 1
             };
 
             _knowledgeRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.Id)).ReturnsAsync(knowledge);
@@ -222,8 +222,8 @@ namespace Application.Tests.Services
             KnowledgeFilter filter = new() { MemberId = 1, ApplicationId = 2, SquadId = 3 };
             List<Knowledge> knowledgeList =
             [
-                new() { Id = 1, MemberId = 1, ApplicationId = 2, SquadIdAtAssociationTime = 3 },
-                new() { Id = 2, MemberId = 1, ApplicationId = 2, SquadIdAtAssociationTime = 3 }
+                new() { Id = 1, MemberId = 1, ApplicationId = 2, AssociatedSquadId = 3 },
+                new() { Id = 2, MemberId = 1, ApplicationId = 2, AssociatedSquadId = 3 }
             ];
             PagedResult<Knowledge> pagedResult = new()
             {
@@ -267,12 +267,12 @@ namespace Application.Tests.Services
                 Id = 1,
                 MemberId = 1,
                 ApplicationId = 2,
-                SquadIdAtAssociationTime = 1
+                AssociatedSquadId = 1
             };
 
             _knowledgeRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.Id)).ReturnsAsync(knowledge);
-            _memberRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.Id)).ReturnsAsync(new Member { Id = knowledge.Id, Role = "SQUAD_LEADER", SquadId = knowledge.SquadIdAtAssociationTime, Name = "Líder", Email = "l@l.com", Cost = 1 });
-            _applicationRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.ApplicationId)).ReturnsAsync(new ApplicationData("App") { Id = knowledge.ApplicationId, SquadId = knowledge.SquadIdAtAssociationTime, ProductOwner = "PO", ConfigurationItem = "CI" });
+            _memberRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.Id)).ReturnsAsync(new Member { Id = knowledge.Id, Role = "SquadLeader", SquadId = knowledge.AssociatedSquadId, Name = "Líder", Email = "l@l.com", Cost = 1 });
+            _applicationRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.ApplicationId)).ReturnsAsync(new ApplicationData("App") { Id = knowledge.ApplicationId, SquadId = knowledge.AssociatedSquadId, ProductOwner = "PO", ConfigurationItem = "CI" });
 
 
             // Act

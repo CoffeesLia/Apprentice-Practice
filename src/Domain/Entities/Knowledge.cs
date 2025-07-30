@@ -13,7 +13,8 @@ namespace Stellantis.ProjectName.Domain.Entities
         public ApplicationData Application { get; set; } = null!;
 
        // armazena o Squad no momento da associação(para regras de negócio)
-        public int SquadIdAtAssociationTime { get; set; }
+        public int AssociatedSquadId { get; set; }
+        public Squad AssociatedSquad { get; set; } = null!;
 
     }
 }

@@ -35,8 +35,8 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task CreateAssociationAsyncShouldAddKnowledge()
         {
             // Arrange
-            var member = _fixture.Build<Member>().With(m => m.Id, 1).With(m => m.SquadId, 1).Create();
-            var app = _fixture.Build<ApplicationData>().With(a => a.Id, 2).With(a => a.SquadId, 1).With(a => a.ProductOwner, "PO").With(a => a.ConfigurationItem, "CI").Create();
+            var member = new Member { Id = 1, Name = "Teste", Role = "Dev", Cost = 100, Email = "teste@teste.com", SquadId = 1 };
+            var app = new ApplicationData("App") { Id = 2, SquadId = 1, ProductOwner = "PO", ConfigurationItem = "CI" };
             _context.Members.Add(member);
             _context.Applications.Add(app);
             await _context.SaveChangesAsync();
@@ -45,34 +45,72 @@ namespace Infrastructure.Tests.Data.Repositories
             await _repository.CreateAssociationAsync(1, 2, 1);
 
             // Assert
-            var knowledge = _context.Knowledges.FirstOrDefault();
+            var knowledge = _context.Knowledges
+                .Include(k => k.Application)
+                .FirstOrDefault();
             Assert.NotNull(knowledge);
             Assert.Equal(1, knowledge.MemberId);
             Assert.Equal(2, knowledge.ApplicationId);
-            Assert.Equal(1, knowledge.SquadIdAtAssociationTime);
+            Assert.Equal(1, knowledge.AssociatedSquadId);
+            Assert.Equal(app.Id, knowledge.Application.Id);
         }
 
         [Fact]
         public async Task AssociationExistsAsyncShouldReturnTrueIfExists()
         {
             // Arrange
-            var knowledge = _fixture.Build<Knowledge>().With(k => k.MemberId, 1).With(k => k.ApplicationId, 2).With(k => k.SquadIdAtAssociationTime, 1).Create();
+            var member = _fixture.Build<Member>().With(m => m.Id, 1).Create();
+            var app = _fixture.Build<ApplicationData>().With(a => a.Id, 2).Create();
+            _context.Members.Add(member);
+            _context.Applications.Add(app);
+            await _context.SaveChangesAsync();
+
+            var knowledge = new Knowledge
+            {
+                MemberId = member.Id,
+                Member = member,
+                ApplicationId = app.Id,
+                Application = app,
+                AssociatedSquadId = 1
+            };
             _context.Knowledges.Add(knowledge);
             await _context.SaveChangesAsync();
 
             // Act
-            var exists = await _repository.AssociationExistsAsync(1, 2);
+            var exists = await _repository.AssociationExistsAsync(member.Id, app.Id);
 
             // Assert
             Assert.True(exists);
         }
 
+
         [Fact]
         public async Task DeleteAsyncShouldRemoveOnlySpecificAssociation()
         {
             // Arrange
-            var k1 = _fixture.Build<Knowledge>().With(k => k.MemberId, 1).With(k => k.ApplicationId, 2).With(k => k.SquadIdAtAssociationTime, 1).Create();
-            var k2 = _fixture.Build<Knowledge>().With(k => k.MemberId, 1).With(k => k.ApplicationId, 3).With(k => k.SquadIdAtAssociationTime, 1).Create();
+            var member = new Member { Id = 1, Name = "M", Role = "R", Cost = 1, Email = "m@x.com", SquadId = 1 };
+            var app1 = new ApplicationData("App1") { Id = 2, SquadId = 1, ProductOwner = "PO", ConfigurationItem = "CI" };
+            var app2 = new ApplicationData("App2") { Id = 3, SquadId = 1, ProductOwner = "PO", ConfigurationItem = "CI" };
+            _context.Members.Add(member);
+            _context.Applications.AddRange(app1, app2);
+            await _context.SaveChangesAsync();
+
+            var k1 = new Knowledge
+            {
+                MemberId = member.Id,
+                Member = member,
+                ApplicationId = app1.Id,
+                Application = app1,
+                AssociatedSquadId = 1
+            };
+            var k2 = new Knowledge
+            {
+                MemberId = member.Id,
+                Member = member,
+                ApplicationId = app2.Id,
+                Application = app2,
+                AssociatedSquadId = 1
+            };
             _context.Knowledges.AddRange(k1, k2);
             await _context.SaveChangesAsync();
 
@@ -88,10 +126,24 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task GetListAsyncShouldApplyFiltersCorrectly()
         {
             // Arrange
-            var knowledges = _fixture.CreateMany<Knowledge>(10).ToList();
-            knowledges[0].MemberId = 99;
-            knowledges[0].ApplicationId = 88;
-            knowledges[0].SquadIdAtAssociationTime = 77;
+            var member = new Member { Id = 99, Name = "Filtro", Role = "Dev", Cost = 100, Email = "filtro@teste.com", SquadId = 77 };
+            var app = new ApplicationData("AppFiltro") { Id = 88, SquadId = 77, ProductOwner = "PO", ConfigurationItem = "CI" };
+            _context.Members.Add(member);
+            _context.Applications.Add(app);
+            await _context.SaveChangesAsync();
+
+            var filtroKnowledge = new Knowledge
+            {
+                MemberId = member.Id,
+                Member = member,
+                ApplicationId = app.Id,
+                Application = app,
+                AssociatedSquadId = 77
+            };
+
+            var knowledges = _fixture.CreateMany<Knowledge>(9).ToList();
+            knowledges.Insert(0, filtroKnowledge); // Garante que o primeiro tem os valores do filtro
+
             _context.Knowledges.AddRange(knowledges);
             await _context.SaveChangesAsync();
 
@@ -110,8 +162,9 @@ namespace Infrastructure.Tests.Data.Repositories
             Assert.Single(result.Result);
             Assert.Equal(99, result.Result.First().MemberId);
             Assert.Equal(88, result.Result.First().ApplicationId);
-            Assert.Equal(77, result.Result.First().SquadIdAtAssociationTime);
+            Assert.Equal(77, result.Result.First().AssociatedSquadId);
         }
+
 
         protected virtual void Dispose(bool disposing)
         {

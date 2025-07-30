@@ -54,10 +54,10 @@ namespace Stellantis.ProjectName.Application.Services
         {
             ArgumentNullException.ThrowIfNull(item);
 
-            if (item.Role == "SQUAD_LEADER")
+            if (item.Role == "SquadLeader")
             {
                 bool alreadyExists = await Repository.AnyAsync(
-                    m => m.SquadId == item.SquadId && m.Role == "SQUAD_LEADER" && m.Id != item.Id).ConfigureAwait(false);
+                    m => m.SquadId == item.SquadId && m.Role == "SquadLeader" && m.Id != item.Id).ConfigureAwait(false);
 
                 if (alreadyExists)
                     return OperationResult.Conflict(_localizer[nameof(MemberResource.LeaderSquadAlreadyExists)]);

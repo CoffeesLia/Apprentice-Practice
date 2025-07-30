@@ -44,7 +44,7 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.Conflict(_localizer[nameof(KnowledgeResource.AssociationAlreadyExists)]);
 
             // registra o squad no momento da associação
-            item.SquadIdAtAssociationTime = member.SquadId;
+            item.AssociatedSquadId = member.SquadId;
 
             await Repository.CreateAssociationAsync(item.MemberId, item.ApplicationId, member.SquadId).ConfigureAwait(false);
             return await base.CreateAsync(item).ConfigureAwait(false);
@@ -74,6 +74,19 @@ namespace Stellantis.ProjectName.Application.Services
             if (member == null || newApplication == null)
                 return OperationResult.NotFound(_localizer[nameof(KnowledgeResource.MemberApplicationNotFound)]);
 
+            // apenas líder do squad pode editar
+            var performingUser = await UnitOfWork.MemberRepository.GetByIdAsync(item.Id).ConfigureAwait(false);
+            if (performingUser == null || !performingUser.SquadLeader)
+                return OperationResult.Conflict(_localizer[nameof(KnowledgeResource.OnlySquadLeaderRemove)]);
+
+            // só permite se membro e aplicação ainda pertencem ao squad do líder
+            if (member.SquadId != performingUser.SquadId || newApplication.SquadId != performingUser.SquadId)
+                return OperationResult.Conflict(_localizer[nameof(KnowledgeResource.OnlyPossibleRemoveIfBelongToTheLeadersSquad)]);
+
+            // associações passadas não podem ser editadas
+            if (existing.AssociatedSquadId != performingUser.SquadId)
+                return OperationResult.Conflict(_localizer[nameof(KnowledgeResource.CannotEditOrRemovePastAssociation)]);
+
             if (member.SquadId != newApplication.SquadId)
                 return OperationResult.Conflict(_localizer[nameof(KnowledgeResource.MemberApplicationMustBelongToTheSameSquad)]);
 
@@ -81,7 +94,7 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.Conflict(_localizer[nameof(KnowledgeResource.AssociationAlreadyExists)]);
 
             existing.ApplicationId = item.ApplicationId;
-            existing.SquadIdAtAssociationTime = member.SquadId;
+            existing.AssociatedSquadId = member.SquadId;
             return await base.UpdateAsync(item).ConfigureAwait(false);
         }
 
@@ -110,7 +123,7 @@ namespace Stellantis.ProjectName.Application.Services
 
             // apenas líder do squad pode remover
             var performingUser = await UnitOfWork.MemberRepository.GetByIdAsync(item.Id).ConfigureAwait(false);
-            if (performingUser == null || performingUser.Role != "SQUAD_LEADER")
+            if (performingUser == null || performingUser.Role != "SquadLeader")
                 return OperationResult.Conflict(_localizer[nameof(KnowledgeResource.OnlySquadLeaderRemove)]);
 
             // só permite se membro e aplicação ainda pertencem ao squad do líder
@@ -118,7 +131,7 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.Conflict(_localizer[nameof(KnowledgeResource.OnlyPossibleRemoveIfBelongToTheLeadersSquad)]);
 
             // associações passadas não podem ser removidas
-            if (item.SquadIdAtAssociationTime != performingUser.SquadId)
+            if (item.AssociatedSquadId != performingUser.SquadId)
                 return OperationResult.Conflict(_localizer[nameof(KnowledgeResource.CannotEditOrRemovePastAssociation)]);
 
             return await base.DeleteAsync(item).ConfigureAwait(false);
@@ -143,6 +156,11 @@ namespace Stellantis.ProjectName.Application.Services
         public async Task<bool> IsAssociationUniqueAsync(int memberId, int applicationId)
         {
             return !await Repository.AssociationExistsAsync(memberId, applicationId).ConfigureAwait(false);
+        }
+
+        public Task<PagedResult<ApplicationData>> GetListAsync(ApplicationFilter applicationFilter)
+        {
+            throw new NotImplementedException();
         }
     }
 }

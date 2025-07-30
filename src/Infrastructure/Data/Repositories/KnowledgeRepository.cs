@@ -22,7 +22,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 {
                     MemberId = memberId,
                     ApplicationId = applicationId,
-                    SquadIdAtAssociationTime = squadIdAtAssociationTime,
+                    AssociatedSquadId = squadIdAtAssociationTime,
                 };
                 Context.Set<Knowledge>().Add(knowledge);
                 await SaveChangesAsync().ConfigureAwait(false);
@@ -71,7 +71,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 query = query.Where(k => k.ApplicationId == filter.ApplicationId);
 
             if (filter.SquadId > 0)
-                query = query.Where(k => k.SquadIdAtAssociationTime == filter.SquadId);
+                query = query.Where(k => k.AssociatedSquadId == filter.SquadId);
 
             return await GetPagedResultAsync(query, filter.Page, filter.PageSize)
                 .ConfigureAwait(false);
@@ -91,11 +91,11 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         public async Task DeleteAsync(int memberId, int applicationId)
         {
-            var knowledge = await Context.Set<Knowledge>()
-                .FirstOrDefaultAsync(k => k.MemberId == memberId && k.ApplicationId == applicationId).ConfigureAwait(false);
+            var knowledge = await Context.Knowledges
+       .FirstOrDefaultAsync(k => k.MemberId == memberId && k.ApplicationId == applicationId).ConfigureAwait(false);
             if (knowledge != null)
             {
-                Context.Set<Knowledge>().Remove(knowledge);
+                Context.Knowledges.Remove(knowledge);
                 await Context.SaveChangesAsync().ConfigureAwait(false);
             }
         }
