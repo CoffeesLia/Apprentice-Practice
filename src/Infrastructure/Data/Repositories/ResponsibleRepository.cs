@@ -48,7 +48,9 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 filters = filters.And(x => x.AreaId == filter.AreaId);
             }
 
-            return await GetListAsync(filter: filters,
+            return await GetListAsync(
+                filter: filters,
+                pageSize: filter.PageSize,
                 page: filter.Page,
                 sort: filter.Sort,
                 sortDir: filter.SortDir,

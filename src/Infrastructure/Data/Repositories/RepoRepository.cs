@@ -43,6 +43,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             return await GetListAsync(
                 filter: filters,
+                pageSize:repoFilter.PageSize,
                 page: repoFilter.Page,
                 sort: repoFilter.Sort,
                 sortDir: repoFilter.SortDir,

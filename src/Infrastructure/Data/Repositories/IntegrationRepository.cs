@@ -38,7 +38,12 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             if (filter.ApplicationDataId > 0)
                 filters = filters.And(x => x.ApplicationDataId == filter.ApplicationDataId);
 
-            return await GetListAsync(filter: filters, page: filter.Page > 0 ? filter.Page : 1, sort: filter.Sort, sortDir: filter.SortDir).ConfigureAwait(false);
+            return await GetListAsync(
+                filter: filters,
+                pageSize:filter.PageSize,
+                page: filter.Page,
+                sort: filter.Sort,
+                sortDir: filter.SortDir).ConfigureAwait(false);
         }
 
         public async Task<bool> VerifyNameExistsAsync(string Name)

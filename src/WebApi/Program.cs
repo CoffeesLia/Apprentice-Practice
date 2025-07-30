@@ -48,7 +48,10 @@ builder.Services.ConfigureDependencyInjection();
 builder.Services.RegisterMapper();
 
 builder.Services.AddSignalR();
+builder.Services.AddScoped<Func<ISmtpClient>>(sp => () => sp.GetRequiredService<ISmtpClient>());
+builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<ISmtpClient, SmtpClientWrapper>();
 
 string? databaseType = configuration["DatabaseType"];
 switch (databaseType)

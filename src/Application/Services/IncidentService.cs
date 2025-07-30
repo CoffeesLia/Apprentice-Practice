@@ -10,10 +10,14 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Services
 {
-    public class IncidentService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<Incident> validator, INotificationService notificationService)
+    public class IncidentService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IStringLocalizer<NotificationResources> notificationLocalizer,
+    IValidator<Incident> validator, INotificationService notificationService)
             : EntityServiceBase<Incident>(unitOfWork, localizerFactory, validator), IIncidentService
     {
         private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(IncidentResource));
+
+        private readonly IStringLocalizer<NotificationResources> _notificationLocalizer = notificationLocalizer;
+
         private readonly INotificationService _notificationService = notificationService;
         protected override IIncidentRepository Repository => UnitOfWork.IncidentRepository;
 
@@ -89,6 +93,10 @@ namespace Stellantis.ProjectName.Application.Services
             // Salva o status anterior
             var previousStatus = existingIncident.Status;
 
+            // Salva os IDs dos membros antigos
+            var oldMemberIds = existingIncident.Members?.Select(m => m.Id).ToHashSet() ?? new HashSet<int>();
+            var oldMembers = existingIncident.Members?.ToList() ?? new List<Member>();
+
             // Atualiza propriedades simples
             existingIncident.Title = item.Title;
             existingIncident.Description = item.Description;
@@ -97,12 +105,13 @@ namespace Stellantis.ProjectName.Application.Services
             existingIncident.CreatedAt = DateTime.UtcNow;
 
             // Atualiza membros apenas se necessário
+            List<Member> newMembers = new();
             if (item.Members != null)
             {
                 var memberIds = item.Members.Select(m => m.Id).ToList();
                 var pagedMembers = await UnitOfWork.MemberRepository
                     .GetListAsync(m => memberIds.Contains(m.Id)).ConfigureAwait(false);
-                var newMembers = pagedMembers.Result.ToList();
+                newMembers = pagedMembers.Result.ToList();
 
                 // Sincroniza a coleção de membros sem sobrescrever a referência
                 existingIncident.Members.Clear();
@@ -145,10 +154,32 @@ namespace Stellantis.ProjectName.Application.Services
 
             var result = OperationResult.Complete();
 
-            // Só notifica se o status mudou
             if (result.Status == OperationResult.Complete().Status && previousStatus != item.Status)
             {
                 await _notificationService.NotifyIncidentStatusChangeAsync(existingIncident.Id).ConfigureAwait(false);
+            }
+
+            var newMemberIds = newMembers.Select(m => m.Id).ToHashSet();
+            var addedMemberIds = newMemberIds.Except(oldMemberIds).ToList();
+            if (addedMemberIds.Count > 0)
+            {
+                var addedMembers = newMembers.Where(m => addedMemberIds.Contains(m.Id)).ToList();
+                foreach (var member in addedMembers)
+                {
+                    var message = _notificationLocalizer["IncidentAddMember", member.Name, existingIncident.Title];
+                    await _notificationService.NotifyMembersAsync(new[] { member }, message).ConfigureAwait(false);
+                }
+            }
+
+            var removedMemberIds = oldMemberIds.Except(newMemberIds).ToList();
+            if (removedMemberIds.Count > 0)
+            {
+                var removedMembers = oldMembers.Where(m => removedMemberIds.Contains(m.Id)).ToList();
+                foreach (var member in removedMembers)
+                {
+                    var message = _notificationLocalizer["IncidentRemoveMember", member.Name, existingIncident.Title];
+                    await _notificationService.NotifyMembersAsync(new[] { member }, message).ConfigureAwait(false);
+                }
             }
 
             return result;

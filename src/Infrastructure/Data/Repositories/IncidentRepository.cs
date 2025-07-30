@@ -40,6 +40,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             var pagedResult = await GetListAsync(
                 filter: filters,
                 page: filter.Page,
+                pageSize: filter.PageSize,
                 sort: filter.Sort,
                 sortDir: filter.SortDir,
                 includeProperties: $"{nameof(Incident.Application)},{nameof(Incident.Members)}"
