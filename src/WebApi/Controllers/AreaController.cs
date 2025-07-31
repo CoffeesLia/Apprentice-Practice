@@ -17,24 +17,32 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         protected override IAreaService Service => (IAreaService)base.Service;
 
         [HttpPost]
+        // [Authorize(Roles = "Area_Add")]
+
         public async Task<IActionResult> CreateAsync([FromBody] AreaDto itemDto)
         {
             return await CreateBaseAsync<AreaVm>(itemDto).ConfigureAwait(false);
         }
 
         [HttpGet("{id}")]
+        // [Authorize(Roles = "Area_List")]
+
         public async Task<ActionResult<AreaVm>> GetAsync(int id)
         {
             return await GetAsync<AreaVm>(id).ConfigureAwait(false);
         }
 
         [HttpPut("{id}")]
+        // [Authorize(Roles = "Area_Upd")]
+
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] AreaDto itemDto)
         {
             return await base.UpdateBaseAsync<AreaVm>(id, itemDto).ConfigureAwait(false);
         }
 
         [HttpDelete("{id}")]
+        // [Authorize(Roles = "Area_Del")]
+
         public override async Task<IActionResult> DeleteAsync(int id)
         {
             return await base.DeleteAsync(id).ConfigureAwait(false);
