@@ -11,7 +11,7 @@ using Stellantis.ProjectName.WebApi.ViewModels;
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [ApiController]
-    [Route("api/feedbacks")]
+    [Route("api/feedback")]
     public sealed class FeedbacksController(IFeedbackService service, IMapper mapper, IStringLocalizerFactory localizerFactory)
         : EntityControllerBase<Feedback, FeedbackDto>(service, mapper, localizerFactory)
     {

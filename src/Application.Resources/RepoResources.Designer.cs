@@ -8,11 +8,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Stellantis.ProjectName.Application.Resources
-{
+namespace Stellantis.ProjectName.Application.Resources {
     using System;
-
-
+    
+    
     /// <summary>
     ///   Uma classe de recurso de tipo de alta segurança, para pesquisar cadeias de caracteres localizadas etc.
     /// </summary>
@@ -23,129 +22,107 @@ namespace Stellantis.ProjectName.Application.Resources
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class RepoResources
-    {
-
+    public class RepoResources {
+        
         private static global::System.Resources.ResourceManager resourceMan;
-
+        
         private static global::System.Globalization.CultureInfo resourceCulture;
-
+        
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal RepoResources()
-        {
+        internal RepoResources() {
         }
-
+        
         /// <summary>
         ///   Retorna a instância de ResourceManager armazenada em cache usada por essa classe.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager
-        {
-            get
-            {
-                if (object.ReferenceEquals(resourceMan, null))
-                {
+        public static global::System.Resources.ResourceManager ResourceManager {
+            get {
+                if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Stellantis.ProjectName.Application.Resources.RepoResources", typeof(RepoResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
             }
         }
-
+        
         /// <summary>
         ///   Substitui a propriedade CurrentUICulture do thread atual para todas as
         ///   pesquisas de recursos que usam essa classe de recurso de tipo de alta segurança.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture
-        {
-            get
-            {
+        public static global::System.Globalization.CultureInfo Culture {
+            get {
                 return resourceCulture;
             }
-            set
-            {
+            set {
                 resourceCulture = value;
             }
         }
-
+        
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Application Id is required..
         /// </summary>
-        public static string ApplicationIdIsRequired
-        {
-            get
-            {
+        public static string ApplicationIdIsRequired {
+            get {
                 return ResourceManager.GetString("ApplicationIdIsRequired", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Description is required..
         /// </summary>
-        public static string DescriptionIsRequired
-        {
-            get
-            {
+        public static string DescriptionIsRequired {
+            get {
                 return ResourceManager.GetString("DescriptionIsRequired", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Name already exists..
         /// </summary>
-        public static string NameAlreadyExists
-        {
-            get
-            {
+        public static string NameAlreadyExists {
+            get {
                 return ResourceManager.GetString("NameAlreadyExists", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Name is required..
         /// </summary>
-        public static string NameIsRequired
-        {
-            get
-            {
+        public static string NameIsRequired {
+            get {
                 return ResourceManager.GetString("NameIsRequired", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a The name must be between {0} and {1} characters long..
         /// </summary>
-        public static string NameValidateLength
-        {
-            get
-            {
+        public static string NameValidateLength {
+            get {
                 return ResourceManager.GetString("NameValidateLength", resourceCulture);
             }
         }
-
+        
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Não encontrado.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Not Found..
         /// </summary>
-        public static string NotFound
-        {
-            get
-            {
+        public static string NotFound {
+            get {
                 return ResourceManager.GetString("NotFound", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Url already exists..
         /// </summary>
-        public static string UrlAlreadyExists
-        {
-            get
-            {
+        public static string UrlAlreadyExists {
+            get {
                 return ResourceManager.GetString("UrlAlreadyExists", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Url is invalid..
         /// </summary>
@@ -158,13 +135,10 @@ namespace Stellantis.ProjectName.Application.Resources
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Url is required..
         /// </summary>
-        public static string UrlIsRequired
-        {
-            get
-            {
+        public static string UrlIsRequired {
+            get {
                 return ResourceManager.GetString("UrlIsRequired", resourceCulture);
             }
-      
         }
     }
 }

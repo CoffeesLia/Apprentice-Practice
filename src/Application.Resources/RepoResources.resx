@@ -144,7 +144,4 @@
   <data name="UrlIsInvalid" xml:space="preserve">
     <value>Url is invalid.</value>
   </data>
-  <data name="NotFound" xml:space="preserve">
-    <value>Não encontrado</value>
-  </data>
 </root>
