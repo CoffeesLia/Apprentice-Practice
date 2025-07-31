@@ -195,8 +195,7 @@
       <Generator></Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="KnowledgeResource.pt-BR.resx">
-      <LastGenOutput>KnowledgeResource.pt-BR.Designer.cs</LastGenOutput>
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator></Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="KnowledgeResource.resx">
       <Generator></Generator>
