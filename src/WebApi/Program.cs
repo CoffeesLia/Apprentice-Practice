@@ -13,9 +13,6 @@ using Stellantis.ProjectName.WebApi;
 using Stellantis.ProjectName.WebApi.Extensions;
 using Stellantis.ProjectName.WebApi.Filters;
 using Stellantis.ProjectName.WebApi.Hubs;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Stellantis.ProjectName.WebApi.Configurations; 
-
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -28,39 +25,6 @@ IConfigurationRoot configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddEnvironmentVariables()
     .Build();
-
-var signingConfigurations = new SigningConfigurations(Environment.GetEnvironmentVariable("SECRET_KEY"));
-builder.Services.AddSingleton(signingConfigurations);
-
-var tokenConfigurations = new TokenConfigurations();
-new ConfigureFromConfigurationOptions<TokenConfigurations>(
-    configuration.GetSection("TokenConfigurations"))
-    .Configure(tokenConfigurations);
-
-builder.Services.AddSingleton(tokenConfigurations);
-
-builder.Services.AddAuthentication(authOptions =>
-{
-    authOptions.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    authOptions.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(bearerOptions =>
-{
-    var paramsValidation = bearerOptions.TokenValidationParameters;
-
-    bearerOptions.RequireHttpsMetadata = false;
-    bearerOptions.SaveToken = true;
-
-    paramsValidation.ValidateIssuer = false;
-    paramsValidation.ValidateAudience = false;
-    paramsValidation.IssuerSigningKey = signingConfigurations.Key;
-    paramsValidation.ValidAudience = tokenConfigurations.Audience;
-    paramsValidation.ValidIssuer = tokenConfigurations.Issuer;
-
-    paramsValidation.ValidateIssuerSigningKey = true;
-    paramsValidation.ValidateLifetime = true;
-    paramsValidation.ClockSkew = TimeSpan.Zero;
-});
 
 builder.Services.AddControllers();
 builder.Services.AddControllers(opt =>
@@ -156,7 +120,6 @@ if (app.Environment.IsDevelopment())
 RequestLocalizationOptions localizationOptions = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value;
 app.UseRequestLocalization(localizationOptions);
 app.UseHttpsRedirection();
-app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.MapHub<ChatHub>("/chat");

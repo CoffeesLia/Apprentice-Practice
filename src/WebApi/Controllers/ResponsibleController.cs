@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces.Services;
@@ -11,47 +10,36 @@ using Stellantis.ProjectName.WebApi.ViewModels;
 
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
-    [ApiController]
     [Route("api/responsible")]
-    [Authorize]
+
     public sealed class ResponsibleController(IResponsibleService service, IMapper mapper, IStringLocalizerFactory localizerFactory)
         : EntityControllerBase<Responsible, ResponsibleDto>(service, mapper, localizerFactory)
     {
         [HttpPost]
-        [Authorize(Roles = "Responsible_Add")]
-
         public async Task<IActionResult> CreateAsync([FromBody] ResponsibleDto itemDto)
         {
             return await CreateBaseAsync<ResponsibleVm>(itemDto).ConfigureAwait(false);
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "Responsible_List")]
-
         public async Task<ActionResult<ResponsibleVm>> GetAsync(int id)
         {
             return await GetAsync<ResponsibleVm>(id).ConfigureAwait(false);
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "Responsible_Upd")]
-
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] ResponsibleDto itemDto)
         {
             return await base.UpdateBaseAsync<ResponsibleVm>(id, itemDto).ConfigureAwait(false);
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Responsible_Del")]
-
         public override async Task<IActionResult> DeleteAsync(int id)
         {
             return await base.DeleteAsync(id).ConfigureAwait(false);
         }
 
         [HttpGet]
-        [Authorize(Roles = "Responsible_List")]
-
         public async Task<IActionResult> GetListAsync([FromQuery] ResponsibleFilterDto filterDto)
         {
             ResponsibleFilter filter = Mapper.Map<ResponsibleFilter>(filterDto);
