@@ -72,14 +72,14 @@ namespace Stellantis.ProjectName.Application.Services
             bool descriptionUnchanged = item.Description == existingItem.Description;
             bool applicationDataIdUnchanged = item.ApplicationDataId == existingItem.ApplicationDataId;
 
-            if (nameUnchanged && descriptionUnchanged)
+            if (nameUnchanged && descriptionUnchanged && applicationDataIdUnchanged)
             {
-                return OperationResult.InvalidData(new ValidationResult(new[]
-                {
-                   new ValidationFailure(nameof(item.Name), Localizer[IntegrationResources.MessageConflict]),
-                   new ValidationFailure(nameof(item.Description), Localizer[IntegrationResources.MessageConflict]),
-                   new ValidationFailure(nameof(item.ApplicationDataId), Localizer[IntegrationResources.MessageConflict])
-               }));
+                return OperationResult.InvalidData(new ValidationResult(
+                [
+                    new ValidationFailure(nameof(item.Name), Localizer[IntegrationResources.MessageConflict]),
+                    new ValidationFailure(nameof(item.Description), Localizer[IntegrationResources.MessageConflict]),
+                    new ValidationFailure(nameof(item.ApplicationDataId), Localizer[IntegrationResources.MessageConflict])
+                ]));
             }
 
             await Repository.UpdateAsync(item).ConfigureAwait(false);
