@@ -70,13 +70,15 @@ namespace Stellantis.ProjectName.Application.Services
 
             bool nameUnchanged = item.Name == existingItem.Name;
             bool descriptionUnchanged = item.Description == existingItem.Description;
+            bool applicationDataIdUnchanged = item.ApplicationDataId == existingItem.ApplicationDataId;
 
             if (nameUnchanged && descriptionUnchanged)
             {
                 return OperationResult.InvalidData(new ValidationResult(new[]
                 {
                    new ValidationFailure(nameof(item.Name), Localizer[IntegrationResources.MessageConflict]),
-                   new ValidationFailure(nameof(item.Description), Localizer[IntegrationResources.MessageConflict])
+                   new ValidationFailure(nameof(item.Description), Localizer[IntegrationResources.MessageConflict]),
+                   new ValidationFailure(nameof(item.ApplicationDataId), Localizer[IntegrationResources.MessageConflict])
                }));
             }
 
