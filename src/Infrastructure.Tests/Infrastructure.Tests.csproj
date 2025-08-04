@@ -34,6 +34,7 @@
     <Compile Remove="Data\EntityConfig\VehicleConfigTests.cs" />
     <Compile Remove="Data\Repositories\EmployeeRepositoryTests.cs" />
     <Compile Remove="Data\Repositories\PartNumberRepositoryTests.cs" />
+    <Compile Remove="Data\Repositories\RepositoryEntityBaseTests.cs" />
     <Compile Remove="Data\Repositories\SupplierRepositoryTests.cs" />
     <Compile Remove="Data\Repositories\VehicleRepository.cs" />
   </ItemGroup>
