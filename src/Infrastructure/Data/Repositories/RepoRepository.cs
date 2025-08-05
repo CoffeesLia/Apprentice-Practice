@@ -53,7 +53,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             ).ConfigureAwait(false);
         }
 
-        public async Task<bool> NameAlreadyExists(string name, int applicationId, int? id = null)
+        public async Task<bool> NameAlreadyExists(string name, int? id = null)
         {
             return await Context.Set<Repo>()
                 .AnyAsync(a => a.Name == name
