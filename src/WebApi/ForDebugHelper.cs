@@ -133,7 +133,7 @@ namespace Stellantis.ProjectName.WebApi
                     new ApplicationData("Marketing Dashboard") { AreaId = 10, ResponsibleId = 10, ConfigurationItem = "MD-Config" },
                     new ApplicationData("Sales CRM") { AreaId = 14, ResponsibleId = 14, ConfigurationItem = "CRM-Config" },
                     new ApplicationData("Quality Control System") { AreaId = 1, ResponsibleId = 13, ConfigurationItem = "QCS-Config" },
-                    new ApplicationData("Supplier Chain Manager") { AreaId = 16, ResponsibleId = 5, ConfigurationItem = "SCM-Config" },
+                    new ApplicationData("Supplier Chain Manager") { AreaId = 16, ResponsibleId = 5, ConfigurationItem = "SCM-Config", SquadId = 5 },
                     new ApplicationData("Engineering Tools") { AreaId = 4, ResponsibleId = 4, ConfigurationItem = "ET-Config" },
                     new ApplicationData("Integration Hub") { AreaId = 9, ResponsibleId = 9, ConfigurationItem = "IH-Config" },
                     new ApplicationData("AMS Portal") { AreaId = 1, ResponsibleId = 1, ConfigurationItem = "AMS-Config" },
@@ -325,37 +325,47 @@ namespace Stellantis.ProjectName.WebApi
                         CreatedAt = DateTime.UtcNow.AddDays(-5),
                         Status = IncidentStatus.Open,
                         ApplicationId = 1,
-                        Members = context.Members.Where(m => m.Id == 1 || m.Id == 2).ToList()
+                        Members = context.Members.Where(m => m.SquadId == 1).ToList()
                     },
                     new Incident
                     {
-                        Title = "Falha no eLog",
-                        Description = "O sistema eLog está fora do ar.",
+                        Title = "Falha de autenticação no eLog",
+                        Description = "Usuários não conseguem autenticar no sistema eLog.",
+                        CreatedAt = DateTime.UtcNow.AddDays(-3),
+                        Status = IncidentStatus.Open,
+                        ApplicationId = 2,
+                        Members = context.Members.Where(m => m.SquadId == 2).ToList()
+                    },
+                    new Incident
+                    {
+                        Title = "Erro de integração na Suite PD",
+                        Description = "Falha ao integrar dados externos na Suite PD.",
                         CreatedAt = DateTime.UtcNow.AddDays(-2),
                         Status = IncidentStatus.InProgress,
-                        ApplicationId = 2,
-                        Members = context.Members.Where(m => m.Id == 3).ToList()
+                        ApplicationId = 3,
+                        Members = context.Members.Where(m => m.SquadId == 3).ToList()
                     },
                     new Incident
                     {
-                        Title = "Problema no Finance Tracker",
-                        Description = "Erro ao gerar relatórios financeiros.",
-                        CreatedAt = DateTime.UtcNow.AddDays(-10),
-                        ClosedAt = DateTime.UtcNow.AddDays(-1),
-                        Status = IncidentStatus.Closed,
+                        Title = "Relatórios inconsistentes no Finance Tracker",
+                        Description = "Os valores dos relatórios financeiros estão divergentes.",
+                        CreatedAt = DateTime.UtcNow.AddDays(-1),
+                        Status = IncidentStatus.Open,
                         ApplicationId = 4,
-                        Members = context.Members.Where(m => m.Id == 4 || m.Id == 5).ToList()
+                        Members = context.Members.Where(m => m.SquadId == 4).ToList()
                     },
                     new Incident
                     {
-                        Title = "Chamado reaberto no HR Portal",
-                        Description = "Problema voltou a ocorrer no HR Portal.",
-                        CreatedAt = DateTime.UtcNow.AddDays(-8),
-                        Status = IncidentStatus.Reopened,
-                        ApplicationId = 5,
-                        Members = context.Members.Where(m => m.Id == 4 || m.Id == 5).ToList()
+                        Title = "Problema de sincronização no Supplier Chain Manager",
+                        Description = "Dados de fornecedores não estão sendo atualizados corretamente.",
+                        CreatedAt = DateTime.UtcNow,
+                        Status = IncidentStatus.Open,
+                        ApplicationId = 9,
+                        Members = context.Members.Where(m => m.SquadId == 5).ToList()
                     }
                 );
+
+                // Notificação
 
                 context.Notifications.AddRange(
                 
