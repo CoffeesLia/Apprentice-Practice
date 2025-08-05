@@ -25,6 +25,9 @@ namespace Stellantis.ProjectName.Application.Services
         {
             ArgumentNullException.ThrowIfNull(item);
 
+            // Força o status para "Em Aberto" ao criar
+            item.Status = IncidentStatus.Open;
+
             // Se vier apenas os IDs dos membros (ex: [{ Id = 1 }, { Id = 2 }]), busque os membros completos
             if (item.Members != null && item.Members.Count > 0)
             {
