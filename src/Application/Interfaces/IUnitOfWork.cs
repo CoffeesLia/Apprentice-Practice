@@ -29,6 +29,8 @@ namespace Stellantis.ProjectName.Application.Interfaces
 
         IRepoRepository RepoRepository { get; }
 
+        IKnowledgeRepository KnowledgeRepository { get; }
+
         Task CommitAsync();
         void BeginTransaction();
     }

@@ -42,6 +42,7 @@
     <Compile Remove="Entities\Supplier.cs" />
     <Compile Remove="Entities\Vehicle.cs" />
     <Compile Remove="Entities\VehiclePartNumber.cs" />
+    <Compile Remove="Enums\NotificationType.cs" />
     <Compile Remove="Enums\PartNumberType.cs" />
     <Compile Remove="Services\VehicleCostService.cs" />
   </ItemGroup>

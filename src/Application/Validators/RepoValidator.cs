@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
+using System;
 
 namespace Stellantis.ProjectName.Application.Validators
 {
@@ -16,12 +17,13 @@ namespace Stellantis.ProjectName.Application.Validators
             var localizer = localizerFactory.Create(typeof(RepoResources));
 
             RuleFor(x => x.Name)
-            .NotNull()
-            .NotEmpty()
-            .WithMessage(localizer[nameof(RepoResources.NameIsRequired)]);
+                .NotNull()
+                .NotEmpty()
+                .WithMessage(localizer[nameof(RepoResources.NameIsRequired)]);
             RuleFor(x => x.Name)
-             .Length(MinimumLegth, MaximumLength)
-             .WithMessage(localizer[nameof(RepoResources.NameValidateLength), MinimumLegth, MaximumLength]);
+                .Length(MinimumLegth, MaximumLength)
+                .WithMessage(localizer[nameof(RepoResources.NameValidateLength), MinimumLegth, MaximumLength]);
+
             RuleFor(x => x.Url)
                 .NotNull()
                 .NotEmpty()

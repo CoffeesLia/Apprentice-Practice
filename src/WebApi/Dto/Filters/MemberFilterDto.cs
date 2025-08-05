@@ -8,6 +8,8 @@
         public decimal? Cost { get; set; }
         public string? Email { get; set; }
         public int SquadId { get; set; }
+        public bool? SquadLeader { get; set; }
+
 
     }
 }

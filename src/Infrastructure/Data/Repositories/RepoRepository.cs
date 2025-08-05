@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
@@ -16,7 +15,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         public async Task DeleteAsync(int id, bool saveChanges = true)
         {
-
             Repo? entity = await GetByIdAsync(id).ConfigureAwait(false);
             if (entity != null)
             {
@@ -36,6 +34,8 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             repoFilter.Page = repoFilter.Page <= 0 ? 1 : repoFilter.Page;
             if (!string.IsNullOrWhiteSpace(repoFilter.Name))
                 filters = filters.And(a => a.Name != null && a.Name.Contains(repoFilter.Name, StringComparison.OrdinalIgnoreCase));
+            if (!string.IsNullOrWhiteSpace(repoFilter.Description))
+                filters = filters.And(a => a.Description != null && a.Description.Contains(repoFilter.Description, StringComparison.OrdinalIgnoreCase));
             if (repoFilter.Url != null)
                 filters = filters.And(x => x.Url == repoFilter.Url);
             if (repoFilter.ApplicationId > 0)
@@ -55,17 +55,16 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         {
             return await Context.Set<Repo>()
                 .AnyAsync(a => a.Name == name
-                            && a.ApplicationId == applicationId
                             && (!id.HasValue || a.Id != id))
                 .ConfigureAwait(false);
         }
 
-
-        public async Task<bool> UrlAlreadyExists(Uri url, int applicationId, int? id = null)
+        public async Task<bool> UrlAlreadyExists(Uri url, int? id = null)
         {
-            return await Context.Set<Repo>().AnyAsync(a => a.Url == url
-                           && a.ApplicationId == applicationId
-                           && (!id.HasValue || a.Id != id)).ConfigureAwait(false);
+            var query = Context.Set<Repo>().Where(r => r.Url == url);
+            if (id.HasValue)
+                query = query.Where(r => r.Id != id.Value);
+            return await query.AnyAsync().ConfigureAwait(false);
         }
     }
 }

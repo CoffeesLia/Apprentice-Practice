@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NameIsRequired" xml:space="preserve">
-    <value>Name is required</value>
+    <value>Name is required.</value>
   </data>
   <data name="NameAlreadyExists" xml:space="preserve">
     <value>Name already exists.</value>
@@ -130,13 +130,19 @@
     <value>Url already exists.</value>
   </data>
   <data name="UrlIsRequired" xml:space="preserve">
-    <value>Url is required</value>
+    <value>Url is required.</value>
   </data>
   <data name="ApplicationIdIsRequired" xml:space="preserve">
-    <value>Application Id is required</value>
+    <value>Application Id is required.</value>
   </data>
   <data name="DescriptionIsRequired" xml:space="preserve">
-    <value>Description is required</value>
+    <value>Description is required.</value>
+  </data>
+  <data name="NotFound" xml:space="preserve">
+    <value>Not Found.</value>
+  </data>
+  <data name="UrlIsInvalid" xml:space="preserve">
+    <value>Url is invalid.</value>
   </data>
   <data name="NotFound" xml:space="preserve">
     <value>Not found.</value>

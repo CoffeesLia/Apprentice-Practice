@@ -35,7 +35,7 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.Conflict(_localizer[nameof(RepoResources.NameAlreadyExists)]);
             }
 
-            if (await Repository.UrlAlreadyExists(item.Url!, item.ApplicationId).ConfigureAwait(false))
+            if (await Repository.UrlAlreadyExists(item.Url!).ConfigureAwait(false))
             {
                 return OperationResult.Conflict(_localizer[nameof(RepoResources.UrlAlreadyExists)]);
             }
@@ -54,12 +54,22 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.InvalidData(validationResult);
             }
 
-            if (await Repository.NameAlreadyExists(item.Name!, item.ApplicationId, item.Id).ConfigureAwait(false))
+            var existingRepo = await Repository.GetByIdAsync(item.Id).ConfigureAwait(false);
+            if (existingRepo is null)
+            {
+                return OperationResult.NotFound(_localizer[nameof(RepoResources.NotFound)]);
+            }
+
+            var normalizedExistingName = existingRepo.Name.Trim();
+            var normalizedNewName = item.Name.Trim();
+
+            if (!string.Equals(normalizedExistingName, normalizedNewName, StringComparison.OrdinalIgnoreCase) &&
+                await Repository.NameAlreadyExists(normalizedNewName, item.Id).ConfigureAwait(false))
             {
                 return OperationResult.Conflict(_localizer[nameof(RepoResources.NameAlreadyExists)]);
             }
 
-            if (await Repository.UrlAlreadyExists(item.Url!, item.ApplicationId, item.Id).ConfigureAwait(false))
+            if (existingRepo.Url != item.Url && await Repository.UrlAlreadyExists(item.Url!, item.Id).ConfigureAwait(false))
             {
                 return OperationResult.Conflict(_localizer[nameof(RepoResources.UrlAlreadyExists)]);
             }

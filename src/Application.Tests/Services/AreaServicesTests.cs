@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using AutoFixture;
+using Microsoft.Extensions.Localization;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
@@ -73,9 +74,22 @@ namespace Application.Tests.Services
         {
             // Arrange
             Area area = new("Área Existente") { ManagerId = 1 };
-            _areaRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(area.Name)).ReturnsAsync(true);
 
-            // Não sobrescreva o mock do ManagerRepository, pois já está configurado no construtor
+            // Mock do manager válido
+            var manager = new Manager { Name = "Gerente", Id = 1, Email = "gerente@email.com" };
+            var managerRepositoryMock = new Mock<IManagerRepository>();
+            managerRepositoryMock.Setup(m => m.GetByIdAsync(area.ManagerId)).ReturnsAsync(manager);
+            _unitOfWorkMock.Setup(u => u.ManagerRepository).Returns(managerRepositoryMock.Object);
+
+            // Mock para simular nome já existente
+            _areaRepositoryMock.Setup(r => r.GetListAsync(It.Is<AreaFilter>(f => f.Name == area.Name)))
+                .ReturnsAsync(new PagedResult<Area>
+                {
+                    Result = new List<Area> { new Area(area.Name) { Id = 2, ManagerId = area.ManagerId } },
+                    Page = 1,
+                    PageSize = 10,
+                    Total = 1
+                });
 
             // Act
             OperationResult result = await _areaService.CreateAsync(area);
@@ -91,18 +105,49 @@ namespace Application.Tests.Services
             // Arrange
             Area area = new("Área Duplicada") { ManagerId = 123 };
 
-            // Mock para garantir que o nome NÃO é único
-            var areaServiceMock = new Mock<AreaService>(_unitOfWorkMock.Object, Helpers.LocalizerFactorHelper.Create(), new AreaValidator(Helpers.LocalizerFactorHelper.Create())) { CallBase = true };
-            areaServiceMock.Setup(s => s.IsAreaNameUniqueAsync(area.Name, null)).ReturnsAsync(false);
+            var areaRepositoryMock = new Mock<IAreaRepository>();
+            areaRepositoryMock.Setup(r => r.GetListAsync(It.Is<AreaFilter>(f => f.Name == area.Name)))
+                .ReturnsAsync(new PagedResult<Area>
+                {
+                    Result = new List<Area> { new Area(area.Name) { Id = 1, ManagerId = 123 } },
+                    Page = 1,
+                    PageSize = 10,
+                    Total = 1
+                });
 
-            // Mock do manager válido
             var manager = new Manager { Name = "Gerente", Id = 123, Email = "gerente@email.com" };
             var managerRepositoryMock = new Mock<IManagerRepository>();
             managerRepositoryMock.Setup(m => m.GetByIdAsync(area.ManagerId)).ReturnsAsync(manager);
-            _unitOfWorkMock.Setup(u => u.ManagerRepository).Returns(managerRepositoryMock.Object);
+
+            var unitOfWorkMock = new Mock<IUnitOfWork>();
+            unitOfWorkMock.Setup(u => u.AreaRepository).Returns(areaRepositoryMock.Object);
+            unitOfWorkMock.Setup(u => u.ManagerRepository).Returns(managerRepositoryMock.Object);
+
+            var localizerMock = new Mock<IStringLocalizer>();
+            localizerMock.Setup(l => l[nameof(AreaResources.AlreadyExists)])
+                .Returns(new LocalizedString(nameof(AreaResources.AlreadyExists), AreaResources.AlreadyExists));
+            localizerMock.Setup(l => l[It.IsAny<string>()])
+                .Returns((string key) =>
+                    key == nameof(AreaResources.AlreadyExists)
+                        ? new LocalizedString(key, AreaResources.AlreadyExists)
+                        : new LocalizedString(key, $"Mensagem para {key ?? "default"}"));
+            localizerMock.Setup(l => l[nameof(AreaResources.AlreadyExists), It.IsAny<object[]>()])
+                .Returns((string key, object[] args) => new LocalizedString(key, AreaResources.AlreadyExists));
+            localizerMock.Setup(l => l[It.IsAny<string>(), It.IsAny<object[]>()])
+                .Returns((string key, object[] args) =>
+                    key == nameof(AreaResources.AlreadyExists)
+                        ? new LocalizedString(key, AreaResources.AlreadyExists)
+                        : new LocalizedString(key, $"Mensagem para {key ?? "default"}"));
+            var localizerFactoryMock = new Mock<IStringLocalizerFactory>();
+            localizerFactoryMock.Setup(f => f.Create(It.IsAny<Type>()))
+                .Returns(localizerMock.Object);
+
+            var areaValidator = new AreaValidator(localizerFactoryMock.Object);
+
+            var areaService = new AreaService(unitOfWorkMock.Object, localizerFactoryMock.Object, areaValidator);
 
             // Act
-            OperationResult result = await areaServiceMock.Object.CreateAsync(area);
+            OperationResult result = await areaService.CreateAsync(area);
 
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
@@ -346,29 +391,115 @@ namespace Application.Tests.Services
         public async Task UpdateAsyncShouldReturnConflictWhenNameAlreadyExists()
         {
             // Arrange
-            Area area = new("Existing Name") { Id = 1, ManagerId = 123 };
-            _areaRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(area.Name)).ReturnsAsync(true);
-            _areaRepositoryMock.Setup(r => r.GetByIdAsync(area.Id)).ReturnsAsync(area);
+            var area = new Area("Nome Duplicado") { Id = 1, ManagerId = 123 };
 
             var pagedResult = new PagedResult<Area>
             {
-                Result = new List<Area> { new Area("Existing Name") { Id = 2, ManagerId = 123 } },
+                Result = new List<Area> { new Area("Nome Duplicado") { Id = 2, ManagerId = 123 } },
                 Page = 1,
                 PageSize = 10,
                 Total = 1
             };
-            _areaRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<AreaFilter>())).ReturnsAsync(pagedResult);
+            _areaRepositoryMock.Setup(r => r.GetByIdAsync(area.Id)).ReturnsAsync(area);
+            _areaRepositoryMock.Setup(r => r.GetListAsync(It.Is<AreaFilter>(f => f.Name == area.Name)))
+                .ReturnsAsync(pagedResult);
 
-            var manager = new Manager { Name = "Gerente", Id = 123, Email = "gerente@email.com" };
+            _areaRepositoryMock.Setup(r => r.GetListAsync(It.Is<AreaFilter>(f => f.ManagerId == area.ManagerId)))
+                .ReturnsAsync(new PagedResult<Area>
+                {
+                    Result = new List<Area>(),
+                    Page = 1,
+                    PageSize = 10,
+                    Total = 0
+                });
+
+            var manager = new Manager { Id = 123, Name = "Gerente", Email = "gerente@email.com" };
             var managerRepositoryMock = new Mock<IManagerRepository>();
             managerRepositoryMock.Setup(m => m.GetByIdAsync(area.ManagerId)).ReturnsAsync(manager);
             _unitOfWorkMock.Setup(u => u.ManagerRepository).Returns(managerRepositoryMock.Object);
 
+            var localizerMock = new Mock<IStringLocalizer>();
+            localizerMock.Setup(l => l[nameof(AreaResources.AlreadyExists)])
+                .Returns(new LocalizedString(nameof(AreaResources.AlreadyExists), AreaResources.AlreadyExists));
+            localizerMock.Setup(l => l[It.IsAny<string>()])
+                .Returns((string key) =>
+                    key == nameof(AreaResources.AlreadyExists)
+                        ? new LocalizedString(key, AreaResources.AlreadyExists)
+                        : new LocalizedString(key, $"Mensagem para {key ?? "default"}"));
+            localizerMock.Setup(l => l[nameof(AreaResources.AlreadyExists), It.IsAny<object[]>()])
+                .Returns((string key, object[] args) => new LocalizedString(key, AreaResources.AlreadyExists));
+            localizerMock.Setup(l => l[It.IsAny<string>(), It.IsAny<object[]>()])
+                .Returns((string key, object[] args) =>
+                    key == nameof(AreaResources.AlreadyExists)
+                        ? new LocalizedString(key, AreaResources.AlreadyExists)
+                        : new LocalizedString(key, $"Mensagem para {key ?? "default"}"));
+
+            var localizerFactoryMock = new Mock<IStringLocalizerFactory>();
+            localizerFactoryMock.Setup(f => f.Create(It.IsAny<Type>()))
+                .Returns(localizerMock.Object);
+
+            var areaValidator = new AreaValidator(localizerFactoryMock.Object);
+            var areaService = new AreaService(_unitOfWorkMock.Object, localizerFactoryMock.Object, areaValidator);
+
             // Act
-            OperationResult result = await _areaService.UpdateAsync(area);
+            var result = await areaService.UpdateAsync(area);
 
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal(AreaResources.AlreadyExists, result.Message);
+        }
+
+        [Fact]
+        public async Task UpdateAsyncShouldReturnConflictWhenManagerUnavailable()
+        {
+            // Arrange
+            var area = new Area("Area com Manager ocupado") { Id = 1, ManagerId = 123 };
+
+            var pagedResult = new PagedResult<Area>
+            {
+                Result = new List<Area> { new Area("Outra Area") { Id = 2, ManagerId = 123 } },
+                Page = 1,
+                PageSize = 10,
+                Total = 1
+            };
+            _areaRepositoryMock.Setup(r => r.GetByIdAsync(area.Id)).ReturnsAsync(area);
+            _areaRepositoryMock.Setup(r => r.GetListAsync(It.Is<AreaFilter>(f => f.ManagerId == area.ManagerId)))
+                .ReturnsAsync(pagedResult);
+
+            var manager = new Manager { Id = 123, Name = "Gerente", Email = "gerente@email.com" };
+            var managerRepositoryMock = new Mock<IManagerRepository>();
+            managerRepositoryMock.Setup(m => m.GetByIdAsync(area.ManagerId)).ReturnsAsync(manager);
+            _unitOfWorkMock.Setup(u => u.ManagerRepository).Returns(managerRepositoryMock.Object);
+
+            var localizerMock = new Mock<IStringLocalizer>();
+            localizerMock.Setup(l => l[nameof(AreaResources.ManagerUnavailable)])
+                .Returns(new LocalizedString(nameof(AreaResources.ManagerUnavailable), AreaResources.ManagerUnavailable));
+            localizerMock.Setup(l => l[It.IsAny<string>()])
+                .Returns((string key) =>
+                    key == nameof(AreaResources.ManagerUnavailable)
+                        ? new LocalizedString(key, AreaResources.ManagerUnavailable)
+                        : new LocalizedString(key, $"Mensagem para {key ?? "default"}"));
+            localizerMock.Setup(l => l[nameof(AreaResources.ManagerUnavailable), It.IsAny<object[]>()])
+                .Returns((string key, object[] args) => new LocalizedString(key, AreaResources.ManagerUnavailable));
+            localizerMock.Setup(l => l[It.IsAny<string>(), It.IsAny<object[]>()])
+                .Returns((string key, object[] args) =>
+                    key == nameof(AreaResources.ManagerUnavailable)
+                        ? new LocalizedString(key, AreaResources.ManagerUnavailable)
+                        : new LocalizedString(key, $"Mensagem para {key ?? "default"}"));
+
+            var localizerFactoryMock = new Mock<IStringLocalizerFactory>();
+            localizerFactoryMock.Setup(f => f.Create(It.IsAny<Type>()))
+                .Returns(localizerMock.Object);
+
+            var areaValidator = new AreaValidator(localizerFactoryMock.Object);
+            var areaService = new AreaService(_unitOfWorkMock.Object, localizerFactoryMock.Object, areaValidator);
+
+            // Act
+            var result = await areaService.UpdateAsync(area);
+
+            // Assert
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal(AreaResources.ManagerUnavailable, result.Message);
         }
 
         [Fact]

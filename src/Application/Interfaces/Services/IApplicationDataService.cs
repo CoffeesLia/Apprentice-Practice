@@ -1,5 +1,7 @@
-﻿using Stellantis.ProjectName.Application.Models.Filters;
+﻿using Stellantis.ProjectName.Application.Interfaces.Services;
+using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Stellantis.ProjectName.Application.Interfaces.Services
 {

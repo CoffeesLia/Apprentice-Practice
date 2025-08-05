@@ -10,39 +10,50 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Services
 {
-    public class FeedbackService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<Feedback> validator)
+    public class FeedbackService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IStringLocalizer<NotificationResources> notificationLocalizer,
+        IValidator<Feedback> validator, INotificationService notificationService)
             : EntityServiceBase<Feedback>(unitOfWork, localizerFactory, validator), IFeedbackService
     {
         private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(FeedbackResources));
+        
+        private readonly IStringLocalizer<NotificationResources> _notificationLocalizer = notificationLocalizer;
+
+        private readonly INotificationService _notificationService = notificationService;
+
         protected override IFeedbackRepository Repository => UnitOfWork.FeedbackRepository;
 
         public override async Task<OperationResult> CreateAsync(Feedback item)
         {
             ArgumentNullException.ThrowIfNull(item);
 
+            // Se vier apenas os IDs dos membros (ex: [{ Id = 1 }, { Id = 2 }]), busque os membros completos
             if (item.Members != null && item.Members.Count > 0)
             {
                 var memberIds = item.Members.Select(m => m.Id).ToList();
                 var pagedMembers = await UnitOfWork.MemberRepository
                     .GetListAsync(m => memberIds.Contains(m.Id)).ConfigureAwait(false);
-                item.Members = [.. pagedMembers.Result];
+                item.Members = pagedMembers.Result.ToList();
             }
             else
             {
-                item.Members = [];
+                item.Members = new List<Member>();
             }
+
+            // Validação do objeto pelo FluentValidation
             var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
             if (!validationResult.IsValid)
             {
                 return OperationResult.InvalidData(validationResult);
             }
 
-            var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(item.ApplicationId).ConfigureAwait(false); 
+            // Verificar se a aplicação existe
+            var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(item.ApplicationId).ConfigureAwait(false);
             if (application == null)
             {
                 return OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
             }
 
+            // Validar se os membros estão no squad da aplicação
             if (item.Members != null && item.Members.Count > 0)
             {
                 var squadId = application.SquadId;
@@ -57,21 +68,16 @@ namespace Stellantis.ProjectName.Application.Services
                 }
             }
 
-        item.CreatedAt = DateTime.UtcNow;
-            if (item.Status == default)
+            item.CreatedAt = DateTime.UtcNow;
+
+            var result = await base.CreateAsync(item).ConfigureAwait(false);
+
+            if (result.Status == OperationResult.Complete().Status)
             {
-                item.Status = FeedbackStatus.Open;
+                await _notificationService.NotifyFeedbackCreatedAsync(item.Id).ConfigureAwait(false);
             }
 
-            return await base.CreateAsync(item).ConfigureAwait(false);
-        }
-
-        public new async Task<OperationResult> GetItemAsync(int id)
-        {
-            var Feedback = await Repository.GetByIdAsync(id).ConfigureAwait(false);
-            return Feedback != null
-             ? OperationResult.Complete()
-                : OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
+            return result;
         }
 
         public override async Task<OperationResult> UpdateAsync(Feedback item)
@@ -84,18 +90,24 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
             }
 
+            var previousStatus = existingFeedback.Status;
+            var oldMemberIds = existingFeedback.Members?.Select(m => m.Id).ToHashSet() ?? new HashSet<int>();
+            var oldMembers = existingFeedback.Members?.ToList() ?? new List<Member>();
+
+            // Atualiza propriedades simples
             existingFeedback.Title = item.Title;
             existingFeedback.Description = item.Description;
             existingFeedback.Status = item.Status;
             existingFeedback.ApplicationId = item.ApplicationId;
             existingFeedback.CreatedAt = DateTime.UtcNow;
 
+            List<Member> newMembers = new();
             if (item.Members != null)
             {
                 var memberIds = item.Members.Select(m => m.Id).ToList();
                 var pagedMembers = await UnitOfWork.MemberRepository
                     .GetListAsync(m => memberIds.Contains(m.Id)).ConfigureAwait(false);
-                var newMembers = pagedMembers.Result.ToList();
+                newMembers = pagedMembers.Result.ToList();
 
                 existingFeedback.Members.Clear();
                 foreach (var member in newMembers)
@@ -132,7 +144,56 @@ namespace Stellantis.ProjectName.Application.Services
 
             await Repository.UpdateAsync(existingFeedback, saveChanges: true).ConfigureAwait(false);
 
-            return OperationResult.Complete();
+            var result = OperationResult.Complete();
+
+            if (result.Status == OperationResult.Complete().Status && previousStatus != item.Status)
+            {
+                await _notificationService.NotifyFeedbackStatusChangeAsync(existingFeedback.Id).ConfigureAwait(false);
+            }
+
+            var newMemberIds = newMembers.Select(m => m.Id).ToHashSet();
+            var addedMemberIds = newMemberIds.Except(oldMemberIds).ToList();
+            if (addedMemberIds.Count > 0)
+            {
+                var addedMembers = newMembers.Where(m => addedMemberIds.Contains(m.Id)).ToList();
+                foreach (var member in addedMembers)
+                {
+                    var message = _notificationLocalizer["FeedbackAddMember", member.Name, existingFeedback.Title];
+                    await _notificationService.NotifyMembersAsync(new[] { member }, message).ConfigureAwait(false);
+                }
+            }
+
+            var removedMemberIds = oldMemberIds.Except(newMemberIds).ToList();
+            if (removedMemberIds.Count > 0)
+            {
+                var removedMembers = oldMembers.Where(m => removedMemberIds.Contains(m.Id)).ToList();
+                foreach (var member in removedMembers)
+                {
+                    var message = _notificationLocalizer["FeedbackRemoveMember", member.Name, existingFeedback.Title];
+                    await _notificationService.NotifyMembersAsync(new[] { member }, message).ConfigureAwait(false);
+                }
+            }
+
+            return result;
+        }
+
+        public new async Task<OperationResult> GetItemAsync(int id)
+        {
+            var feedback = await Repository.GetByIdAsync(id).ConfigureAwait(false);
+            return feedback != null
+                ? OperationResult.Complete()
+                : OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
+        }
+
+        public async Task<PagedResult<Feedback>> GetListAsync(FeedbackFilter feedbackFilter)
+        {
+            feedbackFilter ??= new FeedbackFilter();
+            return await UnitOfWork.FeedbackRepository.GetListAsync(feedbackFilter).ConfigureAwait(false);
+        }
+
+        public async Task<IEnumerable<Member>> GetMembersByApplicationIdAsync(int applicationId)
+        {
+            return await Repository.GetMembersByApplicationIdAsync(applicationId).ConfigureAwait(false);
         }
 
         public override async Task<OperationResult> DeleteAsync(int id)
@@ -143,17 +204,6 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
             }
             return await base.DeleteAsync(item).ConfigureAwait(false);
-        }
-
-        public async Task<PagedResult<Feedback>> GetListAsync(FeedbackFilter filter)
-        {
-            filter ??= new FeedbackFilter();
-            return await UnitOfWork.FeedbackRepository.GetListAsync(filter).ConfigureAwait(false);
-        }
-
-        public async Task<IEnumerable<Member>> GetMembersByApplicationIdAsync(int applicationId)
-        {
-            return await Repository.GetMembersByApplicationIdAsync(applicationId).ConfigureAwait(false);
         }
     }
 }

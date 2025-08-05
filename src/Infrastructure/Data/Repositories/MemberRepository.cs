@@ -3,6 +3,7 @@ using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 
@@ -70,6 +71,10 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 .ConfigureAwait(false);
         }
 
+        public async Task<bool> AnyAsync(Expression<Func<Member, bool>> predicate)
+        {
+            return await Context.Set<Member>().AnyAsync(predicate).ConfigureAwait(false);
+        }
 
         private static async Task<PagedResult<Member>> GetPagedResultAsync(IQueryable<Member> query, int page, int pageSize)
         {

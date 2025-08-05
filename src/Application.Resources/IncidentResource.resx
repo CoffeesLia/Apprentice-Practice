@@ -126,6 +126,9 @@
   <data name="InvalidMembers" xml:space="preserve">
     <value>One or more specified members do not belong to the application's squads</value>
   </data>
+  <data name="NotFound" xml:space="preserve">
+    <value />
+  </data>
   <data name="StatusRequired" xml:space="preserve">
     <value>Status is required.</value>
   </data>

@@ -103,6 +103,16 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>ManagerResources.resx</DependentUpon>
     </Compile>
+    <Compile Update="MemberResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>MemberResource.resx</DependentUpon>
+    </Compile>
+    <Compile Update="NotificationResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>NotificationResources.resx</DependentUpon>
+    </Compile>
     <Compile Update="RepoResources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -184,13 +194,30 @@
     <EmbeddedResource Update="IncidentResource.resx">
       <Generator></Generator>
     </EmbeddedResource>
+    <EmbeddedResource Update="KnowledgeResource.pt-BR.resx">
+      <Generator></Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="KnowledgeResource.resx">
+      <Generator></Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="ManagerResources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ManagerResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Update="MemberResource.pt-br.resx">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Update="MemberResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MemberResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Update="Messages - Copy %282%29.pt-br.resx">
       <SubType>Designer</SubType>
       <DependentUpon>Messages.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="NotificationResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>NotificationResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="RepoResources.pt-BR.resx">
       <Generator></Generator>
