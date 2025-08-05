@@ -36,7 +36,7 @@ namespace Infrastructure.Tests.Data.Repositories
         {
             // Arrange
             var member = new Member { Id = 1, Name = "Teste", Role = "Dev", Cost = 100, Email = "teste@teste.com", SquadId = 1 };
-            var app = new ApplicationData("App") { Id = 2, SquadId = 1, ProductOwner = "PO", ConfigurationItem = "CI" };
+            var app = new ApplicationData("App") { Id = 2, SquadId = 1, ProductOwner = "PO" };
             _context.Members.Add(member);
             _context.Applications.Add(app);
             await _context.SaveChangesAsync();
@@ -89,8 +89,8 @@ namespace Infrastructure.Tests.Data.Repositories
         {
             // Arrange
             var member = new Member { Id = 1, Name = "M", Role = "R", Cost = 1, Email = "m@x.com", SquadId = 1 };
-            var app1 = new ApplicationData("App1") { Id = 2, SquadId = 1, ProductOwner = "PO", ConfigurationItem = "CI" };
-            var app2 = new ApplicationData("App2") { Id = 3, SquadId = 1, ProductOwner = "PO", ConfigurationItem = "CI" };
+            var app1 = new ApplicationData("App1") { Id = 2, SquadId = 1, ProductOwner = "PO" };
+            var app2 = new ApplicationData("App2") { Id = 3, SquadId = 1, ProductOwner = "PO" };
             _context.Members.Add(member);
             _context.Applications.AddRange(app1, app2);
             await _context.SaveChangesAsync();
@@ -127,7 +127,7 @@ namespace Infrastructure.Tests.Data.Repositories
         {
             // Arrange
             var member = new Member { Id = 99, Name = "Filtro", Role = "Dev", Cost = 100, Email = "filtro@teste.com", SquadId = 77 };
-            var app = new ApplicationData("AppFiltro") { Id = 88, SquadId = 77, ProductOwner = "PO", ConfigurationItem = "CI" };
+            var app = new ApplicationData("AppFiltro") { Id = 88, SquadId = 77, ProductOwner = "PO" };
             _context.Members.Add(member);
             _context.Applications.Add(app);
             await _context.SaveChangesAsync();

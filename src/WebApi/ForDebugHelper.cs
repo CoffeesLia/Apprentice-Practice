@@ -125,19 +125,19 @@ namespace Stellantis.ProjectName.WebApi
 
                 // Applications
                 context.Applications.AddRange(
-                    new ApplicationData("Portal AMS") { AreaId = 7, ResponsibleId = 1, ConfigurationItem = "", SquadId = 1 },
-                    new ApplicationData("eLog") { AreaId = 2, ResponsibleId = 2, ConfigurationItem = "", SquadId = 2 },
-                    new ApplicationData("Suite PD") { AreaId = 4, ResponsibleId = 4, ConfigurationItem = "", SquadId = 3 },
-                    new ApplicationData("Finance Tracker") { AreaId = 6, ResponsibleId = 6, ConfigurationItem = "FT-Config", SquadId = 4 },
-                    new ApplicationData("HR Portal") { AreaId = 8, ResponsibleId = 8, ConfigurationItem = "HRP-Config" },
-                    new ApplicationData("Marketing Dashboard") { AreaId = 10, ResponsibleId = 10, ConfigurationItem = "MD-Config" },
-                    new ApplicationData("Sales CRM") { AreaId = 14, ResponsibleId = 14, ConfigurationItem = "CRM-Config" },
-                    new ApplicationData("Quality Control System") { AreaId = 1, ResponsibleId = 13, ConfigurationItem = "QCS-Config" },
-                    new ApplicationData("Supplier Chain Manager") { AreaId = 16, ResponsibleId = 5, ConfigurationItem = "SCM-Config" },
-                    new ApplicationData("Engineering Tools") { AreaId = 4, ResponsibleId = 4, ConfigurationItem = "ET-Config" },
-                    new ApplicationData("Integration Hub") { AreaId = 9, ResponsibleId = 9, ConfigurationItem = "IH-Config" },
-                    new ApplicationData("AMS Portal") { AreaId = 1, ResponsibleId = 1, ConfigurationItem = "AMS-Config" },
-                    new ApplicationData("Architecture Planner") { AreaId = 2, ResponsibleId = 2, ConfigurationItem = "AP-Config" }
+                    new ApplicationData("Portal AMS") { AreaId = 7, ResponsibleId = 1, SquadId = 1 },
+                    new ApplicationData("eLog") { AreaId = 2, ResponsibleId = 2, SquadId = 2 },
+                    new ApplicationData("Suite PD") { AreaId = 4, ResponsibleId = 4, SquadId = 3 },
+                    new ApplicationData("Finance Tracker") { AreaId = 6, ResponsibleId = 6, SquadId = 4 },
+                    new ApplicationData("HR Portal") { AreaId = 8, ResponsibleId = 8 },
+                    new ApplicationData("Marketing Dashboard") { AreaId = 10, ResponsibleId = 10 },
+                    new ApplicationData("Sales CRM") { AreaId = 14, ResponsibleId = 14 },
+                    new ApplicationData("Quality Control System") { AreaId = 1, ResponsibleId = 13 },
+                    new ApplicationData("Supplier Chain Manager") { AreaId = 16, ResponsibleId = 5 },
+                    new ApplicationData("Engineering Tools") { AreaId = 4, ResponsibleId = 4 },
+                    new ApplicationData("Integration Hub") { AreaId = 9, ResponsibleId = 9 },
+                    new ApplicationData("AMS Portal") { AreaId = 1, ResponsibleId = 1 },
+                    new ApplicationData("Architecture Planner") { AreaId = 2, ResponsibleId = 2 }
                 );
 
                 // Serviços

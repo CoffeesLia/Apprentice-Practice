@@ -40,13 +40,11 @@ namespace Infrastructure.Tests.Data.Repositories
                 Page = 1,
                 PageSize = 10,
                 AreaId = 1,
-                ConfigurationItem = "DefaultConfigItem"
             };
             const int Count = 10;
             List<ApplicationData> applicationDataList = [.. Enumerable.Range(1, Count).Select(i => new ApplicationData($"Name {i}")
             {
                 AreaId = filter.AreaId,
-                ConfigurationItem = "DefaultConfigItem"
             })];
 
             await _context.Set<ApplicationData>().AddRangeAsync(applicationDataList);
@@ -71,20 +69,17 @@ namespace Infrastructure.Tests.Data.Repositories
             {
                 Page = 1,
                 Name = _fixture.Create<string>(),
-                ConfigurationItem = "DefaultConfigItem"
             };
             const int Count = 10;
             IEnumerable<ApplicationData> applicationDataList = _fixture
                 .Build<ApplicationData>()
                 .With(x => x.Name, filter.Name)
-                .With(x => x.ConfigurationItem, filter.ConfigurationItem)
                 .CreateMany<ApplicationData>(Count);
 
             await _context.Set<ApplicationData>().AddRangeAsync(applicationDataList);
             applicationDataList = _fixture
                 .Build<ApplicationData>()
                 .With(x => x.Name, _fixture.Create<string>())
-                .With(x => x.ConfigurationItem, "DefaultConfigItem")
                 .CreateMany<ApplicationData>(Count);
             await _context.Set<ApplicationData>().AddRangeAsync(applicationDataList);
             await _context.SaveChangesAsync();
@@ -170,14 +165,12 @@ namespace Infrastructure.Tests.Data.Repositories
             {
                 Page = 1,
                 PageSize = 10,
-                ConfigurationItem = "ConfigItem",
                 External = true
             };
             const int Count = 10;
             List<ApplicationData> applicationDataList = [.. Enumerable.Range(1, Count).Select(i => new ApplicationData($"Name {i}")
             {
                 AreaId = 1,
-                ConfigurationItem = filter.ConfigurationItem,
                 External = filter.External.Value
             })];
 
@@ -191,7 +184,6 @@ namespace Infrastructure.Tests.Data.Repositories
             Assert.Equal(Count, list.Total);
             Assert.All(list.Result, item =>
             {
-                Assert.Equal(filter.ConfigurationItem, item.ConfigurationItem);
                 Assert.Equal(filter.External, item.External);
             });
         }
@@ -247,7 +239,6 @@ namespace Infrastructure.Tests.Data.Repositories
                 .Select(i => new ApplicationData($"App {i}")
                 {
                     AreaId = i <= expectedCount ? areaId : areaId + 1,
-                    ConfigurationItem = "Config"
                 }).ToList();
 
             await _context.Set<ApplicationData>().AddRangeAsync(applicationDataList);

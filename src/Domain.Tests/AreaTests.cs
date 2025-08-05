@@ -50,10 +50,7 @@ namespace Domain.Tests
         {
             // Arrange
             Area area = new("Test Area");
-            ApplicationData application = new("Application")
-            {
-                ConfigurationItem = "ConfigItem"
-            };
+            ApplicationData application = new("Application");
 
             // Act
             area.Applications.Add(application);

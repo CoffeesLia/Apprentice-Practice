@@ -12,7 +12,6 @@ namespace Stellantis.ProjectName.WebApi.ViewModels
         public ResponsibleVm Responsible { get; set; } = null!;
         public AreaVm Area { get; set; } = null!;
         public string? Description { get; set; }
-        public required string ConfigurationItem { get; set; }
         public bool External { get; set; }
     }
 }
