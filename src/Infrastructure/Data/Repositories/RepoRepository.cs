@@ -43,7 +43,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             return await GetListAsync(
                 filter: filters,
-                pageSize:repoFilter.PageSize,
+                pageSize: repoFilter.PageSize,
                 page: repoFilter.Page,
                 sort: repoFilter.Sort,
                 sortDir: repoFilter.SortDir,
@@ -51,7 +51,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             ).ConfigureAwait(false);
         }
 
-        public async Task<bool> NameAlreadyExists(string name, int? id = null)
+        public async Task<bool> NameAlreadyExists(string name, int applicationId, int? id = null)
         {
             return await Context.Set<Repo>()
                 .AnyAsync(a => a.Name == name
