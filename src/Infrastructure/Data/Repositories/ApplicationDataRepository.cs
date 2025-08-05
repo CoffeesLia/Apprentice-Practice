@@ -58,12 +58,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             {
                 filters = filters.And(x => x.ResponsibleId == applicationFilter.ResponsibleId);
             }
-         
-
-            if (!string.IsNullOrWhiteSpace(applicationFilter.ConfigurationItem))
-            {
-                filters = filters.And(x => x.ConfigurationItem != null && x.ConfigurationItem.Contains(applicationFilter.ConfigurationItem));
-            }
 
             if (applicationFilter.External.HasValue)
             {

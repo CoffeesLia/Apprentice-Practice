@@ -64,7 +64,7 @@ namespace Application.Tests.Services
                 Title = string.Empty,
                 Description = string.Empty,
                 ApplicationId = 0,
-                Application = new ApplicationData("App") { Id = 0, ProductOwner = "PO", ConfigurationItem = "CI" },
+                Application = new ApplicationData("App") { Id = 0, ProductOwner = "PO" },
                 Members = new List<Member>()
             };
 
@@ -84,7 +84,7 @@ namespace Application.Tests.Services
                 Title = "Teste",
                 Description = "Desc",
                 ApplicationId = 123,
-                Application = new ApplicationData("App") { Id = 123, ProductOwner = "PO", ConfigurationItem = "CI" },
+                Application = new ApplicationData("App") { Id = 123, ProductOwner = "PO" },
                 Members = new List<Member>()
             };
             _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(incident.ApplicationId)).ReturnsAsync((ApplicationData?)null);
@@ -102,10 +102,10 @@ namespace Application.Tests.Services
                 Title = "Teste",
                 Description = "Desc",
                 ApplicationId = 1,
-                Application = new ApplicationData("App") { Id = 1, ProductOwner = "PO", ConfigurationItem = "CI" },
+                Application = new ApplicationData("App") { Id = 1, ProductOwner = "PO" },
                 Members = new List<Member> { new Member { Id = 99, Name = "Inválido", Role = "Dev", Cost = 1, Email = "inv@x.com", SquadId = 1, Squad = new Squad() } }
             };
-            var app = new ApplicationData("App") { Id = 1, ProductOwner = "PO", ConfigurationItem = "CI" };
+            var app = new ApplicationData("App") { Id = 1, ProductOwner = "PO" };
             // Squads é somente leitura, então adicionamos via Add
             // app.Squads = new List<Squad>(); // ERRADO
             // Não adiciona nenhum squad, lista fica vazia
@@ -125,7 +125,7 @@ namespace Application.Tests.Services
             var squad = new Squad { Id = 1, Name = "S" };
             squad.Members.Add(member); // Adiciona membro na coleção somente leitura
 
-            var app = new ApplicationData("App") { Id = 1, ProductOwner = "PO", ConfigurationItem = "CI" };
+            var app = new ApplicationData("App") { Id = 1, ProductOwner = "PO" };
             app.Squads.Add(squad); // Adiciona squad na coleção somente leitura
 
             var incident = new Incident
@@ -176,7 +176,7 @@ namespace Application.Tests.Services
                 Title = "Teste",
                 Description = "Desc",
                 ApplicationId = 1,
-                Application = new ApplicationData("App") { Id = 1, ProductOwner = "PO", ConfigurationItem = "CI" },
+                Application = new ApplicationData("App") { Id = 1, ProductOwner = "PO" },
                 Members = new List<Member>()
             };
             _incidentRepositoryMock.Setup(r => r.GetByIdAsync(incident.Id)).ReturnsAsync(incident);
@@ -195,7 +195,7 @@ namespace Application.Tests.Services
                 Title = string.Empty,
                 Description = string.Empty,
                 ApplicationId = 1,
-                Application = new ApplicationData("App") { Id = 1, ProductOwner = "PO", ConfigurationItem = "CI" },
+                Application = new ApplicationData("App") { Id = 1, ProductOwner = "PO" },
                 Members = new List<Member>()
             };
 
@@ -213,7 +213,7 @@ namespace Application.Tests.Services
                 Title = "Teste",
                 Description = "Desc",
                 ApplicationId = 1,
-                Application = new ApplicationData("App") { Id = 1, ProductOwner = "PO", ConfigurationItem = "CI" },
+                Application = new ApplicationData("App") { Id = 1, ProductOwner = "PO" },
                 Members = new List<Member>()
             };
             _incidentRepositoryMock.Setup(r => r.GetByIdAsync(incident.Id)).ReturnsAsync((Incident?)null);
@@ -232,7 +232,7 @@ namespace Application.Tests.Services
                 Title = "Teste",
                 Description = "Desc",
                 ApplicationId = 1,
-                Application = new ApplicationData("App") { Id = 1, ProductOwner = "PO", ConfigurationItem = "CI" },
+                Application = new ApplicationData("App") { Id = 1, ProductOwner = "PO" },
                 Members = new List<Member>()
             };
             _incidentRepositoryMock.Setup(r => r.GetByIdAsync(incident.Id)).ReturnsAsync(incident);
@@ -252,12 +252,12 @@ namespace Application.Tests.Services
                 Title = "Teste",
                 Description = "Desc",
                 ApplicationId = 1,
-                Application = new ApplicationData("App") { Id = 1, ProductOwner = "PO", ConfigurationItem = "CI" },
+                Application = new ApplicationData("App") { Id = 1, ProductOwner = "PO"},
                 Members = new List<Member> { new Member { Id = 99, Name = "Inválido", Role = "Dev", Cost = 1, Email = "inv@x.com", SquadId = 1, Squad = new Squad() } }
             };
             _incidentRepositoryMock.Setup(r => r.GetByIdAsync(incident.Id)).ReturnsAsync(incident);
 
-            var app = new ApplicationData("App") { Id = 1, ProductOwner = "PO", ConfigurationItem = "CI" };
+            var app = new ApplicationData("App") { Id = 1, ProductOwner = "PO" };
             // Não adiciona nenhum squad, lista fica vazia
 
             _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(incident.ApplicationId)).ReturnsAsync(app);
@@ -274,7 +274,7 @@ namespace Application.Tests.Services
             var squad = new Squad { Id = 1, Name = "S" };
             squad.Members.Add(member);
 
-            var app = new ApplicationData("App") { Id = 1, ProductOwner = "PO", ConfigurationItem = "CI" };
+            var app = new ApplicationData("App") { Id = 1, ProductOwner = "PO" };
             app.Squads.Add(squad);
 
             var incident = new Incident
@@ -302,7 +302,7 @@ namespace Application.Tests.Services
             var squad = new Squad { Id = 1, Name = "S" };
             squad.Members.Add(member);
 
-            var app = new ApplicationData("App") { Id = 1, ProductOwner = "PO", ConfigurationItem = "CI" };
+            var app = new ApplicationData("App") { Id = 1, ProductOwner = "PO" };
             app.Squads.Add(squad);
 
             var incident = new Incident
@@ -345,7 +345,7 @@ namespace Application.Tests.Services
             var squad = new Squad { Id = 1, Name = "S" };
             squad.Members.Add(member);
 
-            var app = new ApplicationData("App") { Id = 1, ProductOwner = "PO", ConfigurationItem = "CI" };
+            var app = new ApplicationData("App") { Id = 1, ProductOwner = "PO" };
             app.Squads.Add(squad);
 
             var incident = new Incident
@@ -401,7 +401,7 @@ namespace Application.Tests.Services
                 Title = "Teste",
                 Description = "Desc",
                 ApplicationId = 1,
-                Application = new ApplicationData("App") { Id = 1, ProductOwner = "PO", ConfigurationItem = "CI" },
+                Application = new ApplicationData("App") { Id = 1, ProductOwner = "PO" },
                 Members = new List<Member>()
             };
             _incidentRepositoryMock.Setup(r => r.GetByIdAsync(incident.Id)).ReturnsAsync(incident);

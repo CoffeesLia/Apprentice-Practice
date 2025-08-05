@@ -29,10 +29,6 @@ namespace Stellantis.ProjectName.Application.Validators
                 .NotNull()
                 .NotEmpty()
                 .WithMessage(localizer[nameof(ApplicationDataResources.ProductOwnerRequired)]);
-            RuleFor(x => x.ConfigurationItem)
-                .NotNull()
-                .NotEmpty()
-                .WithMessage(localizer[nameof(ApplicationDataResources.ConfigurationItemRequired)]);
         }
     }
 }

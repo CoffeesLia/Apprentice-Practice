@@ -28,10 +28,7 @@ namespace Domain.Tests
         public void ConstructorShouldInitializeApplicationData()
         {
             // Arrange
-            var applicationData = new ApplicationData("Test Application Data")
-            {
-                ConfigurationItem = "Test Configuration Item"
-            };
+            var applicationData = new ApplicationData("Test Application Data");
             // Act
             var integration = new Integration("Name", "Description") { ApplicationData = applicationData };
             // Assert
@@ -43,10 +40,7 @@ namespace Domain.Tests
         {
             // Arrange
             var area = new Area("Test Area");
-            var application = new ApplicationData("Application")
-            {
-                ConfigurationItem = "Test Configuration Item"
-            };
+            var application = new ApplicationData("Application");
 
             // Act
             area.Applications.Add(application);
@@ -58,10 +52,8 @@ namespace Domain.Tests
         public void AddIntegrationShouldAddIntegrationToList()
         {
             // Arrange
-            var applicationData = new ApplicationData("Test Application Data")
-            {
-                ConfigurationItem = "Test Configuration Item"
-            };
+            var applicationData = new ApplicationData("Test Application Data");
+
             var integration = new Integration("Name", "Description");
             // Act
             applicationData.Integration.Add(integration);
@@ -72,10 +64,8 @@ namespace Domain.Tests
         public void AddIntegrationShouldAddIntegrationToApplicationData()
         {
             // Arrange
-            var applicationData = new ApplicationData("Test Application Data")
-            {
-                ConfigurationItem = "Test Configuration Item"
-            };
+            var applicationData = new ApplicationData("Test Application Data");
+
             var integration = new Integration("Name", "Description") { ApplicationData = applicationData };
             // Act
             applicationData.Integration.Add(integration);

@@ -10,8 +10,5 @@ namespace Stellantis.ProjectName.Application.Models.Filters
         public int AreaId { get; set; }
         public int ResponsibleId { get; set; }
         public bool? External { get; set; }
-        public string? ConfigurationItem { get; set; }
-
-
     }
 }

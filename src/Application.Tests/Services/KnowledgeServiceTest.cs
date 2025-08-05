@@ -75,7 +75,7 @@ namespace Application.Tests.Services
             };
 
             _memberRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(new Member { Id = 1, SquadId = 1, Name = "M", Role = "R", Email = "e@e.com", Cost = 1 });
-            _applicationRepositoryMock.Setup(r => r.GetByIdAsync(2)).ReturnsAsync(new ApplicationData("App") { Id = 2, SquadId = 1, ProductOwner = "PO", ConfigurationItem = "CI" });
+            _applicationRepositoryMock.Setup(r => r.GetByIdAsync(2)).ReturnsAsync(new ApplicationData("App") { Id = 2, SquadId = 1, ProductOwner = "PO" });
             _knowledgeRepositoryMock.Setup(r => r.AssociationExistsAsync(1, 2)).ReturnsAsync(true);
 
             // Act
@@ -98,7 +98,7 @@ namespace Application.Tests.Services
             };
 
             _memberRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(new Member { Id = 1, SquadId = 1, Name = "M", Role = "R", Email = "e@e.com", Cost = 1 });
-            _applicationRepositoryMock.Setup(r => r.GetByIdAsync(2)).ReturnsAsync(new ApplicationData("App") { Id = 2, SquadId = 1, ProductOwner = "PO", ConfigurationItem = "CI" });
+            _applicationRepositoryMock.Setup(r => r.GetByIdAsync(2)).ReturnsAsync(new ApplicationData("App") { Id = 2, SquadId = 1, ProductOwner = "PO" });
             _knowledgeRepositoryMock.Setup(r => r.AssociationExistsAsync(1, 2)).ReturnsAsync(false);
             _knowledgeRepositoryMock.Setup(r => r.CreateAssociationAsync(1, 2, 1)).Returns(Task.CompletedTask);
             _unitOfWorkMock.Setup(u => u.CommitAsync()).Returns(Task.CompletedTask);
@@ -272,7 +272,7 @@ namespace Application.Tests.Services
 
             _knowledgeRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.Id)).ReturnsAsync(knowledge);
             _memberRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.Id)).ReturnsAsync(new Member { Id = knowledge.Id, Role = "SquadLeader", SquadId = knowledge.AssociatedSquadId, Name = "Líder", Email = "l@l.com", Cost = 1 });
-            _applicationRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.ApplicationId)).ReturnsAsync(new ApplicationData("App") { Id = knowledge.ApplicationId, SquadId = knowledge.AssociatedSquadId, ProductOwner = "PO", ConfigurationItem = "CI" });
+            _applicationRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.ApplicationId)).ReturnsAsync(new ApplicationData("App") { Id = knowledge.ApplicationId, SquadId = knowledge.AssociatedSquadId, ProductOwner = "PO" });
 
 
             // Act
