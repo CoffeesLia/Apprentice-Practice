@@ -26,8 +26,10 @@ namespace Stellantis.ProjectName.Application.Validators
 
             RuleFor(x => x.Url)
                 .NotNull()
-                .WithMessage(localizer[nameof(RepoResources.UrlIsRequired)])
-                .Must(url => url != null && Uri.IsWellFormedUriString(url.ToString(), UriKind.Absolute))
+                .NotEmpty()
+                .WithMessage(localizer[nameof(RepoResources.UrlIsRequired)]);
+            RuleFor(x => x.Url)
+                .Must(url => url != null && url.IsAbsoluteUri && (url.Scheme == Uri.UriSchemeHttp || url.Scheme == Uri.UriSchemeHttps))
                 .WithMessage(localizer[nameof(RepoResources.UrlIsInvalid)]);
         }
     }

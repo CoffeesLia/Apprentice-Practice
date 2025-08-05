@@ -30,7 +30,8 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         {
             ArgumentNullException.ThrowIfNull(filter);
 
-            var filters = PredicateBuilder.New<Integration>(true);
+            ExpressionStarter<Integration> filters = PredicateBuilder.New<Integration>(true);
+            filter.Page = filter.Page <= 0 ? 1 : filter.Page;
 
             if (!string.IsNullOrWhiteSpace(filter.Name))
                 filters = filters.And(x => x.Name != null && x.Name.Contains(filter.Name));
@@ -38,14 +39,15 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             if (filter.ApplicationDataId > 0)
                 filters = filters.And(x => x.ApplicationDataId == filter.ApplicationDataId);
 
-            return await GetListAsync(
+            var pagedResult = await GetListAsync(
                 filter: filters,
-                pageSize:filter.PageSize,
                 page: filter.Page,
+                pageSize: filter.PageSize,
                 sort: filter.Sort,
-                sortDir: filter.SortDir).ConfigureAwait(false);
-        }
-
+                sortDir: filter.SortDir
+                ).ConfigureAwait(false);
+                return pagedResult;
+        } 
         public async Task<bool> VerifyNameExistsAsync(string Name)
         {
             return await Context.Set<Integration>().AnyAsync(repo => repo.Name == Name).ConfigureAwait(false);

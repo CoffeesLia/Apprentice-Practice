@@ -142,7 +142,12 @@ namespace Infrastructure.Tests.Data.Repositories
             };
 
             var knowledges = _fixture.CreateMany<Knowledge>(9).ToList();
-            knowledges.Insert(0, filtroKnowledge); // Garante que o primeiro tem os valores do filtro
+            foreach (var k in knowledges)
+            {
+                k.Member = null;
+                k.Application = null;
+            }
+            knowledges.Insert(0, filtroKnowledge);
 
             _context.Knowledges.AddRange(knowledges);
             await _context.SaveChangesAsync();
