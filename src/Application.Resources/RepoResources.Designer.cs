@@ -106,7 +106,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Not Found..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Not found..
         /// </summary>
         public static string NotFound {
             get {
@@ -124,7 +124,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Url is invalid..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a UrlIsInvalid.
         /// </summary>
         public static string UrlIsInvalid {
             get {
@@ -133,7 +133,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Url is required..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Url is required.
         /// </summary>
         public static string UrlIsRequired {
             get {

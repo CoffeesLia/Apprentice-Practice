@@ -6,8 +6,10 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
-    public class RepoRepository(Context context) : RepositoryBase<Repo, Context>(context), IRepoRepository
+    public class RepoRepository : RepositoryBase<Repo, Context>, IRepoRepository
     {
+        public RepoRepository(Context context) : base(context) { }
+
         public async Task<Repo?> GetByIdAsync(int id)
         {
             return await Context.Set<Repo>().FindAsync(id).ConfigureAwait(false);
@@ -43,7 +45,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             return await GetListAsync(
                 filter: filters,
-                pageSize:repoFilter.PageSize,
+                pageSize: repoFilter.PageSize,
                 page: repoFilter.Page,
                 sort: repoFilter.Sort,
                 sortDir: repoFilter.SortDir,
