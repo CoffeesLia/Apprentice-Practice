@@ -177,7 +177,7 @@ namespace Stellantis.ProjectName.WebApi
                 // Squads
                 context.Squads.AddRange(
                     new Squad { Name = "Elite Debuggers", Description = "Jovens Aprendizes." },
-                    new Squad { Name = "All Java", Description = "Reposnável pelos projetos em Java." },
+                    new Squad { Name = "All Java", Description = "Reponsável pelos projetos em Java." },
                     new Squad { Name = "Barramento", Description = "Reposnável pelas integrações." },
                     new Squad { Name = "Frontend Masters", Description = "Especialistas em desenvolvimento frontend." },
                     new Squad { Name = "Backend Builders", Description = "Focados em soluções backend robustas." },
