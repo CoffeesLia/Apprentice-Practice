@@ -129,15 +129,15 @@ namespace Stellantis.ProjectName.WebApi
                     new ApplicationData("eLog") { AreaId = 2, ResponsibleId = 2, SquadId = 2 },
                     new ApplicationData("Suite PD") { AreaId = 4, ResponsibleId = 4, SquadId = 3 },
                     new ApplicationData("Finance Tracker") { AreaId = 6, ResponsibleId = 6, SquadId = 4 },
-                    new ApplicationData("HR Portal") { AreaId = 8, ResponsibleId = 8 },
-                    new ApplicationData("Marketing Dashboard") { AreaId = 10, ResponsibleId = 10 },
-                    new ApplicationData("Sales CRM") { AreaId = 14, ResponsibleId = 14 },
-                    new ApplicationData("Quality Control System") { AreaId = 1, ResponsibleId = 13 },
+                    new ApplicationData("HR Portal") { AreaId = 8, ResponsibleId = 8, SquadId = 8 },
+                    new ApplicationData("Marketing Dashboard") { AreaId = 10, ResponsibleId = 10, SquadId = 7 },
+                    new ApplicationData("Sales CRM") { AreaId = 14, ResponsibleId = 14, SquadId = 6 },
+                    new ApplicationData("Quality Control System") { AreaId = 1, ResponsibleId = 13, SquadId = 9},
                     new ApplicationData("Supplier Chain Manager") { AreaId = 16, ResponsibleId = 5, SquadId = 5 },
-                    new ApplicationData("Engineering Tools") { AreaId = 4, ResponsibleId = 4 },
-                    new ApplicationData("Integration Hub") { AreaId = 9, ResponsibleId = 9 },
-                    new ApplicationData("AMS Portal") { AreaId = 1, ResponsibleId = 1 },
-                    new ApplicationData("Architecture Planner") { AreaId = 2, ResponsibleId = 2 }
+                    new ApplicationData("Engineering Tools") { AreaId = 4, ResponsibleId = 4, SquadId = 11 },
+                    new ApplicationData("Integration Hub") { AreaId = 9, ResponsibleId = 9, SquadId = 13 },
+                    new ApplicationData("AMS Portal") { AreaId = 1, ResponsibleId = 1, SquadId = 12 },
+                    new ApplicationData("Architecture Planner") { AreaId = 2, ResponsibleId = 2, SquadId = 10 }
                 );
 
                 // Serviços
