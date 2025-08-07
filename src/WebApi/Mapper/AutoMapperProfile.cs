@@ -57,7 +57,8 @@ namespace Stellantis.ProjectName.WebApi.Mapper
             CreateMap<Responsible, ResponsibleVm>()
             .ForMember(dest => dest.Area, opt => opt.MapFrom(src => src.Area));
 
-            CreateMap<ResponsibleFilterDto, ResponsibleFilter>();
+            CreateMap<ResponsibleFilterDto, ResponsibleFilter>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
 
             CreateMap<ServiceDataDto, ServiceData>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
