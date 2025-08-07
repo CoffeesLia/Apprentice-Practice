@@ -105,7 +105,16 @@ namespace Stellantis.ProjectName.Application.Services
             existingIncident.Description = item.Description;
             existingIncident.Status = item.Status;
             existingIncident.ApplicationId = item.ApplicationId;
-            existingIncident.CreatedAt = DateTime.UtcNow;
+
+            // Atualiza a data de fechamento se o status for "Fechado"
+            if (item.Status == IncidentStatus.Closed && existingIncident.ClosedAt == null)
+            {
+                existingIncident.ClosedAt = DateTime.UtcNow;
+            }
+            else if (item.Status != IncidentStatus.Closed)
+            {
+                existingIncident.ClosedAt = null;
+            }
 
             // Atualiza membros apenas se necessário
             List<Member> newMembers = new();
