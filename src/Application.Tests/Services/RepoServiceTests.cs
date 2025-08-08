@@ -61,7 +61,7 @@ namespace Application.Tests.Services
 
             string nameValidationMessage = string.Format(
                 CultureInfo.InvariantCulture,
-                format: DocumentDataResources.NameValidateLength,
+                format: RepoResources.NameValidateLength,
                 arg0: RepoValidator.MinimumLegth,
                 arg1: ApplicationDataValidator.MaximumLength
             );
@@ -71,7 +71,10 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
-            Assert.Equal(string.Format(CultureInfo.InvariantCulture, RepoResources.NameValidateLength, RepoValidator.MinimumLegth, ApplicationDataValidator.MaximumLength), result.Errors.First());
+            Assert.Equal(string.Format(CultureInfo.InvariantCulture, 
+                RepoResources.NameValidateLength, 
+                RepoValidator.MinimumLegth, 
+                ApplicationDataValidator.MaximumLength), result.Errors.First());
         }
 
         [Fact]
@@ -101,95 +104,6 @@ namespace Application.Tests.Services
             Assert.Contains(RepoResources.NameIsRequired, result.Errors);
             Assert.Contains(RepoResources.UrlIsRequired, result.Errors);
         }
-
-
-        //[Fact]
-        //public async Task CreateAsyncValidRepoReturnsComplete()
-        //{
-        //    var repo = new Repo { Name = "Rep", Description = "Exemple", Url = new Uri("https://exemplo.com"), ApplicationId = 1 };
-        //    _repoRepositoryMock.Setup(r => r.NameAlreadyExists(repo.Name, repo.ApplicationId, null)).ReturnsAsync(false);
-        //    var result = await _repoService.CreateAsync(repo);
-
-        //    Assert.Equal(OperationStatus.Success, result.Status);
-        //}
-
-        //[Fact]
-        //public async Task CreateAsyncDuplicateNameReturnsConflict()
-        //{
-        //    var repo = new Repo { Name = "Rep", Description = "", Url = new Uri("https://exemplo.com"), ApplicationId = 1 };
-        //    _repoRepositoryMock.Setup(r => r.NameAlreadyExists(repo.Name, repo.ApplicationId, null)).ReturnsAsync(true);
-        //    var result = await _repoService.CreateAsync(repo);
-
-        //    Assert.Equal(OperationStatus.Conflict, result.Status);
-        //    Assert.Equal(RepoResources.NameAlreadyExists, result.Message);
-        //}
-
-        //[Fact]
-        //public async Task CreateAsyncDuplicateUrlReturnsConflict()
-        //{
-        //    var repo = new Repo { Name = "repo", Description = "Exemple", Url = new Uri("https://exemplo.com"), ApplicationId = 1 };
-        //    // Fix for CS0854: Replace the optional argument usage with explicit argument passing.
-        //    _repoRepositoryMock.Setup(r => r.NameAlreadyExists(repo.Name, repo.ApplicationId, null)).ReturnsAsync(false);
-        //    _repoRepositoryMock.Setup(r => r.UrlAlreadyExists(repo.Url, repo.ApplicationId, null)).ReturnsAsync(true);
-
-        //    var result = await _repoService.CreateAsync(repo);
-
-        //    Assert.Equal(OperationStatus.Conflict, result.Status);
-        //    Assert.Equal(RepoResources.UrlAlreadyExists, result.Message);
-        //}
-
-
-
-        //[Fact]
-        //public async Task UpdateAsyncValidRepoReturnsComplete()
-        //{
-        //    var repo = new Repo { Name = "Rep", Description = "", Url = new Uri("https://exemplo.com"), ApplicationId = 1 };
-
-        //    _repoRepositoryMock.Setup(r => r.NameAlreadyExists(repo.Name, repo.ApplicationId, null)).ReturnsAsync(false);
-
-        //    _repoRepositoryMock.Setup(r => r.UrlAlreadyExists(repo.Url, repo.ApplicationId, null)).ReturnsAsync(true);
-
-        //    _repoRepositoryMock
-        //        .Setup(r => r.GetByIdAsync(repo.Id))
-        //        .ReturnsAsync(repo);
-
-        //    var result = await _repoService.UpdateAsync(repo);
-
-        //    Assert.Equal(OperationStatus.Success, result.Status);
-        //}
-
-
-        //[Fact]
-        //public async Task UpdateAsyncDuplicateNameReturnsConflict()
-        //{
-        //    var repo = new Repo { Name = "Rep", Description = "", Url = new Uri("https://exemplo.com"), ApplicationId = 1 };
-        //    _repoRepositoryMock
-        //        .Setup(r => r.GetByIdAsync(repo.Id))
-        //        .ReturnsAsync(repo);
-        //    _repoRepositoryMock.Setup(r => r.NameAlreadyExists(repo.Name, repo.ApplicationId, null)).ReturnsAsync(false);
-        //    var result = await _repoService.UpdateAsync(repo);
-
-        //    Assert.Equal(OperationStatus.Conflict, result.Status);
-        //    Assert.Equal(RepoResources.NameAlreadyExists, result.Message);
-        //}
-
-
-        //[Fact]
-        //public async Task UpdateAsyncDuplicateUrlReturnsConflict()
-        //{
-        //    // Arrange 
-        //    var repo = new Repo { Name = "repo", Description = "Exemple", Url = new Uri("https://exemplo.com"), ApplicationId = 1 };
-        //    _repoRepositoryMock.Setup(r => r.NameAlreadyExists(repo.Name, repo.ApplicationId, null)).ReturnsAsync(false);
-
-        //    // Act  
-        //    _repoRepositoryMock.Setup(r => r.NameAlreadyExists(repo.Name, repo.ApplicationId, null)).ReturnsAsync(false);
-
-        //    var result = await _repoService.UpdateAsync(repo);
-
-        //    // Assert  
-        //    Assert.Equal(OperationStatus.Conflict, result.Status);
-        //    Assert.Equal(RepoResources.UrlAlreadyExists, result.Message);
-        //}
 
         [Fact]
         public async Task UpdateAsyncInvalidValidationReturnsInvalidData()
@@ -350,6 +264,169 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Null(result);
+        }
+
+        [Fact]
+        public async Task CreateAsyncShouldReturnConflictWhenNameAlreadyExists()
+        {
+            // Arrange
+            var repo = new Repo
+            {
+                Name = "RepoDuplicado",
+                Description = "Descrição",
+                Url = new Uri("https://exemplo.com"),
+                ApplicationId = 1
+            };
+
+            _repoRepositoryMock
+                .Setup(r => r.NameAlreadyExists(repo.Name, repo.ApplicationId))
+                .ReturnsAsync(true);
+
+            _repoRepositoryMock
+                .Setup(r => r.UrlAlreadyExists(repo.Url, null))
+                .ReturnsAsync(true);
+
+            // Act
+            var result = await _repoService.CreateAsync(repo);
+
+            // Assert
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal(RepoResources.NameAlreadyExists, result.Message);
+        }
+
+        [Fact]
+        public async Task CreateAsyncShouldReturnConflictWhenUrlAlreadyExists()
+        {
+            // Arrange
+            var repo = new Repo
+            {
+                Name = "RepoNovo",
+                Description = "Descrição",
+                Url = new Uri("https://exemplo.com/duplicado"),
+                ApplicationId = 1
+            };
+
+            _repoRepositoryMock
+                .Setup(r => r.NameAlreadyExists(repo.Name, repo.ApplicationId))
+                .ReturnsAsync(false);
+
+            _repoRepositoryMock
+                .Setup(r => r.UrlAlreadyExists(repo.Url, null))
+                .ReturnsAsync(true);
+
+            // Act
+            var result = await _repoService.CreateAsync(repo);
+
+            // Assert
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal(RepoResources.UrlAlreadyExists, result.Message);
+        }
+
+        [Fact]
+        public async Task UpdateAsyncShouldReturnNotFoundWhenRepoDoesNotExist()
+        {
+            // Arrange
+            var repo = new Repo { Id = 99, Name = "RepoX", Description = "Desc", Url = new Uri("https://x.com"), ApplicationId = 1 };
+            _repoRepositoryMock.Setup(r => r.GetByIdAsync(repo.Id)).ReturnsAsync((Repo?)null);
+
+            // Act
+            var result = await _repoService.UpdateAsync(repo);
+
+            // Assert
+            Assert.Equal(OperationStatus.NotFound, result.Status);
+            Assert.Equal(RepoResources.NotFound, result.Message);
+        }
+
+        [Fact]
+        public async Task UpdateAsyncShouldReturnConflictWhenNameAlreadyExists()
+        {
+            // Arrange
+            var existingRepo = new Repo { Id = 1, Name = "RepoA", Description = "Desc", Url = new Uri("https://a.com"), ApplicationId = 1 };
+            var repo = new Repo { Id = 1, Name = "NovoNome", Description = "Desc", Url = new Uri("https://a.com"), ApplicationId = 1 };
+
+            _repoRepositoryMock.Setup(r => r.GetByIdAsync(repo.Id)).ReturnsAsync(existingRepo);
+            _repoRepositoryMock.Setup(r => r.NameAlreadyExists(repo.Name.Trim(), repo.Id)).ReturnsAsync(true);
+
+            // Act
+            var result = await _repoService.UpdateAsync(repo);
+
+            // Assert
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal(RepoResources.NameAlreadyExists, result.Message);
+        }
+
+        [Fact]
+        public async Task UpdateAsyncShouldReturnConflictWhenUrlAlreadyExists()
+        {
+            // Arrange
+            var existingRepo = new Repo { Id = 1, Name = "RepoA", Description = "Desc", Url = new Uri("https://a.com"), ApplicationId = 1 };
+            var repo = new Repo { Id = 1, Name = "RepoA", Description = "Desc", Url = new Uri("https://b.com"), ApplicationId = 1 };
+
+            _repoRepositoryMock.Setup(r => r.GetByIdAsync(repo.Id)).ReturnsAsync(existingRepo);
+            _repoRepositoryMock.Setup(r => r.NameAlreadyExists(repo.Name.Trim(), repo.Id)).ReturnsAsync(false);
+            _repoRepositoryMock.Setup(r => r.UrlAlreadyExists(repo.Url, repo.Id)).ReturnsAsync(true);
+
+            // Act
+            var result = await _repoService.UpdateAsync(repo);
+
+            // Assert
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal(RepoResources.UrlAlreadyExists, result.Message);
+        }
+
+        [Fact]
+        public async Task UpdateAsyncShouldReturnSuccessWhenNoConflicts()
+        {
+            // Arrange
+            var existingRepo = new Repo { Id = 1, Name = "RepoA", Description = "Desc", Url = new Uri("https://a.com"), ApplicationId = 1 };
+            var repo = new Repo { Id = 1, Name = "RepoA", Description = "Desc", Url = new Uri("https://a.com"), ApplicationId = 1 };
+
+            _repoRepositoryMock.Setup(r => r.GetByIdAsync(repo.Id)).ReturnsAsync(existingRepo);
+            _repoRepositoryMock.Setup(r => r.NameAlreadyExists(repo.Name.Trim(), repo.Id)).ReturnsAsync(false);
+            _repoRepositoryMock.Setup(r => r.UrlAlreadyExists(repo.Url, repo.Id)).ReturnsAsync(false);
+
+            // Act
+            var result = await _repoService.UpdateAsync(repo);
+
+            // Assert
+            Assert.Equal(OperationStatus.Success, result.Status);
+        }
+
+        [Fact]
+        public async Task CreateAsyncShouldReturnSuccessWhenValidRepo()
+        {
+            // Arrange
+            var repo = new Repo
+            {
+                Name = "RepoValido",
+                Description = "Descrição válida",
+                Url = new Uri("https://exemplo.com/valido"),
+                ApplicationId = 1
+            };
+
+            // Mock do validador para retornar válido
+            var validatorMock = new Mock<IValidator<Repo>>();
+            validatorMock
+                .Setup(v => v.ValidateAsync(repo, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new ValidationResult());
+
+            // Mock do repositório para garantir unicidade
+            _repoRepositoryMock
+                .Setup(r => r.NameAlreadyExists(repo.Name, repo.ApplicationId))
+                .ReturnsAsync(false);
+
+            _repoRepositoryMock
+                .Setup(r => r.UrlAlreadyExists(repo.Url, null))
+                .ReturnsAsync(false);
+
+            // Instancia o serviço com o validador mockado
+            var repoService = new RepoService(_unitOfWorkMock.Object, Helpers.LocalizerFactorHelper.Create(), validatorMock.Object);
+
+            // Act
+            var result = await repoService.CreateAsync(repo);
+
+            // Assert
+            Assert.Equal(OperationStatus.Success, result.Status);
         }
     }
 }
