@@ -26,6 +26,20 @@ namespace WebApi.Tests.Controllers
             });
         }
 
+        // Teste só pode ser rodado em rede externa
+        //[Fact]
+        //public async Task SmtpClientWrapperSendMailAsyncCompleteWithoutException()
+        //{
+        //    using var mailMessage = new MailMessage("from@teste.com", "to@teste.com")
+        //    {
+        //        Subject = "Assunto",
+        //        Body = "Corpo"
+        //    };
+
+        //    using var smtpWrapper = new SmtpClientWrapper();
+        //    await smtpWrapper.SendMailAsync(mailMessage);
+        //}
+
         [Fact]
         public async Task EmailServiceSendEmailAsyncCallsSmtpClientFactoryAndSendMailAsync()
         {

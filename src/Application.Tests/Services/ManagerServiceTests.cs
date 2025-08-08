@@ -91,7 +91,6 @@ namespace Application.Tests.Services
                 .ReturnsAsync(new ApplicationData("Valid Application Name")
                 {
                     Id = 1,
-                    ConfigurationItem = "Valid Configuration Item",
                 });
 
             _managerRepositoryMock
@@ -127,7 +126,6 @@ namespace Application.Tests.Services
                 .ReturnsAsync(new ApplicationData("Valid Application Name")
                 {
                     Id = 1,
-                    ConfigurationItem = "Valid Configuration Item",
                 });
 
             _managerRepositoryMock.Setup(r => r.VerifyNameExistsAsync(manager.Name))

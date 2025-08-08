@@ -96,7 +96,6 @@ namespace Application.Tests.Services
                 .ReturnsAsync(new ApplicationData("Valid Application Name")
                 {
                     Id = 1,
-                    ConfigurationItem = "Valid Configuration Item",
                 });
 
             _serviceRepositoryMock.Setup(r => r.VerifyNameExistsAsync(serviceData.Name))
@@ -138,7 +137,6 @@ namespace Application.Tests.Services
                 .ReturnsAsync(new ApplicationData("Valid Application Name")
                 {
                     Id = 1,
-                    ConfigurationItem = "Valid Configuration Item",
                 });
 
             _serviceRepositoryMock
@@ -195,7 +193,6 @@ namespace Application.Tests.Services
                 .ReturnsAsync(new ApplicationData("Valid Application Name")
                 {
                     Id = 1,
-                    ConfigurationItem = "Valid Configuration Item",
                 });
 
             _serviceRepositoryMock.Setup(r => r.VerifyNameExistsAsync(serviceData.Name))

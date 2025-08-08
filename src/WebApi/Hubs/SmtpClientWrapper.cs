@@ -6,27 +6,27 @@ namespace Stellantis.ProjectName.WebApi.Hubs
 {
     public class SmtpClientWrapper : ISmtpClient
     {
-        private readonly SmtpClient _client;
+        private readonly string _host = "smtp.gmail.com";
+        private readonly int _port = 587;
+        private readonly string _username = "amsportalproject@gmail.com";
+        private readonly string _password = "cxbz juic zhfs xmoh";
+        private readonly bool _enableSsl = true;
         private bool _disposed;
 
-        public SmtpClientWrapper() =>
-            _client = new SmtpClient("smtp.gmail.com")
-            {
-                Port = 587,
-                Credentials = new NetworkCredential("amsportalproject@gmail.com", "cxbz juic zhfs xmoh"),
-                EnableSsl = true
-            };
-
-        public Task SendMailAsync(MailMessage message) => _client.SendMailAsync(message);
+        public async Task SendMailAsync(MailMessage message)
+        {
+            using var smtpClient = new SmtpClient(_host, _port);
+            smtpClient.Credentials = new NetworkCredential(_username, _password);
+            smtpClient.EnableSsl = _enableSsl;
+            await smtpClient.SendMailAsync(message).ConfigureAwait(false);
+        }
 
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposed)
             {
                 if (disposing)
-                {
-                    _client.Dispose();
-                }
+                {}
                 _disposed = true;
             }
         }

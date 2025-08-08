@@ -123,9 +123,6 @@
   <data name="ApplicationNotFound" xml:space="preserve">
     <value>Application cannot be found</value>
   </data>
-  <data name="ConfigurationItemRequired" xml:space="preserve">
-    <value>Configuration item is required.</value>
-  </data>
   <data name="DescriptionValidateLength" xml:space="preserve">
     <value>The description has a limit of {0} characters.</value>
   </data>

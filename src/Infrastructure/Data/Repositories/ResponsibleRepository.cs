@@ -33,6 +33,10 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             ExpressionStarter<Responsible> filters = PredicateBuilder.New<Responsible>(true);
             filter.Page = filter.Page <= 0 ? 1 : filter.Page;
 
+            if (filter.Id > 0)
+
+                filters = filters.And(x => x.Id == filter.Id);
+
             if (!string.IsNullOrWhiteSpace(filter.Email))
             {
                 filters = filters.And(x => x.Email.Contains(filter.Email, StringComparison.OrdinalIgnoreCase));

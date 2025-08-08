@@ -79,15 +79,6 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Configuration item is required..
-        /// </summary>
-        public static string ConfigurationItemRequired {
-            get {
-                return ResourceManager.GetString("ConfigurationItemRequired", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a The description has a limit of {0} characters..
         /// </summary>
         public static string DescriptionValidateLength {

@@ -63,7 +63,6 @@ namespace WebApi.Tests.Controllers
                 AreaId = 1,
                 Description = "Description",
                 External = true,
-                ConfigurationItem = "ConfigItem",
                 ResponsibleId = 1
             };
 
@@ -84,13 +83,11 @@ namespace WebApi.Tests.Controllers
             {
                 Id = 1,
                 Name = "Test Application",
-                ConfigurationItem = "Test Config"
             };
             ApplicationVm applicationVm = new()
             {
                 Id = 1,
                 Name = "Test Application",
-                ConfigurationItem = "Test Config",
                 Area = new AreaVm()
             };
 
@@ -131,7 +128,6 @@ namespace WebApi.Tests.Controllers
                 AreaId = 1,
                 Description = "Description",
                 External = true,
-                ConfigurationItem = "ConfigItem",
                 ResponsibleId = 1
             };
 

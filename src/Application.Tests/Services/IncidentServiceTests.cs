@@ -1,10 +1,12 @@
-﻿/*using System.Globalization;
+﻿using System.Globalization;
 using Application.Tests.Helpers;
 using AutoFixture;
+using FluentValidation;
 using Microsoft.Extensions.Localization;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
+using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
@@ -20,10 +22,13 @@ namespace Application.Tests.Services
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private readonly Mock<IIncidentRepository> _incidentRepositoryMock;
         private readonly Mock<IApplicationDataRepository> _applicationDataRepositoryMock;
-        private readonly IncidentService _incidentService;
-        private readonly Fixture _fixture;
+        private readonly Mock<IMemberRepository> _memberRepositoryMock;
+        private readonly Mock<IStringLocalizer<NotificationResources>> _notificationLocalizerMock;
+        private readonly Mock<INotificationService> _notificationServiceMock;
         private readonly IStringLocalizerFactory _localizerFactory;
         private readonly IncidentValidator _incidentValidator;
+        private readonly IncidentService _incidentService;
+        private readonly Fixture _fixture;
 
         public IncidentServiceTests()
         {
@@ -31,11 +36,15 @@ namespace Application.Tests.Services
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _incidentRepositoryMock = new Mock<IIncidentRepository>();
             _applicationDataRepositoryMock = new Mock<IApplicationDataRepository>();
+            _memberRepositoryMock = new Mock<IMemberRepository>();
+            _notificationLocalizerMock = new Mock<IStringLocalizer<NotificationResources>>();
+            _notificationServiceMock = new Mock<INotificationService>();
             _localizerFactory = LocalizerFactorHelper.Create();
             _incidentValidator = new IncidentValidator(_localizerFactory);
 
             _unitOfWorkMock.Setup(u => u.IncidentRepository).Returns(_incidentRepositoryMock.Object);
             _unitOfWorkMock.Setup(u => u.ApplicationDataRepository).Returns(_applicationDataRepositoryMock.Object);
+            _unitOfWorkMock.Setup(u => u.MemberRepository).Returns(_memberRepositoryMock.Object);
 
             _fixture = new Fixture();
             _fixture.Behaviors
@@ -44,7 +53,13 @@ namespace Application.Tests.Services
                 .ForEach(b => _fixture.Behaviors.Remove(b));
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
-            _incidentService = new IncidentService(_unitOfWorkMock.Object, _localizerFactory, _incidentValidator);
+            _incidentService = new IncidentService(
+                _unitOfWorkMock.Object,
+                _localizerFactory,
+                _notificationLocalizerMock.Object,
+                _incidentValidator,
+                _notificationServiceMock.Object
+            );
         }
 
         [Fact]
@@ -57,118 +72,115 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task CreateAsyncWhenValidationFails()
+        public async Task CreateAsync_ShouldReturnInvalidData_WhenValidationFails()
         {
             var incident = new Incident
             {
-                Title = string.Empty,
-                Description = string.Empty,
+                Title = "",
+                Description = "",
                 ApplicationId = 0,
-                Application = new ApplicationData("App") { Id = 0, ProductOwner = "PO", ConfigurationItem = "CI" },
                 Members = new List<Member>()
             };
 
-            OperationResult result = await _incidentService.CreateAsync(incident);
+            var result = await _incidentService.CreateAsync(incident);
 
+            Assert.Equal(OperationStatus.InvalidData, result.Status);
             Assert.Equal(OperationStatus.InvalidData, result.Status);
             Assert.Contains(IncidentResource.TitleRequired, result.Errors);
             Assert.Contains(IncidentResource.ApplicationRequired, result.Errors);
             Assert.Contains(IncidentResource.DescriptionRequired, result.Errors);
+
         }
 
         [Fact]
-        public async Task CreateAsyncWhenApplicationNotFound()
-        {
-            var incident = new Incident
-            {
-                Title = "Teste",
-                Description = "Desc",
-                ApplicationId = 123,
-                Application = new ApplicationData("App") { Id = 123, ProductOwner = "PO", ConfigurationItem = "CI" },
-                Members = new List<Member>()
-            };
-            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(incident.ApplicationId)).ReturnsAsync((ApplicationData?)null);
-
-            OperationResult result = await _incidentService.CreateAsync(incident);
-
-            Assert.Equal(OperationStatus.NotFound, result.Status);
-        }
-
-        [Fact]
-        public async Task CreateAsyncWhenInvalidMembers()
+        public async Task CreateAsync_ShouldReturnNotFound_WhenApplicationDoesNotExist()
         {
             var incident = new Incident
             {
                 Title = "Teste",
                 Description = "Desc",
                 ApplicationId = 1,
-                Application = new ApplicationData("App") { Id = 1, ProductOwner = "PO", ConfigurationItem = "CI" },
-                Members = new List<Member> { new Member { Id = 99, Name = "Inválido", Role = "Dev", Cost = 1, Email = "inv@x.com", SquadId = 1, Squad = new Squad() } }
+                Members = new List<Member>()
             };
-            var app = new ApplicationData("App") { Id = 1, ProductOwner = "PO", ConfigurationItem = "CI" };
-            // Squads é somente leitura, então adicionamos via Add
-            // app.Squads = new List<Squad>(); // ERRADO
-            // Não adiciona nenhum squad, lista fica vazia
 
-            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(incident.ApplicationId)).ReturnsAsync(app);
+            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(incident.ApplicationId)).ReturnsAsync((ApplicationData?)null);
 
-            OperationResult result = await _incidentService.CreateAsync(incident);
+            var result = await _incidentService.CreateAsync(incident);
 
-            Assert.Equal(OperationStatus.Conflict, result.Status);
-            Assert.Contains(IncidentResource.InvalidMembers, result.Errors);
+            Assert.Equal(OperationStatus.NotFound, result.Status);
         }
 
         [Fact]
-        public async Task CreateAsyncWhenSuccessful()
+        public async Task CreateAsync_ShouldReturnConflict_WhenMemberNotInSquad()
         {
-            var member = new Member { Id = 1, Name = "M", Role = "Dev", Cost = 1, Email = "m@x.com", SquadId = 1, Squad = new Squad() };
-            var squad = new Squad { Id = 1, Name = "S" };
-            squad.Members.Add(member); // Adiciona membro na coleção somente leitura
-
-            var app = new ApplicationData("App") { Id = 1, ProductOwner = "PO", ConfigurationItem = "CI" };
-            app.Squads.Add(squad); // Adiciona squad na coleção somente leitura
-
+            var member = new Member { Id = 1, Name = "M", Role = "Dev", Cost = 1, Email = "m@x.com", SquadId = 99 };
             var incident = new Incident
             {
                 Title = "Teste",
                 Description = "Desc",
-                ApplicationId = app.Id,
-                Application = app,
+                ApplicationId = 1,
                 Members = new List<Member> { member }
             };
+            var app = new ApplicationData("App") { Id = 1, SquadId = 1, ProductOwner = "PO" };
 
-            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(app.Id)).ReturnsAsync(app);
+            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(incident.ApplicationId)).ReturnsAsync(app);
+            _memberRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Member, bool>>>(), null, null, null, 1, 10))
+                .ReturnsAsync(new PagedResult<Member> { Result = new List<Member> { member } });
 
-            OperationResult result = await _incidentService.CreateAsync(incident);
+            var result = await _incidentService.CreateAsync(incident);
 
-            Assert.Equal(OperationStatus.Success, result.Status);
+            Assert.Equal(OperationStatus.Conflict, result.Status);
         }
 
         [Fact]
-        public async Task GetListAsyncShouldReturnPagedResult()
+        public async Task CreateAsync_ShouldReturnSuccess_WhenValid()
         {
-            IncidentFilter filter = _fixture.Create<IncidentFilter>();
-            PagedResult<Incident> pagedResult = _fixture.Create<PagedResult<Incident>>();
+            var member = new Member { Id = 1, Name = "M", Role = "Dev", Cost = 1, Email = "m@x.com", SquadId = 1 };
+            var incident = new Incident
+            {
+                Title = "Teste",
+                Description = "Desc",
+                ApplicationId = 1,
+                Members = new List<Member> { member }
+            };
+            var app = new ApplicationData("App") { Id = 1, SquadId = 1, ProductOwner = "PO" };
+
+            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(incident.ApplicationId)).ReturnsAsync(app);
+            _memberRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Member, bool>>>(), null, null, null, 1, 10))
+                .ReturnsAsync(new PagedResult<Member> { Result = new List<Member> { member } });
+            _incidentRepositoryMock.Setup(r => r.CreateAsync(It.IsAny<Incident>(), true)).Returns(Task.CompletedTask);
+
+            var result = await _incidentService.CreateAsync(incident);
+
+            Assert.Equal(OperationStatus.Success, result.Status);
+            _notificationServiceMock.Verify(n => n.NotifyIncidentCreatedAsync(It.IsAny<int>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetListAsync_ShouldReturnPagedResult()
+        {
+            var filter = _fixture.Create<IncidentFilter>();
+            var pagedResult = _fixture.Create<PagedResult<Incident>>();
             _incidentRepositoryMock.Setup(r => r.GetListAsync(filter)).ReturnsAsync(pagedResult);
 
-            PagedResult<Incident> result = await _incidentService.GetListAsync(filter);
+            var result = await _incidentService.GetListAsync(filter);
 
             Assert.Equal(pagedResult, result);
         }
 
         [Fact]
-        public async Task GetItemAsyncWhenItemDoesNotExist()
+        public async Task GetItemAsync_ShouldReturnNotFound_WhenItemDoesNotExist()
         {
             int id = _fixture.Create<int>();
             _incidentRepositoryMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync((Incident?)null);
 
-            OperationResult result = await _incidentService.GetItemAsync(id);
+            var result = await _incidentService.GetItemAsync(id);
 
             Assert.Equal(OperationStatus.NotFound, result.Status);
         }
 
         [Fact]
-        public async Task GetItemAsyncWhenItemExists()
+        public async Task GetItemAsync_ShouldReturnSuccess_WhenItemExists()
         {
             var incident = new Incident
             {
@@ -176,224 +188,149 @@ namespace Application.Tests.Services
                 Title = "Teste",
                 Description = "Desc",
                 ApplicationId = 1,
-                Application = new ApplicationData("App") { Id = 1, ProductOwner = "PO", ConfigurationItem = "CI" },
                 Members = new List<Member>()
             };
             _incidentRepositoryMock.Setup(r => r.GetByIdAsync(incident.Id)).ReturnsAsync(incident);
 
-            OperationResult result = await _incidentService.GetItemAsync(incident.Id);
+            var result = await _incidentService.GetItemAsync(incident.Id);
 
             Assert.Equal(OperationStatus.Success, result.Status);
         }
 
         [Fact]
-        public async Task UpdateAsyncWhenValidationFails()
+        public async Task UpdateAsync_ShouldReturnNotFound_WhenIncidentDoesNotExist()
         {
+            var incident = new Incident { Id = 1, Title = "Teste", Description = "Desc", ApplicationId = 1 };
+
+            _incidentRepositoryMock.Setup(r => r.GetByIdAsync(incident.Id)).ReturnsAsync((Incident?)null);
+
+            var result = await _incidentService.UpdateAsync(incident);
+
+            Assert.Equal(OperationStatus.NotFound, result.Status);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_ShouldReturnInvalidData_WhenValidationFails()
+        {
+            var app = new ApplicationData("App")
+            {
+                Id = 1,
+                Name = "App",
+                ProductOwner = "PO",
+                SquadId = 1
+            };
+            var existing = new Incident
+            {
+                Id = 1,
+                Title = "Old",
+                Description = "Old",
+                ApplicationId = 1,
+                Application = app,
+                Members = new List<Member>()
+            };
             var incident = new Incident
             {
                 Id = 1,
-                Title = string.Empty,
-                Description = string.Empty,
+                Title = "",
+                Description = "",
                 ApplicationId = 1,
-                Application = new ApplicationData("App") { Id = 1, ProductOwner = "PO", ConfigurationItem = "CI" },
+                Application = app,
                 Members = new List<Member>()
             };
 
-            OperationResult result = await _incidentService.UpdateAsync(incident);
+            _incidentRepositoryMock.Setup(r => r.GetByIdAsync(incident.Id)).ReturnsAsync(existing);
+            // Mock para evitar NullReference ao buscar membros
+            _memberRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Member, bool>>>(), null, null, null, 1, 10))
+                .ReturnsAsync(new PagedResult<Member> { Result = new List<Member>() });
+
+            var result = await _incidentService.UpdateAsync(incident);
 
             Assert.Equal(OperationStatus.InvalidData, result.Status);
         }
 
         [Fact]
-        public async Task UpdateAsyncWhenIncidentNotFound()
+        public async Task UpdateAsync_ShouldReturnNotFound_WhenApplicationDoesNotExist()
         {
+            var app = new ApplicationData("App") { Id = 1, ProductOwner = "PO", SquadId = 1 };
+            var existing = new Incident
+            {
+                Id = 1,
+                Title = "Old",
+                Description = "Old",
+                ApplicationId = 1,
+                Application = app,
+                Members = new List<Member>()
+            };
             var incident = new Incident
             {
                 Id = 1,
                 Title = "Teste",
                 Description = "Desc",
                 ApplicationId = 1,
-                Application = new ApplicationData("App") { Id = 1, ProductOwner = "PO", ConfigurationItem = "CI" },
+                Application = app,
                 Members = new List<Member>()
             };
-            _incidentRepositoryMock.Setup(r => r.GetByIdAsync(incident.Id)).ReturnsAsync((Incident?)null);
 
-            OperationResult result = await _incidentService.UpdateAsync(incident);
-
-            Assert.Equal(OperationStatus.NotFound, result.Status);
-        }
-
-        [Fact]
-        public async Task UpdateAsyncWhenApplicationNotFound()
-        {
-            var incident = new Incident
-            {
-                Id = 1,
-                Title = "Teste",
-                Description = "Desc",
-                ApplicationId = 1,
-                Application = new ApplicationData("App") { Id = 1, ProductOwner = "PO", ConfigurationItem = "CI" },
-                Members = new List<Member>()
-            };
-            _incidentRepositoryMock.Setup(r => r.GetByIdAsync(incident.Id)).ReturnsAsync(incident);
+            _incidentRepositoryMock.Setup(r => r.GetByIdAsync(incident.Id)).ReturnsAsync(existing);
             _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(incident.ApplicationId)).ReturnsAsync((ApplicationData?)null);
+            _memberRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Member, bool>>>(), null, null, null, 1, 10))
+                .ReturnsAsync(new PagedResult<Member> { Result = new List<Member>() });
 
-            OperationResult result = await _incidentService.UpdateAsync(incident);
+            var result = await _incidentService.UpdateAsync(incident);
 
             Assert.Equal(OperationStatus.NotFound, result.Status);
         }
 
         [Fact]
-        public async Task UpdateAsyncWhenInvalidMembers()
+        public async Task UpdateAsync_ShouldReturnConflict_WhenMemberNotInSquad()
         {
-            var incident = new Incident
-            {
-                Id = 1,
-                Title = "Teste",
-                Description = "Desc",
-                ApplicationId = 1,
-                Application = new ApplicationData("App") { Id = 1, ProductOwner = "PO", ConfigurationItem = "CI" },
-                Members = new List<Member> { new Member { Id = 99, Name = "Inválido", Role = "Dev", Cost = 1, Email = "inv@x.com", SquadId = 1, Squad = new Squad() } }
-            };
-            _incidentRepositoryMock.Setup(r => r.GetByIdAsync(incident.Id)).ReturnsAsync(incident);
+            var member = new Member { Id = 1, Name = "M", Role = "Dev", Cost = 1, Email = "m@x.com", SquadId = 99 };
+            var existing = new Incident { Id = 1, Title = "Old", Description = "Old", ApplicationId = 1, Members = new List<Member>() };
+            var incident = new Incident { Id = 1, Title = "Teste", Description = "Desc", ApplicationId = 1, Members = new List<Member> { member } };
+            var app = new ApplicationData("App") { Id = 1, SquadId = 1, ProductOwner = "PO" };
 
-            var app = new ApplicationData("App") { Id = 1, ProductOwner = "PO", ConfigurationItem = "CI" };
-            // Não adiciona nenhum squad, lista fica vazia
-
+            _incidentRepositoryMock.Setup(r => r.GetByIdAsync(incident.Id)).ReturnsAsync(existing);
             _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(incident.ApplicationId)).ReturnsAsync(app);
+            _memberRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Member, bool>>>(), null, null, null, 1, 10))
+                .ReturnsAsync(new PagedResult<Member> { Result = new List<Member> { member } });
 
-            OperationResult result = await _incidentService.UpdateAsync(incident);
+            var result = await _incidentService.UpdateAsync(incident);
 
             Assert.Equal(OperationStatus.Conflict, result.Status);
         }
 
         [Fact]
-        public async Task UpdateAsyncWhenSuccessful()
+        public async Task UpdateAsync_ShouldReturnSuccess_WhenValid()
         {
-            var member = new Member { Id = 1, Name = "M", Role = "Dev", Cost = 1, Email = "m@x.com", SquadId = 1, Squad = new Squad() };
-            var squad = new Squad { Id = 1, Name = "S" };
-            squad.Members.Add(member);
+            var member = new Member { Id = 1, Name = "M", Role = "Dev", Cost = 1, Email = "m@x.com", SquadId = 1 };
+            var existing = new Incident { Id = 1, Title = "Old", Description = "Old", ApplicationId = 1, Members = new List<Member>() };
+            var incident = new Incident { Id = 1, Title = "Teste", Description = "Desc", ApplicationId = 1, Members = new List<Member> { member } };
+            var app = new ApplicationData("App") { Id = 1, SquadId = 1, ProductOwner = "PO" };
 
-            var app = new ApplicationData("App") { Id = 1, ProductOwner = "PO", ConfigurationItem = "CI" };
-            app.Squads.Add(squad);
+            _incidentRepositoryMock.Setup(r => r.GetByIdAsync(incident.Id)).ReturnsAsync(existing);
+            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(incident.ApplicationId)).ReturnsAsync(app);
+            _memberRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Member, bool>>>(), null, null, null, 1, 10))
+                .ReturnsAsync(new PagedResult<Member> { Result = new List<Member> { member } });
+            _incidentRepositoryMock.Setup(r => r.UpdateAsync(It.IsAny<Incident>(), true)).Returns(Task.CompletedTask);
 
-            var incident = new Incident
-            {
-                Id = 1,
-                Title = "Teste",
-                Description = "Desc",
-                ApplicationId = app.Id,
-                Application = app,
-                Members = new List<Member> { member }
-            };
-
-            _incidentRepositoryMock.Setup(r => r.GetByIdAsync(incident.Id)).ReturnsAsync(incident);
-            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(app.Id)).ReturnsAsync(app);
-
-            OperationResult result = await _incidentService.UpdateAsync(incident);
+            var result = await _incidentService.UpdateAsync(incident);
 
             Assert.Equal(OperationStatus.Success, result.Status);
         }
 
         [Fact]
-        public async Task UpdateAsyncWhenStatusSetToFechadoShouldSetClosedAt()
-        {
-            var member = new Member { Id = 1, Name = "M", Role = "Dev", Cost = 1, Email = "m@x.com", SquadId = 1, Squad = new Squad() };
-            var squad = new Squad { Id = 1, Name = "S" };
-            squad.Members.Add(member);
-
-            var app = new ApplicationData("App") { Id = 1, ProductOwner = "PO", ConfigurationItem = "CI" };
-            app.Squads.Add(squad);
-
-            var incident = new Incident
-            {
-                Id = 1,
-                Title = "Teste",
-                Description = "Desc",
-                ApplicationId = app.Id,
-                Application = app,
-                Members = new List<Member> { member },
-                Status = IncidentStatus.Open,
-                ClosedAt = null
-            };
-
-            var updatedIncident = new Incident
-            {
-                Id = incident.Id,
-                Title = "Teste",
-                Description = "Desc",
-                ApplicationId = app.Id,
-                Application = app,
-                Members = new List<Member> { member },
-                Status = IncidentStatus.Closed,
-                ClosedAt = null
-            };
-
-            _incidentRepositoryMock.Setup(r => r.GetByIdAsync(incident.Id)).ReturnsAsync(incident);
-            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(app.Id)).ReturnsAsync(app);
-
-            OperationResult result = await _incidentService.UpdateAsync(updatedIncident);
-
-            Assert.Equal(OperationStatus.Success, result.Status);
-            Assert.NotNull(incident.ClosedAt);
-        }
-
-        [Fact]
-        public async Task UpdateAsyncWhenStatusSetToReabertoShouldClearClosedAt()
-        {
-            var member = new Member { Id = 1, Name = "M", Role = "Dev", Cost = 1, Email = "m@x.com", SquadId = 1, Squad = new Squad() };
-            var squad = new Squad { Id = 1, Name = "S" };
-            squad.Members.Add(member);
-
-            var app = new ApplicationData("App") { Id = 1, ProductOwner = "PO", ConfigurationItem = "CI" };
-            app.Squads.Add(squad);
-
-            var incident = new Incident
-            {
-                Id = 1,
-                Title = "Teste",
-                Description = "Desc",
-                ApplicationId = app.Id,
-                Application = app,
-                Members = new List<Member> { member },
-                Status = IncidentStatus.Closed,
-                ClosedAt = DateTime.UtcNow
-            };
-
-            var updatedIncident = new Incident
-            {
-                Id = incident.Id,
-                Title = "Teste",
-                Description = "Desc",
-                ApplicationId = app.Id,
-                Application = app,
-                Members = new List<Member> { member },
-                Status = IncidentStatus.Reopened,
-                ClosedAt = incident.ClosedAt
-            };
-
-            _incidentRepositoryMock.Setup(r => r.GetByIdAsync(incident.Id)).ReturnsAsync(incident);
-            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(app.Id)).ReturnsAsync(app);
-
-            OperationResult result = await _incidentService.UpdateAsync(updatedIncident);
-
-            Assert.Equal(OperationStatus.Success, result.Status);
-            Assert.Null(incident.ClosedAt);
-        }
-
-        [Fact]
-        public async Task DeleteAsyncWhenItemDoesNotExist()
+        public async Task DeleteAsync_ShouldReturnNotFound_WhenItemDoesNotExist()
         {
             int id = _fixture.Create<int>();
             _incidentRepositoryMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync((Incident?)null);
 
-            OperationResult result = await _incidentService.DeleteAsync(id);
+            var result = await _incidentService.DeleteAsync(id);
 
             Assert.Equal(OperationStatus.NotFound, result.Status);
         }
 
         [Fact]
-        public async Task DeleteAsyncWhenSuccessful()
+        public async Task DeleteAsync_ShouldReturnSuccess_WhenSuccessful()
         {
             var incident = new Incident
             {
@@ -401,14 +338,14 @@ namespace Application.Tests.Services
                 Title = "Teste",
                 Description = "Desc",
                 ApplicationId = 1,
-                Application = new ApplicationData("App") { Id = 1, ProductOwner = "PO", ConfigurationItem = "CI" },
                 Members = new List<Member>()
             };
             _incidentRepositoryMock.Setup(r => r.GetByIdAsync(incident.Id)).ReturnsAsync(incident);
+            _incidentRepositoryMock.Setup(r => r.DeleteAsync(incident, true)).Returns(Task.CompletedTask);
 
-            OperationResult result = await _incidentService.DeleteAsync(incident.Id);
+            var result = await _incidentService.DeleteAsync(incident.Id);
 
             Assert.Equal(OperationStatus.Success, result.Status);
         }
     }
-} */
+}

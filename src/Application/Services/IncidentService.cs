@@ -25,6 +25,9 @@ namespace Stellantis.ProjectName.Application.Services
         {
             ArgumentNullException.ThrowIfNull(item);
 
+            // Força o status para "Em Aberto" ao criar
+            item.Status = IncidentStatus.Open;
+
             // Se vier apenas os IDs dos membros (ex: [{ Id = 1 }, { Id = 2 }]), busque os membros completos
             if (item.Members != null && item.Members.Count > 0)
             {
@@ -102,7 +105,16 @@ namespace Stellantis.ProjectName.Application.Services
             existingIncident.Description = item.Description;
             existingIncident.Status = item.Status;
             existingIncident.ApplicationId = item.ApplicationId;
-            existingIncident.CreatedAt = DateTime.UtcNow;
+
+            // Atualiza a data de fechamento se o status for "Fechado"
+            if (item.Status == IncidentStatus.Closed && existingIncident.ClosedAt == null)
+            {
+                existingIncident.ClosedAt = DateTime.UtcNow;
+            }
+            else if (item.Status != IncidentStatus.Closed)
+            {
+                existingIncident.ClosedAt = null;
+            }
 
             // Atualiza membros apenas se necessário
             List<Member> newMembers = new();
