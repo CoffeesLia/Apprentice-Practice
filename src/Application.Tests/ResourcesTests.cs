@@ -124,13 +124,23 @@ namespace Application.Tests
         }
 
         [Fact]
-        public void GitResourceAllCultures()
+        public void RepoResourceAllCultures()
         {
             RepoResources  resource = new();
             Assert.NotNull(resource);
             RepoResources .Culture = CultureInfo.InvariantCulture;
             Assert.Equal(CultureInfo.InvariantCulture, RepoResources .Culture);
             VerifyAllResources<RepoResources >(RepoResources .ResourceManager);
+        }
+
+        [Fact]
+        public void FeedbackAllCultures()
+        {
+            FeedbackResources  resource = new();
+            Assert.NotNull(resource);
+            FeedbackResources.Culture = CultureInfo.InvariantCulture;
+            Assert.Equal(CultureInfo.InvariantCulture, FeedbackResources.Culture);
+            VerifyAllResources<FeedbackResources>(FeedbackResources.ResourceManager);
         }
 
         [Fact]
