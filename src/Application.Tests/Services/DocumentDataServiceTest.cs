@@ -230,7 +230,7 @@ namespace Application.Tests.Services
             var filter = new DocumentDataFilter { Name = "Doc", ApplicationId = 1 };
             var documents = new List<DocumentData>
             {
-             new DocumentData { Name = "Doc", Url = new Uri("https://exemplo.com"), ApplicationId = 1 }
+             new() { Name = "Doc", Url = new Uri("https://exemplo.com"), ApplicationId = 1 }
              };
             var pagedResult = new PagedResult<DocumentData>
             {

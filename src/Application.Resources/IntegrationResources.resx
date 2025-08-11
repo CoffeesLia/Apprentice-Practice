@@ -126,9 +126,6 @@
   <data name="DescriptionIsRequired" xml:space="preserve">
     <value>Description Is Required</value>
   </data>
-  <data name="GettingIntegrationList" xml:space="preserve">
-    <value>Getting Integration List</value>
-  </data>
   <data name="IdNotFound" xml:space="preserve">
     <value>Id Not Found</value>
   </data>
@@ -143,12 +140,6 @@
   </data>
   <data name="NameIsRequired" xml:space="preserve">
     <value>Name Is Required.</value>
-  </data>
-  <data name="NameValidateLength" xml:space="preserve">
-    <value>The name must be between {0} and {1} characters long.</value>
-  </data>
-  <data name="NoIntegrations" xml:space="preserve">
-    <value>No Integrations</value>
   </data>
   <data name="UpdatedSuccessfully" xml:space="preserve">
     <value>Update integration Not Found.</value>
