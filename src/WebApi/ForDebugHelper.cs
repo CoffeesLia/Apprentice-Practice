@@ -365,8 +365,68 @@ namespace Stellantis.ProjectName.WebApi
                     }
                 );
 
-                // Notificação
+                // Knowledges
+                context.Knowledges.AddRange(
+                    new Knowledge
+                    {
+                        MemberId = 1, // Matheus
+                        ApplicationId = 1, // Portal AMS
+                        SquadId = 1, // Elite Debuggers
+                        AssociatedSquads = context.Squads.Where(m => m.Id == 4 || m.Id == 5).ToList(),
+                        AssociatedApplications = context.Applications.Where(m => m.Id == 2 || m.Id == 3).ToList()
+                    },
+                    new Knowledge
+                    {
+                        MemberId = 2, // Patricia
+                        ApplicationId = 2, // eLog
+                        SquadId = 1, // Elite Debuggers
+                        AssociatedSquads = context.Squads.Where(m => m.Id == 2 || m.Id == 7).ToList(),
+                        AssociatedApplications = context.Applications.Where(m => m.Id == 1 || m.Id == 4).ToList()
 
+                    },
+                    new Knowledge
+                    {
+                        MemberId = 3, // Jardel
+                        ApplicationId = 4, // Finance Tracker
+                        SquadId = 4, // Backend Builders
+                        AssociatedSquads = context.Squads.Where(m => m.Id == 1 || m.Id == 3).ToList(),
+                        AssociatedApplications = context.Applications.Where(m => m.Id == 2).ToList()
+                    },
+                    new Knowledge
+                    {
+                        MemberId = 4, // Vitória
+                        ApplicationId = 3, // Suite PD
+                        SquadId = 3, // Barramento
+                        AssociatedSquads = context.Squads.Where(m => m.Id == 6 || m.Id == 4).ToList(),
+                        AssociatedApplications = context.Applications.Where(m => m.Id == 2 || m.Id == 3 || m.Id == 1).ToList()
+                    },
+                    new Knowledge
+                    {
+                        MemberId = 5, // Andryel
+                        ApplicationId = 5, // HR Portal
+                        SquadId = 5, // Data Wizards
+                        AssociatedSquads = context.Squads.Where(m => m.Id == 4 || m.Id == 5 || m.Id == 8).ToList(),
+                        AssociatedApplications = context.Applications.Where(m => m.Id == 5 || m.Id == 1).ToList()
+                    },
+                    new Knowledge
+                    {
+                        MemberId = 6, // Ana
+                        ApplicationId = 6, // Marketing Dashboard
+                        SquadId = 6, // Cloud Ninjas
+                        AssociatedSquads = context.Squads.Where(m => m.Id == 4 || m.Id == 5).ToList(),
+                        AssociatedApplications = context.Applications.Where(m => m.Id == 0).ToList()
+                    },
+                    new Knowledge
+                    {
+                        MemberId = 12, // Lucas Almeida
+                        ApplicationId = 12, // Architecture Planner
+                        SquadId = 6, // Cloud Ninjas
+                        AssociatedSquads = context.Squads.Where(m => m.Id == 0).ToList(),
+                        AssociatedApplications = context.Applications.Where(m => m.Id == 12 || m.Id == 4).ToList()
+                    }
+                );
+
+                // Notificação
                 context.Notifications.AddRange(
 
                     new Notification
