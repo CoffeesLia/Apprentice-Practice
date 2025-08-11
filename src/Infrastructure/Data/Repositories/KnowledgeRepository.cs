@@ -15,20 +15,21 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 .Include(k => k.Member)
                 .Include(k => k.Application)
                 .Include(k => k.Squad)
+                .Include(k => k.AssociatedSquads)
+                .Include(k => k.AssociatedApplications)
                 .FirstOrDefaultAsync(k => k.Id == id)
                 .ConfigureAwait(false);
         }
 
-        public async Task CreateAssociationAsync(int memberId, int applicationId, int squadIdAtAssociationTime)
+        public async Task CreateAssociationAsync(int memberId, int applicationId, int squadId)
         {
-            if (!await AssociationExistsAsync(memberId, applicationId).ConfigureAwait(false))
+            if (!await AssociationExistsAsync(memberId, applicationId, squadId).ConfigureAwait(false))
             {
                 var knowledge = new Knowledge
                 {
                     MemberId = memberId,
                     ApplicationId = applicationId,
-                    AssociatedSquadId = squadIdAtAssociationTime,
-                    SquadId = squadIdAtAssociationTime
+                    SquadId = squadId
                 };
                 Context.Set<Knowledge>().Add(knowledge);
                 await SaveChangesAsync().ConfigureAwait(false);
@@ -39,6 +40,13 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         {
             return await Context.Set<Knowledge>()
                 .AnyAsync(k => k.MemberId == memberId && k.ApplicationId == applicationId).ConfigureAwait(false);
+        }
+
+        public async Task<bool> AssociationExistsAsync(int memberId, int applicationId, int squadId)
+        {
+            return await Context.Set<Knowledge>()
+                .AnyAsync(k => k.MemberId == memberId && k.ApplicationId == applicationId && k.SquadId == squadId)
+                .ConfigureAwait(false);
         }
 
         public async Task<List<ApplicationData>> ListApplicationsByMemberAsync(int memberId)
@@ -69,7 +77,10 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             IQueryable<Knowledge> query = Context.Set<Knowledge>()
                 .Include(k => k.Member)
                 .Include(k => k.Application)
-                .Include(k => k.Squad);
+                .Include(k => k.Squad)
+                .Include(k => k.AssociatedSquads)
+                .Include(k => k.AssociatedApplications);
+
 
             if (filter.MemberId > 0)
                 query = query.Where(k => k.MemberId == filter.MemberId);
