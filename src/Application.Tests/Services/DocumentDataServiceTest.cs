@@ -1,16 +1,17 @@
-﻿using System.Globalization;
-using AutoFixture;
+﻿using AutoFixture;
 using FluentValidation;
 using FluentValidation.Results;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
+using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Application.Validators;
 using Stellantis.ProjectName.Domain.Entities;
+using System.Globalization;
 using Xunit;
 
 
@@ -122,11 +123,11 @@ namespace Application.Tests.Services
             var document = new DocumentData { Name = "Doc", Url = new Uri("https://exemplo.com"), ApplicationId = 1 };
             _documentRepositoryMock
               .Setup(r => r.NameAlreadyExists(document.Name, document.ApplicationId, null))
-              .ReturnsAsync(false); // Nome é único (não existe)
+              .ReturnsAsync(false); 
 
             _documentRepositoryMock
                 .Setup(r => r.UrlAlreadyExists(document.Url, document.ApplicationId, null))
-                .ReturnsAsync(true); // URL NÃO é única (já existe)
+                .ReturnsAsync(true);
             var result = await _documentService.CreateAsync(document);
 
             Assert.Equal(OperationStatus.Conflict, result.Status);
@@ -138,22 +139,18 @@ namespace Application.Tests.Services
         [Fact]
         public async Task UpdateAsyncValidDocumentReturnsComplete()
         {
-            var document = new DocumentData { Name = "Doc", Url = new Uri("https://exemplo.com"), ApplicationId = 1 };
+            // Arrange
+            var existingDocument = new DocumentData { Id = 1, Name = "RepoA", Url = new Uri("https://a.com"), ApplicationId = 1 };
+            var document = new DocumentData { Id = 1, Name = "RepoA", Url = new Uri("https://a.com"), ApplicationId = 1 };
 
-            _documentRepositoryMock
-                .Setup(r => r.NameAlreadyExists(document.Name, document.ApplicationId, document.Id))
-                .ReturnsAsync(true);
+            _documentRepositoryMock.Setup(r => r.GetByIdAsync(document.Id)).ReturnsAsync(existingDocument);
+            _documentRepositoryMock.Setup(r => r.NameAlreadyExists(document.Name.Trim(), document.ApplicationId, document.Id)).ReturnsAsync(false);
+            _documentRepositoryMock.Setup(r => r.UrlAlreadyExists(document.Url, document.ApplicationId, document.Id)).ReturnsAsync(false);
 
-            _documentRepositoryMock
-                .Setup(r => r.UrlAlreadyExists(document.Url, document.ApplicationId, document.Id))
-                .ReturnsAsync(true);
-
-            _documentRepositoryMock
-                .Setup(r => r.GetByIdAsync(document.Id))
-                .ReturnsAsync(document);
-
+            // Act
             var result = await _documentService.UpdateAsync(document);
 
+            // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
         }
 
@@ -161,8 +158,11 @@ namespace Application.Tests.Services
         [Fact]
         public async Task UpdateAsyncDuplicateNameReturnsConflict()
         {
-            var document = new DocumentData { Name = "Doc", Url = new Uri("https://exemplo.com"), ApplicationId = 1 };
-            _documentRepositoryMock.Setup(r => r.NameAlreadyExists(document.Name, document.ApplicationId, null)).ReturnsAsync(true);
+            var existingDocument = new DocumentData { Id = 1, Name = "Doc",Url = new Uri("https://a.com"), ApplicationId = 1 };
+            var document = new DocumentData { Id = 1, Name = "Doc", Url = new Uri("https://abc.com"), ApplicationId = 1 };
+
+            _documentRepositoryMock.Setup(r => r.GetByIdAsync(document.Id)).ReturnsAsync(existingDocument);
+            _documentRepositoryMock.Setup(r => r.NameAlreadyExists(document.Name.Trim(), document.ApplicationId, document.Id)).ReturnsAsync(true);
 
             var result = await _documentService.UpdateAsync(document);
 
@@ -174,21 +174,21 @@ namespace Application.Tests.Services
         [Fact]
         public async Task UpdateAsyncDuplicateUrlReturnsConflict()
         {
-            var document = new DocumentData { Name = "Doc", Url = new Uri("https://exemplo.com"), ApplicationId = 1 };
-            _documentRepositoryMock
-                .Setup(r => r.NameAlreadyExists(document.Name, document.ApplicationId, null))
-                .ReturnsAsync(false); // Nome é único (não existe)
 
-            _documentRepositoryMock
-                .Setup(r => r.UrlAlreadyExists(document.Url, document.ApplicationId, null))
-                .ReturnsAsync(true); // URL NÃO é única (já existe)
-            _documentRepositoryMock
-                .Setup(r => r.GetByIdAsync(document.Id))
-                .ReturnsAsync(document);
+            // Arrange
+            var existingDocument = new DocumentData { Id = 1, Name = "RepoA", Url = new Uri("https://a.com"), ApplicationId = 1 };
+            var document = new DocumentData { Id = 1, Name = "RepoA", Url = new Uri("https://b.com"), ApplicationId = 1 };
+
+            _documentRepositoryMock.Setup(r => r.GetByIdAsync(document.Id)).ReturnsAsync(existingDocument);
+            _documentRepositoryMock.Setup(r => r.UrlAlreadyExists(document.Url, document.ApplicationId, document.Id)).ReturnsAsync(true);
+
+            // Act
             var result = await _documentService.UpdateAsync(document);
 
+            // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
             Assert.Equal(DocumentDataResources.UrlAlreadyExists, result.Message);
+
 
         }
 
@@ -196,9 +196,7 @@ namespace Application.Tests.Services
         public async Task UpdateAsyncInvalidValidationReturnsInvalidData()
         {
             var document = new DocumentData { Name = string.Empty, Url = new Uri("https://exemplo.com"), ApplicationId = 1 };
-            var validationResult = new FluentValidation.Results.ValidationResult(
-                new[] { new FluentValidation.Results.ValidationFailure("Name", "Required") }
-            );
+
             // Força o validador a retornar inválido
             var localizer = Helpers.LocalizerFactorHelper.Create();
             var validator = new DocumentDataValidator(localizer);
