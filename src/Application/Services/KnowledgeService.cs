@@ -43,12 +43,21 @@ namespace Stellantis.ProjectName.Application.Services
             if (await Repository.AssociationExistsAsync(item.MemberId, item.ApplicationId).ConfigureAwait(false))
                 return OperationResult.Conflict(_localizer[nameof(KnowledgeResource.AssociationAlreadyExists)]);
 
-            // registra o squad no momento da associação
+            // Preenche automaticamente o SquadId e AssociatedSquadId
+            item.SquadId = member.SquadId;
             item.AssociatedSquadId = member.SquadId;
 
-            await Repository.CreateAssociationAsync(item.MemberId, item.ApplicationId, member.SquadId).ConfigureAwait(false);
-            return await base.CreateAsync(item).ConfigureAwait(false);
+            var squad = await UnitOfWork.SquadRepository.GetByIdAsync(member.SquadId).ConfigureAwait(false);
+            item.Squad = squad;
 
+            item.Member = member;
+            item.Application = application;
+
+            await Repository.CreateAssociationAsync(item.MemberId, item.ApplicationId, member.SquadId).ConfigureAwait(false);
+
+            // Após criar, busque novamente para garantir navegações populadas (opcional, mas recomendado)
+            var created = await Repository.GetByIdAsync(item.Id).ConfigureAwait(false);
+            return await base.CreateAsync(created ?? item).ConfigureAwait(false);
         }
 
         // valida se o parâmeto não é nulo; busca associação existente pelo ID; caso não encontre, retorna erro; se a aplicação não mudou, retorna sucesso; se membro ou aplicação não existir, retorna mensagem; valida se a aplicação pertence ao mesmo squad do membro;

@@ -365,8 +365,60 @@ namespace Stellantis.ProjectName.WebApi
                     }
                 );
 
-                // Notificação
+                // Knowledges
+                context.Knowledges.AddRange(
+                    new Knowledge
+                    {
+                        MemberId = 1, // Matheus
+                        ApplicationId = 1, // Portal AMS
+                        SquadId = 1, // Elite Debuggers
+                        AssociatedSquadId = 1 // Elite Debuggers
+                    },
+                    new Knowledge
+                    {
+                        MemberId = 2, // Patricia
+                        ApplicationId = 2, // eLog
+                        SquadId = 1, // Elite Debuggers
+                        AssociatedSquadId = 1 // Elite Debuggers
+                    },
+                    new Knowledge
+                    {
+                        MemberId = 3, // Jardel
+                        ApplicationId = 4, // Finance Tracker
+                        SquadId = 4, // Backend Builders
+                        AssociatedSquadId = 4 // Backend Builders
+                    },
+                    new Knowledge
+                    {
+                        MemberId = 4, // Vitória
+                        ApplicationId = 3, // Suite PD
+                        SquadId = 3, // Barramento
+                        AssociatedSquadId = 3 // Barramento
+                    },
+                    new Knowledge
+                    {
+                        MemberId = 5, // Andryel
+                        ApplicationId = 5, // HR Portal
+                        SquadId = 5, // Data Wizards
+                        AssociatedSquadId = 5 // Data Wizards
+                    },
+                    new Knowledge
+                    {
+                        MemberId = 6, // Ana
+                        ApplicationId = 6, // Marketing Dashboard
+                        SquadId = 6, // Cloud Ninjas
+                        AssociatedSquadId = 6 // Cloud Ninjas
+                    },
+                    new Knowledge
+                    {
+                        MemberId = 12, // Lucas Almeida
+                        ApplicationId = 12, // Architecture Planner
+                        SquadId = 6, // Cloud Ninjas
+                        AssociatedSquadId = 6 // Cloud Ninjas
+                    }
+                );
 
+                // Notificação
                 context.Notifications.AddRange(
 
                     new Notification

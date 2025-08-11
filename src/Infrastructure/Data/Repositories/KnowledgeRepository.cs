@@ -11,7 +11,12 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
     {
         public async Task<Knowledge?> GetByIdAsync(int id)
         {
-            return await Context.Set<Knowledge>().FindAsync(id).ConfigureAwait(false);
+            return await Context.Set<Knowledge>()
+                .Include(k => k.Member)
+                .Include(k => k.Application)
+                .Include(k => k.Squad)
+                .FirstOrDefaultAsync(k => k.Id == id)
+                .ConfigureAwait(false);
         }
 
         public async Task CreateAssociationAsync(int memberId, int applicationId, int squadIdAtAssociationTime)
@@ -23,6 +28,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                     MemberId = memberId,
                     ApplicationId = applicationId,
                     AssociatedSquadId = squadIdAtAssociationTime,
+                    SquadId = squadIdAtAssociationTime
                 };
                 Context.Set<Knowledge>().Add(knowledge);
                 await SaveChangesAsync().ConfigureAwait(false);
@@ -62,7 +68,8 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             IQueryable<Knowledge> query = Context.Set<Knowledge>()
                 .Include(k => k.Member)
-                .Include(k => k.Application);
+                .Include(k => k.Application)
+                .Include(k => k.Squad);
 
             if (filter.MemberId > 0)
                 query = query.Where(k => k.MemberId == filter.MemberId);
@@ -71,7 +78,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 query = query.Where(k => k.ApplicationId == filter.ApplicationId);
 
             if (filter.SquadId > 0)
-                query = query.Where(k => k.AssociatedSquadId == filter.SquadId);
+                query = query.Where(k => k.SquadId == filter.SquadId);
 
             return await GetPagedResultAsync(query, filter.Page, filter.PageSize)
                 .ConfigureAwait(false);

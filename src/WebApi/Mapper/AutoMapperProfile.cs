@@ -257,17 +257,25 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
             CreateMap<PagedResult<Incident>, PagedResultVm<IncidentVm>>();
 
+
             CreateMap<KnowledgeDto, Knowledge>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.Member, opt => opt.Ignore())
                 .ForMember(dest => dest.Application, opt => opt.Ignore())
-                .ForMember(dest => dest.AssociatedSquad, opt => opt.Ignore());
+                .ForMember(dest => dest.Squad, opt => opt.Ignore())
+                .ForMember(dest => dest.SquadId, opt => opt.Ignore())
+                .ForMember(dest => dest.AssociatedSquadId, opt => opt.Ignore())      
+                .ForMember(dest => dest.AssociatedSquad, opt => opt.Ignore());       
             CreateMap<Knowledge, KnowledgeVm>()
                 .ForMember(dest => dest.MemberName, opt => opt.MapFrom(src => src.Member != null ? src.Member.Name : string.Empty))
                 .ForMember(dest => dest.ApplicationName, opt => opt.MapFrom(src => src.Application != null ? src.Application.Name : string.Empty))
-                .ForMember(dest => dest.SquadName, opt => opt.Ignore());
+                .ForMember(dest => dest.SquadName, opt => opt.MapFrom(src => src.Squad != null ? src.Squad.Name : string.Empty));
             CreateMap<KnowledgeFilterDto, KnowledgeFilter>()
-                .ForMember(dest => dest.SquadId, opt => opt.MapFrom(src => src.SquadId));
+                .ForMember(dest => dest.SquadId, opt => opt.MapFrom(src => src.SquadId))
+                .ForMember(dest => dest.MemberId, opt => opt.MapFrom(src => src.MemberId))
+                .ForMember(dest => dest.ApplicationId, opt => opt.MapFrom(src => src.ApplicationId));
+            CreateMap<PagedResult<Knowledge>, PagedResultVm<KnowledgeVm>>();
+
 
         }
     }
