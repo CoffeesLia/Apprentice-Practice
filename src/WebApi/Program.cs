@@ -59,8 +59,8 @@ switch (databaseType)
     case "InMemory":
         builder.Services.AddDbContext<Context>(options => options.UseInMemoryDatabase(databaseName: "InMemory"));
         break;
-    case "SqlServer":
-        builder.Services.AddDbContext<Context>(options => options.UseSqlServer(configuration["ConnectionString"]));
+    case "Sqlite":
+        builder.Services.AddDbContext<Context>(options => options.UseSqlite(configuration.GetConnectionString("DefaultConnection")));
         break;
     default:
         throw new NotSupportedException(databaseType);

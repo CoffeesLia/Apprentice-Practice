@@ -1,0 +1,4 @@
+# Ignorar banco SQLite local
+/WebApi/portal_ams.db
+*.db-shm
+*.db-wal
