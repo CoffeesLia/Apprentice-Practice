@@ -1,5 +1,4 @@
 ﻿namespace Stellantis.ProjectName.Domain.Entities
-
 {
     public class Knowledge : EntityBase
     {
@@ -15,9 +14,12 @@
         public Squad Squad { get; set; } = null!;
 
 
-       // armazena o Squad no momento da associação(para regras de negócio)
-        public int AssociatedSquadId { get; set; }
-        public Squad AssociatedSquad { get; set; } = null!;
+        // armazena o Squad no momento da associação(para regras de negócio)
+        public ICollection<Squad>? AssociatedSquads { get; set; }
+        public List<int>? AssociatedSquadIds { get; set; }
+
+        public ICollection<ApplicationData>? AssociatedApplications { get; set; }
+        public List<int>? AssociatedApplicationIds { get; set; }
 
     }
 }
