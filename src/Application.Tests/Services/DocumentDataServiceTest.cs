@@ -212,7 +212,7 @@ namespace Application.Tests.Services
         public async Task DeleteAsyncDocumentExistsReturnsSuccess()
         {
             // Arrange
-            var document = new DocumentData { Id = 1, Name = "Doc", Url = new System.Uri("https://exemplo.com"), ApplicationId = 1 };
+            var document = new DocumentData { Id = 1, Name = "Doc", Url = new Uri("https://exemplo.com"), ApplicationId = 1 };
             _documentRepositoryMock.Setup(r => r.GetByIdAsync(document.Id)).ReturnsAsync(document);
 
             // Act
