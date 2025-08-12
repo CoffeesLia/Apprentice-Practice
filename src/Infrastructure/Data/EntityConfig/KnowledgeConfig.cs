@@ -27,6 +27,12 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
                 .WithMany(a => a.Knowledges)
                 .HasForeignKey(k => k.ApplicationId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // relacionamento com squad
+            builder.HasOne(k => k.Squad)
+                .WithMany()
+                .HasForeignKey(k => k.SquadId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
