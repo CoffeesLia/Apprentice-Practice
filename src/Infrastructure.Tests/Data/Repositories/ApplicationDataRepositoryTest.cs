@@ -253,6 +253,92 @@ namespace Infrastructure.Tests.Data.Repositories
             Assert.All(result, x => Assert.Equal(areaId, x.AreaId));
         }
 
+        [Fact]
+        public async Task GetListAsyncBySquadId()
+        {
+            // Arrange
+            var squadId = 42;
+            var filter = new ApplicationFilter
+            {
+                Page = 1,
+                PageSize = 10,
+                SquadId = squadId
+            };
+            var count = 5;
+            var apps = Enumerable.Range(1, count)
+                .Select(i => new ApplicationData($"App {i}") { SquadId = squadId })
+                .ToList();
+
+            await _context.Set<ApplicationData>().AddRangeAsync(apps);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.GetListAsync(filter);
+
+            // Assert
+            Assert.Equal(count, result.Total);
+            Assert.All(result.Result, x => Assert.Equal(squadId, x.SquadId));
+        }
+
+        [Fact]
+        public async Task GetListAsyncByResponsibleId()
+        {
+            // Arrange
+            var responsibleId = 99;
+            var filter = new ApplicationFilter
+            {
+                Page = 1,
+                PageSize = 10,
+                ResponsibleId = responsibleId
+            };
+            var count = 3;
+            var apps = Enumerable.Range(1, count)
+                .Select(i => new ApplicationData($"App {i}") { ResponsibleId = responsibleId })
+                .ToList();
+
+            await _context.Set<ApplicationData>().AddRangeAsync(apps);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.GetListAsync(filter);
+
+            // Assert
+            Assert.Equal(count, result.Total);
+            Assert.All(result.Result, x => Assert.Equal(responsibleId, x.ResponsibleId));
+        }
+
+        [Fact]
+        public async Task GetListAsyncById()
+        {
+
+            // Arrange
+            var id = 1;
+            var squadId = 1;
+            var areaId = 1;
+            var responsibleId = 1;
+            var name = _fixture.Create<string>();
+            var external = false;
+
+            ApplicationFilter filter = new()
+            {
+                Id = id,
+                SquadId = squadId,
+                AreaId = areaId,
+                ResponsibleId = responsibleId,
+                Name = name,
+                External = external,
+            };
+
+            await _context.SaveChangesAsync();
+
+            // Act
+            PagedResult<ApplicationData> result = await _repository.GetListAsync(filter);
+
+            // Assert
+            Assert.Equal(filter.Page, result.Page);
+            Assert.Equal(filter.PageSize, result.PageSize);
+        }
+
 
         protected virtual void Dispose(bool disposing)
         {
