@@ -17,7 +17,10 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
             builder.Property(x => x.Cost).IsRequired().HasColumnType("decimal(18,2)");
             builder.Property(x => x.Email).IsRequired().HasMaxLength(150);
             builder.Property(x => x.SquadId).IsRequired();
-            builder.HasOne<Squad>().WithMany().HasForeignKey(p => p.SquadId).OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(m => m.Squad)
+                   .WithMany(s => s.Members)  
+                   .HasForeignKey(m => m.SquadId)
+                   .OnDelete(DeleteBehavior.Cascade);
 
 
         }
