@@ -1,16 +1,17 @@
-﻿using System.Globalization;
-using System.Text;
-using FluentValidation;
+﻿using FluentValidation;
 using FluentValidation.Results;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
+using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Application.Validators;
 using Stellantis.ProjectName.Domain.Entities;
+using System.Globalization;
+using System.Text;
 using Xunit;
 
 namespace Application.Tests.Services
@@ -209,34 +210,59 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.InvalidData, result.Status);
         }
 
-
         [Fact]
-        public async Task UpdateAsyncShouldReturnConflictWhenNameIsNotUnique()
+        public async Task UpdateAsyncDuplicateNameReturnsConflict()
         {
             // Arrange
-            ApplicationData applicationData = new("TestApp")
-            {
-                Id = 1,
-                AreaId = 1,
-                ResponsibleId = 1,
-            };
+            var existingApp = new ApplicationData("App") { Id = 1, AreaId = 1, ResponsibleId = 1, ProductOwner = "Dono" };
+            var appToUpdate = new ApplicationData("App") { Id = 1, AreaId = 1, ResponsibleId = 1, ProductOwner = "Outro" };
 
-            List<ApplicationData> existingItems =
-            [
-                    new("TestApp")
-                    {
-                        Id = 2,
-                    }
-                ];
+            _applicationDataRepositoryMock
+                .Setup(r => r.GetByIdAsync(appToUpdate.Id))
+                .ReturnsAsync(existingApp);
 
-            _applicationDataRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<ApplicationFilter>()))
-                .ReturnsAsync(new PagedResult<ApplicationData> { Result = existingItems });
+            _applicationDataRepositoryMock
+                .Setup(r => r.GetListAsync(It.IsAny<ApplicationFilter>()))
+                .ReturnsAsync(new PagedResult<ApplicationData>
+                {
+                    Result = [new ApplicationData("App") { Id = 2, AreaId = 1, ResponsibleId = 1, ProductOwner = "Outro" }],
+                    Page = 1,
+                    PageSize = 10,
+                    Total = 1
+                });
 
             // Act
-            OperationResult result = await _applicationDataService.UpdateAsync(applicationData);
+            var result = await _applicationDataService.UpdateAsync(appToUpdate);
 
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal(ApplicationDataResources.AlreadyExists, result.Message);
+        }
+
+        [Fact]
+        public async Task CreateAsyncShouldReturnConflictWhenApplicationNameIsNotUnique()
+        {
+            var applicationData = new ApplicationData("App")
+            {
+                ResponsibleId = 1,
+                AreaId = 1,
+                ProductOwner = "Dono",
+            };
+
+            _applicationDataRepositoryMock
+                .Setup(r => r.GetListAsync(It.IsAny<ApplicationFilter>()))
+                .ReturnsAsync(new PagedResult<ApplicationData>
+                {
+                    Result = [new ApplicationData("App") { Id = 2, AreaId = 1, ResponsibleId = 1, ProductOwner = "Outro" }],
+                    Page = 1,
+                    PageSize = 10,
+                    Total = 1
+                });
+
+            var result = await _applicationDataService.CreateAsync(applicationData);
+
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal(ApplicationDataResources.AlreadyExists, result.Message);
         }
 
 

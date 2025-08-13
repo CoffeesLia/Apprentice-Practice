@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Stellantis.ProjectName.Infrastructure.Data;
 
@@ -10,9 +11,11 @@ using Stellantis.ProjectName.Infrastructure.Data;
 namespace Stellantis.ProjectName.Infrastructure.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20250812121958_NewMigration")]
+    partial class NewMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -349,9 +352,14 @@ namespace Stellantis.ProjectName.Infrastructure.Migrations
                     b.Property<bool>("SquadLeader")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("SquadsId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
                     b.HasIndex("SquadId");
+
+                    b.HasIndex("SquadsId");
 
                     b.ToTable("Members", "dbo");
                 });
@@ -642,13 +650,19 @@ namespace Stellantis.ProjectName.Infrastructure.Migrations
 
             modelBuilder.Entity("Stellantis.ProjectName.Domain.Entities.Member", b =>
                 {
-                    b.HasOne("Stellantis.ProjectName.Domain.Entities.Squad", "Squad")
-                        .WithMany("Members")
+                    b.HasOne("Stellantis.ProjectName.Domain.Entities.Squad", null)
+                        .WithMany()
                         .HasForeignKey("SquadId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Squad");
+                    b.HasOne("Stellantis.ProjectName.Domain.Entities.Squad", "Squads")
+                        .WithMany("Members")
+                        .HasForeignKey("SquadsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Squads");
                 });
 
             modelBuilder.Entity("Stellantis.ProjectName.Domain.Entities.Repo", b =>

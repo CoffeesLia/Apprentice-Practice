@@ -172,7 +172,7 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
                .ForMember(dest => dest.Cost, opt => opt.MapFrom(src => src.Cost))
                .ForMember(dest => dest.SquadId, opt => opt.MapFrom(src => src.SquadId))
-               .ForMember(dest => dest.Squads, opt => opt.Ignore())
+               .ForMember(dest => dest.Squad, opt => opt.Ignore())
                .ForMember(dest => dest.Knowledges, opt => opt.Ignore())
                .ForMember(dest => dest.SquadLeader, opt => opt.MapFrom(src => src.SquadLeader));
 
@@ -183,7 +183,7 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
                .ForMember(dest => dest.Cost, opt => opt.MapFrom(src => src.Cost))
                .ForMember(dest => dest.SquadId, opt => opt.MapFrom(src => src.SquadId))
-               .ForMember(dest => dest.Squads, opt => opt.MapFrom(src => src.Squads))
+               .ForMember(dest => dest.Squad, opt => opt.MapFrom(src => src.Squad))
                .ForMember(dest => dest.SquadLeader, opt => opt.MapFrom(src => src.SquadLeader));
 
 
