@@ -58,10 +58,10 @@ dotnet restore
 
 # Executar a aplicação
 dotnet run
-
+```
 Acesse: http://localhost:5000/swagger ✅
-
-📂 Estrutura de Pastas (Resumo)
+---
+### 📂 Estrutura de Pastas (Resumo)
 
 src/
   ├─ Application/     # Casos de uso e serviços
@@ -72,7 +72,7 @@ src/
 
 ---
 
- 🤝 Como Contribuir
+ ### 🤝 Como Contribuir
 
 1. Crie uma branch a partir da `develop` seguindo o padrão:  
    - `feature/nome-da-feature`  
@@ -89,12 +89,12 @@ src/
 5. Siga as convenções de código do projeto e mantenha o Swagger atualizado.
 
 ---
-📜 Licença
+### 📜 Licença
 
 Este projeto está licenciado sob a licença **MIT**.
 
 ---
 
-📊 Status do Projeto
+### 📊 Status do Projeto
 
 🔄 **Em desenvolvimento**
