@@ -78,5 +78,19 @@ namespace WebApi.Tests
 
             Assert.True(context.Database.IsInMemory(), "O contexto não está usando o provedor InMemory.");
         }
+
+        [Fact]
+        public void ShouldRegisterDbContextWithSqliteWhenDatabaseTypeIsSqlite()
+        {
+            Environment.SetEnvironmentVariable("DatabaseType", "Sqlite");
+            Environment.SetEnvironmentVariable("ConnectionString", "DataSource=:memory:");
+            using var factory = new CustomWebApplicationFactory("Sqlite");
+            using var scope = factory.Services.CreateScope();
+
+            var context = scope.ServiceProvider.GetService<Context>();
+            Assert.NotNull(context);
+
+            Assert.Equal("Microsoft.Data.Sqlite", context.Database.GetDbConnection().GetType().Namespace);
+        }
     }
 }
