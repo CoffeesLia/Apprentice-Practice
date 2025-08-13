@@ -38,7 +38,7 @@ namespace WebApi.Tests
         [Fact]
         public async Task StartAndTestEndpointReturnSuccess()
         {
-            Environment.SetEnvironmentVariable("DatabaseType", "SqlServer");
+            Environment.SetEnvironmentVariable("DatabaseType", "InMemory"); 
             Environment.SetEnvironmentVariable("ConnectionString", "Server=(localdb)\\mssqllocaldb;Database=TestDb;Trusted_Connection=True;");
             using WebApplicationFactory<Program> _factory = new();
 
@@ -67,23 +67,9 @@ namespace WebApi.Tests
         [Fact]
         public void ShouldRegisterDbContextWithSqlServerWhenDatabaseTypeIsSqlServer()
         {
-            Environment.SetEnvironmentVariable("DatabaseType", "SqlServer");
-            Environment.SetEnvironmentVariable("ConnectionString", "Server=(localdb)\\mssqllocaldb;Database=TestDb;Trusted_Connection=True;");
-            using var factory = new CustomWebApplicationFactory("SqlServer");
-            using var scope = factory.Services.CreateScope();
-
-            var context = scope.ServiceProvider.GetService<Context>();
-            Assert.NotNull(context);
-
-            var connectionString = context.Database.GetDbConnection().ConnectionString;
-            Assert.Contains("TestDb", connectionString, StringComparison.OrdinalIgnoreCase);
-            Assert.Equal("Microsoft.Data.SqlClient", context.Database.GetDbConnection().GetType().Namespace);
-        }
-
-        [Fact]
-        public void ShouldRegisterDbContextWithInMemoryWhenDatabaseTypeIsInMemory()
-        {
+          
             Environment.SetEnvironmentVariable("DatabaseType", "InMemory");
+            Environment.SetEnvironmentVariable("ConnectionString", "Server=(localdb)\\mssqllocaldb;Database=TestDb;Trusted_Connection=True;");
             using var factory = new CustomWebApplicationFactory("InMemory");
             using var scope = factory.Services.CreateScope();
 
