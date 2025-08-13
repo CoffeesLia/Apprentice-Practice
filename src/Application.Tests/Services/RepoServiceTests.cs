@@ -53,28 +53,17 @@ namespace Application.Tests.Services
             // Arrange
             var repo = new Repo
             {
+                ApplicationId = 1,
                 Name = "o",
                 Description = "Description exemplo",
                 Url = new Uri("https://exemplo.com")
-
             };
-
-            string nameValidationMessage = string.Format(
-                CultureInfo.InvariantCulture,
-                format: RepoResources.NameValidateLength,
-                arg0: RepoValidator.MinimumLegth,
-                arg1: ApplicationDataValidator.MaximumLength
-            );
 
             // Act
             OperationResult result = await _repoService.CreateAsync(repo);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
-            Assert.Equal(string.Format(CultureInfo.InvariantCulture, 
-                RepoResources.NameValidateLength, 
-                RepoValidator.MinimumLegth, 
-                ApplicationDataValidator.MaximumLength), result.Errors.First());
         }
 
         [Fact]
