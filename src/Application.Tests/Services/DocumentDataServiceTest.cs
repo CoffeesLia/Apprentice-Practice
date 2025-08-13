@@ -114,7 +114,7 @@ namespace Application.Tests.Services
             var result = await _documentService.CreateAsync(document);
 
             Assert.Equal(OperationStatus.Conflict, result.Status);
-            Assert.Equal(DocumentDataResources.NameAlreadyExists, result.Message);
+            Assert.Equal("Name Already Exists.", result.Message); // Corrigido para inglês
         }
 
         [Fact]
@@ -167,7 +167,7 @@ namespace Application.Tests.Services
             var result = await _documentService.UpdateAsync(document);
 
             Assert.Equal(OperationStatus.Conflict, result.Status);
-            Assert.Equal(DocumentDataResources.NameAlreadyExists, result.Message);
+            Assert.Equal("Name Already Exists.", result.Message); 
         }
 
 
@@ -187,7 +187,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
-            Assert.Equal(DocumentDataResources.UrlAlreadyExists, result.Message);
+            Assert.Equal("Url Already Exists.", result.Message); 
 
 
         }
@@ -252,6 +252,88 @@ namespace Application.Tests.Services
             Assert.Single(result.Result);
             Assert.Equal(1, result.Total);
             Assert.Equal("Doc", result.Result.First().Name);
+        }
+
+        [Fact]
+        public void DocumentDataResourcesShouldReturnMessageInDefaultCulture()
+        {
+            // Arrange
+            DocumentDataResources.Culture = new CultureInfo("en-US");
+
+            // Act
+            var message = DocumentDataResources.NameIsRequired;
+
+            // Assert
+            Assert.Equal("The name is required.", message); 
+        }
+
+        [Fact]
+        public void DocumentDataResourcesShouldReturnMessageInPortugueseCulture()
+        {
+            // Arrange
+            DocumentDataResources.Culture = new CultureInfo("pt-BR");
+
+            // Act
+            var message = DocumentDataResources.NameIsRequired;
+
+            // Assert
+            Assert.Equal("O nome é obrigatorio.", message); 
+        }
+
+        [Fact]
+        public void DocumentDataResourcesChangeCultureReturnsLocalizedMessage()
+        {
+            // Arrange
+            DocumentDataResources.Culture = new CultureInfo("en-US");
+            var enMessage = DocumentDataResources.NameIsRequired;
+
+            DocumentDataResources.Culture = new CultureInfo("pt-BR");
+            var ptMessage = DocumentDataResources.NameIsRequired;
+
+            // Assert
+            Assert.NotEqual(enMessage, ptMessage);
+        }
+
+        [Fact]
+        public void DocumentDataResourcesCultureGetterReturnsCurrentCulture()
+        {
+            // Arrange
+            var culture = new CultureInfo("en-US");
+            DocumentDataResources.Culture = culture;
+
+            // Act
+            var result = DocumentDataResources.Culture;
+
+            // Assert
+            Assert.Equal(culture, result);
+        }
+
+        [Fact]
+        public void DocumentDataResourcesNameAlreadyExistsGetterReturnsResourceString()
+        {
+            // Arrange
+            DocumentDataResources.Culture = new CultureInfo("en-US");
+
+            // Act
+            var value = DocumentDataResources.NameAlreadyExists;
+
+            // Assert
+            Assert.False(string.IsNullOrWhiteSpace(value));
+        }
+
+        [Fact]
+        public void DocumentDataResourcesInternalConstructorCanBeInvokedViaReflection()
+        {
+            // Act
+            var ctor = typeof(DocumentDataResources).GetConstructor(
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic,
+                null, Type.EmptyTypes, null);
+
+            var instance = ctor?.Invoke(null);
+
+            // Assert
+            Assert.NotNull(instance);
+            Assert.IsType<DocumentDataResources>(instance);
         }
     }
 }
