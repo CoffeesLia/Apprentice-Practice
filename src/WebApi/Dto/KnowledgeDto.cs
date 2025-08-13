@@ -4,6 +4,7 @@
     {
         public int MemberId { get; set; }
         public int ApplicationId { get; set; }
+        public int SquadId { get; set; }
         public List<int>? AssociatedSquadIds { get; set; }
         public List<int>? AssociatedApplicationIds { get; set; }
     }
