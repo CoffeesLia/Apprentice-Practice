@@ -62,14 +62,14 @@ dotnet run
 Acesse: http://localhost:5000/swagger ✅
 ---
 ### 📂 Estrutura de Pastas (Resumo)
-
+```plaintext
 src/
   ├─ Application/     # Casos de uso e serviços
   ├─ Domain/          # Entidades e interfaces
   ├─ Infrastructure/  # Implementações de persistência
   ├─ WebApi/          # Controllers e configuração
   └─ Tests/           # Testes unitários e de integração
-
+```
 ---
 
  ### 🤝 Como Contribuir
