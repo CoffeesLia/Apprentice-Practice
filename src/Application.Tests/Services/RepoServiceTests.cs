@@ -428,5 +428,70 @@ namespace Application.Tests.Services
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
         }
+
+        [Fact]
+        public async Task ShouldHaveErrorWhenDescriptionIsRequired()
+        {
+            // Arrange
+            var repo = new Repo
+            {
+                Name = "Valid Name",
+                Description = string.Empty,
+                Url = new Uri("https://exemplo.com"),
+                ApplicationId = 1
+            };
+            var localizerFactory = Helpers.LocalizerFactorHelper.Create();
+            var validator = new RepoValidator(localizerFactory);
+
+            // Act
+            var result = await validator.ValidateAsync(repo);
+
+            // Assert
+            Assert.Contains(result.Errors, e => e.PropertyName == nameof(repo.Description) && e.ErrorMessage == RepoResources.DescriptionIsRequired);
+        }
+
+        [Fact]
+        public async Task ShouldHaveErrorWhenApplicationIdIsRequired()
+        {
+            // Arrange
+            var repo = new Repo
+            {
+                Name = "Valid Name",
+                Description = "Descrição",
+                Url = new Uri("https://exemplo.com"),
+                ApplicationId = 0 // ou -1, conforme sua regra
+            };
+            var localizerFactory = Helpers.LocalizerFactorHelper.Create();
+            var validator = new RepoValidator(localizerFactory);
+
+            // Act
+            var result = await validator.ValidateAsync(repo);
+
+            // Assert
+            Assert.Contains(result.Errors, e => e.PropertyName == nameof(repo.ApplicationId) && e.ErrorMessage == RepoResources.ApplicationIdIsRequired);
+
+        }
+
+        [Fact]
+        public async Task ShouldHaveErrorWhenUrlIsInvalid()
+        {
+            // Arrange
+            var repo = new Repo
+            {
+                Name = "Valid Name",
+                Description = "Descrição",
+                Url = null!, // Url inválida
+                ApplicationId = 1
+            };
+            var localizerFactory = Helpers.LocalizerFactorHelper.Create();
+            var validator = new RepoValidator(localizerFactory);
+
+            // Act
+            var result = await validator.ValidateAsync(repo);
+
+            // Assert
+            Assert.Contains(result.Errors, e => e.PropertyName == nameof(repo.Url) && e.ErrorMessage == RepoResources.UrlIsInvalid);
+
+        }
     }
 }

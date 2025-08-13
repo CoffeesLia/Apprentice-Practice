@@ -16,6 +16,14 @@ namespace Stellantis.ProjectName.Application.Validators
             ArgumentNullException.ThrowIfNull(localizerFactory);
             var localizer = localizerFactory.Create(typeof(RepoResources));
 
+            RuleFor(r => r.Description)
+                .NotEmpty()
+                .WithMessage(localizer[nameof(RepoResources.DescriptionIsRequired)]);
+
+            RuleFor(r => r.ApplicationId)
+                .GreaterThan(0)
+                .WithMessage(localizer[nameof(RepoResources.ApplicationIdIsRequired)]);
+
             RuleFor(x => x.Name)
                 .NotNull()
                 .NotEmpty()
@@ -31,6 +39,8 @@ namespace Stellantis.ProjectName.Application.Validators
             RuleFor(x => x.Url)
                 .Must(url => url != null && url.IsAbsoluteUri && (url.Scheme == Uri.UriSchemeHttp || url.Scheme == Uri.UriSchemeHttps))
                 .WithMessage(localizer[nameof(RepoResources.UrlIsInvalid)]);
+
+
         }
     }
 }
