@@ -14,7 +14,9 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             return await Context.Set<Knowledge>()
                 .Include(k => k.Member)
                 .Include(k => k.Application)
-                .Include(k => k.Squad)       
+                .Include(k => k.Squad)
+                .Include(k => k.AssociatedSquads)
+                .Include(k => k.AssociatedApplications)
                 .FirstOrDefaultAsync(k => k.Id == id)
                 .ConfigureAwait(false);
         }
@@ -75,7 +77,10 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             IQueryable<Knowledge> query = Context.Set<Knowledge>()
                 .Include(k => k.Member)
                 .Include(k => k.Application)
-                .Include(k => k.Squad);
+                .Include(k => k.Squad)
+                .Include(k => k.AssociatedSquads)
+                .Include(k => k.AssociatedApplications);
+
 
             if (filter.MemberId > 0)
                 query = query.Where(k => k.MemberId == filter.MemberId);

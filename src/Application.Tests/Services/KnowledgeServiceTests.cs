@@ -222,7 +222,7 @@ namespace Application.Tests.Services
                 .With(m => m.Id, 1)
                 .With(m => m.SquadId, 10)
                 .With(m => m.Role, "SquadLeader")
-                .With(m => m.SquadLeader, true)
+               // .With(m => m.SquadLeader, true)
                 .Create();
 
             var application = _fixture.Build<ApplicationData>()

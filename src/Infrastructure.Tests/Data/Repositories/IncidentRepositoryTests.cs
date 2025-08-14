@@ -207,7 +207,7 @@ namespace Infrastructure.Tests.Data.Repositories
                 Name = "Squad Alpha", // Propriedade obrigatória
                 Description = "Squad de testes", // Propriedade obrigatória
             };
-            var application = new ApplicationData("App") { Id = 1, SquadId = squad.Id, Squads = squad };
+            var application = new ApplicationData("App") { Id = 1, SquadId = squad.Id, Squad = squad };
             await _context.Set<Squad>().AddAsync(squad);
             await _context.Set<ApplicationData>().AddAsync(application);
             await _context.SaveChangesAsync();

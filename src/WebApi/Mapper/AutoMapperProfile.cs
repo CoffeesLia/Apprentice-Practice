@@ -184,7 +184,7 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                .ForMember(dest => dest.Cost, opt => opt.MapFrom(src => src.Cost))
                .ForMember(dest => dest.SquadId, opt => opt.MapFrom(src => src.SquadId))
                .ForMember(dest => dest.Squad, opt => opt.MapFrom(src => src.Squad));
-              // .ForMember(dest => dest.SquadLeader, opt => opt.MapFrom(src => src.SquadLeader));
+               //.ForMember(dest => dest.SquadLeader, opt => opt.MapFrom(src => src.SquadLeader));
 
 
             CreateMap<MemberFilterDto, MemberFilter>()
