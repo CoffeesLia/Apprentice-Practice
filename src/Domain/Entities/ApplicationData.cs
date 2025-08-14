@@ -11,7 +11,7 @@ namespace Stellantis.ProjectName.Domain.Entities
         public string? Description { get; set; }
         public int SquadId { get; set; }
         public bool External { get; set; }
-        public Squad Squads { get; set; }
+        public Squad Squad { get; set; }
         public Responsible Responsible { get; set; } = null!;
         public ICollection<Repo> Repos { get; } = [];
         public ICollection<DocumentData> Documents { get; } = [];
