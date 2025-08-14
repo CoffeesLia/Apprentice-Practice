@@ -17,10 +17,7 @@ namespace Stellantis.ProjectName.Application.Services
         private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(KnowledgeResource));
         protected override IKnowledgeRepository Repository =>
             UnitOfWork.KnowledgeRepository;
-
-        // métodos herdados de EntityServiceBase
-
-        // valida os dados; varifica se já existe associação; busca membro e aplicação; garante que os dois pertencem ao mesmo squad
+        // Criação da associação
         public override async Task<OperationResult> CreateAsync(Knowledge item)
         {
             ArgumentNullException.ThrowIfNull(item);
@@ -29,7 +26,7 @@ namespace Stellantis.ProjectName.Application.Services
             if (!validationResult.IsValid)
                 return OperationResult.InvalidData(validationResult);
 
-            var member = await UnitOfWork.MemberRepository.GetByIdAsync(item.MemberId).ConfigureAwait(false);                                                                               
+            var member = await UnitOfWork.MemberRepository.GetByIdAsync(item.MemberId).ConfigureAwait(false);
             var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(item.ApplicationId).ConfigureAwait(false);
 
             if (member == null || application == null)
@@ -43,38 +40,10 @@ namespace Stellantis.ProjectName.Application.Services
 
             var squad = await UnitOfWork.SquadRepository.GetByIdAsync(member.SquadId).ConfigureAwait(false);
 
-            var associatedSquads = new List<Squad>();
-            if (item.AssociatedSquadIds != null && item.AssociatedSquadIds.Count > 0)
-            {
-                foreach (var squadId in item.AssociatedSquadIds.Distinct())
-                {
-                    var squadEntity = await UnitOfWork.SquadRepository.GetByIdAsync(squadId).ConfigureAwait(false);
-                    if (squadEntity != null && !associatedSquads.Any(s => s.Id == squadEntity.Id))
-                        associatedSquads.Add(squadEntity);
-                }
-            }
-            if (squad != null && !associatedSquads.Any(s => s.Id == squad.Id))
-                associatedSquads.Add(squad);
-
-            var associatedApplications = new List<ApplicationData>();
-            if (item.AssociatedApplicationIds != null && item.AssociatedApplicationIds.Count > 0)
-            {
-                foreach (var appId in item.AssociatedApplicationIds.Distinct())
-                {
-                    var appEntity = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(appId).ConfigureAwait(false);
-                    if (appEntity != null && !associatedApplications.Any(a => a.Id == appEntity.Id))
-                        associatedApplications.Add(appEntity);
-                }
-            }
-            if (application != null && !associatedApplications.Any(a => a.Id == application.Id))
-                associatedApplications.Add(application);
-
             item.SquadId = member.SquadId;
             item.Squad = squad!;
             item.Member = member;
             item.Application = application;
-            item.AssociatedSquads = associatedSquads;
-            item.AssociatedApplications = associatedApplications;
 
             await Repository.CreateAssociationAsync(item.MemberId, item.ApplicationId, item.SquadId).ConfigureAwait(false);
 
@@ -82,6 +51,7 @@ namespace Stellantis.ProjectName.Application.Services
             return await base.CreateAsync(created ?? item).ConfigureAwait(false);
         }
 
+        // Atualização da associação
         public override async Task<OperationResult> UpdateAsync(Knowledge item)
         {
             ArgumentNullException.ThrowIfNull(item);
@@ -94,24 +64,23 @@ namespace Stellantis.ProjectName.Application.Services
             if (existing == null)
                 return OperationResult.NotFound(_localizer[nameof(KnowledgeResource.AssociationNotFound)]);
 
-            // Validação: associação passada não pode ser editada
-            var member = await UnitOfWork.MemberRepository.GetByIdAsync(existing.MemberId).ConfigureAwait(false);
-            var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(existing.ApplicationId).ConfigureAwait(false);
+            if (existing.ApplicationId == item.ApplicationId)
+                return OperationResult.Complete();
 
-            if (member == null || application == null)
+            var member = await UnitOfWork.MemberRepository.GetByIdAsync(existing.MemberId).ConfigureAwait(false);
+            var newApplication = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(item.ApplicationId).ConfigureAwait(false);
+
+            if (member == null || newApplication == null)
                 return OperationResult.NotFound(_localizer[nameof(KnowledgeResource.MemberApplicationNotFound)]);
 
-            if (member.SquadId != existing.SquadId || application.SquadId != existing.SquadId)
-                return OperationResult.Conflict(_localizer[nameof(KnowledgeResource.CannotEditOrRemovePastAssociation)]);
-
             var performingUser = await UnitOfWork.MemberRepository.GetByIdAsync(item.Id).ConfigureAwait(false);
-            if (performingUser == null || !performingUser.SquadLeader)
-                return OperationResult.Conflict(_localizer[nameof(KnowledgeResource.OnlySquadLeaderRemove)]);
+            // if (performingUser == null || !performingUser.SquadLeader)
+            // return OperationResult.Conflict(_localizer[nameof(KnowledgeResource.OnlySquadLeaderRemove)]);
 
-            if (member.SquadId != performingUser.SquadId || application.SquadId != performingUser.SquadId)
+            if (member.SquadId != performingUser.SquadId || newApplication.SquadId != performingUser.SquadId)
                 return OperationResult.Conflict(_localizer[nameof(KnowledgeResource.OnlyPossibleRemoveIfBelongToTheLeadersSquad)]);
 
-            if (member.SquadId != application.SquadId)
+            if (member.SquadId != newApplication.SquadId)
                 return OperationResult.Conflict(_localizer[nameof(KnowledgeResource.MemberApplicationMustBelongToTheSameSquad)]);
 
             if (await Repository.AssociationExistsAsync(member.Id, item.ApplicationId, member.SquadId).ConfigureAwait(false))
@@ -120,41 +89,6 @@ namespace Stellantis.ProjectName.Application.Services
             existing.ApplicationId = item.ApplicationId;
 
             var squad = await UnitOfWork.SquadRepository.GetByIdAsync(member.SquadId).ConfigureAwait(false);
-            var associatedSquads = existing.AssociatedSquads?.ToList() ?? new List<Squad>();
-            if (item.AssociatedSquadIds != null && item.AssociatedSquadIds.Count > 0)
-            {
-                foreach (var squadId in item.AssociatedSquadIds.Distinct())
-                {
-                    if (!associatedSquads.Any(s => s.Id == squadId))
-                    {
-                        var squadEntity = await UnitOfWork.SquadRepository.GetByIdAsync(squadId).ConfigureAwait(false);
-                        if (squadEntity != null)
-                            associatedSquads.Add(squadEntity);
-                    }
-                }
-            }
-            if (squad != null && !associatedSquads.Any(s => s.Id == squad.Id))
-                associatedSquads.Add(squad);
-            existing.AssociatedSquads = associatedSquads;
-
-            var associatedApplications = existing.AssociatedApplications?.ToList() ?? new List<ApplicationData>();
-            if (item.AssociatedApplicationIds != null && item.AssociatedApplicationIds.Count > 0)
-            {
-                foreach (var appId in item.AssociatedApplicationIds.Distinct())
-                {
-                    if (!associatedApplications.Any(a => a.Id == appId))
-                    {
-                        var appEntity = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(appId).ConfigureAwait(false);
-                        if (appEntity != null)
-                            associatedApplications.Add(appEntity);
-                    }
-                }
-            }
-            var newApplication = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(item.ApplicationId).ConfigureAwait(false);
-            if (newApplication != null && !associatedApplications.Any(a => a.Id == newApplication.Id))
-                associatedApplications.Add(newApplication);
-            existing.AssociatedApplications = associatedApplications;
-
             existing.SquadId = member.SquadId;
             existing.Squad = squad!;
             existing.Member = member;
@@ -169,11 +103,9 @@ namespace Stellantis.ProjectName.Application.Services
             if (knowledge == null)
                 return OperationResult.NotFound(_localizer[nameof(KnowledgeResource.AssociationNotFound)]);
 
-            // retorna os dados relevantas, caso necesário
             return OperationResult.Complete(_localizer[nameof(KnowledgeResource.AssociationFound)]);
         }
 
-        // remove uma associação pelo ID; busca a associação, caso não exista, rertorna erro; se existir, remove 
         public override async Task<OperationResult> DeleteAsync(int id)
         {
             var item = await Repository.GetByIdAsync(id).ConfigureAwait(false);
@@ -185,10 +117,6 @@ namespace Stellantis.ProjectName.Application.Services
 
             if (member == null || application == null)
                 return OperationResult.NotFound(_localizer[nameof(KnowledgeResource.MemberApplicationNotFound)]);
-
-            // Validação: associação passada não pode ser removida
-            if (member.SquadId != item.SquadId || application.SquadId != item.SquadId)
-                return OperationResult.Conflict(_localizer[nameof(KnowledgeResource.CannotEditOrRemovePastAssociation)]);
 
             var performingUser = await UnitOfWork.MemberRepository.GetByIdAsync(item.Id).ConfigureAwait(false);
             if (performingUser == null || performingUser.Role != "SquadLeader")
