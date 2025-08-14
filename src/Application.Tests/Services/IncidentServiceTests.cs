@@ -72,7 +72,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task CreateAsync_ShouldReturnInvalidData_WhenValidationFails()
+        public async Task CreateAsyncShouldReturnInvalidDataWhenValidationFails()
         {
             var incident = new Incident
             {
@@ -93,7 +93,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task CreateAsync_ShouldReturnNotFound_WhenApplicationDoesNotExist()
+        public async Task CreateAsyncShouldReturnNotFoundWhenApplicationDoesNotExist()
         {
             var incident = new Incident
             {
@@ -111,7 +111,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task CreateAsync_ShouldReturnConflict_WhenMemberNotInSquad()
+        public async Task CreateAsyncShouldReturnConflictWhenMemberNotInSquad()
         {
             var member = new Member { Id = 1, Name = "M", Role = "Dev", Cost = 1, Email = "m@x.com", SquadId = 99 };
             var incident = new Incident
@@ -133,7 +133,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task CreateAsync_ShouldReturnSuccess_WhenValid()
+        public async Task CreateAsyncShouldReturnSuccessWhenValid()
         {
             var member = new Member { Id = 1, Name = "M", Role = "Dev", Cost = 1, Email = "m@x.com", SquadId = 1 };
             var incident = new Incident
@@ -157,7 +157,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task GetListAsync_ShouldReturnPagedResult()
+        public async Task GetListAsyncShouldReturnPagedResult()
         {
             var filter = _fixture.Create<IncidentFilter>();
             var pagedResult = _fixture.Create<PagedResult<Incident>>();
@@ -169,7 +169,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task GetItemAsync_ShouldReturnNotFound_WhenItemDoesNotExist()
+        public async Task GetItemAsyncShouldReturnNotFoundWhenItemDoesNotExist()
         {
             int id = _fixture.Create<int>();
             _incidentRepositoryMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync((Incident?)null);
@@ -180,7 +180,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task GetItemAsync_ShouldReturnSuccess_WhenItemExists()
+        public async Task GetItemAsyncShouldReturnSuccessWhenItemExists()
         {
             var incident = new Incident
             {
@@ -198,7 +198,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task UpdateAsync_ShouldReturnNotFound_WhenIncidentDoesNotExist()
+        public async Task UpdateAsyncShouldReturnNotFoundWhenIncidentDoesNotExist()
         {
             var incident = new Incident { Id = 1, Title = "Teste", Description = "Desc", ApplicationId = 1 };
 
@@ -210,7 +210,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task UpdateAsync_ShouldReturnInvalidData_WhenValidationFails()
+        public async Task UpdateAsyncShouldReturnInvalidDataWhenValidationFails()
         {
             var app = new ApplicationData("App")
             {
@@ -249,7 +249,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task UpdateAsync_ShouldReturnNotFound_WhenApplicationDoesNotExist()
+        public async Task UpdateAsyncShouldReturnNotFoundWhenApplicationDoesNotExist()
         {
             var app = new ApplicationData("App") { Id = 1, ProductOwner = "PO", SquadId = 1 };
             var existing = new Incident
@@ -282,7 +282,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task UpdateAsync_ShouldReturnConflict_WhenMemberNotInSquad()
+        public async Task UpdateAsyncShouldReturnConflictWhenMemberNotInSquad()
         {
             var member = new Member { Id = 1, Name = "M", Role = "Dev", Cost = 1, Email = "m@x.com", SquadId = 99 };
             var existing = new Incident { Id = 1, Title = "Old", Description = "Old", ApplicationId = 1, Members = new List<Member>() };
@@ -300,7 +300,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task UpdateAsync_ShouldReturnSuccess_WhenValid()
+        public async Task UpdateAsyncShouldReturnSuccessWhenValid()
         {
             var member = new Member { Id = 1, Name = "M", Role = "Dev", Cost = 1, Email = "m@x.com", SquadId = 1 };
             var existing = new Incident { Id = 1, Title = "Old", Description = "Old", ApplicationId = 1, Members = new List<Member>() };
@@ -319,7 +319,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task DeleteAsync_ShouldReturnNotFound_WhenItemDoesNotExist()
+        public async Task DeleteAsyncShouldReturnNotFoundWhenItemDoesNotExist()
         {
             int id = _fixture.Create<int>();
             _incidentRepositoryMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync((Incident?)null);
@@ -330,7 +330,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task DeleteAsync_ShouldReturnSuccess_WhenSuccessful()
+        public async Task DeleteAsyncShouldReturnSuccessWhenSuccessful()
         {
             var incident = new Incident
             {
@@ -346,6 +346,42 @@ namespace Application.Tests.Services
             var result = await _incidentService.DeleteAsync(incident.Id);
 
             Assert.Equal(OperationStatus.Success, result.Status);
+        }
+
+        [Fact]
+        public void IncidentServiceInvalidMembersResourceReturnsExpectedString()
+        {
+            // Arrange
+            var expected = IncidentResource.InvalidMembers;
+
+            // Act
+            var actual = IncidentResource.InvalidMembers;
+
+            // Assert
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void IncidentResourceStatusRequiredPropertyReturnsExpectedString()
+        {
+            // Arrange
+            var expected = IncidentResource.StatusRequired;
+
+            // Act
+            var actual = IncidentResource.StatusRequired;
+
+            // Assert
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void IncidentResourceConstructorCanBeInvoked()
+        {
+            // Act
+            var resource = Activator.CreateInstance(typeof(IncidentResource), true);
+
+            // Assert
+            Assert.NotNull(resource);
         }
     }
 }
