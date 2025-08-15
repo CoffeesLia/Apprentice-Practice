@@ -11,8 +11,8 @@ using Stellantis.ProjectName.Infrastructure.Data;
 namespace Stellantis.ProjectName.Infrastructure.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20250812121958_NewMigration")]
-    partial class NewMigration
+    [Migration("20250814143904_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -67,9 +67,6 @@ namespace Stellantis.ProjectName.Infrastructure.Migrations
                     b.Property<bool>("External")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("KnowledgeId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -84,20 +81,13 @@ namespace Stellantis.ProjectName.Infrastructure.Migrations
                     b.Property<int>("SquadId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("SquadId1")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("Id");
 
                     b.HasIndex("AreaId");
 
-                    b.HasIndex("KnowledgeId");
-
                     b.HasIndex("ResponsibleId");
 
                     b.HasIndex("SquadId");
-
-                    b.HasIndex("SquadId1");
 
                     b.ToTable("ApplicationData", "dbo");
                 });
@@ -117,8 +107,6 @@ namespace Stellantis.ProjectName.Infrastructure.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ManagerId");
 
                     b.ToTable("Area", "dbo");
                 });
@@ -277,12 +265,6 @@ namespace Stellantis.ProjectName.Infrastructure.Migrations
                     b.Property<int>("ApplicationId")
                         .HasColumnType("INTEGER");
 
-                    b.PrimitiveCollection<string>("AssociatedApplicationIds")
-                        .HasColumnType("TEXT");
-
-                    b.PrimitiveCollection<string>("AssociatedSquadIds")
-                        .HasColumnType("TEXT");
-
                     b.Property<int>("MemberId")
                         .HasColumnType("INTEGER");
 
@@ -349,17 +331,9 @@ namespace Stellantis.ProjectName.Infrastructure.Migrations
                     b.Property<int>("SquadId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("SquadLeader")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SquadsId")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("Id");
 
                     b.HasIndex("SquadId");
-
-                    b.HasIndex("SquadsId");
 
                     b.ToTable("Members", "dbo");
                 });
@@ -486,17 +460,12 @@ namespace Stellantis.ProjectName.Infrastructure.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("KnowledgeId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(55)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("KnowledgeId");
 
                     b.ToTable("Squads", "dbo");
                 });
@@ -539,38 +508,21 @@ namespace Stellantis.ProjectName.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Stellantis.ProjectName.Domain.Entities.Knowledge", null)
-                        .WithMany("AssociatedApplications")
-                        .HasForeignKey("KnowledgeId");
-
                     b.HasOne("Stellantis.ProjectName.Domain.Entities.Responsible", "Responsible")
                         .WithMany()
                         .HasForeignKey("ResponsibleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Stellantis.ProjectName.Domain.Entities.Squad", "Squads")
-                        .WithMany()
-                        .HasForeignKey("SquadId");
-
-                    b.HasOne("Stellantis.ProjectName.Domain.Entities.Squad", null)
+                    b.HasOne("Stellantis.ProjectName.Domain.Entities.Squad", "Squad")
                         .WithMany("Applications")
-                        .HasForeignKey("SquadId1");
+                        .HasForeignKey("SquadId");
 
                     b.Navigation("Area");
 
                     b.Navigation("Responsible");
 
-                    b.Navigation("Squads");
-                });
-
-            modelBuilder.Entity("Stellantis.ProjectName.Domain.Entities.Area", b =>
-                {
-                    b.HasOne("Stellantis.ProjectName.Domain.Entities.ApplicationData", null)
-                        .WithMany()
-                        .HasForeignKey("ManagerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Squad");
                 });
 
             modelBuilder.Entity("Stellantis.ProjectName.Domain.Entities.DocumentData", b =>
@@ -650,19 +602,13 @@ namespace Stellantis.ProjectName.Infrastructure.Migrations
 
             modelBuilder.Entity("Stellantis.ProjectName.Domain.Entities.Member", b =>
                 {
-                    b.HasOne("Stellantis.ProjectName.Domain.Entities.Squad", null)
-                        .WithMany()
+                    b.HasOne("Stellantis.ProjectName.Domain.Entities.Squad", "Squad")
+                        .WithMany("Members")
                         .HasForeignKey("SquadId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Stellantis.ProjectName.Domain.Entities.Squad", "Squads")
-                        .WithMany("Members")
-                        .HasForeignKey("SquadsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Squads");
+                    b.Navigation("Squad");
                 });
 
             modelBuilder.Entity("Stellantis.ProjectName.Domain.Entities.Repo", b =>
@@ -700,13 +646,6 @@ namespace Stellantis.ProjectName.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Stellantis.ProjectName.Domain.Entities.Squad", b =>
-                {
-                    b.HasOne("Stellantis.ProjectName.Domain.Entities.Knowledge", null)
-                        .WithMany("AssociatedSquads")
-                        .HasForeignKey("KnowledgeId");
-                });
-
             modelBuilder.Entity("Stellantis.ProjectName.Domain.Entities.ApplicationData", b =>
                 {
                     b.Navigation("Documents");
@@ -723,13 +662,6 @@ namespace Stellantis.ProjectName.Infrastructure.Migrations
                     b.Navigation("Applications");
 
                     b.Navigation("Responsibles");
-                });
-
-            modelBuilder.Entity("Stellantis.ProjectName.Domain.Entities.Knowledge", b =>
-                {
-                    b.Navigation("AssociatedApplications");
-
-                    b.Navigation("AssociatedSquads");
                 });
 
             modelBuilder.Entity("Stellantis.ProjectName.Domain.Entities.Member", b =>

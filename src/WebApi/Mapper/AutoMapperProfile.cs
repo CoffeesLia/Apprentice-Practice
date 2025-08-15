@@ -22,13 +22,13 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(x => x.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(x => x.External, opt => opt.MapFrom(src => src.External))
                 .ForMember(x => x.ResponsibleId, opt => opt.MapFrom(src => src.ResponsibleId))
-                .ForMember(dest => dest.Squads, opt => opt.Ignore())
+                .ForMember(dest => dest.Squad, opt => opt.Ignore())
                 .ForMember(dest => dest.Knowledges, opt => opt.Ignore())
                 .ForMember(dest => dest.ProductOwner, opt => opt.Ignore());
 
 
             CreateMap<ApplicationData, ApplicationVm>()
-                .ForMember(dest => dest.Squads, opt => opt.MapFrom(src => src.Squads))
+                .ForMember(dest => dest.Squads, opt => opt.MapFrom(src => src.Squad))
                 .ForMember(dest => dest.Responsible, opt => opt.MapFrom(src => src.Responsible))
                 .ForMember(dest => dest.Area, opt => opt.MapFrom(src => src.Area))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
@@ -135,7 +135,7 @@ namespace Stellantis.ProjectName.WebApi.Mapper
             .ForMember(x => x.Name, opt => opt.MapFrom(src => src.Name))
             .ForMember(x => x.Cost, x => x.Ignore())
             .ForMember(x => x.Members, x => x.Ignore())
-            .ForMember(dest => dest.Applications, opt => opt.Ignore()); 
+            .ForMember(dest => dest.Applications, opt => opt.Ignore());
 
             CreateMap<PagedResult<Squad>, PagedResultVm<SquadVm>>();
             CreateMap<Squad, SquadVm>()
@@ -173,8 +173,8 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                .ForMember(dest => dest.Cost, opt => opt.MapFrom(src => src.Cost))
                .ForMember(dest => dest.SquadId, opt => opt.MapFrom(src => src.SquadId))
                .ForMember(dest => dest.Squad, opt => opt.Ignore())
-               .ForMember(dest => dest.Knowledges, opt => opt.Ignore())
-               .ForMember(dest => dest.SquadLeader, opt => opt.MapFrom(src => src.SquadLeader));
+               .ForMember(dest => dest.Knowledges, opt => opt.Ignore());
+            //    .ForMember(dest => dest.SquadLeader, opt => opt.MapFrom(src => src.SquadLeader));
 
             CreateMap<Member, MemberVm>().ReverseMap()
                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
@@ -183,8 +183,8 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
                .ForMember(dest => dest.Cost, opt => opt.MapFrom(src => src.Cost))
                .ForMember(dest => dest.SquadId, opt => opt.MapFrom(src => src.SquadId))
-               .ForMember(dest => dest.Squad, opt => opt.MapFrom(src => src.Squad))
-               .ForMember(dest => dest.SquadLeader, opt => opt.MapFrom(src => src.SquadLeader));
+               .ForMember(dest => dest.Squad, opt => opt.MapFrom(src => src.Squad));
+          //     .ForMember(dest => dest.SquadLeader, opt => opt.MapFrom(src => src.SquadLeader));
 
 
             CreateMap<MemberFilterDto, MemberFilter>()
@@ -264,7 +264,7 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(dest => dest.Application, opt => opt.Ignore())
                 .ForMember(dest => dest.Squad, opt => opt.Ignore())
                 .ForMember(dest => dest.SquadId, opt => opt.Ignore())
-                .ForMember(dest => dest.AssociatedSquads, opt => opt.Ignore())      
+                .ForMember(dest => dest.AssociatedSquads, opt => opt.Ignore())
                 .ForMember(dest => dest.AssociatedApplications, opt => opt.Ignore());
             CreateMap<Knowledge, KnowledgeVm>()
                 .ForMember(dest => dest.MemberName, opt => opt.MapFrom(src => src.Member != null ? src.Member.Name : string.Empty))

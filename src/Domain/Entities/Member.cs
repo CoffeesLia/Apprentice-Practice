@@ -9,6 +9,6 @@
         public int SquadId { get; set; }
         public Squad Squad { get; set; }
         public ICollection<Knowledge> Knowledges { get; set; } = [];
-        public bool SquadLeader { get; set; }
+      //  public bool SquadLeader { get; set; }
     }
 }

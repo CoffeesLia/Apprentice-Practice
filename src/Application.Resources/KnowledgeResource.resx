@@ -132,6 +132,9 @@
   <data name="CannotEditOrRemovePastAssociation" xml:space="preserve">
     <value>It's not allowed to remove past associations.</value>
   </data>
+  <data name="KnowledgeNotFound" xml:space="preserve">
+    <value>Knowledge not found.</value>
+  </data>
   <data name="MemberApplicationMustBelongToTheSameSquad" xml:space="preserve">
     <value>Member and application must belong to the same squad.</value>
   </data>

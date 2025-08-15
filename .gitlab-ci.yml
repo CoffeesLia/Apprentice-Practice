@@ -8,7 +8,7 @@ include:
 
 variables:
   REPOSITORY_URL: 924431524709.dkr.ecr.us-east-1.amazonaws.com/digital-esb-app-esb-baseproject-esb
-  CX_ADDITIONAL_PARAMS: "--ignore-policy"
+  CX_ADDITIONAL_PARAMS: '--threshold "sast-medium=9999; sast-high=9999; sast-critical=9999"'
 
 stages:
   - security

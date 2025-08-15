@@ -11,8 +11,8 @@ using Stellantis.ProjectName.Infrastructure.Data;
 namespace Stellantis.ProjectName.Infrastructure.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20250812145830_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250812124103_IniciarOCreate")]
+    partial class IniciarOCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -352,9 +352,14 @@ namespace Stellantis.ProjectName.Infrastructure.Migrations
                     b.Property<bool>("SquadLeader")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("SquadsId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
                     b.HasIndex("SquadId");
+
+                    b.HasIndex("SquadsId");
 
                     b.ToTable("Members", "dbo");
                 });
@@ -645,13 +650,19 @@ namespace Stellantis.ProjectName.Infrastructure.Migrations
 
             modelBuilder.Entity("Stellantis.ProjectName.Domain.Entities.Member", b =>
                 {
-                    b.HasOne("Stellantis.ProjectName.Domain.Entities.Squad", "Squad")
-                        .WithMany("Members")
+                    b.HasOne("Stellantis.ProjectName.Domain.Entities.Squad", null)
+                        .WithMany()
                         .HasForeignKey("SquadId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Squad");
+                    b.HasOne("Stellantis.ProjectName.Domain.Entities.Squad", "Squads")
+                        .WithMany("Members")
+                        .HasForeignKey("SquadsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Squads");
                 });
 
             modelBuilder.Entity("Stellantis.ProjectName.Domain.Entities.Repo", b =>

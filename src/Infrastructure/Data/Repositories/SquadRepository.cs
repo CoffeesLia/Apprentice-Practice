@@ -58,13 +58,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             }
 
             var pagedResult = await GetListAsync(query, squadFilter.Sort, squadFilter.SortDir, squadFilter.Page, squadFilter.PageSize).ConfigureAwait(false);
-
-            foreach (var squad in pagedResult.Result)
-            {
-                if (squad.Members != null)
-                    squad.Cost = squad.Members.Sum(m => m.Cost);
-            }
-
             return pagedResult;
         }
 
