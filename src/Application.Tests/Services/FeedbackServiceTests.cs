@@ -1,367 +1,259 @@
-﻿//using Application.Tests.Helpers;
-//using AutoFixture;
-//using Microsoft.Extensions.Localization;
+﻿//using Xunit;
 //using Moq;
+//using FluentValidation;
+//using FluentValidation.Results;
+//using Microsoft.Extensions.Localization;
 //using Stellantis.ProjectName.Application.Interfaces;
 //using Stellantis.ProjectName.Application.Interfaces.Repositories;
+//using Stellantis.ProjectName.Application.Interfaces.Services;
 //using Stellantis.ProjectName.Application.Models;
 //using Stellantis.ProjectName.Application.Models.Filters;
 //using Stellantis.ProjectName.Application.Resources;
-//using Stellantis.ProjectName.Application.Services;
-//using Stellantis.ProjectName.Application.Validators;
 //using Stellantis.ProjectName.Domain.Entities;
-//using System.Globalization;
-//using Xunit;
+//using Stellantis.ProjectName.Application.Services;
+//using System.Collections.Generic;
+//using System.Threading.Tasks;
 
 //namespace Application.Tests.Services
 //{
-//    public class FeedbacksServiceTests
+//    public class FeedbackServiceTests
 //    {
-//        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
-//        private readonly Mock<IFeedbacksRepository> _feedbacksRepositoryMock;
-//        private readonly Mock<IApplicationDataRepository> _applicationDataRepositoryMock;
-//        private readonly FeedbacksService _feedbacksService;
-//        private readonly Fixture _fixture;
-//        private readonly IStringLocalizerFactory _localizerFactory;
-//        private readonly FeedbacksValidator _feedbacksValidator;
+//        private readonly Mock<IUnitOfWork> _unitOfWorkMock = new();
+//        private readonly Mock<IFeedbackRepository> _feedbackRepositoryMock = new();
+//        private readonly Mock<IMemberRepository> _memberRepositoryMock = new();
+//        private readonly Mock<IApplicationDataRepository> _applicationDataRepositoryMock = new();
+//        private readonly Mock<IStringLocalizerFactory> _localizerFactoryMock = new();
+//        private readonly Mock<IStringLocalizer<NotificationResources>> _notificationLocalizerMock = new();
+//        private readonly Mock<IValidator<Feedback>> _validatorMock = new();
+//        private readonly Mock<INotificationService> _notificationServiceMock = new();
+//        private readonly Mock<IStringLocalizer> _localizerMock = new();
 
-//        public FeedbacksServiceTests()
+//        private FeedbackService CreateService()
 //        {
-//            CultureInfo.CurrentCulture = CultureInfo.CurrentUICulture = new CultureInfo("pt-BR");
-//            _unitOfWorkMock = new Mock<IUnitOfWork>();
-//            _feedbacksRepositoryMock = new Mock<IFeedbacksRepository>();
-//            _applicationDataRepositoryMock = new Mock<IApplicationDataRepository>();
-//            _localizerFactory = LocalizerFactorHelper.Create();
-//            _feedbacksValidator = new FeedbacksValidator(_localizerFactory);
-
-//            _unitOfWorkMock.Setup(u => u.FeedbacksRepository).Returns(_feedbacksRepositoryMock.Object);
-//            _unitOfWorkMock.Setup(u => u.ApplicationDataRepository).Returns(_applicationDataRepositoryMock.Object);
-
-//            _fixture = new Fixture();
-//            _fixture.Behaviors
-//                .OfType<ThrowingRecursionBehavior>()
-//                .ToList()
-//                .ForEach(b => _fixture.Behaviors.Remove(b));
-//            _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
-
-//            _feedbacksService = new FeedbacksService(_unitOfWorkMock.Object, _localizerFactory, _feedbacksValidator);
+//            _unitOfWorkMock.SetupGet(u => u.FeedbackRepository).Returns(_feedbackRepositoryMock.Object);
+//            _unitOfWorkMock.SetupGet(u => u.MemberRepository).Returns(_memberRepositoryMock.Object);
+//            _unitOfWorkMock.SetupGet(u => u.ApplicationDataRepository).Returns(_applicationDataRepositoryMock.Object);
+//            _localizerFactoryMock.Setup(f => f.Create(typeof(FeedbackResources))).Returns(_localizerMock.Object);
+//            return new FeedbackService(
+//                _unitOfWorkMock.Object,
+//                _localizerFactoryMock.Object,
+//                _notificationLocalizerMock.Object,
+//                _validatorMock.Object,
+//                _notificationServiceMock.Object
+//            );
 //        }
 
 //        [Fact]
-//        public void CulturePropertyShouldGetAndSetCorrectValue()
+//        public async Task CreateAsyncShouldReturnInvalidDataWhenValidationFails()
 //        {
-//            // Arrange
-//            CultureInfo expectedCulture = new("pt-BR");
+//            var feedback = new Feedback { Title = "t", Description = "d", ApplicationId = 1 };
+//            var validationResult = new ValidationResult(new[] { new ValidationFailure("Title", "Required") });
+//            _validatorMock.Setup(v => v.ValidateAsync(feedback, default)).ReturnsAsync(validationResult);
 
-//            // Act
-//            FeedbacksResources.Culture = expectedCulture;
-//            CultureInfo result = FeedbacksResources.Culture;
+//            var service = CreateService();
+//            var result = await service.CreateAsync(feedback);
 
-//            // Assert
-//            Assert.Equal(expectedCulture, result);
+//            Assert.Equal(OperationResult.InvalidData(validationResult).Status, result.Status);
 //        }
 
 //        [Fact]
-//        public async Task CreateAsyncWhenValidationFails()
+//        public async Task CreateAsyncShouldReturnNotFoundWhenApplicationDoesNotExist()
 //        {
-//            // Arrange
-//            Feedback feedbacks = _fixture.Build<Feedback>()
-//                .With(i => i.Title, string.Empty)
-//                .With(i => i.Description, string.Empty)
-//                .With(i => i.ApplicationId, 0) 
+//            var feedback = new Feedback { Title = "t", Description = "d", ApplicationId = 1 };
+//            _validatorMock.Setup(v => v.ValidateAsync(feedback, default)).ReturnsAsync(new ValidationResult());
+//            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync((ApplicationData)null);
 
-//                .Create();
+//            var service = CreateService();
+//            var result = await service.CreateAsync(feedback);
 
-//            // Act
-//            OperationResult result = await _feedbacksService.CreateAsync(feedbacks);
-
-//            // Assert
-//            Assert.Equal(OperationStatus.InvalidData, result.Status);
-//            Assert.Contains(FeedbacksResources.TitleRequired, result.Errors);
-//            Assert.Contains(FeedbacksResources.ApplicationRequired, result.Errors);
-//            Assert.Contains(FeedbacksResources.DescriptionRequired, result.Errors);
+//            Assert.Equal(OperationResult.NotFound(string.Empty).Status, result.Status);
 //        }
 
 //        [Fact]
-//        public async Task CreateAsyncWhenApplicationNotFound()
+//        public async Task CreateAsyncShouldReturnConflictWhenMembersNotInSquad()
 //        {
-//            // Arrange
-//            Feedback feedbacks = _fixture.Create<Feedback>();
-//            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(feedbacks.ApplicationId)).ReturnsAsync((ApplicationData?)null);
+//            var feedback = new Feedback
+//            {
+//                Members = [new() { Id = 1, SquadId = 2, Name = "A", Role = "Dev", Cost = 1, Email = "a@a.com" }],
+//                ApplicationId = 1
+//            };
+//            _validatorMock.Setup(v => v.ValidateAsync(feedback, default)).ReturnsAsync(new ValidationResult());
+//            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(new ApplicationData("App") { SquadId = 1 });
+//            _memberRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<MemberFilter>())).ReturnsAsync(new PagedResult<Member> { Result = new List<Member> { new Member { Id = 1, SquadId = 2, Name = "A", Role = "Dev", Cost = 1, Email = "a@a.com" } }, Page = 1, PageSize = 10, Total = 1 });
 
-//            // Act
-//            OperationResult result = await _feedbacksService.CreateAsync(feedbacks);
+//            var service = CreateService();
+//            var result = await service.CreateAsync(feedback);
 
-//            // Assert
-//            Assert.Equal(OperationStatus.NotFound, result.Status);
+//            Assert.Equal(OperationResult.Conflict(string.Empty).Status, result.Status);
 //        }
 
 //        [Fact]
-//        public async Task CreateAsyncWhenInvalidMembers()
+//        public async Task CreateAsyncShouldNotifyWhenSuccess()
 //        {
-//            // Arrange
-//            var feedbacks = _fixture.Create<Feedback>();
-//            var app = _fixture.Build<ApplicationData>()
-//                .With(a => a.Id, feedbacks.ApplicationId)
-//                .With(a => a.Squads, [])
-//                .Create();
+//            var feedback = new Feedback { Title = "t", Description = "d", ApplicationId = 1 };
+//            _validatorMock.Setup(v => v.ValidateAsync(feedback, default)).ReturnsAsync(new ValidationResult());
+//            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(new ApplicationData("App") { SquadId = 1 });
+//            OperationResult.Setup(string.Empty)(r => r.CreateAsync(feedback)).ReturnsAsync(OperationResult.Complete());
+//            _notificationServiceMock.Setup(n => n.NotifyFeedbackCreatedAsync(It.IsAny<int>())).Returns(Task.CompletedTask);
 
-//            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(feedbacks.ApplicationId)).ReturnsAsync(app);
+//            var service = CreateService();
+//            var result = await service.CreateAsync(feedback);
 
-//            // Act
-//            OperationResult result = await _feedbacksService.CreateAsync(feedbacks);
-
-//            // Assert
-//            Assert.Equal(OperationStatus.Conflict, result.Status);
-//            Assert.Contains(FeedbacksResources.InvalidMembers, result.Errors);
+//            Assert.Equal(OperationResult.Complete().Status, result.Status);
+//            _notificationServiceMock.Verify(n => n.NotifyFeedbackCreatedAsync(It.IsAny<int>()), Times.Once);
 //        }
 
 //        [Fact]
-//        public async Task CreateAsyncWhenSuccessful()
+//        public async Task UpdateAsyncShouldReturnNotFoundWhenFeedbackDoesNotExist()
 //        {
-//            // Arrange
-//            var member = _fixture.Build<Member>().With(m => m.Id, 1).Create();
-//            var squad = _fixture.Build<Squad>().With(s => s.Members, [member]).Create();
-//            var app = _fixture.Build<ApplicationData>().With(a => a.Squads, [squad]).Create();
-//            var feedbacks = _fixture.Build<Feedback>()
-//                .With(i => i.ApplicationId, app.Id)
-//                .With(i => i.Members, [member])
-//                .Create();
+//            var feedback = new Feedback { Id = 1 };
+//            _feedbackRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync((Feedback)null);
 
-//            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(app.Id)).ReturnsAsync(app);
+//            var service = CreateService();
+//            var result = await service.UpdateAsync(feedback);
 
-//            // Act
-//            OperationResult result = await _feedbacksService.CreateAsync(feedbacks);
+//            Assert.Equal(OperationResult.NotFound(string.Empty).Status, result.Status);
+//        }
 
-//            // Assert
-//            Assert.Equal(OperationStatus.Success, result.Status);
+//        [Fact]
+//        public async Task UpdateAsyncShouldReturnInvalidDataWhenValidationFails()
+//        {
+//            var feedback = new Feedback { Id = 1 };
+//            _feedbackRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(new Feedback { Id = 1 });
+//            var validationResult = new ValidationResult(new[] { new ValidationFailure("Title", "Required") });
+//            _validatorMock.Setup(v => v.ValidateAsync(It.IsAny<Feedback>(), default)).ReturnsAsync(validationResult);
+
+//            var service = CreateService();
+//            var result = await service.UpdateAsync(feedback);
+
+//            Assert.Equal(OperationResult.InvalidData(validationResult).Status, result.Status);
+//        }
+
+//        [Fact]
+//        public async Task UpdateAsyncShouldReturnNotFoundWhenApplicationDoesNotExist()
+//        {
+//            var feedback = new Feedback { Id = 1, ApplicationId = 1 };
+//            _feedbackRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(new Feedback { Id = 1 });
+//            _validatorMock.Setup(v => v.ValidateAsync(It.IsAny<Feedback>(), default)).ReturnsAsync(new ValidationResult());
+//            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync((ApplicationData)null);
+
+//            var service = CreateService();
+//            var result = await service.UpdateAsync(feedback);
+
+//            Assert.Equal(OperationResult.NotFound(string.Empty).Status, result.Status);
+//        }
+
+//        [Fact]
+//        public async Task UpdateAsyncShouldReturnConflictWhenMembersNotInSquad()
+//        {
+//            var feedback = new Feedback
+//            {
+//                Id = 1,
+//                ApplicationId = 1,
+//                Members = new List<Member> { new Member { Id = 1, SquadId = 2, Name = "A", Role = "Dev", Cost = 1, Email = "a@a.com" } }
+//            };
+//            var existingFeedback = new Feedback
+//            {
+//                Id = 1,
+//                Members = new List<Member> { new Member { Id = 1, SquadId = 2, Name = "A", Role = "Dev", Cost = 1, Email = "a@a.com" } }
+//            };
+//            _feedbackRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(existingFeedback);
+//            _validatorMock.Setup(v => v.ValidateAsync(It.IsAny<Feedback>(), default)).ReturnsAsync(new ValidationResult());
+//            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(new ApplicationData("App") { SquadId = 1 });
+//            _memberRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<MemberFilter>())).ReturnsAsync(new PagedResult<Member> { Result = new List<Member> { new Member { Id = 1, SquadId = 2, Name = "A", Role = "Dev", Cost = 1, Email = "a@a.com" } }, Page = 1, PageSize = 10, Total = 1 });
+
+//            var service = CreateService();
+//            var result = await service.UpdateAsync(feedback);
+
+//            Assert.Equal(OperationResult.Conflict(string.Empty).Status, result.Status);
+//        }
+
+//        [Fact]
+//        public async Task UpdateAsyncShouldNotifyWhenStatusChanged()
+//        {
+//            var feedback = new Feedback { Id = 1, Status = FeedbackStatus.Closed, ApplicationId = 1 };
+//            var existingFeedback = new Feedback { Id = 1, Status = FeedbackStatus.Open };
+//            _feedbackRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(existingFeedback);
+//            _validatorMock.Setup(v => v.ValidateAsync(It.IsAny<Feedback>(), default)).ReturnsAsync(new ValidationResult());
+//            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(new ApplicationData("App") { SquadId = 1 });
+//            _feedbackRepositoryMock.Setup(r => r.UpdateAsync(existingFeedback, true)).Returns(Task.CompletedTask);
+//            _notificationServiceMock.Setup(n => n.NotifyFeedbackStatusChangeAsync(1)).Returns(Task.CompletedTask);
+
+//            var service = CreateService();
+//            var result = await service.UpdateAsync(feedback);
+
+//            Assert.Equal(OperationResult.Complete().Status, result.Status);
+//            _notificationServiceMock.Verify(n => n.NotifyFeedbackStatusChangeAsync(1), Times.Once);
+//        }
+
+//        [Fact]
+//        public async Task GetItemAsyncShouldReturnNotFoundWhenFeedbackDoesNotExist()
+//        {
+//            _feedbackRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync((Feedback)null);
+
+//            var service = CreateService();
+//            var result = await service.GetItemAsync(1);
+
+//            Assert.Equal(OperationResult.NotFound(string.Empty).Status, result.Status);
+//        }
+
+//        [Fact]
+//        public async Task GetItemAsyncShouldReturnCompleteWhenFeedbackExists()
+//        {
+//            _feedbackRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(new Feedback { Id = 1 });
+
+//            var service = CreateService();
+//            var result = await service.GetItemAsync(1);
+
+//            Assert.Equal(OperationResult.Complete().Status, result.Status);
 //        }
 
 //        [Fact]
 //        public async Task GetListAsyncShouldReturnPagedResult()
 //        {
-//            // Arrange
-//            filter filter = _fixture.Create<filter>();
-//            PagedResult<Feedback> pagedResult = _fixture.Create<PagedResult<Feedback>>();
-//            _feedbacksRepositoryMock.Setup(r => r.GetListAsync(filter)).ReturnsAsync(pagedResult);
+//            var pagedResult = new PagedResult<Feedback> { Result = new List<Feedback>(), Page = 1, PageSize = 10, Total = 0 };
+//            _feedbackRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<FeedbackFilter>())).ReturnsAsync(pagedResult);
 
-//            // Act
-//            PagedResult<Feedback> result = await _feedbacksService.GetListAsync(filter);
+//            var service = CreateService();
+//            var result = await service.GetListAsync(new FeedbackFilter());
 
-//            // Assert
 //            Assert.Equal(pagedResult, result);
 //        }
 
 //        [Fact]
-//        public async Task GetItemAsyncWhenItemDoesNotExist()
+//        public async Task GetMembersByApplicationIdAsyncShouldReturnMembers()
 //        {
-//            // Arrange
-//            int id = _fixture.Create<int>();
-//            _feedbacksRepositoryMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync((Feedback?)null);
+//            var members = new List<Member> { new Member { Id = 1, Name = "A", SquadId = 1, Role = "Dev", Cost = 1, Email = "a@a.com" } };
+//            _feedbackRepositoryMock.Setup(r => r.GetMembersByApplicationIdAsync(1)).ReturnsAsync(members);
 
-//            // Act
-//            OperationResult result = await _feedbacksService.GetItemAsync(id);
+//            var service = CreateService();
+//            var result = await service.GetMembersByApplicationIdAsync(1);
 
-//            // Assert
-//            Assert.Equal(OperationStatus.NotFound, result.Status);
+//            Assert.Equal(members, result);
 //        }
 
 //        [Fact]
-//        public async Task GetItemAsyncWhenItemExists()
+//        public async Task DeleteAsyncShouldReturnNotFoundWhenFeedbackDoesNotExist()
 //        {
-//            // Arrange
-//            Feedback feedbacks = _fixture.Create<Feedback>();
-//            _feedbacksRepositoryMock.Setup(r => r.GetByIdAsync(feedbacks.Id)).ReturnsAsync(feedbacks);
+//            _feedbackRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync((Feedback)null);
 
-//            // Act
-//            OperationResult result = await _feedbacksService.GetItemAsync(feedbacks.Id);
+//            var service = CreateService();
+//            var result = await service.DeleteAsync(1);
 
-//            // Assert
-//            Assert.Equal(OperationStatus.Success, result.Status);
+//            Assert.Equal(OperationResult.NotFound(string.Empty).Status, result.Status);
 //        }
 
 //        [Fact]
-//        public async Task UpdateAsyncWhenValidationFails()
+//        public async Task DeleteAsyncShouldCallBaseDeleteWhenFeedbackExists()
 //        {
-//            // Arrange
-//            Feedback feedbacks = _fixture.Build<Feedback>()
-//                .With(i => i.Title, string.Empty)
-//                .With(i => i.Description, string.Empty)
-//                .Create();
+//            var feedback = new Feedback { Id = 1 };
+//            _feedbackRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(feedback);
+//            _feedbackRepositoryMock.Setup(r => r.DeleteAsync(feedback)).ReturnsAsync(OperationResult.Complete());
 
-//            // Act
-//            OperationResult result = await _feedbacksService.UpdateAsync(feedbacks);
+//            var service = CreateService();
+//            var result = await service.DeleteAsync(1);
 
-//            // Assert
-//            Assert.Equal(OperationStatus.InvalidData, result.Status);
-//        }
-
-//        [Fact]
-//        public async Task UpdateAsyncWhenFeedbacksNotFound()
-//        {
-//            // Arrange
-//            Feedback feedbacks = _fixture.Create<Feedback>();
-//            _feedbacksRepositoryMock.Setup(r => r.GetByIdAsync(feedbacks.Id)).ReturnsAsync((Feedback?)null);
-
-//            // Act
-//            OperationResult result = await _feedbacksService.UpdateAsync(feedbacks);
-
-//            // Assert
-//            Assert.Equal(OperationStatus.NotFound, result.Status);
-//        }
-
-//        [Fact]
-//        public async Task UpdateAsyncWhenApplicationNotFound()
-//        {
-//            // Arrange
-//            Feedback feedbacks = _fixture.Create<Feedback>();
-//            _feedbacksRepositoryMock.Setup(r => r.GetByIdAsync(feedbacks.Id)).ReturnsAsync(feedbacks);
-//            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(feedbacks.ApplicationId)).ReturnsAsync((ApplicationData?)null);
-
-//            // Act
-//            OperationResult result = await _feedbacksService.UpdateAsync(feedbacks);
-
-//            // Assert
-//            Assert.Equal(OperationStatus.NotFound, result.Status);
-//        }
-
-//        [Fact]
-//        public async Task UpdateAsyncWhenInvalidMembers()
-//        {
-//            // Arrange
-//            var feedbacks = _fixture.Create<Feedback>();
-//            _feedbacksRepositoryMock.Setup(r => r.GetByIdAsync(feedbacks.Id)).ReturnsAsync(feedbacks);
-
-//            var app = _fixture.Build<ApplicationData>()
-//                .With(a => a.Id, feedbacks.ApplicationId)
-//                .With(a => a.Squads, []) 
-//                .Create();
-
-//            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(feedbacks.ApplicationId)).ReturnsAsync(app);
-
-//            // Act
-//            OperationResult result = await _feedbacksService.UpdateAsync(feedbacks);
-
-//            // Assert
-//            Assert.Equal(OperationStatus.Conflict, result.Status);
-//        }
-
-//        [Fact]
-//        public async Task UpdateAsyncWhenSuccessful()
-//        {
-//            // Arrange
-//            var member = _fixture.Build<Member>().With(m => m.Id, 1).Create();
-//            var squad = _fixture.Build<Squad>().With(s => s.Members, [member]).Create();
-//            var app = _fixture.Build<ApplicationData>().With(a => a.Squads, [squad]).Create();
-//            var feedbacks = _fixture.Build<Feedback>()
-//                .With(i => i.ApplicationId, app.Id)
-//                .With(i => i.Members, [member])
-//                .Create();
-
-//            _feedbacksRepositoryMock.Setup(r => r.GetByIdAsync(feedbacks.Id)).ReturnsAsync(feedbacks);
-//            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(app.Id)).ReturnsAsync(app);
-
-//            // Act
-//            OperationResult result = await _feedbacksService.UpdateAsync(feedbacks);
-
-//            // Assert
-//            Assert.Equal(OperationStatus.Success, result.Status);
-//        }
-
-//        [Fact]
-//        public async Task UpdateAsyncWhenStatusSetToFechadoShouldSetClosedAt()
-//        {
-//            // Arrange
-//            var member = _fixture.Build<Member>().With(m => m.Id, 1).Create();
-//            var squad = _fixture.Build<Squad>().With(s => s.Members, [member]).Create();
-//            var app = _fixture.Build<ApplicationData>().With(a => a.Squads, [squad]).Create();
-
-//            var feedbacks = _fixture.Build<Feedback>()
-//                .With(i => i.FeedbackStatus, Status.Open)
-//                .With(i => i.ClosedAt, (DateTime?)null)
-//                .With(i => i.ApplicationId, app.Id)
-//                .With(i => i.Members, [member])
-//                .Create();
-
-//            var updatedFeedbacks = _fixture.Build<Feedback>()
-//                .With(i => i.Id, feedbacks.Id)
-//                .With(i => i.FeedbackStatus, Status.Closed)
-//                .With(i => i.ClosedAt, (DateTime?)null)
-//                .With(i => i.ApplicationId, app.Id)
-//                .With(i => i.Members, [member])
-//                .Create();
-
-//            _feedbacksRepositoryMock.Setup(r => r.GetByIdAsync(feedbacks.Id)).ReturnsAsync(feedbacks);
-//            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(app.Id)).ReturnsAsync(app);
-
-//            // Act
-//            OperationResult result = await _feedbacksService.UpdateAsync(updatedFeedbacks);
-
-//            // Assert
-//            Assert.Equal(OperationStatus.Success, result.Status);
-//            Assert.NotNull(feedbacks.ClosedAt);
-//        }
-
-//        [Fact]
-//        public async Task UpdateAsyncWhenStatusSetToReabertoShouldClearClosedAt()
-//        {
-//            // Arrange
-//            var member = _fixture.Build<Member>().With(m => m.Id, 1).Create();
-//            var squad = _fixture.Build<Squad>().With(s => s.Members, [member]).Create();
-//            var app = _fixture.Build<ApplicationData>().With(a => a.Squads, [squad]).Create();
-
-//            var feedbacks = _fixture.Build<Feedback>()
-//                .With(i => i.FeedbackStatus, Status.Closed)
-//                .With(i => i.ClosedAt, DateTime.UtcNow)
-//                .With(i => i.ApplicationId, app.Id)
-//                .With(i => i.Members, [member])
-//                .Create();
-
-//            var updatedFeedbacks = _fixture.Build<Feedback>()
-//                .With(i => i.Id, feedbacks.Id)
-//                .With(i => i.FeedbackStatus, Status.Reopened)
-//                .With(i => i.ClosedAt, feedbacks.ClosedAt)
-//                .With(i => i.ApplicationId, app.Id)
-//                .With(i => i.Members, [member])
-//                .Create();
-
-//            _feedbacksRepositoryMock.Setup(r => r.GetByIdAsync(feedbacks.Id)).ReturnsAsync(feedbacks);
-//            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(app.Id)).ReturnsAsync(app);
-
-//            // Act
-//            OperationResult result = await _feedbacksService.UpdateAsync(updatedFeedbacks);
-
-//            // Assert
-//            Assert.Equal(OperationStatus.Success, result.Status);
-//            Assert.Null(feedbacks.ClosedAt);
-//        }
-
-//        [Fact]
-//        public async Task DeleteAsyncWhenItemDoesNotExist()
-//        {
-//            // Arrange
-//            int id = _fixture.Create<int>();
-//            _feedbacksRepositoryMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync((Feedback?)null);
-
-//            // Act
-//            OperationResult result = await _feedbacksService.DeleteAsync(id);
-
-//            // Assert
-//            Assert.Equal(OperationStatus.NotFound, result.Status);
-//        }
-
-//        [Fact]
-//        public async Task DeleteAsyncWhenSuccessful()
-//        {
-//            // Arrange
-//            Feedback feedbacks = _fixture.Create<Feedback>();
-//            _feedbacksRepositoryMock.Setup(r => r.GetByIdAsync(feedbacks.Id)).ReturnsAsync(feedbacks);
-
-//            // Act
-//            OperationResult result = await _feedbacksService.DeleteAsync(feedbacks.Id);
-
-//            // Assert
-//            Assert.Equal(OperationStatus.Success, result.Status);
+//            Assert.Equal(OperationResult.Complete().Status, result.Status);
 //        }
 //    }
 //}

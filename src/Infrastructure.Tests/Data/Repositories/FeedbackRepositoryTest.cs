@@ -121,6 +121,40 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
+        public async Task GetListAsyncSetsPageToOneWhenPageIsZeroOrNegative()
+        {
+            // Arrange
+            var application = _fixture.Build<ApplicationData>()
+                .With(a => a.Id, 1)
+                .Create();
+            await _context.Set<ApplicationData>().AddAsync(application);
+            await _context.SaveChangesAsync();
+
+            var feedbacks = _fixture.Build<Feedback>()
+                .With(f => f.ApplicationId, application.Id)
+                .With(f => f.Application, application)
+                .CreateMany(3)
+                .ToList();
+
+            await _context.Set<Feedback>().AddRangeAsync(feedbacks);
+            await _context.SaveChangesAsync();
+
+            var filter = new FeedbackFilter
+            {
+                Page = 0,
+                PageSize = 10,
+                ApplicationId = application.Id
+            };
+
+            // Act
+            var result = await _repository.GetListAsync(filter);
+
+            // Assert
+            Assert.Equal(1, result.Page); 
+            Assert.Equal(3, result.Total); 
+        }
+
+        [Fact]
         public async Task GetMembersByApplicationIdAsyncReturnsMembersWhenApplicationExists()
         {
             // Arrange
