@@ -1,13 +1,9 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoFixture;
+﻿using AutoFixture;
 using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
-using Xunit;
 
 namespace Infrastructure.Tests.Data.Repositories
 {
@@ -121,6 +117,40 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
+        public async Task GetListAsyncSetsPageToOneWhenPageIsZeroOrNegative()
+        {
+            // Arrange
+            var application = _fixture.Build<ApplicationData>()
+                .With(a => a.Id, 1)
+                .Create();
+            await _context.Set<ApplicationData>().AddAsync(application);
+            await _context.SaveChangesAsync();
+
+            var feedbacks = _fixture.Build<Feedback>()
+                .With(f => f.ApplicationId, application.Id)
+                .With(f => f.Application, application)
+                .CreateMany(3)
+                .ToList();
+
+            await _context.Set<Feedback>().AddRangeAsync(feedbacks);
+            await _context.SaveChangesAsync();
+
+            var filter = new FeedbackFilter
+            {
+                Page = 0,
+                PageSize = 10,
+                ApplicationId = application.Id
+            };
+
+            // Act
+            var result = await _repository.GetListAsync(filter);
+
+            // Assert
+            Assert.Equal(1, result.Page);
+            Assert.Equal(3, result.Total);
+        }
+
+        [Fact]
         public async Task GetMembersByApplicationIdAsyncReturnsMembersWhenApplicationExists()
         {
             // Arrange
@@ -197,9 +227,45 @@ namespace Infrastructure.Tests.Data.Repositories
             Assert.All(result, f => Assert.Equal(status, f.Status));
         }
 
+        [Fact]
+        public async Task GetListAsyncFiltersByIdWhenIdIsGreaterThanZero()
+        {
+            // Arrange
+            var feedback = _fixture.Build<Feedback>()
+                .With(f => f.Id, 123)
+                .With(f => f.Title, "FiltrarPorId")
+                .Create();
+            await _context.Set<Feedback>().AddAsync(feedback);
+            await _context.SaveChangesAsync();
+
+            var filter = new FeedbackFilter
+            {
+                Id = 123, // Ativa o filtro por Id
+                Page = 1,
+                PageSize = 10
+            };
+
+            // Act
+            var result = await _repository.GetListAsync(filter);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Single(result.Result);
+            Assert.Equal(123, result.Result.First().Id);
+        }
+
         public void Dispose()
         {
-            _context?.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _context?.Dispose();
+            }
         }
     }
 }
