@@ -231,9 +231,6 @@ namespace Infrastructure.Tests.Data.Repositories
             Assert.All(result, f => Assert.Equal(status, f.Status));
         }
 
-        public void Dispose()
-        {
-            _context?.Dispose();
-        }
+        public void Dispose() => _context?.Dispose();
     }
 }
