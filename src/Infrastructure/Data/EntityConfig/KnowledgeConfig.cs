@@ -33,6 +33,38 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
                 .WithMany()
                 .HasForeignKey(k => k.SquadId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // N:N para AssociatedApplications
+            builder.HasMany(k => k.AssociatedApplications)
+                   .WithMany() // sem criar FK em ApplicationData
+                   .UsingEntity<Dictionary<string, object>>(
+                       "KnowledgeApplication",
+                       j => j.HasOne<ApplicationData>()
+                             .WithMany()
+                             .HasForeignKey("ApplicationId")
+                             .OnDelete(DeleteBehavior.Cascade),
+                       j => j.HasOne<Knowledge>()
+                             .WithMany()
+                             .HasForeignKey("KnowledgeId")
+                             .OnDelete(DeleteBehavior.Cascade),
+                       j => j.HasKey("KnowledgeId", "ApplicationId")
+                   );
+
+            // N:N para AssociatedSquads
+            builder.HasMany(k => k.AssociatedSquads)
+                   .WithMany()
+                   .UsingEntity<Dictionary<string, object>>(
+                       "KnowledgeSquad",
+                       j => j.HasOne<Squad>()
+                             .WithMany()
+                             .HasForeignKey("SquadId")
+                             .OnDelete(DeleteBehavior.Cascade),
+                       j => j.HasOne<Knowledge>()
+                             .WithMany()
+                             .HasForeignKey("KnowledgeId")
+                             .OnDelete(DeleteBehavior.Cascade),
+                       j => j.HasKey("KnowledgeId", "SquadId")
+                   );
         }
     }
 }
