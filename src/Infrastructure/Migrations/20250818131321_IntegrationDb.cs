@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Stellantis.ProjectName.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class NewMigration : Migration
+    public partial class IntegrationDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -76,6 +76,22 @@ namespace Stellantis.ProjectName.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Squads",
+                schema: "dbo",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 55, nullable: false),
+                    Description = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
+                    Cost = table.Column<decimal>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Squads", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Responsible",
                 schema: "dbo",
                 columns: table => new
@@ -99,6 +115,31 @@ namespace Stellantis.ProjectName.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Members",
+                schema: "dbo",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 150, nullable: false),
+                    Role = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
+                    Cost = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Email = table.Column<string>(type: "TEXT", maxLength: 150, nullable: false),
+                    SquadId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Members", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Members_Squads_SquadId",
+                        column: x => x.SquadId,
+                        principalSchema: "dbo",
+                        principalTable: "Squads",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ApplicationData",
                 schema: "dbo",
                 columns: table => new
@@ -111,8 +152,7 @@ namespace Stellantis.ProjectName.Infrastructure.Migrations
                     Description = table.Column<string>(type: "TEXT", nullable: true),
                     SquadId = table.Column<int>(type: "INTEGER", nullable: false),
                     External = table.Column<bool>(type: "INTEGER", nullable: false),
-                    ProductOwner = table.Column<string>(type: "TEXT", nullable: true),
-                    KnowledgeId = table.Column<int>(type: "INTEGER", nullable: true)
+                    ProductOwner = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -131,6 +171,12 @@ namespace Stellantis.ProjectName.Infrastructure.Migrations
                         principalTable: "Responsible",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ApplicationData_Squads_SquadId",
+                        column: x => x.SquadId,
+                        principalSchema: "dbo",
+                        principalTable: "Squads",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -239,6 +285,45 @@ namespace Stellantis.ProjectName.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Knowledge",
+                schema: "dbo",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    MemberId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ApplicationId = table.Column<int>(type: "INTEGER", nullable: false),
+                    SquadId = table.Column<int>(type: "INTEGER", nullable: false),
+                    AssociatedSquadIds = table.Column<string>(type: "TEXT", nullable: true),
+                    AssociatedApplicationIds = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Knowledge", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Knowledge_ApplicationData_ApplicationId",
+                        column: x => x.ApplicationId,
+                        principalSchema: "dbo",
+                        principalTable: "ApplicationData",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Knowledge_Members_MemberId",
+                        column: x => x.MemberId,
+                        principalSchema: "dbo",
+                        principalTable: "Members",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Knowledge_Squads_SquadId",
+                        column: x => x.SquadId,
+                        principalSchema: "dbo",
+                        principalTable: "Squads",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Repo",
                 schema: "dbo",
                 columns: table => new
@@ -310,6 +395,13 @@ namespace Stellantis.ProjectName.Infrastructure.Migrations
                         principalTable: "Feedback",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_FeedbackMembers_Members_MemberId",
+                        column: x => x.MemberId,
+                        principalSchema: "dbo",
+                        principalTable: "Members",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -330,74 +422,62 @@ namespace Stellantis.ProjectName.Infrastructure.Migrations
                         principalTable: "Incident",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Knowledge",
-                schema: "dbo",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    MemberId = table.Column<int>(type: "INTEGER", nullable: false),
-                    ApplicationId = table.Column<int>(type: "INTEGER", nullable: false),
-                    SquadId = table.Column<int>(type: "INTEGER", nullable: false),
-                    AssociatedSquadIds = table.Column<string>(type: "TEXT", nullable: true),
-                    AssociatedApplicationIds = table.Column<string>(type: "TEXT", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Knowledge", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Knowledge_ApplicationData_ApplicationId",
-                        column: x => x.ApplicationId,
+                        name: "FK_IncidentMembers_Members_MemberId",
+                        column: x => x.MemberId,
                         principalSchema: "dbo",
-                        principalTable: "ApplicationData",
+                        principalTable: "Members",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Squads",
+                name: "KnowledgeApplication",
                 schema: "dbo",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 55, nullable: false),
-                    Description = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
-                    Cost = table.Column<decimal>(type: "TEXT", nullable: true),
-                    KnowledgeId = table.Column<int>(type: "INTEGER", nullable: true)
+                    KnowledgeId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ApplicationId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Squads", x => x.Id);
+                    table.PrimaryKey("PK_KnowledgeApplication", x => new { x.KnowledgeId, x.ApplicationId });
                     table.ForeignKey(
-                        name: "FK_Squads_Knowledge_KnowledgeId",
+                        name: "FK_KnowledgeApplication_ApplicationData_ApplicationId",
+                        column: x => x.ApplicationId,
+                        principalSchema: "dbo",
+                        principalTable: "ApplicationData",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_KnowledgeApplication_Knowledge_KnowledgeId",
                         column: x => x.KnowledgeId,
                         principalSchema: "dbo",
                         principalTable: "Knowledge",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Members",
+                name: "KnowledgeSquad",
                 schema: "dbo",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 150, nullable: false),
-                    Role = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
-                    Cost = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Email = table.Column<string>(type: "TEXT", maxLength: 150, nullable: false),
+                    KnowledgeId = table.Column<int>(type: "INTEGER", nullable: false),
                     SquadId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Members", x => x.Id);
+                    table.PrimaryKey("PK_KnowledgeSquad", x => new { x.KnowledgeId, x.SquadId });
                     table.ForeignKey(
-                        name: "FK_Members_Squads_SquadId",
+                        name: "FK_KnowledgeSquad_Knowledge_KnowledgeId",
+                        column: x => x.KnowledgeId,
+                        principalSchema: "dbo",
+                        principalTable: "Knowledge",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_KnowledgeSquad_Squads_SquadId",
                         column: x => x.SquadId,
                         principalSchema: "dbo",
                         principalTable: "Squads",
@@ -410,12 +490,6 @@ namespace Stellantis.ProjectName.Infrastructure.Migrations
                 schema: "dbo",
                 table: "ApplicationData",
                 column: "AreaId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ApplicationData_KnowledgeId",
-                schema: "dbo",
-                table: "ApplicationData",
-                column: "KnowledgeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ApplicationData_ResponsibleId",
@@ -491,6 +565,18 @@ namespace Stellantis.ProjectName.Infrastructure.Migrations
                 column: "SquadId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_KnowledgeApplication_ApplicationId",
+                schema: "dbo",
+                table: "KnowledgeApplication",
+                column: "ApplicationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KnowledgeSquad_SquadId",
+                schema: "dbo",
+                table: "KnowledgeSquad",
+                column: "SquadId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Members_SquadId",
                 schema: "dbo",
                 table: "Members",
@@ -519,95 +605,11 @@ namespace Stellantis.ProjectName.Infrastructure.Migrations
                 schema: "dbo",
                 table: "ServiceData",
                 column: "ApplicationId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Squads_KnowledgeId",
-                schema: "dbo",
-                table: "Squads",
-                column: "KnowledgeId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_ApplicationData_Knowledge_KnowledgeId",
-                schema: "dbo",
-                table: "ApplicationData",
-                column: "KnowledgeId",
-                principalSchema: "dbo",
-                principalTable: "Knowledge",
-                principalColumn: "Id");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_ApplicationData_Squads_SquadId",
-                schema: "dbo",
-                table: "ApplicationData",
-                column: "SquadId",
-                principalSchema: "dbo",
-                principalTable: "Squads",
-                principalColumn: "Id");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_FeedbackMembers_Members_MemberId",
-                schema: "dbo",
-                table: "FeedbackMembers",
-                column: "MemberId",
-                principalSchema: "dbo",
-                principalTable: "Members",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_IncidentMembers_Members_MemberId",
-                schema: "dbo",
-                table: "IncidentMembers",
-                column: "MemberId",
-                principalSchema: "dbo",
-                principalTable: "Members",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Knowledge_Members_MemberId",
-                schema: "dbo",
-                table: "Knowledge",
-                column: "MemberId",
-                principalSchema: "dbo",
-                principalTable: "Members",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Knowledge_Squads_SquadId",
-                schema: "dbo",
-                table: "Knowledge",
-                column: "SquadId",
-                principalSchema: "dbo",
-                principalTable: "Squads",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_ApplicationData_Area_AreaId",
-                schema: "dbo",
-                table: "ApplicationData");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Responsible_Area_AreaId",
-                schema: "dbo",
-                table: "Responsible");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_ApplicationData_Knowledge_KnowledgeId",
-                schema: "dbo",
-                table: "ApplicationData");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Squads_Knowledge_KnowledgeId",
-                schema: "dbo",
-                table: "Squads");
-
             migrationBuilder.DropTable(
                 name: "ChatMessages",
                 schema: "dbo");
@@ -626,6 +628,14 @@ namespace Stellantis.ProjectName.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Integration",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
+                name: "KnowledgeApplication",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
+                name: "KnowledgeSquad",
                 schema: "dbo");
 
             migrationBuilder.DropTable(
@@ -653,10 +663,6 @@ namespace Stellantis.ProjectName.Infrastructure.Migrations
                 schema: "dbo");
 
             migrationBuilder.DropTable(
-                name: "Area",
-                schema: "dbo");
-
-            migrationBuilder.DropTable(
                 name: "Knowledge",
                 schema: "dbo");
 
@@ -674,6 +680,10 @@ namespace Stellantis.ProjectName.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Squads",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
+                name: "Area",
                 schema: "dbo");
         }
     }
