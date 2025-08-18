@@ -274,3 +274,6 @@ __pycache__/
 /src/Application/Services/ResponsibleService.cs
 /src/Infrastructure/Migrations/20250815124121_NewMigration.cs
 /src/Infrastructure/Migrations/20250815124121_NewMigration.Designer.cs
+/src/Infrastructure/Migrations/20250818122822_InitialCreate.cs
+/src/Infrastructure/Migrations/20250818122822_InitialCreate.Designer.cs
+/src/Infrastructure/Migrations/ContextModelSnapshot.cs
