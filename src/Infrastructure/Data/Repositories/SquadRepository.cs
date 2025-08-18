@@ -54,8 +54,8 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             if (!string.IsNullOrEmpty(squadFilter.Name))
             {
                 var nameFilter = squadFilter.Name;
-                query = query.Where(s => s.Name != null && s.Name.Contains(nameFilter, StringComparison.OrdinalIgnoreCase));
-            }
+                query = query.Where(s => s.Name != null && s.Name.ToLower().Contains(nameFilter.ToLower()));
+            }       
 
             var pagedResult = await GetListAsync(query, squadFilter.Sort, squadFilter.SortDir, squadFilter.Page, squadFilter.PageSize).ConfigureAwait(false);
             return pagedResult;

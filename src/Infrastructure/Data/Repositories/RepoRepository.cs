@@ -35,9 +35,9 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             var filters = PredicateBuilder.New<Repo>(true);
             repoFilter.Page = repoFilter.Page <= 0 ? 1 : repoFilter.Page;
             if (!string.IsNullOrWhiteSpace(repoFilter.Name))
-                filters = filters.And(a => a.Name != null && a.Name.Contains(repoFilter.Name, StringComparison.OrdinalIgnoreCase));
+                filters = filters.And(a => a.Name != null && a.Name.ToLower().Contains(repoFilter.Name.ToLower()));
             if (!string.IsNullOrWhiteSpace(repoFilter.Description))
-                filters = filters.And(a => a.Description != null && a.Description.Contains(repoFilter.Description, StringComparison.OrdinalIgnoreCase));
+                filters = filters.And(a => a.Description != null && a.Description.ToLower().Contains(repoFilter.Description.ToLower()));
             if (repoFilter.Url != null)
                 filters = filters.And(x => x.Url == repoFilter.Url);
             if (repoFilter.ApplicationId > 0)

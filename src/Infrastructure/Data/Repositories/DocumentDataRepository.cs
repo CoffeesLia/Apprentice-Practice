@@ -34,7 +34,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             var filters = PredicateBuilder.New<DocumentData>(true);
             documentFilter.Page = documentFilter.Page <= 0 ? 1 : documentFilter.Page;
             if (!string.IsNullOrWhiteSpace(documentFilter.Name))
-                filters = filters.And(x => x.Name.Contains(documentFilter.Name));
+                filters = filters.And(x => x.Name.ToLower().Contains(documentFilter.Name.ToLower()));
             if (documentFilter.Url != null)
                 filters = filters.And(x => x.Url == documentFilter.Url);
             if (documentFilter.ApplicationId > 0)

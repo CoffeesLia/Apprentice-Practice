@@ -35,7 +35,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             applicationFilter.Page = applicationFilter.Page <= 0 ? 1 : applicationFilter.Page;
             if (!string.IsNullOrWhiteSpace(applicationFilter.Name))
             {
-                filters = filters.And(x => x.Name != null && x.Name.Contains(applicationFilter.Name));
+                filters = filters.And(x => x.Name != null && x.Name.ToLower().Contains(applicationFilter.Name.ToLower()));
             }
 
 

@@ -272,3 +272,5 @@ __pycache__/
 /src/Application.Tests/Services/SquadServiceTestes.cs
 /src/Domain/Entities/EntitieSquad.cs
 /src/Application/Services/ResponsibleService.cs
+/src/Infrastructure/Migrations/20250815124121_NewMigration.cs
+/src/Infrastructure/Migrations/20250815124121_NewMigration.Designer.cs

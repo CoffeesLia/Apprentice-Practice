@@ -43,12 +43,12 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             if (!string.IsNullOrEmpty(membersFilter.Name))
             {
-                query = query.Where(a => a.Name != null && a.Name.Contains(membersFilter.Name));
+                query = query.Where(a => a.Name != null && a.Name.ToLower().Contains(membersFilter.Name.ToLower()));
             }
 
             if (!string.IsNullOrEmpty(membersFilter.Email))
             {
-                query = query.Where(a => a.Email != null && a.Email.Contains(membersFilter.Email));
+                query = query.Where(a => a.Email != null && a.Email.ToLower().Contains(membersFilter.Email.ToLower()));
             }
 
             if (!string.IsNullOrEmpty(membersFilter.Role))

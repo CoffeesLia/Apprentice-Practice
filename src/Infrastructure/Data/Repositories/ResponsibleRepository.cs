@@ -39,12 +39,12 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             if (!string.IsNullOrWhiteSpace(filter.Email))
             {
-                filters = filters.And(x => x.Email.Contains(filter.Email, StringComparison.OrdinalIgnoreCase));
+                filters = filters.And(x => x.Email.ToLower().Contains(filter.Email.ToLower()));
             }
 
             if (!string.IsNullOrWhiteSpace(filter.Name))
             {
-                filters = filters.And(x => x.Name.Contains(filter.Name, StringComparison.OrdinalIgnoreCase));
+                filters = filters.And(x => x.Name.ToLower().Contains(filter.Name.ToLower()));
             }
 
             if (filter.AreaId != 0)
