@@ -133,7 +133,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Url is required.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Url is required..
         /// </summary>
         public static string UrlIsRequired {
             get {
