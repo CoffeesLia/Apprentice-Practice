@@ -108,6 +108,7 @@ namespace Application.Tests.Services
             var result = await _feedbackService.CreateAsync(feedback);
 
             Assert.Equal(OperationStatus.NotFound, result.Status);
+            Assert.Contains(FeedbackResources.NotFound, result.Errors);
         }
 
         [Fact]
@@ -394,6 +395,107 @@ namespace Application.Tests.Services
             ArgumentNullException.ThrowIfNull(existingFeedback);
 
             await _notificationServiceMock.Object.NotifyFeedbackStatusChangeAsync(existingFeedback.Id).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task UpdateAsyncShouldNotifyStatusChangeWhenStatusIsChanged()
+        {
+            // Arrange
+            var member = new Member
+            {
+                Id = 1,
+                Name = "M",
+                Role = "Developer", 
+                Cost = 1000,     
+                Email = "m@example.com", 
+                SquadId = 1
+            };
+            var app = new ApplicationData("App") { Id = 1, SquadId = 1, ProductOwner = "PO" };
+            var existing = new Feedback { Id = 1, Title = "Old", Description = "Old", ApplicationId = 1, Status = FeedbackStatus.Open, Members = [member], Application = app };
+            var feedback = new Feedback { Id = 1, Title = "Teste", Description = "Desc", ApplicationId = 1, Status = FeedbackStatus.Closed, Members = [member], Application = app };
+
+            _feedbackRepositoryMock.Setup(r => r.GetByIdAsync(feedback.Id)).ReturnsAsync(existing);
+            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(feedback.ApplicationId)).ReturnsAsync(app);
+            _memberRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Member, bool>>>(), null, null, null, 1, 10))
+                .ReturnsAsync(new PagedResult<Member> { Result = [member] });
+            _feedbackRepositoryMock.Setup(r => r.UpdateAsync(It.IsAny<Feedback>(), true)).Returns(Task.CompletedTask);
+
+            // Act
+            var result = await _feedbackService.UpdateAsync(feedback);
+
+            // Assert
+            Assert.Equal(OperationStatus.Success, result.Status);
+            _notificationServiceMock.Verify(n => n.NotifyFeedbackStatusChangeAsync(existing.Id), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateAsyncShouldNotifyRemovedMembersWhenMembersAreRemoved()
+        {
+            // Arrange
+            var member1 = new Member
+            {
+                Id = 1,
+                Name = "M1",
+                SquadId = 1,
+                Role = "Developer", 
+                Cost = 1000,        
+                Email = "m1@example.com" 
+            };
+            var member2 = new Member
+            {
+                Id = 2,
+                Name = "M2",
+                SquadId = 1,
+                Role = "Developer", 
+                Cost = 1000,       
+                Email = "m2@example.com" 
+            };
+            var app = new ApplicationData("App") { Id = 1, SquadId = 1, ProductOwner = "PO" };
+            var existing = new Feedback { Id = 1, Title = "Old", Description = "Old", ApplicationId = 1, Status = FeedbackStatus.Open, Members = new List<Member> { member1, member2 }, Application = app };
+            var feedback = new Feedback { Id = 1, Title = "Teste", Description = "Desc", ApplicationId = 1, Status = FeedbackStatus.Open, Members = new List<Member> { member1 }, Application = app };
+
+            _feedbackRepositoryMock.Setup(r => r.GetByIdAsync(feedback.Id)).ReturnsAsync(existing);
+            _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(feedback.ApplicationId)).ReturnsAsync(app);
+            _memberRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Member, bool>>>(), null, null, null, 1, 10))
+                .ReturnsAsync(new PagedResult<Member> { Result = new List<Member> { member1 } });
+            _feedbackRepositoryMock.Setup(r => r.UpdateAsync(It.IsAny<Feedback>(), true)).Returns(Task.CompletedTask);
+
+            _notificationLocalizerMock.Setup(l => l["FeedbackRemoveMember", member2.Name, existing.Title])
+                .Returns(new LocalizedString("FeedbackRemoveMember", $"Removido: {member2.Name} do {existing.Title}"));
+
+            // Act
+            var result = await _feedbackService.UpdateAsync(feedback);
+
+            // Assert
+            Assert.Equal(OperationStatus.Success, result.Status);
+            _notificationServiceMock.Verify(n => n.NotifyMembersAsync(It.Is<IEnumerable<Member>>(m => m.First().Id == member2.Id), It.IsAny<string>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetMembersByApplicationIdAsyncShouldCallRepository()
+        {
+            // Arrange
+            var applicationId = 1;
+            var members = new List<Member>
+            {
+                new Member
+                {
+                    Id = 1,
+                    Name = "M",
+                    SquadId = 1,
+                    Role = "Developer",
+                    Cost = 1000,   
+                    Email = "m@example.com" 
+                }
+            };
+            _feedbackRepositoryMock.Setup(r => r.GetMembersByApplicationIdAsync(applicationId)).ReturnsAsync(members);
+
+            // Act
+            var result = await _feedbackService.GetMembersByApplicationIdAsync(applicationId);
+
+            // Assert
+            Assert.Equal(members, result);
+            _feedbackRepositoryMock.Verify(r => r.GetMembersByApplicationIdAsync(applicationId), Times.Once);
         }
     }
 }
