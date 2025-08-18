@@ -1,10 +1,4 @@
-﻿using System.Globalization;
-using Application.Tests.Helpers;
-using AutoFixture;
-using FluentValidation;
-using Microsoft.Extensions.Localization;
-using Moq;
-using Stellantis.ProjectName.Application.Interfaces;
+﻿using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models;
@@ -13,6 +7,11 @@ using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Application.Validators;
 using Stellantis.ProjectName.Domain.Entities;
+using System.Globalization;
+using Application.Tests.Helpers;
+using AutoFixture;
+using Microsoft.Extensions.Localization;
+using Moq;
 using Xunit;
 
 namespace Application.Tests.Services
@@ -478,7 +477,7 @@ namespace Application.Tests.Services
             var applicationId = 1;
             var members = new List<Member>
             {
-                new Member
+                new()
                 {
                     Id = 1,
                     Name = "M",
