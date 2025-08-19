@@ -80,9 +80,18 @@ namespace Stellantis.ProjectName.Application.Services
 
         public override async Task<OperationResult> DeleteAsync(int id)
         {
-            if (!await Repository.VerifySquadExistsAsync(id).ConfigureAwait(false))
-            {
+            var squad = await Repository.GetByIdAsync(id).ConfigureAwait(false);
+            if (squad == null)
                 return OperationResult.NotFound(_localizer[nameof(SquadResources.SquadNotFound)]);
+
+            // Verifica membros vinculados
+            var members = await UnitOfWork.MemberRepository.GetListAsync(new MemberFilter { SquadId = id }).ConfigureAwait(false);
+            // Verifica aplicações vinculadas
+            var applications = await UnitOfWork.ApplicationDataRepository.GetListAsync(a => a.SquadId == id).ConfigureAwait(false);
+
+            if ((members.Result?.Any() ?? false) || (applications?.Any() ?? false))
+            {
+                return OperationResult.Conflict(_localizer[nameof(SquadResources.SquadDeleteLinkedError)]);
             }
 
             await Repository.DeleteAsync(id, true).ConfigureAwait(false);
