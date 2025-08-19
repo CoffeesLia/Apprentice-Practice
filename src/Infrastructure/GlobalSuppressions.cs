@@ -1,0 +1,10 @@
+﻿// This file is used by Code Analysis to maintain SuppressMessage
+// attributes that are applied to this project.
+// Project-level suppressions either have no target or are given
+// a specific target and scoped to a namespace, type, member, etc.
+
+using System.Diagnostics.CodeAnalysis;
+
+[assembly: SuppressMessage("Performance", "CA1862:Use as sobrecargas do método 'StringComparison' para realizar comparações de strings que não diferenciam maiúsculas de minúsculas", Justification = "<Pendente>", Scope = "member", Target = "~M:Stellantis.ProjectName.Infrastructure.Data.Repositories.IntegrationRepository.GetListAsync(Stellantis.ProjectName.Application.Models.Filters.IntegrationFilter)~System.Threading.Tasks.Task{Stellantis.ProjectName.Application.Models.Filters.PagedResult{Stellantis.ProjectName.Domain.Entities.Integration}}")]
+[assembly: SuppressMessage("Globalization", "CA1304:Especificar CultureInfo", Justification = "<Pendente>", Scope = "member", Target = "~M:Stellantis.ProjectName.Infrastructure.Data.Repositories.IntegrationRepository.GetListAsync(Stellantis.ProjectName.Application.Models.Filters.IntegrationFilter)~System.Threading.Tasks.Task{Stellantis.ProjectName.Application.Models.Filters.PagedResult{Stellantis.ProjectName.Domain.Entities.Integration}}")]
+[assembly: SuppressMessage("Globalization", "CA1311:Especifique uma cultura ou use uma versão invariável", Justification = "<Pendente>", Scope = "member", Target = "~M:Stellantis.ProjectName.Infrastructure.Data.Repositories.IntegrationRepository.GetListAsync(Stellantis.ProjectName.Application.Models.Filters.IntegrationFilter)~System.Threading.Tasks.Task{Stellantis.ProjectName.Application.Models.Filters.PagedResult{Stellantis.ProjectName.Domain.Entities.Integration}}")]
