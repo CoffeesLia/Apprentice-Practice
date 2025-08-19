@@ -277,3 +277,4 @@ __pycache__/
 /src/Infrastructure/Migrations/20250818122822_InitialCreate.cs
 /src/Infrastructure/Migrations/20250818122822_InitialCreate.Designer.cs
 /src/Infrastructure/Migrations/ContextModelSnapshot.cs
+/src/Infrastructure/Migrations
