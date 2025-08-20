@@ -88,6 +88,15 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a It is not possible to delete a squad when it is linked to applications and members..
+        /// </summary>
+        public static string SquadDeleteLinkedError {
+            get {
+                return ResourceManager.GetString("SquadDeleteLinkedError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Squad description is required..
         /// </summary>
         public static string SquadDescriptionRequired {
