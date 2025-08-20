@@ -692,5 +692,67 @@ namespace Application.Tests.Services
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
         }
+
+        [Fact]
+        public void SquadDeleteLinkedErrorResourceReturnsCorrectValue()
+        {
+            // Arrange
+            string expectedValue = "Não é possível apagar um squad quando ele está vinculado a uma aplicação e membros.";
+
+            // Act
+            string actualValue = SquadResources.SquadDeleteLinkedError;
+
+            // Assert
+            Assert.Equal(expectedValue, actualValue);
+        }
+
+        [Fact]
+        public async Task DeleteAsyncReturnsConflictWhenSquadHasLinkedMembersOrApplications()
+        {
+            // Arrange
+            int squadId = 1;
+            var squad = new Squad { Id = squadId, Name = "Squad Test" };
+
+            _squadRepositoryMock.Setup(r => r.VerifySquadExistsAsync(squadId)).ReturnsAsync(true);
+            _squadRepositoryMock.Setup(r => r.GetByIdAsync(squadId)).ReturnsAsync(squad);
+
+            // Simula membros vinculados (com propriedades obrigatórias)
+            var memberRepoMock = new Mock<IMemberRepository>();
+            memberRepoMock.Setup(m => m.GetListAsync(It.IsAny<MemberFilter>()))
+                .ReturnsAsync(new PagedResult<Member>
+                {
+                    Result = new List<Member>
+                    {
+                        new Member
+                        {
+                            Id = 10,
+                            Name = "Membro Vinculado",
+                            SquadId = squadId,
+                            Role = "Developer",
+                            Cost = 100,
+                            Email = "membro@example.com"
+                        }
+                    },
+                    Page = 1,
+                    PageSize = 10,
+                    Total = 1
+                });
+            _unitOfWorkMock.Setup(u => u.MemberRepository).Returns(memberRepoMock.Object);
+
+            // Simula aplicações vinculadas (pode ser vazio, pois já há membros vinculados)
+            var appRepoMock = new Mock<IApplicationDataRepository>();
+            appRepoMock.Setup(a => a.GetListAsync(It.IsAny<Expression<Func<ApplicationData, bool>>>()))
+                .ReturnsAsync(new List<ApplicationData>());
+            _unitOfWorkMock.Setup(u => u.ApplicationDataRepository).Returns(appRepoMock.Object);
+
+            var expectedMessage = SquadResources.SquadDeleteLinkedError;
+
+            // Act
+            var result = await _squadService.DeleteAsync(squadId);
+
+            // Assert
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal(expectedMessage, result.Message);
+        }
     }
 }
