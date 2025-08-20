@@ -33,6 +33,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             ExpressionStarter<ApplicationData> filters = PredicateBuilder.New<ApplicationData>(true);
             applicationFilter.Page = applicationFilter.Page <= 0 ? 1 : applicationFilter.Page;
+            applicationFilter.PageSize = applicationFilter.PageSize <= 0 ? 10 : applicationFilter.PageSize;
             if (!string.IsNullOrWhiteSpace(applicationFilter.Name))
             {
                 filters = filters.And(x => x.Name != null && x.Name.ToLower().Contains(applicationFilter.Name.ToLower()));

@@ -19,10 +19,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
                 .IsRequired()
                 .HasMaxLength(255);
 
-            builder.HasOne(ad => ad.Area)
-            .WithMany(a => a.Applications)
-            .HasForeignKey(ad => ad.AreaId);
-
             builder.Property(ad => ad.AreaId)
                 .IsRequired();
 
@@ -30,6 +26,11 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
                 .WithMany(a => a.Applications)
                 .HasForeignKey(r => r.AreaId)
                 .IsRequired();
+
+            builder.HasOne(ad => ad.Responsible)
+            .WithMany()
+            .HasForeignKey(ad => ad.ResponsibleId)
+            .IsRequired();
 
             builder.HasOne(ad => ad.Squad)
             .WithMany(s => s.Applications)
@@ -40,7 +41,8 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
                 .WithOne(k => k.Application)
                 .HasForeignKey(k => k.ApplicationId)
                 .OnDelete(DeleteBehavior.Cascade);
-        
+
+            builder.Ignore(ad => ad.ProductOwner);
         }
     }
 }
