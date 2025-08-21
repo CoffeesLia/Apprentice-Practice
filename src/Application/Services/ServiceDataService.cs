@@ -77,10 +77,10 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.NotFound(_localizer[nameof(ServiceDataResources.ServiceNotFound)]);
             }
 
-            var application = await Repository.GetByIdAsync(service.ApplicationId).ConfigureAwait(false);
+            var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(service.ApplicationId).ConfigureAwait(false);
             if (application == null)
             {
-                return OperationResult.InvalidData(validationResult);
+                return OperationResult.Conflict(_localizer[nameof(ServiceDataResources.ServiceInvalidApplicationId)]);
             }
 
             if (await Repository.VerifyNameExistsAsync(service.Name).ConfigureAwait(false))
