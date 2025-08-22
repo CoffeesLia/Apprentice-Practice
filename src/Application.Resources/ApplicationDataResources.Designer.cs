@@ -88,6 +88,15 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Cannot delete the application because there are linked integrations..
+        /// </summary>
+        public static string IntegrationLinkedError {
+            get {
+                return ResourceManager.GetString("IntegrationLinkedError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a The name is required..
         /// </summary>
         public static string NameRequired {
@@ -120,6 +129,15 @@ namespace Stellantis.ProjectName.Application.Resources {
         public static string ResponsibleNotFound {
             get {
                 return ResourceManager.GetString("ResponsibleNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Cannot delete the application because there are linked services. .
+        /// </summary>
+        public static string ServiceLinkedError {
+            get {
+                return ResourceManager.GetString("ServiceLinkedError", resourceCulture);
             }
         }
     }

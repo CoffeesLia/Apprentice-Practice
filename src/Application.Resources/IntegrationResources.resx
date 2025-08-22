@@ -129,9 +129,6 @@
   <data name="IdNotFound" xml:space="preserve">
     <value>Id Not Found</value>
   </data>
-  <data name="MessageConflict" xml:space="preserve">
-    <value>Message Conflict</value>
-  </data>
   <data name="MessageNotFound" xml:space="preserve">
     <value>Message Not Found</value>
   </data>

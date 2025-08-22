@@ -71,13 +71,26 @@ namespace Stellantis.ProjectName.Application.Services
 
             return await base.UpdateAsync(item).ConfigureAwait(false);
         }
-
         public override async Task<OperationResult> DeleteAsync(int id)
         {
             var item = await Repository.GetFullByIdAsync(id).ConfigureAwait(false);
             if (item == null)
             {
-                return OperationResult.NotFound(base.Localizer[nameof(ApplicationDataResources.ApplicationNotFound)]);
+                return OperationResult.NotFound(_localizer[nameof(ApplicationDataResources.ApplicationNotFound)]);
+            }
+
+            // Verifica integrações vinculadas
+            var integrations = await UnitOfWork.IntegrationRepository.GetListAsync(new IntegrationFilter { ApplicationDataId = id }).ConfigureAwait(false);
+            if (integrations.Result.Any())
+            {
+                return OperationResult.Conflict(_localizer[nameof(ApplicationDataResources.IntegrationLinkedError)]);
+            }
+
+            // Verifica serviços vinculados
+            var services = await UnitOfWork.ServiceDataRepository.GetListAsync(new ServiceDataFilter { ApplicationId = id }).ConfigureAwait(false);
+            if (services.Result.Any())
+            {
+                return OperationResult.Conflict(_localizer[nameof(ApplicationDataResources.ServiceLinkedError)]);
             }
 
             return await base.DeleteAsync(item).ConfigureAwait(false);

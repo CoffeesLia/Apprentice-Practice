@@ -129,9 +129,6 @@
   <data name="IdNotFound" xml:space="preserve">
     <value>Id não encontrado.</value>
   </data>
-  <data name="MessageConflict" xml:space="preserve">
-    <value>Os dados devem ser diferentes dos preenchidos.</value>
-  </data>
   <data name="MessageNotFound" xml:space="preserve">
     <value>Integração não encontrada.</value>
   </data>
