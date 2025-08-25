@@ -13,8 +13,8 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
 
             builder.HasKey(k => k.Id);
 
-            // assegura que não exista duplicidade de associação
-            builder.HasIndex(k => new { k.MemberId, k.ApplicationId}).IsUnique();
+            // assegura que não exista duplicidade de associação considerando o status
+            builder.HasIndex(k => new { k.MemberId, k.ApplicationId, k.SquadId, k.Status }).IsUnique();
 
             // relacionamento com member
             builder.HasOne(k => k.Member)
@@ -34,37 +34,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
                 .HasForeignKey(k => k.SquadId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // N:N para AssociatedApplications
-            builder.HasMany(k => k.AssociatedApplications)
-                   .WithMany() // sem criar FK em ApplicationData
-                   .UsingEntity<Dictionary<string, object>>(
-                       "KnowledgeApplication",
-                       j => j.HasOne<ApplicationData>()
-                             .WithMany()
-                             .HasForeignKey("ApplicationId")
-                             .OnDelete(DeleteBehavior.Cascade),
-                       j => j.HasOne<Knowledge>()
-                             .WithMany()
-                             .HasForeignKey("KnowledgeId")
-                             .OnDelete(DeleteBehavior.Cascade),
-                       j => j.HasKey("KnowledgeId", "ApplicationId")
-                   );
-
-            // N:N para AssociatedSquads
-            builder.HasMany(k => k.AssociatedSquads)
-                   .WithMany()
-                   .UsingEntity<Dictionary<string, object>>(
-                       "KnowledgeSquad",
-                       j => j.HasOne<Squad>()
-                             .WithMany()
-                             .HasForeignKey("SquadId")
-                             .OnDelete(DeleteBehavior.Cascade),
-                       j => j.HasOne<Knowledge>()
-                             .WithMany()
-                             .HasForeignKey("KnowledgeId")
-                             .OnDelete(DeleteBehavior.Cascade),
-                       j => j.HasKey("KnowledgeId", "SquadId")
-                   );
         }
     }
 }

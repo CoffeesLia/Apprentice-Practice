@@ -28,6 +28,15 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             return await GetAsync<KnowledgeVm>(id).ConfigureAwait(false);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetListAsync([FromQuery] KnowledgeFilterDto filterDto)
+        {
+            KnowledgeFilter filter = Mapper.Map<KnowledgeFilter>(filterDto);
+            PagedResult<Knowledge> pagedResult = await Service.GetListAsync(filter!).ConfigureAwait(false);
+            PagedResultVm<KnowledgeVm> result = Mapper.Map<PagedResultVm<KnowledgeVm>>(pagedResult);
+            return Ok(result);
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] KnowledgeDto itemDto)
         {
@@ -38,16 +47,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         public override async Task<IActionResult> DeleteAsync(int id)
         {
             return await base.DeleteAsync(id).ConfigureAwait(false);
-
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetListAsync([FromQuery] KnowledgeFilterDto filterDto)
-        {
-            KnowledgeFilter filter = Mapper.Map<KnowledgeFilter>(filterDto);
-            PagedResult<Knowledge> pagedResult = await Service.GetListAsync(filter!).ConfigureAwait(false);
-            PagedResultVm<KnowledgeVm> result = Mapper.Map<PagedResultVm<KnowledgeVm>>(pagedResult);
-            return Ok(result);
-        }
     }
 }

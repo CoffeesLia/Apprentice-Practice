@@ -10,8 +10,11 @@ namespace Stellantis.ProjectName.WebApi.ViewModels
         public string ApplicationName { get; set; }
         public int SquadId { get; set; }
         public string SquadName { get; set; }
+        public KnowledgeStatus Status { get; set; }
 
-        public List<int>? AssociatedSquadIds { get; set; }
-        public List<int>? AssociatedApplicationIds { get; set; }
+        public string StatusText { get; set; }
+
+        //public List<int>? AssociatedSquadIds { get; set; }
+        //public List<int>? AssociatedApplicationIds { get; set; }
     }
 }

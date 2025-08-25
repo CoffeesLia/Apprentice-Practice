@@ -44,12 +44,22 @@ namespace Infrastructure.Tests.Data.Repositories
             _context.Squads.Add(squad);
             await _context.SaveChangesAsync();
 
+            var knowledge = new Knowledge
+            {
+                MemberId = member.Id,
+                ApplicationId = application.Id,
+                SquadId = squad.Id,
+                Status = KnowledgeStatus.Atual,
+                Member = member,
+                Application = application,
+                Squad = squad
+            };
+
             // Act
-            await _repository.CreateAssociationAsync(member.Id, application.Id, squad.Id);
-            await _context.SaveChangesAsync();
+            await _repository.CreateAssociationAsync(knowledge);
 
             // Assert
-            var exists = await _repository.AssociationExistsAsync(member.Id, application.Id, squad.Id);
+            var exists = await _repository.AssociationExistsAsync(member.Id, application.Id, squad.Id, KnowledgeStatus.Atual);
             Assert.True(exists);
         }
 
@@ -57,9 +67,27 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task GetByIdAsyncShouldReturnKnowledge()
         {
             // Arrange
-            Knowledge knowledge = _fixture.Create<Knowledge>();
-            await _repository.CreateAsync(knowledge);
+            var member = _fixture.Build<Member>().With(m => m.Id, 10).Create();
+            var application = _fixture.Build<ApplicationData>().With(a => a.Id, 20).Create();
+            var squad = _fixture.Build<Squad>().With(s => s.Id, 30).Create();
+
+            _context.Members.Add(member);
+            _context.Applications.Add(application);
+            _context.Squads.Add(squad);
             await _context.SaveChangesAsync();
+
+            var knowledge = new Knowledge
+            {
+                MemberId = member.Id,
+                ApplicationId = application.Id,
+                SquadId = squad.Id,
+                Status = KnowledgeStatus.Atual,
+                Member = member,
+                Application = application,
+                Squad = squad
+            };
+
+            await _repository.CreateAssociationAsync(knowledge);
 
             // Act
             Knowledge? retrievedKnowledge = await _repository.GetByIdAsync(knowledge.Id);
@@ -70,20 +98,37 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
-        public async Task DeleteAsyncShouldRemoveKnowledge()
+        public async Task RemoveAsyncShouldRemoveKnowledge()
         {
             // Arrange
-            Knowledge knowledge = _fixture.Create<Knowledge>();
-            await _repository.CreateAsync(knowledge);
+            var member = _fixture.Build<Member>().With(m => m.Id, 100).Create();
+            var application = _fixture.Build<ApplicationData>().With(a => a.Id, 200).Create();
+            var squad = _fixture.Build<Squad>().With(s => s.Id, 300).Create();
+
+            _context.Members.Add(member);
+            _context.Applications.Add(application);
+            _context.Squads.Add(squad);
             await _context.SaveChangesAsync();
+
+            var knowledge = new Knowledge
+            {
+                MemberId = member.Id,
+                ApplicationId = application.Id,
+                SquadId = squad.Id,
+                Status = KnowledgeStatus.Atual,
+                Member = member,
+                Application = application,
+                Squad = squad
+            };
+
+            await _repository.CreateAssociationAsync(knowledge);
 
             // Act
-            await _repository.DeleteAsync(knowledge.Id);
-            await _context.SaveChangesAsync();
+            await _repository.RemoveAsync(member.Id, application.Id, squad.Id, KnowledgeStatus.Atual);
 
             // Assert
-            Knowledge? deletedKnowledge = await _context.Set<Knowledge>().FindAsync(knowledge.Id);
-            Assert.Null(deletedKnowledge);
+            var exists = await _repository.AssociationExistsAsync(member.Id, application.Id, squad.Id, KnowledgeStatus.Atual);
+            Assert.False(exists);
         }
 
         protected virtual void Dispose(bool disposing)
