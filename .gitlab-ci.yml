@@ -12,7 +12,6 @@ variables:
 
 stages:
   - security
-  - build
   - test
 
 before_script:
