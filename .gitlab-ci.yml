@@ -13,6 +13,7 @@ variables:
 stages:
   - security
   - test
+  - build
 
 before_script:
   - IMAGE_TAG="$(echo $CI_COMMIT_SHA | head -c 8)"
