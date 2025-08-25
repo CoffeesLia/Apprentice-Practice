@@ -12,7 +12,7 @@ namespace Stellantis.ProjectName.WebApi.ViewModels
         public string SquadName { get; set; }
         public KnowledgeStatus Status { get; set; }
 
-        //public string StatusText => Status == KnowledgeStatus.Passado ? "passado" : "atual";
+        public string StatusText { get; set; }
 
         //public List<int>? AssociatedSquadIds { get; set; }
         //public List<int>? AssociatedApplicationIds { get; set; }

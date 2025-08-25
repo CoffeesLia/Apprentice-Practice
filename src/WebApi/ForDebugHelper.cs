@@ -367,49 +367,23 @@ namespace Stellantis.ProjectName.WebApi
 
                 // Knowledges
                 context.Knowledges.AddRange(
-                    new Knowledge
-                    {
-                        MemberId = 1, // Matheus
-                        ApplicationId = 1, // Portal AMS
-                        SquadId = 1, // Elite Debuggers
-                    },
-                    new Knowledge
-                    {
-                        MemberId = 2, // Patricia
-                        ApplicationId = 2, // eLog
-                        SquadId = 1, // Elite Debuggers
-
-                    },
-                    new Knowledge
-                    {
-                        MemberId = 3, // Jardel
-                        ApplicationId = 4, // Finance Tracker
-                        SquadId = 4, // Backend Builders
-                    },
-                    new Knowledge
-                    {
-                        MemberId = 4, // Vitória
-                        ApplicationId = 3, // Suite PD
-                        SquadId = 3, // Barramento
-                    },
-                    new Knowledge
-                    {
-                        MemberId = 5, // Andryel
-                        ApplicationId = 5, // HR Portal
-                        SquadId = 5, // Data Wizards
-                    },
-                    new Knowledge
-                    {
-                        MemberId = 6, // Ana
-                        ApplicationId = 6, // Marketing Dashboard
-                        SquadId = 6, // Cloud Ninjas
-                    },
-                    new Knowledge
-                    {
-                        MemberId = 12, // Lucas Almeida
-                        ApplicationId = 12, // Architecture Planner
-                        SquadId = 6, // Cloud Ninjas
-                    }
+                    new Knowledge { MemberId = 1, ApplicationId = 1, SquadId = 1, Status = KnowledgeStatus.Atual }, // Matheus
+                    new Knowledge { MemberId = 2, ApplicationId = 2, SquadId = 1, Status = KnowledgeStatus.Atual }, // Patricia
+                    new Knowledge { MemberId = 3, ApplicationId = 4, SquadId = 4, Status = KnowledgeStatus.Atual }, // Jardel
+                    new Knowledge { MemberId = 4, ApplicationId = 3, SquadId = 3, Status = KnowledgeStatus.Atual }, // Vitória
+                    new Knowledge { MemberId = 5, ApplicationId = 5, SquadId = 5, Status = KnowledgeStatus.Atual }, // Andryel
+                    new Knowledge { MemberId = 6, ApplicationId = 6, SquadId = 6, Status = KnowledgeStatus.Atual }, // Ana
+                    new Knowledge { MemberId = 7, ApplicationId = 2, SquadId = 2, Status = KnowledgeStatus.Atual }, // Cecília
+                    new Knowledge { MemberId = 8, ApplicationId = 1, SquadId = 1, Status = KnowledgeStatus.Atual }, // João Silva
+                    new Knowledge { MemberId = 9, ApplicationId = 4, SquadId = 4, Status = KnowledgeStatus.Atual }, // Maria Oliveira
+                    new Knowledge { MemberId = 10, ApplicationId = 3, SquadId = 3, Status = KnowledgeStatus.Atual }, // Pedro Santos
+                    new Knowledge { MemberId = 11, ApplicationId = 5, SquadId = 5, Status = KnowledgeStatus.Atual }, // Ana Costa
+                    new Knowledge { MemberId = 12, ApplicationId = 12, SquadId = 6, Status = KnowledgeStatus.Atual }, // Lucas Almeida
+                    new Knowledge { MemberId = 13, ApplicationId = 2, SquadId = 2, Status = KnowledgeStatus.Atual }, // Carla Mendes
+                    new Knowledge { MemberId = 14, ApplicationId = 1, SquadId = 1, Status = KnowledgeStatus.Atual }, // Rafael Lima
+                    new Knowledge { MemberId = 15, ApplicationId = 4, SquadId = 4, Status = KnowledgeStatus.Atual }, // Fernanda Souza
+                    new Knowledge { MemberId = 16, ApplicationId = 3, SquadId = 3, Status = KnowledgeStatus.Atual }, // Bruno Rocha
+                    new Knowledge { MemberId = 17, ApplicationId = 5, SquadId = 5, Status = KnowledgeStatus.Atual }  // Juliana Martins
                 );
 
                 // Notificação

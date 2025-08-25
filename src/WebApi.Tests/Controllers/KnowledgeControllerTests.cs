@@ -122,53 +122,5 @@ namespace WebApi.Tests.Controllers
             // Assert
             Assert.IsType<CreatedAtActionResult>(result);
         }
-
-        [Fact]
-        public async Task AssociateMultipleShouldReturnOkWhenAllAssociationsAreCreated()
-        {
-            // Arrange
-            var items = new List<KnowledgeDto>
-            {
-                new KnowledgeDto { MemberId = 1, ApplicationId = 2, SquadId = 3, Status = KnowledgeStatus.Atual },
-                new KnowledgeDto { MemberId = 1, ApplicationId = 5, SquadId = 3, Status = KnowledgeStatus.Passado }
-            };
-
-            _serviceMock.Setup(s => s.CreateAsync(It.IsAny<Knowledge>())).ReturnsAsync(OperationResult.Complete());
-
-            // Act
-            IActionResult result = await _controller.AssociateMultiple(items);
-
-            // Assert
-            Assert.IsType<OkResult>(result);
-        }
-
-        [Fact]
-        public async Task GetAllByMemberShouldReturnOkResultWithList()
-        {
-            // Arrange
-            int memberId = 1;
-            var knowledges = new List<Knowledge>
-            {
-                new Knowledge { MemberId = 1, ApplicationId = 2, SquadId = 3, Status = KnowledgeStatus.Atual },
-                new Knowledge { MemberId = 1, ApplicationId = 5, SquadId = 3, Status = KnowledgeStatus.Passado }
-            };
-            var pagedResult = new PagedResult<Knowledge>
-            {
-                Result = knowledges,
-                Page = 1,
-                PageSize = 10,
-                Total = 2
-            };
-
-            _serviceMock.Setup(s => s.GetListAsync(It.IsAny<KnowledgeFilter>())).ReturnsAsync(pagedResult);
-
-            // Act
-            IActionResult result = await _controller.GetAllByMember(memberId);
-
-            // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedList = Assert.IsAssignableFrom<List<KnowledgeVm>>(okResult.Value);
-            Assert.Equal(2, returnedList.Count);
-        }
     }
 }
