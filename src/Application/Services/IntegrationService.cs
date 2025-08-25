@@ -54,38 +54,37 @@ namespace Stellantis.ProjectName.Application.Services
         {
             ArgumentNullException.ThrowIfNull(item);
 
+            // Validação do objeto pelo FluentValidation
             var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
             if (!validationResult.IsValid)
             {
                 return OperationResult.InvalidData(validationResult);
             }
 
+            // Obter o registro atual do banco
             var existingItem = await Repository.GetByIdAsync(item.Id).ConfigureAwait(false);
             if (existingItem is null)
             {
                 return OperationResult.NotFound(Localizer[IntegrationResources.MessageNotFound]);
             }
 
-            UnitOfWork.IntegrationRepository.DetachEntity(existingItem);
-
-            bool nameUnchanged = item.Name == existingItem.Name;
-            bool descriptionUnchanged = item.Description == existingItem.Description;
-            bool applicationDataIdUnchanged = item.ApplicationDataId == existingItem.ApplicationDataId;
-
-            if (nameUnchanged && descriptionUnchanged && applicationDataIdUnchanged)
+            // Verificar se houve alguma alteração
+            if (existingItem.Name == item.Name &&
+                existingItem.Description == item.Description &&
+                existingItem.ApplicationDataId == item.ApplicationDataId)
             {
-                return OperationResult.InvalidData(new ValidationResult(
-                [
-                    new ValidationFailure(nameof(item.Name), Localizer[IntegrationResources.MessageConflict]),
-                    new ValidationFailure(nameof(item.Description), Localizer[IntegrationResources.MessageConflict]),
-                    new ValidationFailure(nameof(item.ApplicationDataId), Localizer[IntegrationResources.MessageConflict])
-                ]));
+                // Nenhuma modificação -> não precisa atualizar
+                return OperationResult.Complete(Localizer[IntegrationResources.UpdatedSuccessfully]);
             }
 
-            await Repository.UpdateAsync(item).ConfigureAwait(false);
+            // Atualizar somente os campos alterados
+            existingItem.Name = item.Name;
+            existingItem.Description = item.Description;
+            existingItem.ApplicationDataId = item.ApplicationDataId;
+
+            await Repository.UpdateAsync(existingItem).ConfigureAwait(false);
             return OperationResult.Complete(Localizer[IntegrationResources.UpdatedSuccessfully]);
         }
-
 
         public new async Task<OperationResult> DeleteAsync(int id)
         {

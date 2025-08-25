@@ -28,11 +28,11 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
             builder.Property(i => i.Status)
                 .IsRequired();
 
-            builder.HasOne(i => i.Application) // Configura o relacionamento com ApplicationData
-                .WithMany() // Sem propriedade de navegação explícita
+            builder.HasOne(i => i.Application) 
+                .WithMany() 
                 .HasForeignKey(i => i.ApplicationId)
                 .IsRequired()
-                .OnDelete(DeleteBehavior.Restrict); // Evita exclusão em cascata
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder
                 .HasMany(i => i.Members)

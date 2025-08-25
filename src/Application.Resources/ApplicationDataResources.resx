@@ -138,4 +138,10 @@
   <data name="ProductOwnerRequired" xml:space="preserve">
     <value>Product Owner is required.</value>
   </data>
+  <data name="IntegrationLinkedError" xml:space="preserve">
+    <value>Cannot delete the application because there are linked integrations.</value>
+  </data>
+  <data name="ServiceLinkedError" xml:space="preserve">
+    <value>Cannot delete the application because there are linked services. </value>
+  </data>
 </root>
