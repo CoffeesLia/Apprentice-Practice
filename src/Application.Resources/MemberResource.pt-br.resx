@@ -139,6 +139,6 @@
     <value>Custo do membro é obrigátorio.</value>
   </data>
   <data name="LeaderSquadAlreadyExists" xml:space="preserve">
-    <value>Jáa existe um líder para este Squad.</value>
+    <value>Já existe um líder para este Squad.</value>
   </data>
 </root>

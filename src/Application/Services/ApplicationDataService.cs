@@ -93,6 +93,41 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.Conflict(_localizer[nameof(ApplicationDataResources.ServiceLinkedError)]);
             }
 
+            // Verifica repositórios vinculados
+            var repos = await UnitOfWork.RepoRepository.GetListAsync(new RepoFilter { ApplicationId = id }).ConfigureAwait(false);
+            if (repos.Result.Any())
+            {
+                return OperationResult.Conflict(_localizer[nameof(ApplicationDataResources.RepoLinkedError)]);
+            }
+
+            // Verifica documentos vinculados
+            var documents = await UnitOfWork.DocumentDataRepository.GetListAsync(new DocumentDataFilter { ApplicationId = id }).ConfigureAwait(false);
+            if (documents.Result.Any())
+            {
+                return OperationResult.Conflict(_localizer[nameof(ApplicationDataResources.DocumentLinkedError)]);
+            }
+
+            // Verifica conhecimentos vinculados
+            var knowledges = await UnitOfWork.KnowledgeRepository.GetListAsync(new KnowledgeFilter { ApplicationId = id }).ConfigureAwait(false);
+            if (knowledges.Result.Any())
+            {
+                return OperationResult.Conflict(_localizer[nameof(ApplicationDataResources.KnowledgeLinkedError)]);
+            }
+
+            // Verifica feedbacks vinculados
+            var feedbacks = await UnitOfWork.FeedbackRepository.GetMembersByApplicationIdAsync(id).ConfigureAwait(false);
+            if (feedbacks.Any())
+            {
+                return OperationResult.Conflict(_localizer[nameof(ApplicationDataResources.FeedbackLinkedError)]);
+            }
+
+            // Verifica incidentes vinculados
+            var incidents = await UnitOfWork.IncidentRepository.GetMembersByApplicationIdAsync(id).ConfigureAwait(false);
+            if (incidents.Any())
+            {
+                return OperationResult.Conflict(_localizer[nameof(ApplicationDataResources.IncidentLinkedError)]);
+            }
+
             return await base.DeleteAsync(item).ConfigureAwait(false);
         }
 

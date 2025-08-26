@@ -49,20 +49,12 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 sortDir: filter.SortDir
                 ).ConfigureAwait(false);
                 return pagedResult;
-        } 
-        public async Task<bool> VerifyNameExistsAsync(string Name)
-        {
-            return await Context.Set<Integration>().AnyAsync(repo => repo.Name == Name).ConfigureAwait(false);
         }
-
-        public async Task<bool> VerifyDescriptionExistsAsync(string description)
+        public async Task<bool> IsIntegrationNameUniqueAsync(string name, int? id = null)
         {
-            return await Context.Set<Integration>().AnyAsync(repo => repo.Description == description).ConfigureAwait(false);
-        }
-
-        public async Task<bool> VerifyApplicationIdExistsAsync(int applicationId)
-        {
-            return await Context.Set<Integration>().AnyAsync(repo => repo.ApplicationDataId == applicationId).ConfigureAwait(false);
+            return !await Context.Set<Integration>()
+                .AnyAsync(a => a.Name == name && (!id.HasValue || a.Id != id))
+                .ConfigureAwait(false);
         }
     }
 }

@@ -88,11 +88,47 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Cannot delete the application because there are linked documents..
+        /// </summary>
+        public static string DocumentLinkedError {
+            get {
+                return ResourceManager.GetString("DocumentLinkedError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Não é possível excluir a aplicação pois existem feedbacks vinculados.   .
+        /// </summary>
+        public static string FeedbackLinkedError {
+            get {
+                return ResourceManager.GetString("FeedbackLinkedError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Não é possível excluir a aplicação pois existem incidentes vinculados..
+        /// </summary>
+        public static string IncidentLinkedError {
+            get {
+                return ResourceManager.GetString("IncidentLinkedError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Cannot delete the application because there are linked integrations..
         /// </summary>
         public static string IntegrationLinkedError {
             get {
                 return ResourceManager.GetString("IntegrationLinkedError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Cannot delete the application because there are linked member knowledges. .
+        /// </summary>
+        public static string KnowledgeLinkedError {
+            get {
+                return ResourceManager.GetString("KnowledgeLinkedError", resourceCulture);
             }
         }
         
@@ -120,6 +156,15 @@ namespace Stellantis.ProjectName.Application.Resources {
         public static string ProductOwnerRequired {
             get {
                 return ResourceManager.GetString("ProductOwnerRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Cannot delete the application because there are linked repositories..
+        /// </summary>
+        public static string RepoLinkedError {
+            get {
+                return ResourceManager.GetString("RepoLinkedError", resourceCulture);
             }
         }
         

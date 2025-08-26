@@ -135,6 +135,9 @@
   <data name="MessageSucess" xml:space="preserve">
     <value>Integração criada com sucesso.</value>
   </data>
+  <data name="NameAlreadyExistsInApplication" xml:space="preserve">
+    <value>Já existe uma integração com este nome para esta aplicação.</value>
+  </data>
   <data name="NameIsRequired" xml:space="preserve">
     <value>Nome é obrigatório.</value>
   </data>

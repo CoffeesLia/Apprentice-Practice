@@ -144,4 +144,19 @@
   <data name="ServiceLinkedError" xml:space="preserve">
     <value>Não é possível excluir a aplicação pois existem serviços vinculados. </value>
   </data>
+  <data name="RepoLinkedError" xml:space="preserve">
+    <value>Não é possível excluir a aplicação pois existem repositórios vinculados.</value>
+  </data>
+  <data name="DocumentLinkedError" xml:space="preserve">
+    <value>Não é possível excluir a aplicação pois existem documentos vinculados. </value>
+  </data>
+  <data name="KnowledgeLinkedError" xml:space="preserve">
+    <value>Não é possível excluir a aplicação pois existem conhecimento de membros vinculados. </value>
+  </data>
+  <data name="FeedbackLinkedError" xml:space="preserve">
+    <value>Cannot delete the application because there are linked feedbacks.</value>
+  </data>
+  <data name="IncidentLinkedError" xml:space="preserve">
+    <value>Cannot delete the application because there are linked incidents.</value>
+  </data>
 </root>
