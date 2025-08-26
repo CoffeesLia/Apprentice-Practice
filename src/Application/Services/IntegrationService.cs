@@ -28,12 +28,12 @@ namespace Stellantis.ProjectName.Application.Services
 
             if (await Repository.VerifyNameExistsAsync(item.Name).ConfigureAwait(false))
             {
-              return OperationResult.Conflict(Localizer[IntegrationResources.MessageConflict]);
+              return OperationResult.InvalidData(validationResult);
             }
 
             if (await Repository.VerifyDescriptionExistsAsync(item.Description).ConfigureAwait(false))
             {
-                return OperationResult.Conflict(Localizer[IntegrationResources.MessageConflict]);
+                return OperationResult.InvalidData(validationResult);
             }
 
             await Repository.CreateAsync(item).ConfigureAwait(false);
@@ -54,30 +54,25 @@ namespace Stellantis.ProjectName.Application.Services
         {
             ArgumentNullException.ThrowIfNull(item);
 
-            // Validação do objeto pelo FluentValidation
             var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
             if (!validationResult.IsValid)
             {
                 return OperationResult.InvalidData(validationResult);
             }
 
-            // Obter o registro atual do banco
             var existingItem = await Repository.GetByIdAsync(item.Id).ConfigureAwait(false);
             if (existingItem is null)
             {
                 return OperationResult.NotFound(Localizer[IntegrationResources.MessageNotFound]);
             }
 
-            // Verificar se houve alguma alteração
             if (existingItem.Name == item.Name &&
                 existingItem.Description == item.Description &&
                 existingItem.ApplicationDataId == item.ApplicationDataId)
             {
-                // Nenhuma modificação -> não precisa atualizar
                 return OperationResult.Complete(Localizer[IntegrationResources.UpdatedSuccessfully]);
             }
 
-            // Atualizar somente os campos alterados
             existingItem.Name = item.Name;
             existingItem.Description = item.Description;
             existingItem.ApplicationDataId = item.ApplicationDataId;

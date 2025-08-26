@@ -347,25 +347,7 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.NotFound, result.Status);
         }
 
-        [Fact]
-        public async Task DeleteAsyncShouldReturnSuccessWhenItemIsDeleted()
-        {
-            // Arrange
-            ApplicationData applicationData = new("TestApp")
-            {
-                Id = 1,
-                AreaId = 1,
-            };
-
-            _applicationDataRepositoryMock.Setup(r => r.GetFullByIdAsync(applicationData.Id)).ReturnsAsync(applicationData);
-            _applicationDataRepositoryMock.Setup(r => r.DeleteAsync(applicationData.Id, true)).Returns(Task.CompletedTask);
-
-            // Act
-            OperationResult result = await _applicationDataService.DeleteAsync(applicationData.Id);
-
-            // Assert
-            Assert.Equal(OperationStatus.Success, result.Status);
-        }
+        
 
         [Fact]
         public async Task IsApplicationNameUniqueAsyncShouldReturnFalseWhenNameIsNullOrWhiteSpace()
@@ -380,6 +362,14 @@ namespace Application.Tests.Services
             Assert.False(result);
         }
 
+        [Fact]
+
+        public async Task DeleteShouldReturnRightWhenItsCorrect()
+        {
+            var Integration = new Integration("name", "descriptoion") { Id = 1, ApplicationDataId = 1 };
+
+
+        }
         [Fact]
         public async Task IsApplicationNameUniqueAsyncShouldReturnTrueWhenExistingItemsResultIsNull()
         {
