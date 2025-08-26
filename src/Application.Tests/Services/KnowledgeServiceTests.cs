@@ -5,13 +5,11 @@ using FluentValidation.Results;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
-using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Domain.Entities;
-using System;
 using System.Globalization;
 using Xunit;
 
@@ -30,7 +28,7 @@ namespace Application.Tests.Services
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _knowledgeRepositoryMock = new Mock<IKnowledgeRepository>();
 
-            Microsoft.Extensions.Localization.IStringLocalizerFactory localizer = LocalizerFactorHelper.Create();
+            var localizer = LocalizerFactorHelper.Create();
             var validatorMock = new Mock<IValidator<Knowledge>>();
 
             _unitOfWorkMock.Setup(u => u.KnowledgeRepository).Returns(_knowledgeRepositoryMock.Object);
@@ -46,10 +44,10 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task CreateAsyncWhenValidationFails()
+        public async Task CreateAsyncWhenValidationFailsReturnsInvalidData()
         {
             // Arrange
-            Knowledge knowledge = _fixture.Build<Knowledge>()
+            var knowledge = _fixture.Build<Knowledge>()
                 .With(k => k.MemberId, 0)
                 .With(k => k.ApplicationId, 0)
                 .Create();
@@ -61,34 +59,45 @@ namespace Application.Tests.Services
             var service = new KnowledgeService(_unitOfWorkMock.Object, LocalizerFactorHelper.Create(), validatorMock.Object);
 
             // Act
-            OperationResult result = await service.CreateAsync(knowledge);
+            var result = await service.CreateAsync(knowledge);
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
         }
 
         [Fact]
-        public async Task CreateAsyncShouldReturnConflictWhenAssociationAlreadyExists()
+        public async Task CreateAsyncWhenAssociationAlreadyExistsReturnsConflict()
         {
             // Arrange
-            Knowledge knowledge = _fixture.Create<Knowledge>();
+            var knowledge = _fixture.Build<Knowledge>()
+                .With(k => k.Status, KnowledgeStatus.Atual)
+                .Create();
+
             var validatorMock = new Mock<IValidator<Knowledge>>();
             validatorMock.Setup(v => v.ValidateAsync(knowledge, default)).ReturnsAsync(new ValidationResult());
-            _knowledgeRepositoryMock.Setup(r => r.AssociationExistsAsync(knowledge.MemberId, knowledge.ApplicationId, knowledge.SquadId)).ReturnsAsync(true);
 
-            // Mock dos repositórios de membro e aplicação
             var memberRepositoryMock = new Mock<IMemberRepository>();
             var applicationRepositoryMock = new Mock<IApplicationDataRepository>();
-            memberRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.MemberId)).ReturnsAsync(new Member { Id = knowledge.MemberId, SquadId = knowledge.SquadId, Name = "Test", Role = "Test", Email = "test@test.com", Cost = 1 });
+            memberRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.MemberId)).ReturnsAsync(
+                new Member
+                {
+                    Id = knowledge.MemberId,
+                    SquadId = knowledge.SquadId,
+                    Name = "Test Name",
+                    Role = "Test Role",
+                    Email = "test@email.com",
+                    Cost = 1m
+                }
+            ); 
             applicationRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.ApplicationId)).ReturnsAsync(new ApplicationData("App") { Id = knowledge.ApplicationId, SquadId = knowledge.SquadId });
-
             _unitOfWorkMock.Setup(u => u.MemberRepository).Returns(memberRepositoryMock.Object);
             _unitOfWorkMock.Setup(u => u.ApplicationDataRepository).Returns(applicationRepositoryMock.Object);
+            _knowledgeRepositoryMock.Setup(r => r.AssociationExistsAsync(knowledge.MemberId, knowledge.ApplicationId, knowledge.SquadId, knowledge.Status)).ReturnsAsync(true);
 
             var service = new KnowledgeService(_unitOfWorkMock.Object, LocalizerFactorHelper.Create(), validatorMock.Object);
 
             // Act
-            OperationResult result = await service.CreateAsync(knowledge);
+            var result = await service.CreateAsync(knowledge);
 
             // Assert
             Assert.Equal(OperationStatus.Conflict, result.Status);
@@ -96,12 +105,15 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task CreateAsyncWhenSuccessful()
+        public async Task CreateAsyncWhenSuccessfulReturnsSuccess()
         {
             // Arrange
             var member = _fixture.Build<Member>()
+                .With(m => m.Id, 1)
                 .With(m => m.Name, "Valid Name")
+                .With(m => m.Role, "SquadLeader")
                 .With(m => m.Email, "valid.email@example.com")
+                .With(m => m.Cost, 1m)
                 .With(m => m.SquadId, 1)
                 .Create();
 
@@ -120,15 +132,13 @@ namespace Application.Tests.Services
                 .With(k => k.Member, member)
                 .With(k => k.Application, application)
                 .With(k => k.Squad, squad)
+                .With(k => k.Status, KnowledgeStatus.Atual)
                 .Create();
 
             var validatorMock = new Mock<IValidator<Knowledge>>();
             var validationResult = new ValidationResult();
             validatorMock.Setup(v => v.ValidateAsync(knowledge, default)).ReturnsAsync(validationResult);
 
-            _knowledgeRepositoryMock.Setup(r => r.AssociationExistsAsync(knowledge.MemberId, knowledge.ApplicationId, knowledge.SquadId)).ReturnsAsync(false);
-
-            // Mock dos repositórios de membro, aplicação e squad
             var memberRepositoryMock = new Mock<IMemberRepository>();
             var applicationRepositoryMock = new Mock<IApplicationDataRepository>();
             var squadRepositoryMock = new Mock<ISquadRepository>();
@@ -141,60 +151,59 @@ namespace Application.Tests.Services
             _unitOfWorkMock.Setup(u => u.ApplicationDataRepository).Returns(applicationRepositoryMock.Object);
             _unitOfWorkMock.Setup(u => u.SquadRepository).Returns(squadRepositoryMock.Object);
             _unitOfWorkMock.Setup(u => u.CommitAsync()).Returns(Task.CompletedTask);
+            _knowledgeRepositoryMock.Setup(r => r.AssociationExistsAsync(knowledge.MemberId, knowledge.ApplicationId, knowledge.SquadId, knowledge.Status)).ReturnsAsync(false);
 
             var service = new KnowledgeService(_unitOfWorkMock.Object, LocalizerFactorHelper.Create(), validatorMock.Object);
 
             // Act
-            OperationResult result = await service.CreateAsync(knowledge);
+            var result = await service.CreateAsync(knowledge);
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
         }
 
         [Fact]
-        public async Task GetItemAsyncWhenItemDoesNotExist()
+        public async Task GetItemAsyncWhenItemDoesNotExistReturnsNotFound()
         {
             // Arrange
             int id = _fixture.Create<int>();
             _knowledgeRepositoryMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync((Knowledge?)null);
 
             // Act
-            OperationResult result = await _knowledgeService.GetItemAsync(id);
+            var result = await _knowledgeService.GetItemAsync(id);
 
             // Assert
             Assert.Equal(OperationStatus.NotFound, result.Status);
         }
 
         [Fact]
-        public async Task GetItemAsyncWhenItemExists()
+        public async Task GetItemAsyncWhenItemExistsReturnsSuccess()
         {
             // Arrange
-            Knowledge knowledge = _fixture.Create<Knowledge>();
+            var knowledge = _fixture.Create<Knowledge>();
             _knowledgeRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.Id)).ReturnsAsync(knowledge);
 
             // Act
-            OperationResult result = await _knowledgeService.GetItemAsync(knowledge.Id);
+            var result = await _knowledgeService.GetItemAsync(knowledge.Id);
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
         }
 
         [Fact]
-        public async Task UpdateAsyncShouldReturnNotFoundWhenKnowledgeDoesNotExist()
+        public async Task UpdateAsyncWhenKnowledgeDoesNotExistReturnsNotFound()
         {
             // Arrange
-            Knowledge knowledge = _fixture.Create<Knowledge>();
+            var knowledge = _fixture.Create<Knowledge>();
             _knowledgeRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.Id)).ReturnsAsync((Knowledge?)null);
 
-            // Mock do validator para evitar NullReferenceException
             var validatorMock = new Mock<IValidator<Knowledge>>();
             validatorMock.Setup(v => v.ValidateAsync(knowledge, default)).ReturnsAsync(new ValidationResult());
 
-            // Recrie o serviço com o validator mockado corretamente
             var service = new KnowledgeService(_unitOfWorkMock.Object, LocalizerFactorHelper.Create(), validatorMock.Object);
 
             // Act
-            OperationResult result = await service.UpdateAsync(knowledge);
+            var result = await service.UpdateAsync(knowledge);
 
             // Assert
             Assert.Equal(OperationStatus.NotFound, result.Status);
@@ -202,27 +211,68 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task DeleteAsyncWhenItemDoesNotExist()
+        public async Task UpdateAsyncWhenAssociationIsPastReturnsConflict()
+        {
+            // Arrange
+            var knowledge = _fixture.Build<Knowledge>()
+                .With(k => k.Status, KnowledgeStatus.Passado)
+                .Create();
+
+            _knowledgeRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.Id)).ReturnsAsync(knowledge);
+
+            var validatorMock = new Mock<IValidator<Knowledge>>();
+            validatorMock.Setup(v => v.ValidateAsync(knowledge, default)).ReturnsAsync(new ValidationResult());
+
+            var service = new KnowledgeService(_unitOfWorkMock.Object, LocalizerFactorHelper.Create(), validatorMock.Object);
+
+            // Act
+            var result = await service.UpdateAsync(knowledge);
+
+            // Assert
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal(KnowledgeResource.CannotEditOrRemovePastAssociation, result.Message);
+        }
+
+        [Fact]
+        public async Task DeleteAsyncWhenItemDoesNotExistReturnsNotFound()
         {
             // Arrange
             int id = _fixture.Create<int>();
             _knowledgeRepositoryMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync((Knowledge?)null);
 
             // Act
-            OperationResult result = await _knowledgeService.DeleteAsync(id);
+            var result = await _knowledgeService.DeleteAsync(id);
 
             // Assert
             Assert.Equal(OperationStatus.NotFound, result.Status);
         }
+
         [Fact]
-        public async Task DeleteAsyncWhenSuccessful()
+        public async Task DeleteAsyncWhenAssociationIsPastReturnsConflict()
+        {
+            // Arrange
+            var knowledge = _fixture.Build<Knowledge>()
+                .With(k => k.Status, KnowledgeStatus.Passado)
+                .Create();
+
+            _knowledgeRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.Id)).ReturnsAsync(knowledge);
+
+            // Act
+            var result = await _knowledgeService.DeleteAsync(knowledge.Id);
+
+            // Assert
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal(KnowledgeResource.CannotEditOrRemovePastAssociation, result.Message);
+        }
+
+        [Fact]
+        public async Task DeleteAsyncWhenSuccessfulReturnsSuccess()
         {
             // Arrange
             var member = _fixture.Build<Member>()
                 .With(m => m.Id, 1)
                 .With(m => m.SquadId, 10)
                 .With(m => m.Role, "SquadLeader")
-               // .With(m => m.SquadLeader, true)
                 .Create();
 
             var application = _fixture.Build<ApplicationData>()
@@ -235,6 +285,7 @@ namespace Application.Tests.Services
                 .With(k => k.MemberId, member.Id)
                 .With(k => k.ApplicationId, application.Id)
                 .With(k => k.SquadId, member.SquadId)
+                .With(k => k.Status, KnowledgeStatus.Atual)
                 .Create();
 
             _knowledgeRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.Id)).ReturnsAsync(knowledge);
@@ -250,7 +301,7 @@ namespace Application.Tests.Services
             _unitOfWorkMock.Setup(u => u.ApplicationDataRepository).Returns(applicationRepositoryMock.Object);
 
             // Act
-            OperationResult result = await _knowledgeService.DeleteAsync(knowledge.Id);
+            var result = await _knowledgeService.DeleteAsync(knowledge.Id);
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
