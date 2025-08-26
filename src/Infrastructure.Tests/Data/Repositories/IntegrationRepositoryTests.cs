@@ -59,6 +59,63 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
+        public async Task IsIntegrationNameUniqueAsync_ReturnsFalse_WhenNameExists()
+        {
+            // Arrange
+            _fixture.Behaviors.Remove(new ThrowingRecursionBehavior());
+            _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+
+            var integration = _fixture.Build<Integration>()
+                .With(i => i.Name, "Nome Teste")
+                .Without(i => i.ApplicationData)
+                .Create();
+
+            await _context.Set<Integration>().AddAsync(integration);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.IsIntegrationNameUniqueAsync("Nome Teste");
+
+            // Assert
+            Assert.False(result);
+        }
+
+        [Fact]
+        public async Task IsIntegrationNameUniqueAsync_ReturnsTrue_WhenNameDoesNotExist()
+        {
+            // Arrange
+            var name = _fixture.Create<string>();
+
+            // Act
+            var result = await _repository.IsIntegrationNameUniqueAsync(name);
+
+            // Assert
+            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task IsIntegrationNameUniqueAsync_ReturnsTrue_WhenNameExistsButIdIsSame()
+        {
+            // Arrange
+            _fixture.Behaviors.Remove(new ThrowingRecursionBehavior());
+            _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+
+            var integration = _fixture.Build<Integration>()
+                .With(i => i.Name, "Nome Teste")
+                .Without(i => i.ApplicationData)
+                .Create();
+
+            await _context.Set<Integration>().AddAsync(integration);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.IsIntegrationNameUniqueAsync("Nome Teste", integration.Id);
+
+            // Assert
+            Assert.True(result);
+        }
+
+        [Fact]
         public async Task DeleteAsyncWhenCalled()
         {
             // Arrange
@@ -79,25 +136,6 @@ namespace Infrastructure.Tests.Data.Repositories
             // Assert
             var result = await _context.Set<Integration>().FindAsync(integration.Id);
             Assert.Null(result);
-        }
-        
-
-        [Fact]
-        public async Task VerifyNameExistsAsyncShouldReturnTrueWhenNameExists()
-        {
-            // Arrange  
-            var repo = new Integration("Test Name", "Test Description")
-            {
-                ApplicationDataId = 1,
-            };
-            await _context.Set<Integration>().AddAsync(repo);
-            await _context.SaveChangesAsync();
-
-            // Act  
-            var result = await _repository.VerifyNameExistsAsync(repo.Name);
-
-            // Assert  
-            Assert.True(result);
         }
 
         [Fact]
@@ -181,49 +219,6 @@ namespace Infrastructure.Tests.Data.Repositories
             var result = await _context.Set<Integration>().FindAsync(integration.Id);
             Assert.NotNull(result);
             Assert.Equal(IntegrationResources.UpdatedSuccessfully, result.Name);
-        }
-
-        [Fact]
-        public async Task VerifyDescriptionExistsAsyncItWhenDescriptionDoesNotExist()
-        {
-            // Arrange  
-            var description = _fixture.Create<string>();
-
-            // Act  
-            var result = await _repository.VerifyDescriptionExistsAsync(description);
-
-            // Assert  
-            Assert.False(result);
-        }
-
-
-        [Fact]
-        public async Task VerifyDescriptionExistsAsyncItWhenDescriptionExists()
-        {
-            // Arrange  
-            var integration = new Integration("Test Name", "Test Description")
-            {
-                ApplicationDataId = 1
-            };
-            await _context.Set<Integration>().AddAsync(integration);
-            await _context.SaveChangesAsync();
-
-            // Act  
-            var result = await _repository.VerifyDescriptionExistsAsync(integration.Description);
-
-            // Assert  
-            Assert.True(result);
-        }
-
-        [Fact]
-        public async Task VerifyApplicationIdExistsAsyncWhenApplicationDoesNotExist()
-        {
-            // Arrange  
-            var id = _fixture.Create<int>();
-            // Act  
-            var result = await _repository.VerifyApplicationIdExistsAsync(id);
-            // Assert  
-            Assert.False(result);
         }
 
         [Fact]
