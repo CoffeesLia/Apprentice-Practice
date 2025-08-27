@@ -86,10 +86,7 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task VerifyNameExistsAsyncShouldReturnTrueWhenNameExists()
         {
             // Arrange  
-            var repo = new Integration("Test Name", "Test Description")
-            {
-                ApplicationDataId = 1,
-            };
+            var repo = new Integration { Name = "Test Name", Description = "Test Description", ApplicationDataId = 1 };
             await _context.Set<Integration>().AddAsync(repo);
             await _context.SaveChangesAsync();
 
@@ -104,10 +101,7 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task CreateAsyncWhenCalled()
         {
             // Arrange
-            var integration = new Integration("Test Name", "Test Description")
-            {
-                ApplicationDataId = 1
-            };
+            var integration = new Integration { Name = "Test Name", Description = "Test Description", ApplicationDataId = 1 };
             // Act
             await _repository.CreateAsync(integration);
             // Assert
@@ -119,10 +113,7 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task GetListAsyncReturnFilterName()
         {
             // Arrange
-            var integration = new Integration("Test Integration", "Test Description")
-            {
-                ApplicationDataId = 1
-            };
+            var integration = new Integration { Name = "Test Integration", Description = "Test Description", ApplicationDataId = 1 };
             await _context.Set<Integration>().AddAsync(integration);
             await _context.SaveChangesAsync();
             var filter = new IntegrationFilter { Name = integration.Name, Page = 1, PageSize = 10, ApplicationDataId = integration.ApplicationDataId };
@@ -163,10 +154,7 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task UpdateAsyncWhenCalled()
         {
             // Arrange  
-            var integration = new Integration("Original Name", "Original Description")
-            {
-                ApplicationDataId = 1
-            };
+            var integration = new Integration { Name = "Original Name", Description = "Original Description", ApplicationDataId = 1 };
 
             await _context.Set<Integration>().AddAsync(integration);
             await _context.SaveChangesAsync();
@@ -201,10 +189,7 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task VerifyDescriptionExistsAsyncItWhenDescriptionExists()
         {
             // Arrange  
-            var integration = new Integration("Test Name", "Test Description")
-            {
-                ApplicationDataId = 1
-            };
+            var integration = new Integration { Name = "Test Name", Description = "Test Description", ApplicationDataId = 1 };
             await _context.Set<Integration>().AddAsync(integration);
             await _context.SaveChangesAsync();
 

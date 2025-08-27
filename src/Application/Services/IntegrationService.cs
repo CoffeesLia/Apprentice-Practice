@@ -35,6 +35,11 @@ namespace Stellantis.ProjectName.Application.Services
             {
                 return OperationResult.InvalidData(validationResult);
             }
+            
+            if (await Repository.VerifyApplicationIdExistsAsync(item.ApplicationDataId).ConfigureAwait(false))
+            {
+                return OperationResult.InvalidData(validationResult);
+            }
 
             await Repository.CreateAsync(item).ConfigureAwait(false);
             return OperationResult.Complete(Localizer[IntegrationResources.MessageSucess]);
@@ -71,6 +76,21 @@ namespace Stellantis.ProjectName.Application.Services
                 existingItem.ApplicationDataId == item.ApplicationDataId)
             {
                 return OperationResult.Complete(Localizer[IntegrationResources.UpdatedSuccessfully]);
+            }
+
+            if (await Repository.VerifyNameExistsAsync(item.Name).ConfigureAwait(false))
+            {
+                return OperationResult.InvalidData(validationResult);
+            }
+
+            if (await Repository.VerifyDescriptionExistsAsync(item.Description).ConfigureAwait(false))
+            {
+                return OperationResult.InvalidData(validationResult);
+            }
+
+            if (await Repository.VerifyApplicationIdExistsAsync(item.ApplicationDataId).ConfigureAwait(false))
+            {
+                return OperationResult.InvalidData(validationResult);
             }
 
             existingItem.Name = item.Name;

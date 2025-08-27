@@ -362,14 +362,7 @@ namespace Application.Tests.Services
             Assert.False(result);
         }
 
-        [Fact]
 
-        public async Task DeleteShouldReturnRightWhenItsCorrect()
-        {
-            var Integration = new Integration("name", "descriptoion") { Id = 1, ApplicationDataId = 1 };
-
-
-        }
         [Fact]
         public async Task IsApplicationNameUniqueAsyncShouldReturnTrueWhenExistingItemsResultIsNull()
         {

@@ -81,13 +81,13 @@ namespace Stellantis.ProjectName.Application.Resources
         }
 
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Message Conflict
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Application Is Required.
         /// </summary>
-        public static string MessageConflict
+        public static string ApplicationIsRequired
         {
             get
             {
-                return ResourceManager.GetString("MessageConflict", resourceCulture);
+                return ResourceManager.GetString("ApplicationIsRequired", resourceCulture);
             }
         }
 

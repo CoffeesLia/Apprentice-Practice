@@ -19,7 +19,7 @@ namespace WebApi.Tests.Controllers
 
             using var smtpWrapper = new SmtpClientWrapper();
 
-            // Act & Assert
+            // Act & Assert'
             // O método não lança exceção em ambiente de teste local sem rede externa.
             // Portanto, apenas verifique se não lança exceção.
             await smtpWrapper.SendMailAsync(mailMessage);

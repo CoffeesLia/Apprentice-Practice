@@ -1,9 +1,9 @@
 ﻿namespace Stellantis.ProjectName.Domain.Entities
 {
-    public class Integration(string name, string description) : EntityBase
+    public class Integration : EntityBase
     {
-        public string Name { get; set; } = name;
-        public string Description { get; set; } = description;
+        public string Name { get; set; } = null!;
+        public string Description { get; set; } = null!;
         public int ApplicationDataId { get; set; }
         public ApplicationData ApplicationData { get; set; } = null!;
     }

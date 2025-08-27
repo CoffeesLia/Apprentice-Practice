@@ -65,6 +65,8 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.InvalidData, result.Status);
         }
 
+
+
         [Fact]
         public async Task CreateAsyncWhenAssociationAlreadyExistsReturnsConflict()
         {
@@ -305,6 +307,380 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
+        }
+
+
+        [Fact]
+        public async Task GetListAsyncWithMemberIdFilterReturnsFilteredResults()
+        {
+            // Arrange
+            var filter = new KnowledgeFilter { MemberId = 1 };
+            var knowledges = _fixture.Build<Knowledge>()
+                .With(k => k.MemberId, 1)
+                .CreateMany(3)
+                .ToList();
+
+            _knowledgeRepositoryMock
+                .Setup(r => r.GetListAsync(It.Is<KnowledgeFilter>(f => f.MemberId == 1)))
+                .ReturnsAsync(new PagedResult<Knowledge> { Result = knowledges, Page = 1, PageSize = 10, Total = 3 });
+
+            // Exemplo 2:
+            _knowledgeRepositoryMock
+                .Setup(r => r.GetListAsync(It.Is<KnowledgeFilter>(f => f.ApplicationId == 2)))
+                .ReturnsAsync(new PagedResult<Knowledge> { Result = new List<Knowledge>(), Page = 1, PageSize = 10, Total = 2 });
+
+            // Exemplo 3:
+            _knowledgeRepositoryMock
+                .Setup(r => r.GetListAsync(It.Is<KnowledgeFilter>(f => f.SquadId == 5)))
+                .ReturnsAsync(new PagedResult<Knowledge> { Result = new List<Knowledge>(), Page = 1, PageSize = 10, Total = 1 });
+
+            // Exemplo 4:
+            _knowledgeRepositoryMock
+                .Setup(r => r.GetListAsync(It.Is<KnowledgeFilter>(f => f.Status == KnowledgeStatus.Atual)))
+                .ReturnsAsync(new PagedResult<Knowledge> { Result = new List<Knowledge>(), Page = 1, PageSize = 10, Total = 4 });
+
+            // Act
+            var result = await _knowledgeService.GetListAsync(filter);
+
+            // Assert
+            Assert.Equal(1, result.Page);
+            Assert.Equal(10, result.PageSize);
+            Assert.Equal(4, result.Total);
+        }
+
+        [Fact]
+        public async Task GetListAsyncWithApplicationIdFilterReturnsFilteredResults()
+        {
+            // Arrange
+            var filter = new KnowledgeFilter { ApplicationId = 2 };
+            _knowledgeRepositoryMock
+                .Setup(r => r.GetListAsync(It.Is<KnowledgeFilter>(f => f.ApplicationId == 2)))
+                .ReturnsAsync(new PagedResult<Knowledge> { Result = new List<Knowledge>(), Page = 1, PageSize = 10, Total = 2 });
+
+            // Act
+            var result = await _knowledgeService.GetListAsync(filter);
+
+            // Assert
+            Assert.Equal(2, result.Total);
+        }
+
+        [Fact]
+        public async Task GetListAsyncWithSquadIdFilterReturnsFilteredResults()
+        {
+            // Arrange
+            var filter = new KnowledgeFilter { SquadId = 5 };
+            _knowledgeRepositoryMock
+                .Setup(r => r.GetListAsync(It.Is<KnowledgeFilter>(f => f.SquadId == 5)))
+                .ReturnsAsync(new PagedResult<Knowledge> { Result = new List<Knowledge>(), Page = 1, PageSize = 10, Total = 1 });
+
+            // Act
+            var result = await _knowledgeService.GetListAsync(filter);
+
+            // Assert
+            Assert.Equal(1, result.Total);
+        }
+
+        [Fact]
+        public async Task GetListAsyncWithStatusFilterReturnsFilteredResults()
+        {
+            // Arrange
+            var filter = new KnowledgeFilter { Status = KnowledgeStatus.Atual };
+            _knowledgeRepositoryMock
+                .Setup(r => r.GetListAsync(It.Is<KnowledgeFilter>(f => f.Status == KnowledgeStatus.Atual)))
+                .ReturnsAsync(new PagedResult<Knowledge> { Result = new List<Knowledge>(), Page = 1, PageSize = 10, Total = 4 });
+
+            // Act
+            var result = await _knowledgeService.GetListAsync(filter);
+
+            // Assert
+            Assert.Equal(4, result.Total);
+        }
+        [Fact]
+        public async Task GetListAsyncWhenFilterIsNullReturnsAll()
+        {
+            // Arrange
+            var knowledges = _fixture.Build<Knowledge>().CreateMany(2).ToList();
+            _knowledgeRepositoryMock
+                .Setup(r => r.GetListAsync(It.IsAny<KnowledgeFilter>()))
+                .ReturnsAsync(new PagedResult<Knowledge> { Result = knowledges, Page = 1, PageSize = 10, Total = 2 });
+
+            // Act
+            var result = await _knowledgeService.GetListAsync(null);
+
+            // Assert
+            Assert.Equal(2, result.Total);
+        }
+
+
+        [Fact]
+        public async Task UpdateAsyncWhenMemberOrApplicationNotFoundReturnsNotFound()
+        {
+            // Arrange
+            var knowledge = _fixture.Build<Knowledge>()
+                .With(k => k.Status, KnowledgeStatus.Atual)
+                .Create();
+
+            _knowledgeRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.Id)).ReturnsAsync(knowledge);
+
+            var validatorMock = new Mock<IValidator<Knowledge>>();
+            validatorMock.Setup(v => v.ValidateAsync(knowledge, default)).ReturnsAsync(new ValidationResult());
+
+            var memberRepositoryMock = new Mock<IMemberRepository>();
+            memberRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.MemberId)).ReturnsAsync((Member?)null);
+
+            var applicationRepositoryMock = new Mock<IApplicationDataRepository>();
+            applicationRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.ApplicationId)).ReturnsAsync((ApplicationData?)null);
+
+            _unitOfWorkMock.Setup(u => u.MemberRepository).Returns(memberRepositoryMock.Object);
+            _unitOfWorkMock.Setup(u => u.ApplicationDataRepository).Returns(applicationRepositoryMock.Object);
+
+            var service = new KnowledgeService(_unitOfWorkMock.Object, LocalizerFactorHelper.Create(), validatorMock.Object);
+
+            // Act
+            var result = await service.UpdateAsync(knowledge);
+
+            // Assert
+            Assert.Equal(OperationStatus.NotFound, result.Status);
+        }
+
+        [Fact]
+        public async Task UpdateAsyncWhenMemberAndApplicationSquadIdMismatchReturnsConflict()
+        {
+            // Arrange
+            var member = _fixture.Build<Member>().With(m => m.Id, 1).With(m => m.SquadId, 1).Create();
+            var application = _fixture.Build<ApplicationData>().With(a => a.Id, 2).With(a => a.SquadId, 2).Create();
+            var knowledge = _fixture.Build<Knowledge>()
+                .With(k => k.Id, 10)
+                .With(k => k.MemberId, member.Id)
+                .With(k => k.ApplicationId, application.Id)
+                .With(k => k.Status, KnowledgeStatus.Atual)
+                .Create();
+
+            _knowledgeRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.Id)).ReturnsAsync(knowledge);
+
+            var validatorMock = new Mock<IValidator<Knowledge>>();
+            validatorMock.Setup(v => v.ValidateAsync(knowledge, default)).ReturnsAsync(new ValidationResult());
+
+            var memberRepositoryMock = new Mock<IMemberRepository>();
+            memberRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.MemberId)).ReturnsAsync(member);
+
+            var applicationRepositoryMock = new Mock<IApplicationDataRepository>();
+            applicationRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.ApplicationId)).ReturnsAsync(application);
+
+            _unitOfWorkMock.Setup(u => u.MemberRepository).Returns(memberRepositoryMock.Object);
+            _unitOfWorkMock.Setup(u => u.ApplicationDataRepository).Returns(applicationRepositoryMock.Object);
+
+            var service = new KnowledgeService(_unitOfWorkMock.Object, LocalizerFactorHelper.Create(), validatorMock.Object);
+
+            // Act
+            var result = await service.UpdateAsync(knowledge);
+
+            // Assert
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+        }
+
+        [Fact]
+        public async Task UpdateAsyncWhenAssociationAlreadyExistsReturnsConflict()
+        {
+            // Arrange
+            var member = _fixture.Build<Member>().With(m => m.Id, 1).With(m => m.SquadId, 1).Create();
+            var application = _fixture.Build<ApplicationData>().With(a => a.Id, 2).With(a => a.SquadId, 1).Create();
+            var knowledge = _fixture.Build<Knowledge>()
+                .With(k => k.Id, 10)
+                .With(k => k.MemberId, member.Id)
+                .With(k => k.ApplicationId, application.Id)
+                .With(k => k.Status, KnowledgeStatus.Atual)
+                .Create();
+
+            _knowledgeRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.Id)).ReturnsAsync(knowledge);
+
+            var validatorMock = new Mock<IValidator<Knowledge>>();
+            validatorMock.Setup(v => v.ValidateAsync(knowledge, default)).ReturnsAsync(new ValidationResult());
+
+            var memberRepositoryMock = new Mock<IMemberRepository>();
+            memberRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.MemberId)).ReturnsAsync(member);
+
+            var applicationRepositoryMock = new Mock<IApplicationDataRepository>();
+            applicationRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.ApplicationId)).ReturnsAsync(application);
+
+            var squadRepositoryMock = new Mock<ISquadRepository>();
+            squadRepositoryMock.Setup(r => r.GetByIdAsync(member.SquadId)).ReturnsAsync(new Squad { Id = member.SquadId });
+
+            _unitOfWorkMock.Setup(u => u.MemberRepository).Returns(memberRepositoryMock.Object);
+            _unitOfWorkMock.Setup(u => u.ApplicationDataRepository).Returns(applicationRepositoryMock.Object);
+            _unitOfWorkMock.Setup(u => u.SquadRepository).Returns(squadRepositoryMock.Object);
+
+            _knowledgeRepositoryMock.Setup(r => r.AssociationExistsAsync(member.Id, application.Id, member.SquadId, knowledge.Status)).ReturnsAsync(true);
+
+            var service = new KnowledgeService(_unitOfWorkMock.Object, LocalizerFactorHelper.Create(), validatorMock.Object);
+
+            // Act
+            var result = await service.UpdateAsync(knowledge);
+
+            // Assert
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+        }
+
+        [Fact]
+        public async Task UpdateAsyncWhenSuccessfulReturnsSuccess()
+        {
+            // Arrange
+            var member = _fixture.Build<Member>().With(m => m.Id, 1).With(m => m.SquadId, 1).Create();
+            var application = _fixture.Build<ApplicationData>().With(a => a.Id, 2).With(a => a.SquadId, 1).Create();
+            var squad = new Squad { Id = 1, Name = "Squad Test" };
+            var knowledge = _fixture.Build<Knowledge>()
+                .With(k => k.Id, 10)
+                .With(k => k.MemberId, member.Id)
+                .With(k => k.ApplicationId, application.Id)
+                .With(k => k.Status, KnowledgeStatus.Atual)
+                .Create();
+
+            _knowledgeRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.Id)).ReturnsAsync(knowledge);
+
+            var validatorMock = new Mock<IValidator<Knowledge>>();
+            validatorMock.Setup(v => v.ValidateAsync(knowledge, default)).ReturnsAsync(new ValidationResult());
+
+            var memberRepositoryMock = new Mock<IMemberRepository>();
+            memberRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.MemberId)).ReturnsAsync(member);
+
+            var applicationRepositoryMock = new Mock<IApplicationDataRepository>();
+            applicationRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.ApplicationId)).ReturnsAsync(application);
+
+            var squadRepositoryMock = new Mock<ISquadRepository>();
+            squadRepositoryMock.Setup(r => r.GetByIdAsync(member.SquadId)).ReturnsAsync(squad);
+
+            _unitOfWorkMock.Setup(u => u.MemberRepository).Returns(memberRepositoryMock.Object);
+            _unitOfWorkMock.Setup(u => u.ApplicationDataRepository).Returns(applicationRepositoryMock.Object);
+            _unitOfWorkMock.Setup(u => u.SquadRepository).Returns(squadRepositoryMock.Object);
+
+            _knowledgeRepositoryMock.Setup(r => r.AssociationExistsAsync(member.Id, application.Id, member.SquadId, knowledge.Status)).ReturnsAsync(false);
+
+            var service = new KnowledgeService(_unitOfWorkMock.Object, LocalizerFactorHelper.Create(), validatorMock.Object);
+
+            // Act
+            var result = await service.UpdateAsync(knowledge);
+
+            // Assert
+            Assert.Equal(OperationStatus.Success, result.Status);
+        }
+        [Fact]
+        public void KnowledgeResource_ApplicationIsRequired_ShouldReturnResource()
+        {
+            // Act
+            var value = KnowledgeResource.ApplicationIsRequired;
+
+            // Assert
+            Assert.False(string.IsNullOrWhiteSpace(value));
+        }
+
+        [Fact]
+        public void KnowledgeResource_AssociationAlreadyExists_ShouldReturnResource()
+        {
+            // Act
+            var value = KnowledgeResource.AssociationAlreadyExists;
+
+            // Assert
+            Assert.False(string.IsNullOrWhiteSpace(value));
+        }
+
+        [Fact]
+        public void KnowledgeResource_AssociationFound_ShouldReturnResource()
+        {
+            // Act
+            var value = KnowledgeResource.AssociationFound;
+
+            // Assert
+            Assert.False(string.IsNullOrWhiteSpace(value));
+        }
+
+        [Fact]
+        public void KnowledgeResource_AssociationNotFound_ShouldReturnResource()
+        {
+            // Act
+            var value = KnowledgeResource.AssociationNotFound;
+
+            // Assert
+            Assert.False(string.IsNullOrWhiteSpace(value));
+        }
+
+        [Fact]
+        public void KnowledgeResource_CannotEditOrRemovePastAssociation_ShouldReturnResource()
+        {
+            // Act
+            var value = KnowledgeResource.CannotEditOrRemovePastAssociation;
+
+            // Assert
+            Assert.False(string.IsNullOrWhiteSpace(value));
+        }
+
+        [Fact]
+        public void KnowledgeResource_MemberApplicationMustBelongToTheSameSquad_ShouldReturnResource()
+        {
+            // Act
+            var value = KnowledgeResource.MemberApplicationMustBelongToTheSameSquad;
+
+            // Assert
+            Assert.False(string.IsNullOrWhiteSpace(value));
+        }
+
+        [Fact]
+        public void KnowledgeResource_MemberApplicationNotFound_ShouldReturnResource()
+        {
+            // Act
+            var value = KnowledgeResource.MemberApplicationNotFound;
+
+            // Assert
+            Assert.False(string.IsNullOrWhiteSpace(value));
+        }
+
+        [Fact]
+        public void KnowledgeResource_MemberIsRequired_ShouldReturnResource()
+        {
+            // Act
+            var value = KnowledgeResource.MemberIsRequired;
+
+            // Assert
+            Assert.False(string.IsNullOrWhiteSpace(value));
+        }
+
+        [Fact]
+        public void KnowledgeResource_OnlyPossibleRemoveIfBelongToTheLeadersSquad_ShouldReturnResource()
+        {
+            // Act
+            var value = KnowledgeResource.OnlyPossibleRemoveIfBelongToTheLeadersSquad;
+
+            // Assert
+            Assert.False(string.IsNullOrWhiteSpace(value));
+        }
+
+        [Fact]
+        public void KnowledgeResource_OnlySquadLeaderAssociate_ShouldReturnResource()
+        {
+            // Act
+            var value = KnowledgeResource.OnlySquadLeaderAssociate;
+
+            // Assert
+            Assert.False(string.IsNullOrWhiteSpace(value));
+        }
+
+        [Fact]
+        public void KnowledgeResource_OnlySquadLeaderRemove_ShouldReturnResource()
+        {
+            // Act
+            var value = KnowledgeResource.OnlySquadLeaderRemove;
+
+            // Assert
+            Assert.False(string.IsNullOrWhiteSpace(value));
+        }
+
+        [Fact]
+        public void KnowledgeResource_UnsupportedMembershipUpdate_ShouldReturnResource()
+        {
+            // Act
+            var value = KnowledgeResource.UnsupportedMembershipUpdate;
+
+            // Assert
+            Assert.False(string.IsNullOrWhiteSpace(value));
         }
     }
 }

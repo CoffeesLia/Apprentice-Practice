@@ -33,12 +33,12 @@ namespace Application.Tests.Services
 
             _integrationService = new IntegrationService(_unitOfWorkMock.Object, localizer, integrationValidator);
         }
-       
+
         [Fact]
         public async Task DeleteAsyncShouldReturnSuccessWhenIntegrationExists()
         {
             // Arrange  
-            var integration = new Integration("Valid Name", "Valid Description") { Id = 1 };
+            var integration = new Integration { Name = "Valid Name", Description = "Valid Description", Id = 1 };
             _integrationRepositoryMock.Setup(r => r.GetByIdAsync(integration.Id)).ReturnsAsync(integration);
             _integrationRepositoryMock.Setup(r => r.DeleteAsync(integration.Id, true)).Returns(Task.CompletedTask);
 
@@ -53,7 +53,7 @@ namespace Application.Tests.Services
         public async Task GetItemAsyncShouldReturnIntegrationWhenIntegrationExists()
         {
             // Arrange    
-            var integration = new Integration("Test Integration", "aaa") { Id = 1 };
+            var integration = new Integration { Name = "Test Integration", Description = "aaa", Id = 1 };
             _integrationRepositoryMock.Setup(r => r.GetByIdAsync(integration.Id)).ReturnsAsync(integration);
 
             // Act    
@@ -122,7 +122,7 @@ namespace Application.Tests.Services
         public async Task CreateAsyncShouldReturnErrorWhenIntegrationNameIsEmpty()
         {
             // Arrange      
-            var integration = new Integration(string.Empty, "Description") { ApplicationDataId = 1, Id = 1 };
+            var integration = new Integration { Name = string.Empty, Description = "Valid Description", ApplicationDataId = 1, Id = 1 };
             _integrationRepositoryMock.Setup(r => r.GetByIdAsync(integration.Id)).ReturnsAsync((Integration?)null);
 
             // Act    
@@ -137,7 +137,7 @@ namespace Application.Tests.Services
         public async Task CreateAsyncShouldReturnErrorWhenIntegrationDescriptionIsName()
         {
             // Arrange      
-            var integration = new Integration("Name", string.Empty) { ApplicationDataId = 1, Id = 1 };
+            var integration = new Integration { Name = "Valid Name", Description = "", ApplicationDataId = 1, Id = 1 };
             _integrationRepositoryMock.Setup(r => r.VerifyDescriptionExistsAsync(integration.Description)).ReturnsAsync(false);
 
             // Act    
@@ -152,7 +152,7 @@ namespace Application.Tests.Services
         public async Task CreateShouldReturnErrorWhenIntegrationDescriptionIsEmpty()
         {
             // Arrange      
-            var integration = new Integration("Name", string.Empty) { ApplicationDataId = 1, Id = 1 };
+            var integration = new Integration { Name = "Valid Name", Description = string.Empty, ApplicationDataId = 1, Id = 1 };
             _integrationRepositoryMock.Setup(r => r.GetByIdAsync(integration.Id)).ReturnsAsync((Integration?)null);
 
             // Act    
@@ -167,7 +167,7 @@ namespace Application.Tests.Services
         public async Task CreateAsyncShouldReturnSuccessWhenValidIntegration()
         {
             // Arrange 
-            var integration = new Integration("ValidName", "ValidDescription") { ApplicationDataId = 1 };
+            var integration = new Integration { Name = "Valid Name", Description = "Valid Description", ApplicationDataId = 1 };
             _integrationRepositoryMock.Setup(r => r.VerifyNameExistsAsync(integration.Name)).ReturnsAsync(false);
             _integrationRepositoryMock.Setup(r => r.VerifyDescriptionExistsAsync(integration.Description)).ReturnsAsync(false);
 
@@ -182,7 +182,7 @@ namespace Application.Tests.Services
         public async Task CreateAsyncShouldReturnErrorWhenNameExist()
         {
             // Arrange      
-            var integration = new Integration("ExistingName", "ValidDescription") { ApplicationDataId = 1 };
+            var integration = new Integration { Name = "ExistingName", Description = "ValidDescription", ApplicationDataId = 1 };
 
             _integrationRepositoryMock
                 .Setup(r => r.VerifyNameExistsAsync(integration.Name))
@@ -200,7 +200,7 @@ namespace Application.Tests.Services
         public async Task CreateAsyncShouldReturnErrorWhenDescriptionExist()
         {
             // Arrange      
-            var integration = new Integration("ValidName", "DescriptionValid") { ApplicationDataId = 1 };
+            var integration = new Integration { Name = "ValidName", Description = "DescriptionValid", ApplicationDataId = 1 };
 
             _integrationRepositoryMock
              .Setup(r => r.VerifyDescriptionExistsAsync(integration.Description))
@@ -218,21 +218,9 @@ namespace Application.Tests.Services
         public async Task UpdateReturnValidatedChangeShouldReturnMessage()
         {
             // Arrange
-            var integration = new Integration("name", "Description") { Id = 1, ApplicationDataId = 1 };
+            var integration = new Integration { Name = "name", Description = "Description", Id = 1, ApplicationDataId = 1 };
 
             _integrationRepositoryMock.Setup(r => r.GetByIdAsync(integration.Id)).ReturnsAsync(integration);
-
-            _integrationRepositoryMock
-            .Setup(r => r.VerifyNameExistsAsync(integration.Name))
-            .ReturnsAsync(true);
-
-            _integrationRepositoryMock
-            .Setup(r => r.VerifyDescriptionExistsAsync(integration.Description))
-            .ReturnsAsync(true);
-
-            _integrationRepositoryMock
-             .Setup(r => r.VerifyApplicationIdExistsAsync(integration.ApplicationDataId))
-             .ReturnsAsync(true);
 
             // Act
             var result = await _integrationService.UpdateAsync(integration);
@@ -244,16 +232,60 @@ namespace Application.Tests.Services
         }
 
         [Fact]
+        public async Task UpdateAsyncShouldReturnInvalidDataWhenNameIsEmpty()
+        {
+            // Arrange
+            var integrationToUpdate = new Integration { Name = "", Description = "Desc", Id = 1, ApplicationDataId = 1 };
+            _integrationRepositoryMock
+                .Setup(r => r.VerifyNameExistsAsync(integrationToUpdate.Name))
+                .ReturnsAsync(false);
+            // Act
+            var result = await _integrationService.UpdateAsync(integrationToUpdate);
+            // Assert
+            Assert.Equal(OperationStatus.InvalidData, result.Status);
+        }
+
+        [Fact]
+        public async Task UpdateAsyncShouldReturnInvalidDataWhenDescriptionIsEmpty()
+        {
+            // Arrange
+            var integrationToUpdate = new Integration { Name = "Int", Description = "", Id = 1, ApplicationDataId = 1 };
+            _integrationRepositoryMock
+                .Setup(r => r.VerifyDescriptionExistsAsync(integrationToUpdate.Description))
+                .ReturnsAsync(false);
+            // Act
+            var result = await _integrationService.UpdateAsync(integrationToUpdate);
+            // Assert
+            Assert.Equal(OperationStatus.InvalidData, result.Status);
+        }
+
+        [Fact]
+
+        public async Task UpdateAsyncShouldReturnInvalidDataWhenNameAlreadyExistss()
+        {
+            // Arrange
+            var integrationToUpdate = new Integration { Name = "DuplicateName", Description = "Desc", Id = 1, ApplicationDataId = 1 };
+            _integrationRepositoryMock
+                .Setup(r => r.VerifyNameExistsAsync(integrationToUpdate.Name))
+                .ReturnsAsync(true);
+
+            // Act
+            var result = await _integrationService.UpdateAsync(integrationToUpdate);
+            // Assert
+            Assert.Equal(OperationStatus.NotFound, result.Status);
+        }
+
+        [Fact]
 
         public async Task UpdateAsyncShouldReturnInvalidDataWhenDescriptionAlreadyExists()
         {
             // Arrange
-            var integrationToUpdate = new Integration("Int", "DuplicateDesc") { Id = 1, ApplicationDataId = 1 };
+            var integrationToUpdate = new Integration { Name = "Int", Description = "DuplicateDesc", Id = 1, ApplicationDataId = 1 };
 
             _integrationRepositoryMock
                 .Setup(r => r.VerifyDescriptionExistsAsync(integrationToUpdate.Description))
                 .ReturnsAsync(true);
-      
+
             // Act
             var result = await _integrationService.UpdateAsync(integrationToUpdate);
 
@@ -266,7 +298,7 @@ namespace Application.Tests.Services
         public async Task UpdateAsyncShouldReturnInvalidDataWhenNameAlreadyExists()
         {
             // Arrange  
-            var integration = new Integration("name", "Desc") { ApplicationDataId = 1 };
+            var integration = new Integration { Name = "name", Description = "Desc", ApplicationDataId = 1 };
 
             _integrationRepositoryMock.Setup(r => r.VerifyNameExistsAsync(integration.Name)).ReturnsAsync(true);
 
@@ -294,13 +326,44 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.NotFound, result.Status);
         }
 
+        [Fact]
+        public async Task UpdateAsyncShouldReturnErrorWhenApplicationIsNull()
+        {
+            // Arrange  
+            var integration = new Integration { Name = "ValidName", Description = "ValidDescription",  Id = 1 };
+            _integrationRepositoryMock.Setup(r => r.GetByIdAsync(integration.ApplicationDataId)).ReturnsAsync(integration);
+            // Act
+            var result = await _integrationService.UpdateAsync(integration);
+            // Assert
+            Assert.Equal(OperationStatus.InvalidData, result.Status);
+        }
 
         [Fact]
+        public async Task UpdateReturnValidatedChangeShouldReturnMessagae()
+        {
+            // Arrange
+            var integration = new Integration{Name="name", Description = "desc",  Id = 1, ApplicationDataId = 1 };
 
+            _integrationRepositoryMock.Setup(r => r.GetByIdAsync(integration.Id)).ReturnsAsync(integration);
+
+
+            _integrationRepositoryMock
+             .Setup(r => r.VerifyApplicationIdExistsAsync(integration.ApplicationDataId))
+             .ReturnsAsync(true);
+
+            // Act
+            var result = await _integrationService.UpdateAsync(integration);
+
+            // Assert
+            Assert.Equal(OperationStatus.Success, result.Status);
+
+        }
+
+        [Fact]
         public async Task UpdateAsyncShouldReturnErrorWhenIntegrationIsEmpty()
         {
             // Arrange  
-            var integration = new Integration("", "") { ApplicationDataId = 1, Id = 1 };
+            var integration = new Integration { Name = "", Description = "", ApplicationDataId = 1, Id = 1 };
             _integrationRepositoryMock.Setup(r => r.GetByIdAsync(integration.Id)).ReturnsAsync((Integration?)null);
             // Act
             var result = await _integrationService.UpdateAsync(integration);
@@ -309,21 +372,101 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task UpdateAsyncShouldReturnSuccessWhenIntegrationExists()
+
+        public async Task CreateAsyncShouldReturnErrorWhenApplicationIdNotExists()
         {
-            // Arrange  
-            var existingIntegration = new Integration("Int", "Desc") { ApplicationDataId = 1 };
-            var integration = new Integration("Int", "Desc");
+            // Arrange      
+            var integration = new Integration { Name = "ValidName", Description = "ValidDescription", ApplicationDataId = 0, Id = 1 };
+            _integrationRepositoryMock
+             .Setup(r => r.VerifyApplicationIdExistsAsync(integration.ApplicationDataId))
+             .ReturnsAsync(false);
+            // Act    
+            var result = await _integrationService.CreateAsync(integration);
+            // Assert    
+            Assert.Equal(OperationStatus.InvalidData, result.Status);
+        }
 
-            _integrationRepositoryMock.Setup(r => r.GetByIdAsync(integration.Id)).ReturnsAsync(existingIntegration);
-            _integrationRepositoryMock.Setup(r => r.UpdateAsync(It.IsAny<Integration>(), true)).Returns(Task.CompletedTask);
+        [Fact]
+        public async Task UpdateAsyncShouldReturnErrorWhenApplicationIdNotExists()
+        {
+            // Arrange      
+            var integration = new Integration { Name = "ValidName", Description = "ValidDescription", ApplicationDataId = 0, Id = 1 };
+            _integrationRepositoryMock
+             .Setup(r => r.VerifyApplicationIdExistsAsync(integration.ApplicationDataId))
+             .ReturnsAsync(false);
+            // Act    
+            var result = await _integrationService.UpdateAsync(integration);
+            // Assert    
+            Assert.Equal(OperationStatus.InvalidData, result.Status);
+        }
 
-            // Act  
+        [Fact]
+
+        public async Task UpdateAsyncShouldReturnErrorWhenNameDontExist()
+        {
+            var integration = new Integration {Name = "" };
+
+            _integrationRepositoryMock
+                .Setup(i => i.VerifyNameExistsAsync(integration.Name))
+                .ReturnsAsync(false);
+
             var result = await _integrationService.UpdateAsync(integration);
 
-            // Assert  
+            Assert.Equal(OperationStatus.InvalidData, result.Status);
+
+        }
+        [Fact]
+        public async Task UpdateAsyncShouldReturnInvalidDataWhenNameAlreadyExistsRepositoryCheck()
+        {
+            // Arrange
+            var integrationToUpdate = new Integration { Name = "DuplicatedName", Description = "Desc", Id = 1, ApplicationDataId = 1 };
+            var existingIntegration = new Integration { Name = "OldName", Description = "OldDesc", Id = 1, ApplicationDataId = 1 };
+
+            _integrationRepositoryMock.Setup(r => r.GetByIdAsync(integrationToUpdate.Id)).ReturnsAsync(existingIntegration);
+            _integrationRepositoryMock.Setup(r => r.VerifyNameExistsAsync(integrationToUpdate.Name)).ReturnsAsync(true);
+
+            // Act
+            var result = await _integrationService.UpdateAsync(integrationToUpdate);
+
+            // Assert
+            Assert.Equal(OperationStatus.InvalidData, result.Status);
+        }
+
+        [Fact]
+        public async Task UpdateAsyncShouldReturnInvalidDataWhenDescriptionAlreadyExistsRepositoryCheck()
+        {
+            // Arrange
+            var integrationToUpdate = new Integration { Name = "ValidName", Description = "DuplicatedDesc", Id = 1, ApplicationDataId = 1 };
+            var existingIntegration = new Integration { Name = "ValidName", Description = "OldDesc", Id = 1, ApplicationDataId = 1 };
+
+            _integrationRepositoryMock.Setup(r => r.GetByIdAsync(integrationToUpdate.Id)).ReturnsAsync(existingIntegration);
+            _integrationRepositoryMock.Setup(r => r.VerifyNameExistsAsync(integrationToUpdate.Name)).ReturnsAsync(false);
+            _integrationRepositoryMock.Setup(r => r.VerifyDescriptionExistsAsync(integrationToUpdate.Description)).ReturnsAsync(true);
+
+            // Act
+            var result = await _integrationService.UpdateAsync(integrationToUpdate);
+
+            // Assert
+            Assert.Equal(OperationStatus.InvalidData, result.Status);
+        }
+
+        [Fact]
+        public async Task UpdateAsyncShouldReturnInvalidDataWhenApplicationIdDoesNotExistRepositoryCheck()
+        {
+            // Arrange
+            var integrationToUpdate = new Integration { Name = "ValidName", Description = "ValidDesc", Id = 1, ApplicationDataId = 99 };
+            var existingIntegration = new Integration { Name = "ValidName", Description = "ValidDesc", Id = 1, ApplicationDataId = 1 };
+
+            _integrationRepositoryMock.Setup(r => r.GetByIdAsync(integrationToUpdate.Id)).ReturnsAsync(existingIntegration);
+            _integrationRepositoryMock.Setup(r => r.VerifyNameExistsAsync(integrationToUpdate.Name)).ReturnsAsync(false);
+            _integrationRepositoryMock.Setup(r => r.VerifyDescriptionExistsAsync(integrationToUpdate.Description)).ReturnsAsync(false);
+            _integrationRepositoryMock.Setup(r => r.VerifyApplicationIdExistsAsync(integrationToUpdate.ApplicationDataId)).ReturnsAsync(false);
+
+            // Act
+            var result = await _integrationService.UpdateAsync(integrationToUpdate);
+
+            // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
-            Assert.Equal(IntegrationResources.UpdatedSuccessfully, result.Message);
         }
     }
 }

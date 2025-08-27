@@ -166,5 +166,17 @@ namespace Application.Tests
             // Assert
             Assert.Equal(expectedCulture, actualCulture);
         }
+
+        [Fact]
+        public void KnownoloadResourcesAllCultures()
+        {
+            CultureInfo expectedCulture = new("pt-BR");
+            ManagerResources resource = new();
+            Assert.NotNull(resource);
+            ManagerResources.Culture = expectedCulture;
+            Assert.Equal(expectedCulture, ManagerResources.Culture);
+            VerifyAllResources<ManagerResources>(ManagerResources.ResourceManager);
+        }
+
     }
 }
