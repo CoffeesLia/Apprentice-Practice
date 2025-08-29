@@ -1,4 +1,6 @@
-﻿using FluentValidation;
+﻿using System.Globalization;
+using System.Text;
+using FluentValidation;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
@@ -10,14 +12,23 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Services
 {
-    public class ApplicationDataService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<ApplicationData> validator)
-            : EntityServiceBase<ApplicationData>(unitOfWork, localizerFactory, validator), IApplicationDataService
+    public class ApplicationDataService : EntityServiceBase<ApplicationData>, IApplicationDataService
     {
-        private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(ApplicationDataResources));
+        private readonly IStringLocalizer _localizer;
+        private readonly ApplicationExportService _exportService;
+
+        public ApplicationDataService(
+            IUnitOfWork unitOfWork,
+            IStringLocalizerFactory localizerFactory,
+            IValidator<ApplicationData> validator)
+            : base(unitOfWork, localizerFactory, validator)
+        {
+            _localizer = localizerFactory.Create(typeof(ApplicationDataResources));
+            _exportService = new ApplicationExportService(unitOfWork, localizerFactory);
+        }
 
         protected override IApplicationDataRepository Repository =>
             UnitOfWork.ApplicationDataRepository;
-
         public override async Task<OperationResult> CreateAsync(ApplicationData item)
         {
             ArgumentNullException.ThrowIfNull(item);
@@ -158,17 +169,24 @@ namespace Stellantis.ProjectName.Application.Services
             );
         }
 
-
         public async Task<bool> IsResponsibleFromArea(int areaId, int responsibleId)
         {
             var responsible = await UnitOfWork.ResponsibleRepository.GetByIdAsync(responsibleId).ConfigureAwait(false);
-
             if (responsible == null)
             {
                 return false;
             }
-
             return responsible.AreaId == areaId;
+        }
+
+        public async Task<byte[]> ExportToCsvAsync(ApplicationFilter filter)
+        {
+            return await _exportService.ExportToCsvAsync(filter);
+        }
+
+        public async Task<byte[]> ExportToPdfAsync(ApplicationFilter filter)
+        {
+            return await _exportService.ExportToPdfAsync(filter);
         }
     }
 }

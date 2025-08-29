@@ -159,4 +159,31 @@
   <data name="IncidentLinkedError" xml:space="preserve">
     <value>Cannot delete the application because there are linked incidents.</value>
   </data>
+  <data name="Csv_Id" xml:space="preserve">
+    <value>Id</value>
+  </data>
+  <data name="Csv_Name" xml:space="preserve">
+    <value>Nome</value>
+  </data>
+  <data name="Csv_Area" xml:space="preserve">
+    <value>Área</value>
+  </data>
+  <data name="Csv_Responsible" xml:space="preserve">
+    <value>Responsável</value>
+  </data>
+  <data name="Csv_Squad" xml:space="preserve">
+    <value>Squad</value>
+  </data>
+  <data name="Csv_Description" xml:space="preserve">
+    <value>Descrição</value>
+  </data>
+  <data name="Csv_External" xml:space="preserve">
+    <value>Externo</value>
+  </data>
+  <data name="Csv_External_Yes" xml:space="preserve">
+    <value>Sim</value>
+  </data>
+  <data name="Csv_External_No" xml:space="preserve">
+    <value>Não</value>
+  </data>
 </root>
