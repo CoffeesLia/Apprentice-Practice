@@ -7,6 +7,7 @@ using Stellantis.ProjectName.Application.Interfaces;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
+using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Services
 {
@@ -158,6 +159,197 @@ namespace Stellantis.ProjectName.Application.Services
                         {
                             t.Span("Gerado em: ").SemiBold();
                             t.Span(DateTime.Now.ToString("dd/MM/yyyy HH:mm", CultureInfo.CurrentCulture)); // Dia/Mês/Ano
+                        });
+
+                        row.RelativeColumn().AlignRight().Text(t =>
+                        {
+                            t.Span("Página ").SemiBold();
+                            t.CurrentPageNumber();
+                            t.Span(" / ");
+                            t.TotalPages();
+                        });
+                    });
+                });
+            });
+
+            return document.GeneratePdf();
+        }
+        public async Task<byte[]> ExportApplicationAsync(int id)
+        {
+            QuestPDF.Settings.License = LicenseType.Community;
+
+            var app = await _unitOfWork.ApplicationDataRepository
+                .GetFullByIdAsync(id)
+                .ConfigureAwait(false);
+
+            if (app == null)
+                throw new KeyNotFoundException($"Application with Id {id} not found");
+
+            var primaryColor = Colors.Blue.Darken2;
+            var headerBgColor = Colors.Grey.Lighten3;
+            var evenRowColor = Colors.Grey.Lighten4;
+            var oddRowColor = Colors.White;
+            var textColor = Color.FromHex("#444444");
+            var logoPath = @"C:\Users\SE68087\gitlab\api\src\Application\Services\logo.png";
+
+            // Buscar membros do squad (se houver)
+            List<Member> squadMembers = new();
+            if (app.Squad != null)
+            {
+                var squadMembersResult = await _unitOfWork.MemberRepository.GetListAsync(
+                    new MemberFilter { SquadId = app.Squad.Id }
+                );
+                squadMembers = squadMembersResult.Result.ToList();
+            }
+
+            var document = Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.A4);
+                    page.Margin(40);
+                    page.PageColor(Colors.White);
+                    page.DefaultTextStyle(TextStyle.Default.FontFamily("Segoe UI").FontColor(textColor).FontSize(11));
+
+                    // Cabeçalho
+                    page.Header().Element(header =>
+                    {
+                        header.Row(row =>
+                        {
+                            row.RelativeColumn().AlignMiddle()
+                                .Text(app.Name ?? "Aplicação")
+                                .FontSize(18).SemiBold().FontColor(textColor);
+                            row.ConstantColumn(120).AlignMiddle().Image(logoPath, ImageScaling.FitWidth);
+                        });
+                    });
+
+                    // Conteúdo
+                    page.Content().Column(content =>
+                    {
+                        // Bloco de dados principais
+                        content.Item().Element(e =>
+                        {
+                            e.Background(headerBgColor).Padding(10).Column(col =>
+                            {
+                                col.Item().Text("Dados da Aplicação").SemiBold().FontSize(13).FontColor(textColor);
+                                col.Item().PaddingTop(4).Row(row =>
+                                {
+                                    row.RelativeColumn().Text($"Área:").SemiBold();
+                                    row.RelativeColumn().Text(app.Area?.Name ?? "-");
+                                });
+                                col.Item().Row(row =>
+                                {
+                                    row.RelativeColumn().Text($"Responsável:").SemiBold();
+                                    row.RelativeColumn().Text(app.Responsible?.Name ?? "-");
+                                });
+                                col.Item().Row(row =>
+                                {
+                                    row.RelativeColumn().Text($"Squad:").SemiBold();
+                                    row.RelativeColumn().Text(app.Squad?.Name ?? "-");
+                                });
+                                col.Item().Row(row =>
+                                {
+                                    row.RelativeColumn().Text($"Externo:").SemiBold();
+                                    row.RelativeColumn().Text(app.External ? _localizer["Csv_External_Yes"].Value : _localizer["Csv_External_No"].Value);
+                                });
+                            });
+                        });
+
+                        // Descrição
+                        if (!string.IsNullOrWhiteSpace(app.Description))
+                        {
+                            content.Item().PaddingTop(10).Element(e =>
+                            {
+                                e.Background(evenRowColor).Padding(10).Column(col =>
+                                {
+                                    col.Item().Text("Descrição").SemiBold().FontSize(13).FontColor(textColor);
+                                    col.Item().PaddingTop(4).Text(app.Description).FontColor(textColor);
+                                });
+                            });
+                        }
+
+                        // Integrações
+                        if (app.Integration != null && app.Integration.Any())
+                        {
+                            content.Item().PaddingTop(10).Element(e =>
+                            {
+                                e.Background(oddRowColor).Padding(10).Column(col =>
+                                {
+                                    col.Item().Text("Integrações").SemiBold().FontSize(13).FontColor(textColor);
+                                    col.Item().PaddingTop(4).Table(table =>
+                                    {
+                                        table.ColumnsDefinition(c => c.RelativeColumn());
+                                        int idx = 0;
+                                        foreach (var integ in app.Integration)
+                                        {
+                                            var bg = idx % 2 == 0 ? evenRowColor : oddRowColor;
+                                            table.Cell().Background(bg).Padding(5).Text(integ.Name).FontColor(textColor);
+                                            idx++;
+                                        }
+                                    });
+                                });
+                            });
+                        }
+
+                        // Repositórios
+                        if (app.Repos != null && app.Repos.Any())
+                        {
+                            content.Item().PaddingTop(10).Element(e =>
+                            {
+                                e.Background(evenRowColor).Padding(10).Column(col =>
+                                {
+                                    col.Item().Text("Repositórios").SemiBold().FontSize(13).FontColor(textColor);
+                                    col.Item().PaddingTop(4).Table(table =>
+                                    {
+                                        table.ColumnsDefinition(c => c.RelativeColumn());
+                                        int idx = 0;
+                                        foreach (var repo in app.Repos)
+                                        {
+                                            var bg = idx % 2 == 0 ? oddRowColor : evenRowColor;
+                                            table.Cell().Background(bg).Padding(5).Text(repo.Name).FontColor(textColor);
+                                            idx++;
+                                        }
+                                    });
+                                });
+                            });
+                        }
+
+                        // Membros do Squad
+                        if (squadMembers.Any())
+                        {
+                            content.Item().PaddingTop(10).Element(e =>
+                            {
+                                e.Background(oddRowColor).Padding(10).Column(col =>
+                                {
+                                    col.Item().Text("Membros do Squad").SemiBold().FontSize(13).FontColor(textColor);
+                                    col.Item().PaddingTop(4).Table(table =>
+                                    {
+                                        table.ColumnsDefinition(c =>
+                                        {
+                                            c.RelativeColumn(2); // Nome
+                                            c.RelativeColumn(3); // Email
+                                        });
+                                        int idx = 0;
+                                        foreach (var member in squadMembers)
+                                        {
+                                            var bg = idx % 2 == 0 ? evenRowColor : oddRowColor;
+                                            table.Cell().Background(bg).Padding(5).Text(member.Name).FontColor(textColor);
+                                            table.Cell().Background(bg).Padding(5).Text(member.Email).FontColor(textColor);
+                                            idx++;
+                                        }
+                                    });
+                                });
+                            });
+                        }
+                    });
+
+                    // Rodapé
+                    page.Footer().Row(row =>
+                    {
+                        row.RelativeColumn().AlignLeft().Text(t =>
+                        {
+                            t.Span("Gerado em: ").SemiBold();
+                            t.Span(DateTime.Now.ToString("dd/MM/yyyy HH:mm", CultureInfo.CurrentCulture));
                         });
 
                         row.RelativeColumn().AlignRight().Text(t =>

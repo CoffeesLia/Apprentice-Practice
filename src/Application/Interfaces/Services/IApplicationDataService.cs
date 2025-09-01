@@ -12,6 +12,8 @@ namespace Stellantis.ProjectName.Application.Interfaces.Services
         Task<bool> IsResponsibleFromArea(int areaId, int responsibleId);
         Task<byte[]> ExportToCsvAsync(ApplicationFilter filter);
         Task<byte[]> ExportToPdfAsync(ApplicationFilter filter);
+        Task<byte[]> ExportApplicationAsync(int id);
+
 
     }
 }

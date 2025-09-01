@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
@@ -63,5 +64,13 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             var pdfBytes = await Service.ExportToPdfAsync(filter).ConfigureAwait(false);
             return File(pdfBytes, "application/pdf", $"applications_{DateTime.Now:yyyyMMddHHmmss}.pdf");
         }
+
+        [HttpGet("{id}/export/pdf")]
+        public async Task<IActionResult> ExportSinglePdf(int id)
+        {
+            var pdfBytes = await Service.ExportApplicationAsync(id).ConfigureAwait(false);
+            return File(pdfBytes, "application/pdf", $"application_{id}_{DateTime.Now:yyyyMMddHHmmss}.pdf");
+        }
+
     }
 }

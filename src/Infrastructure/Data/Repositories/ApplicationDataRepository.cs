@@ -88,9 +88,14 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         public async Task<ApplicationData?> GetFullByIdAsync(int id)
         {
             return await Context.Set<ApplicationData>()
-                       .Include(x => x.Area)
-                       .FirstOrDefaultAsync(x => x.Id == id)
-                       .ConfigureAwait(false);
+           .Include(x => x.Area)
+           .Include(x => x.Responsible)
+           .Include(x => x.Squad)
+           .Include(x => x.Integration)
+           .Include(x => x.Repos)
+           .Include(x => x.Documents)
+           .FirstOrDefaultAsync(x => x.Id == id)
+           .ConfigureAwait(false);
         }
 
         public async Task<bool> IsResponsibleFromArea(int areaId, int responsibleId)

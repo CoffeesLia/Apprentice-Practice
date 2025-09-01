@@ -188,5 +188,10 @@ namespace Stellantis.ProjectName.Application.Services
         {
             return await _exportService.ExportToPdfAsync(filter);
         }
+
+        public async Task<byte[]> ExportApplicationAsync(int id)
+        {
+            return await _exportService.ExportApplicationAsync(id);
+        }
     }
 }
