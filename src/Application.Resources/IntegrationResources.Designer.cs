@@ -8,11 +8,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Stellantis.ProjectName.Application.Resources
-{
+namespace Stellantis.ProjectName.Application.Resources {
     using System;
-
-
+    
+    
     /// <summary>
     ///   Uma classe de recurso de tipo de alta segurança, para pesquisar cadeias de caracteres localizadas etc.
     /// </summary>
@@ -23,125 +22,121 @@ namespace Stellantis.ProjectName.Application.Resources
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class IntegrationResources
-    {
-
+    public class IntegrationResources {
+        
         private static global::System.Resources.ResourceManager resourceMan;
-
+        
         private static global::System.Globalization.CultureInfo resourceCulture;
-
+        
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal IntegrationResources()
-        {
+        internal IntegrationResources() {
         }
-
+        
         /// <summary>
         ///   Retorna a instância de ResourceManager armazenada em cache usada por essa classe.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager
-        {
-            get
-            {
-                if (object.ReferenceEquals(resourceMan, null))
-                {
+        public static global::System.Resources.ResourceManager ResourceManager {
+            get {
+                if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Stellantis.ProjectName.Application.Resources.IntegrationResources", typeof(IntegrationResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
             }
         }
-
+        
         /// <summary>
         ///   Substitui a propriedade CurrentUICulture do thread atual para todas as
         ///   pesquisas de recursos que usam essa classe de recurso de tipo de alta segurança.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture
-        {
-            get
-            {
+        public static global::System.Globalization.CultureInfo Culture {
+            get {
                 return resourceCulture;
             }
-            set
-            {
+            set {
                 resourceCulture = value;
             }
         }
-
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Deleted Successfully.
-        /// </summary>
-        public static string DeletedSuccessfully
-        {
-            get
-            {
-                return ResourceManager.GetString("DeletedSuccessfully", resourceCulture);
-            }
-        }
-
+        
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Application Is Required.
         /// </summary>
-        public static string ApplicationIsRequired
-        {
-            get
-            {
+        public static string ApplicationIsRequired {
+            get {
                 return ResourceManager.GetString("ApplicationIsRequired", resourceCulture);
             }
         }
-
+        
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Message Not Found.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Deleted Successfully.
         /// </summary>
-        public static string MessageNotFound
-        {
-            get
-            {
-                return ResourceManager.GetString("MessageNotFound", resourceCulture);
+        public static string DeletedSuccessfully {
+            get {
+                return ResourceManager.GetString("DeletedSuccessfully", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Description Is Required.
         /// </summary>
-        public static string DescriptionIsRequired
-        {
-            get
-            {
+        public static string DescriptionIsRequired {
+            get {
                 return ResourceManager.GetString("DescriptionIsRequired", resourceCulture);
             }
         }
-
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Id Not Found.
+        /// </summary>
+        public static string IdNotFound {
+            get {
+                return ResourceManager.GetString("IdNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Message Not Found.
+        /// </summary>
+        public static string MessageNotFound {
+            get {
+                return ResourceManager.GetString("MessageNotFound", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Successfully created.
         /// </summary>
-        public static string MessageSucess
-        {
-            get
-            {
+        public static string MessageSucess {
+            get {
                 return ResourceManager.GetString("MessageSucess", resourceCulture);
             }
         }
-
+        
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Name Is Required.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a There is already an integration with this name for this application..
         /// </summary>
-        public static string NameIsRequired
-        {
-            get
-            {
+        public static string NameAlreadyExistsInApplication {
+            get {
+                return ResourceManager.GetString("NameAlreadyExistsInApplication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Name Is Required..
+        /// </summary>
+        public static string NameIsRequired {
+            get {
                 return ResourceManager.GetString("NameIsRequired", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Update integration Not Found..
         /// </summary>
-        public static string UpdatedSuccessfully
-        {
-            get
-            {
+        public static string UpdatedSuccessfully {
+            get {
                 return ResourceManager.GetString("UpdatedSuccessfully", resourceCulture);
             }
         }
