@@ -94,6 +94,7 @@ namespace Application.Tests.Services
 
             // Assert  
             Assert.Equal(expected, result);
+
         }
 
         [Fact]
@@ -306,6 +307,21 @@ namespace Application.Tests.Services
 
             // Assert  
             Assert.Equal(OperationStatus.NotFound, result.Status);
+        }
+
+        [Fact]
+        public async Task UpdateAsyncShouldReturnInvalidDataWhenapplicationDontExists()
+        {
+            // Arrange  
+            var integration = new Integration { Name = "name", Description = "Desc" };
+
+            _integrationRepositoryMock.Setup(r => r.VerifyApplicationIdExistsAsync(integration.ApplicationDataId)).ReturnsAsync(true);
+
+            // Act  
+            var result = await _integrationService.UpdateAsync(integration);
+
+            // Assert  
+            Assert.Equal(OperationStatus.InvalidData, result.Status);
         }
 
         [Fact]
