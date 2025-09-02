@@ -27,8 +27,8 @@ namespace Application.Tests.Services
         {
             CultureInfo.CurrentCulture = new CultureInfo("pt-BR");
             CultureInfo.CurrentUICulture = new CultureInfo("pt-BR");
-            CultureInfo.CurrentCulture = new CultureInfo("en-US");
-            CultureInfo.CurrentUICulture = new CultureInfo("en-US");
+            //CultureInfo.CurrentCulture = new CultureInfo("en-US");
+            //CultureInfo.CurrentUICulture = new CultureInfo("en-US");
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _managerRepositoryMock = new Mock<IManagerRepository>();
 
