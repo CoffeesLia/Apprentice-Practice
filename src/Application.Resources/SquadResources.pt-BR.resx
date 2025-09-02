@@ -141,7 +141,13 @@
   <data name="DescriptionValidateLength" xml:space="preserve">
     <value>A descrição deve ter entre 3 e 255 caracteres.</value>
   </data>
-  <data name="SquadDeleteLinkedError" xml:space="preserve">
-    <value>Não é possível apagar um squad quando ele está vinculado a uma aplicação e membros.</value>
+  <data name="SquadDeleteLinkedApplication" xml:space="preserve">
+    <value>Não é possível apagar um Squad com aplicações vinculadas.</value>
+  </data>
+  <data name="SquadDeleteLinkedMembers" xml:space="preserve">
+    <value>Não é possível apagar um Squad com membros vinculados.</value>
+  </data>
+  <data name="SquadDeleteLinkedMemberApp" xml:space="preserve">
+    <value>Não é possível apagar um Squad com aplicações ou membros vinculados.</value>
   </data>
 </root>
