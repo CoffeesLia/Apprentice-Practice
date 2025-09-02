@@ -81,7 +81,7 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             var integrationDto = new IntegrationDto { Name = "Test Integration", Description = "Test Description", ApplicationDataId = 1 };
-            var integration = new Integration("Test Integration", "Test Description") { ApplicationDataId = 1 };
+            var integration = new Integration { Name = "Test Integration", Description = "Test Description", ApplicationDataId = 1 };
             _serviceMock.Setup(s => s.CreateAsync(It.IsAny<Integration>())).ReturnsAsync(OperationResult.Complete());
 
             // Act
@@ -98,7 +98,7 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             var integrationId = 1;
-            var integration = new Integration("Test Integration", "Test Description") { ApplicationDataId = 1 };
+            var integration = new Integration { Name = "Test Integration", Description = "Test Description", ApplicationDataId = 1 };
             _serviceMock.Setup(s => s.GetItemAsync(integrationId)).ReturnsAsync(integration);
 
             // Act
@@ -167,10 +167,7 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange  
             var integrationId = 1;
-            var integration = new Integration("Name", "Description")
-            {
-                ApplicationDataId = 1
-            };
+            var integration = new Integration { Name = "Name", Description = "Description", ApplicationDataId = 1 };
             var integrationDto = new IntegrationDto
             {
                 Name = "Updated Name",

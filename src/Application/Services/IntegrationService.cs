@@ -14,8 +14,6 @@ namespace Stellantis.ProjectName.Application.Services
     public class IntegrationService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<Integration> validator)
                : EntityServiceBase<Integration>(unitOfWork, localizerFactory, validator), IIntegrationService
     {
-        private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(IntegrationResources));
-
         protected override IIntegrationRepository Repository => UnitOfWork.IntegrationRepository;
 
         public override async Task<OperationResult> CreateAsync(Integration item)
@@ -28,12 +26,23 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.InvalidData(validationResult);
             }
 
-            if (!await Repository.IsIntegrationNameUniqueAsync(item.Name).ConfigureAwait(false))
+            if (await Repository.VerifyNameExistsAsync(item.Name).ConfigureAwait(false))
             {
-                return OperationResult.Conflict(_localizer[nameof(IntegrationResources.NameAlreadyExistsInApplication)]);
+              return OperationResult.InvalidData(validationResult);
             }
 
-            return await base.CreateAsync(item).ConfigureAwait(false);
+            if (await Repository.VerifyDescriptionExistsAsync(item.Description).ConfigureAwait(false))
+            {
+                return OperationResult.InvalidData(validationResult);
+            }
+            
+            if (await Repository.VerifyApplicationIdExistsAsync(item.ApplicationDataId).ConfigureAwait(false))
+            {
+                return OperationResult.InvalidData(validationResult);
+            }
+
+            await Repository.CreateAsync(item).ConfigureAwait(false);
+            return OperationResult.Complete(Localizer[IntegrationResources.MessageSucess]);
         }
 
         public new async Task<OperationResult> GetItemAsync(int id)
@@ -41,51 +50,55 @@ namespace Stellantis.ProjectName.Application.Services
             var integration = await Repository.GetByIdAsync(id).ConfigureAwait(false);
             if (integration == null)
             {
-                return OperationResult.NotFound(_localizer[IntegrationResources.MessageNotFound]);
+                return OperationResult.NotFound(Localizer[IntegrationResources.MessageNotFound]);
             }
-            return OperationResult.Complete(_localizer[IntegrationResources.MessageSucess]);
+            return OperationResult.Complete(Localizer[IntegrationResources.MessageSucess]);
         }
 
         public override async Task<OperationResult> UpdateAsync(Integration item)
         {
             ArgumentNullException.ThrowIfNull(item);
 
-            // Validação do objeto pelo FluentValidation
             var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
             if (!validationResult.IsValid)
             {
                 return OperationResult.InvalidData(validationResult);
             }
 
-            // Obter o registro atual do banco
             var existingItem = await Repository.GetByIdAsync(item.Id).ConfigureAwait(false);
             if (existingItem is null)
             {
-                return OperationResult.Conflict(IntegrationResources.NameAlreadyExistsInApplication);
+                return OperationResult.NotFound(Localizer[IntegrationResources.MessageNotFound]);
             }
 
-            // Verifica se o nome já existe em outra integração
-            if (!await Repository.IsIntegrationNameUniqueAsync(item.Name, item.Id).ConfigureAwait(false))
-            {
-                return OperationResult.Conflict(_localizer[nameof(IntegrationResources.NameAlreadyExistsInApplication)]);
-            }
-
-            // Verificar se houve alguma alteração
             if (existingItem.Name == item.Name &&
                 existingItem.Description == item.Description &&
                 existingItem.ApplicationDataId == item.ApplicationDataId)
             {
-                // Nenhuma modificação -> não precisa atualizar
-                return OperationResult.Complete(_localizer[IntegrationResources.UpdatedSuccessfully]);
+                return OperationResult.Complete(Localizer[IntegrationResources.UpdatedSuccessfully]);
             }
 
-            // Atualizar somente os campos alterados
+            if (await Repository.VerifyNameExistsAsync(item.Name).ConfigureAwait(false))
+            {
+                return OperationResult.InvalidData(validationResult);
+            }
+
+            if (await Repository.VerifyDescriptionExistsAsync(item.Description).ConfigureAwait(false))
+            {
+                return OperationResult.InvalidData(validationResult);
+            }
+
+            if (await Repository.VerifyApplicationIdExistsAsync(item.ApplicationDataId).ConfigureAwait(false))
+            {
+                return OperationResult.InvalidData(validationResult);
+            }
+
             existingItem.Name = item.Name;
             existingItem.Description = item.Description;
             existingItem.ApplicationDataId = item.ApplicationDataId;
 
             await Repository.UpdateAsync(existingItem).ConfigureAwait(false);
-            return OperationResult.Complete(_localizer[IntegrationResources.UpdatedSuccessfully]);
+            return OperationResult.Complete(Localizer[IntegrationResources.UpdatedSuccessfully]);
         }
 
         public new async Task<OperationResult> DeleteAsync(int id)
@@ -93,11 +106,11 @@ namespace Stellantis.ProjectName.Application.Services
             var integration = await Repository.GetByIdAsync(id).ConfigureAwait(false);
             if (integration == null)
             {
-                return OperationResult.NotFound(_localizer[IntegrationResources.MessageNotFound]);
+                return OperationResult.NotFound(Localizer[IntegrationResources.MessageNotFound]);
             }
 
             await Repository.DeleteAsync(id).ConfigureAwait(false);
-            return OperationResult.Complete(_localizer[IntegrationResources.DeletedSuccessfully]);
+            return OperationResult.Complete(Localizer[IntegrationResources.DeletedSuccessfully]);
         }
 
         public async Task<PagedResult<Integration>> GetListAsync(IntegrationFilter filter)

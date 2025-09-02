@@ -96,37 +96,8 @@ namespace Infrastructure.Tests.Data.Repositories
         [Fact]
         public async Task IsIntegrationNameUniqueAsync_ReturnsTrue_WhenNameExistsButIdIsSame()
         {
-            // Arrange
-            _fixture.Behaviors.Remove(new ThrowingRecursionBehavior());
-            _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
-
-            var integration = _fixture.Build<Integration>()
-                .With(i => i.Name, "Nome Teste")
-                .Without(i => i.ApplicationData)
-                .Create();
-
-            await _context.Set<Integration>().AddAsync(integration);
-            await _context.SaveChangesAsync();
-
-            // Act
-            var result = await _repository.IsIntegrationNameUniqueAsync("Nome Teste", integration.Id);
-
-            // Assert
-            Assert.True(result);
-        }
-
-        [Fact]
-        public async Task DeleteAsyncWhenCalled()
-        {
-            // Arrange
-            var fixture = new Fixture();
-            fixture.Behaviors.Remove(new ThrowingRecursionBehavior());
-            fixture.Behaviors.Add(new OmitOnRecursionBehavior());
-
-            var integration = fixture.Build<Integration>()
-                                     .Without(i => i.ApplicationData)
-                                     .Create();
-
+            // Arrange  
+            var integration = new Integration { Name = "Test Name", Description = "Test Description", ApplicationDataId = 1 };
             await _context.Set<Integration>().AddAsync(integration);
             await _context.SaveChangesAsync();
 
@@ -142,10 +113,7 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task CreateAsyncWhenCalled()
         {
             // Arrange
-            var integration = new Integration("Test Name", "Test Description")
-            {
-                ApplicationDataId = 1
-            };
+            var integration = new Integration { Name = "Test Name", Description = "Test Description", ApplicationDataId = 1 };
             // Act
             await _repository.CreateAsync(integration);
             // Assert
@@ -157,10 +125,7 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task GetListAsyncReturnFilterName()
         {
             // Arrange
-            var integration = new Integration("Test Integration", "Test Description")
-            {
-                ApplicationDataId = 1
-            };
+            var integration = new Integration { Name = "Test Integration", Description = "Test Description", ApplicationDataId = 1 };
             await _context.Set<Integration>().AddAsync(integration);
             await _context.SaveChangesAsync();
             var filter = new IntegrationFilter { Name = integration.Name, Page = 1, PageSize = 10, ApplicationDataId = integration.ApplicationDataId };
@@ -201,10 +166,7 @@ namespace Infrastructure.Tests.Data.Repositories
         public async Task UpdateAsyncWhenCalled()
         {
             // Arrange  
-            var integration = new Integration("Original Name", "Original Description")
-            {
-                ApplicationDataId = 1
-            };
+            var integration = new Integration { Name = "Original Name", Description = "Original Description", ApplicationDataId = 1 };
 
             await _context.Set<Integration>().AddAsync(integration);
             await _context.SaveChangesAsync();
@@ -219,6 +181,46 @@ namespace Infrastructure.Tests.Data.Repositories
             var result = await _context.Set<Integration>().FindAsync(integration.Id);
             Assert.NotNull(result);
             Assert.Equal(IntegrationResources.UpdatedSuccessfully, result.Name);
+        }
+
+        [Fact]
+        public async Task VerifyDescriptionExistsAsyncItWhenDescriptionDoesNotExist()
+        {
+            // Arrange  
+            var description = _fixture.Create<string>();
+
+            // Act  
+            var result = await _repository.VerifyDescriptionExistsAsync(description);
+
+            // Assert  
+            Assert.False(result);
+        }
+
+
+        [Fact]
+        public async Task VerifyDescriptionExistsAsyncItWhenDescriptionExists()
+        {
+            // Arrange  
+            var integration = new Integration { Name = "Test Name", Description = "Test Description", ApplicationDataId = 1 };
+            await _context.Set<Integration>().AddAsync(integration);
+            await _context.SaveChangesAsync();
+
+            // Act  
+            var result = await _repository.VerifyDescriptionExistsAsync(integration.Description);
+
+            // Assert  
+            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task VerifyApplicationIdExistsAsyncWhenApplicationDoesNotExist()
+        {
+            // Arrange  
+            var id = _fixture.Create<int>();
+            // Act  
+            var result = await _repository.VerifyApplicationIdExistsAsync(id);
+            // Assert  
+            Assert.False(result);
         }
 
         [Fact]
