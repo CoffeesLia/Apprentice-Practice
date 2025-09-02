@@ -8,25 +8,41 @@ namespace Stellantis.ProjectName.Application.Services
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-        public async Task<Dashboard> GetDashboardDataAsync()
+        public async Task<Dashboard> GetDashboardAsync()
         {
-            // Total de aplicações
             var applications = await _unitOfWork.ApplicationDataRepository
                 .GetListAsync(a => true).ConfigureAwait(false);
             int totalApplications = applications.Count;
 
-            // Total de incidentes abertos
             var incidents = await _unitOfWork.IncidentRepository
                 .GetListAsync(i => i.Status == IncidentStatus.Open).ConfigureAwait(false);
-            int openIncidents = incidents.Result.Count();
+            int totalOpenIncidents = incidents.Total;
 
-            // Total de squads ativos
+            var members = await _unitOfWork.MemberRepository
+                .GetListAsync(m => true).ConfigureAwait(false);
+            int totalMembers = members.Total;
+
             var squads = await _unitOfWork.SquadRepository
-                .GetListAsync(s => s.Members != null && s.Members.Any()).ConfigureAwait(false);
-            int activeSquads = squads.Result.Count();
+                .GetListAsync(s => s.Members != null && s.Members.Any())
+                .ConfigureAwait(false);
 
-            // Retorna os dados agregados
-            return new Dashboard(totalApplications, openIncidents, activeSquads);
+            var squadSummaries = squads.Result.Select(s => new SquadSummary
+            {
+                SquadName = s.Name!,
+                Members = s.Members?.Select(m => new MemberSummary
+                {
+                    Name = m.Name,
+                    Role = m.Role
+                }).ToList() ?? []
+            }).ToList();
+
+            return new Dashboard
+            {
+                TotalApplications = totalApplications,
+                TotalOpenIncidents = totalOpenIncidents,
+                TotalMembers = totalMembers,
+                Squads = squadSummaries
+            };
         }
     }
 }
