@@ -69,6 +69,8 @@ namespace Application.Tests.Services
             Assert.Equal(ApplicationDataResources.NameRequired, result.Errors.First());
         }
 
+
+
         [Fact]
         public async Task CreateAsyncShouldReturnInvalidDataWhenProductOwerIsRequired()
         {
@@ -347,7 +349,7 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.NotFound, result.Status);
         }
 
-        
+
 
         [Fact]
         public async Task IsApplicationNameUniqueAsyncShouldReturnFalseWhenNameIsNullOrWhiteSpace()
@@ -455,5 +457,245 @@ namespace Application.Tests.Services
             Assert.False(result);
         }
 
+        [Fact]
+        public async Task DeleteAsyncShouldReturnConflictWhenIntegrationLinked()
+        {
+            // Arrange
+            int applicationId = 1;
+            var applicationData = new ApplicationData("App") { Id = applicationId };
+            _applicationDataRepositoryMock.Setup(r => r.GetFullByIdAsync(applicationId)).ReturnsAsync(applicationData);
+
+            var integrationRepoMock = new Mock<IIntegrationRepository>();
+            integrationRepoMock.Setup(r => r.GetListAsync(It.IsAny<IntegrationFilter>()))
+                .ReturnsAsync(new PagedResult<Integration> { Result = [new Integration()] });
+
+            _unitOfWorkMock.Setup(u => u.IntegrationRepository).Returns(integrationRepoMock.Object);
+
+            // Act
+            var result = await _applicationDataService.DeleteAsync(applicationId);
+
+            // Assert
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal(ApplicationDataResources.IntegrationLinkedError, result.Message);
+        }
+
+        [Fact]
+        public async Task DeleteAsyncShouldReturnConflictWhenServiceLinked()
+        {
+            // Arrange
+            int applicationId = 1;
+            var applicationData = new ApplicationData("App") { Id = applicationId };
+            _applicationDataRepositoryMock.Setup(r => r.GetFullByIdAsync(applicationId)).ReturnsAsync(applicationData);
+
+            var integrationRepoMock = new Mock<IIntegrationRepository>();
+            integrationRepoMock.Setup(r => r.GetListAsync(It.IsAny<IntegrationFilter>()))
+                .ReturnsAsync(new PagedResult<Integration> { Result = [] });
+            _unitOfWorkMock.Setup(u => u.IntegrationRepository).Returns(integrationRepoMock.Object);
+
+            // Act
+            var result = await _applicationDataService.DeleteAsync(applicationId);
+
+            // Assert
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal(ApplicationDataResources.ServiceLinkedError, result.Message);
+        }
+
+        [Fact]
+        public async Task DeleteAsyncShouldReturnConflictWhenRepoLinked()
+        {
+            // Arrange
+            int applicationId = 1;
+            var applicationData = new ApplicationData("App") { Id = applicationId };
+            _applicationDataRepositoryMock.Setup(r => r.GetFullByIdAsync(applicationId)).ReturnsAsync(applicationData);
+
+            var integrationRepoMock = new Mock<IIntegrationRepository>();
+            integrationRepoMock.Setup(r => r.GetListAsync(It.IsAny<IntegrationFilter>()))
+                .ReturnsAsync(new PagedResult<Integration> { Result = [] });
+            _unitOfWorkMock.Setup(u => u.IntegrationRepository).Returns(integrationRepoMock.Object);
+
+            var serviceRepoMock = new Mock<IServiceDataRepository>();
+            serviceRepoMock.Setup(r => r.GetListAsync(It.IsAny<ServiceDataFilter>()))
+                .ReturnsAsync(new PagedResult<ServiceData> { Result = [] });
+            _unitOfWorkMock.Setup(u => u.ServiceDataRepository).Returns(serviceRepoMock.Object);
+
+            // Act
+            var result = await _applicationDataService.DeleteAsync(applicationId);
+
+            // Assert
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal(ApplicationDataResources.RepoLinkedError, result.Message);
+        }
+
+        [Fact]
+        public async Task DeleteAsyncShouldReturnConflictWhenDocumentLinked()
+        {
+            // Arrange
+            int applicationId = 1;
+            var applicationData = new ApplicationData("App") { Id = applicationId };
+            _applicationDataRepositoryMock.Setup(r => r.GetFullByIdAsync(applicationId)).ReturnsAsync(applicationData);
+
+            var integrationRepoMock = new Mock<IIntegrationRepository>();
+            integrationRepoMock.Setup(r => r.GetListAsync(It.IsAny<IntegrationFilter>()))
+                .ReturnsAsync(new PagedResult<Integration> { Result = [] });
+            _unitOfWorkMock.Setup(u => u.IntegrationRepository).Returns(integrationRepoMock.Object);
+
+            var serviceRepoMock = new Mock<IServiceDataRepository>();
+            serviceRepoMock.Setup(r => r.GetListAsync(It.IsAny<ServiceDataFilter>()))
+                .ReturnsAsync(new PagedResult<ServiceData> { Result = [] });
+            _unitOfWorkMock.Setup(u => u.ServiceDataRepository).Returns(serviceRepoMock.Object);
+
+            var repoRepoMock = new Mock<IRepoRepository>();
+            repoRepoMock.Setup(r => r.GetListAsync(It.IsAny<RepoFilter>()))
+                .ReturnsAsync(new PagedResult<Repo> { Result = [] });
+            _unitOfWorkMock.Setup(u => u.RepoRepository).Returns(repoRepoMock.Object);
+
+            // Act
+            var result = await _applicationDataService.DeleteAsync(applicationId);
+
+            // Assert
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal(ApplicationDataResources.DocumentLinkedError, result.Message);
+        }
+
+        [Fact]
+        public async Task DeleteAsyncShouldReturnConflictWhenKnowledgeLinked()
+        {
+            // Arrange
+            int applicationId = 1;
+            var applicationData = new ApplicationData("App") { Id = applicationId };
+            _applicationDataRepositoryMock.Setup(r => r.GetFullByIdAsync(applicationId)).ReturnsAsync(applicationData);
+
+            var integrationRepoMock = new Mock<IIntegrationRepository>();
+            integrationRepoMock.Setup(r => r.GetListAsync(It.IsAny<IntegrationFilter>()))
+                .ReturnsAsync(new PagedResult<Integration> { Result = [] });
+            _unitOfWorkMock.Setup(u => u.IntegrationRepository).Returns(integrationRepoMock.Object);
+
+            var serviceRepoMock = new Mock<IServiceDataRepository>();
+            serviceRepoMock.Setup(r => r.GetListAsync(It.IsAny<ServiceDataFilter>()))
+                .ReturnsAsync(new PagedResult<ServiceData> { Result = [] });
+            _unitOfWorkMock.Setup(u => u.ServiceDataRepository).Returns(serviceRepoMock.Object);
+
+            var repoRepoMock = new Mock<IRepoRepository>();
+            repoRepoMock.Setup(r => r.GetListAsync(It.IsAny<RepoFilter>()))
+                .ReturnsAsync(new PagedResult<Repo> { Result = [] });
+            _unitOfWorkMock.Setup(u => u.RepoRepository).Returns(repoRepoMock.Object);
+
+            var documentRepoMock = new Mock<IDocumentRepository>();
+            documentRepoMock.Setup(r => r.GetListAsync(It.IsAny<DocumentDataFilter>()))
+                .ReturnsAsync(new PagedResult<DocumentData> { Result = [] });
+            // Substitua todas as ocorrências de "_unitOfWorkMock.Setup(u => u.DocumentRepository)" por "_unitOfWorkMock.Setup(u => u.DocumentDataRepository)"
+            // Exemplo de correção:
+            _unitOfWorkMock.Setup(u => u.DocumentDataRepository).Returns(documentRepoMock.Object);
+           
+
+            var knowledgeRepoMock = new Mock<IKnowledgeRepository>();
+            knowledgeRepoMock.Setup(r => r.GetListAsync(It.IsAny<KnowledgeFilter>()))
+                .ReturnsAsync(new PagedResult<Knowledge> { Result = [new Knowledge()] });
+            _unitOfWorkMock.Setup(u => u.KnowledgeRepository).Returns(knowledgeRepoMock.Object);
+
+            // Act
+            var result = await _applicationDataService.DeleteAsync(applicationId);
+
+            // Assert
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal(ApplicationDataResources.KnowledgeLinkedError, result.Message);
+        }
+
+        [Fact]
+        public async Task DeleteAsyncShouldReturnConflictWhenFeedbackLinked()
+        {
+            // Arrange
+            int applicationId = 1;
+            var applicationData = new ApplicationData("App") { Id = applicationId };
+            _applicationDataRepositoryMock.Setup(r => r.GetFullByIdAsync(applicationId)).ReturnsAsync(applicationData);
+
+            var integrationRepoMock = new Mock<IIntegrationRepository>();
+            integrationRepoMock.Setup(r => r.GetListAsync(It.IsAny<IntegrationFilter>()))
+                .ReturnsAsync(new PagedResult<Integration> { Result = [] });
+            _unitOfWorkMock.Setup(u => u.IntegrationRepository).Returns(integrationRepoMock.Object);
+
+            var serviceRepoMock = new Mock<IServiceDataRepository>();
+            serviceRepoMock.Setup(r => r.GetListAsync(It.IsAny<ServiceDataFilter>()))
+                .ReturnsAsync(new PagedResult<ServiceData> { Result = [] });
+            _unitOfWorkMock.Setup(u => u.ServiceDataRepository).Returns(serviceRepoMock.Object);
+
+            var repoRepoMock = new Mock<IRepoRepository>();
+            repoRepoMock.Setup(r => r.GetListAsync(It.IsAny<RepoFilter>()))
+                .ReturnsAsync(new PagedResult<Repo> { Result = [] });
+            _unitOfWorkMock.Setup(u => u.RepoRepository).Returns(repoRepoMock.Object);
+
+            var documentRepoMock = new Mock<IDocumentRepository>();
+            documentRepoMock.Setup(r => r.GetListAsync(It.IsAny<DocumentDataFilter>()))
+                .ReturnsAsync(new PagedResult<DocumentData> { Result = [] });
+            _unitOfWorkMock.Setup(u => u.DocumentDataRepository).Returns(documentRepoMock.Object);
+
+            var knowledgeRepoMock = new Mock<IKnowledgeRepository>();
+            knowledgeRepoMock.Setup(r => r.GetListAsync(It.IsAny<KnowledgeFilter>()))
+                .ReturnsAsync(new PagedResult<Knowledge> { Result = [] });
+            _unitOfWorkMock.Setup(u => u.KnowledgeRepository).Returns(knowledgeRepoMock.Object);
+
+            var feedbackRepoMock = new Mock<IFeedbackRepository>();
+            feedbackRepoMock.Setup(r => r.GetListAsync(It.IsAny<FeedbackFilter>()))
+                .ReturnsAsync(new PagedResult<Feedback> { Result = [new Feedback()] });
+            _unitOfWorkMock.Setup(u => u.FeedbackRepository).Returns(feedbackRepoMock.Object);
+
+            // Act
+            var result = await _applicationDataService.DeleteAsync(applicationId);
+
+            // Assert
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal(ApplicationDataResources.FeedbackLinkedError, result.Message);
+        }
+
+        [Fact]
+        public async Task DeleteAsyncShouldReturnConflictWhenIncidentLinked()
+        {
+            // Arrange
+            int applicationId = 1;
+            var applicationData = new ApplicationData("App") { Id = applicationId };
+            _applicationDataRepositoryMock.Setup(r => r.GetFullByIdAsync(applicationId)).ReturnsAsync(applicationData);
+
+            var integrationRepoMock = new Mock<IIntegrationRepository>();
+            integrationRepoMock.Setup(r => r.GetListAsync(It.IsAny<IntegrationFilter>()))
+                .ReturnsAsync(new PagedResult<Integration> { Result = [] });
+            _unitOfWorkMock.Setup(u => u.IntegrationRepository).Returns(integrationRepoMock.Object);
+
+            var serviceRepoMock = new Mock<IServiceDataRepository>();
+            serviceRepoMock.Setup(r => r.GetListAsync(It.IsAny<ServiceDataFilter>()))
+                .ReturnsAsync(new PagedResult<ServiceData> { Result = [] });
+            _unitOfWorkMock.Setup(u => u.ServiceDataRepository).Returns(serviceRepoMock.Object);
+
+            var repoRepoMock = new Mock<IRepoRepository>();
+            repoRepoMock.Setup(r => r.GetListAsync(It.IsAny<RepoFilter>()))
+                .ReturnsAsync(new PagedResult<Repo> { Result = [] });
+            _unitOfWorkMock.Setup(u => u.RepoRepository).Returns(repoRepoMock.Object);
+
+            var documentRepoMock = new Mock<IDocumentRepository>();
+            documentRepoMock.Setup(r => r.GetListAsync(It.IsAny<DocumentDataFilter>()))
+                .ReturnsAsync(new PagedResult<DocumentData> { Result = [] });
+            _unitOfWorkMock.Setup(u => u.DocumentDataRepository).Returns(documentRepoMock.Object);
+
+            var knowledgeRepoMock = new Mock<IKnowledgeRepository>();
+            knowledgeRepoMock.Setup(r => r.GetListAsync(It.IsAny<KnowledgeFilter>()))
+                .ReturnsAsync(new PagedResult<Knowledge> { Result = [] });
+            _unitOfWorkMock.Setup(u => u.KnowledgeRepository).Returns(knowledgeRepoMock.Object);
+
+            var feedbackRepoMock = new Mock<IFeedbackRepository>();
+            feedbackRepoMock.Setup(r => r.GetListAsync(It.IsAny<FeedbackFilter>()))
+                .ReturnsAsync(new PagedResult<Feedback> { Result = [] });
+            _unitOfWorkMock.Setup(u => u.FeedbackRepository).Returns(feedbackRepoMock.Object);
+
+            var incidentRepoMock = new Mock<IIncidentRepository>();
+            incidentRepoMock.Setup(r => r.GetListAsync(It.IsAny<IncidentFilter>()))
+                .ReturnsAsync(new PagedResult<Incident> { Result = [new Incident()] });
+            _unitOfWorkMock.Setup(u => u.IncidentRepository).Returns(incidentRepoMock.Object);
+
+            // Act
+            var result = await _applicationDataService.DeleteAsync(applicationId);
+
+            // Assert
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal(ApplicationDataResources.IncidentLinkedError, result.Message);
+        }
     }
 }

@@ -289,7 +289,7 @@ namespace Infrastructure.Tests.Data.Repositories
             Assert.Equal(10, pagedResult.PageSize);
         }
 
-   
+
 
         [Fact]
         public async Task GetListAsyncShouldRespectPagination()

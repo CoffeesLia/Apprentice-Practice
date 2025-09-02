@@ -9,6 +9,7 @@ using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Application.Services;
+using Stellantis.ProjectName.Application.Validators;
 using Stellantis.ProjectName.Domain.Entities;
 using System.Globalization;
 using Xunit;
@@ -42,6 +43,7 @@ namespace Application.Tests.Services
                 .ForEach(b => _fixture.Behaviors.Remove(b));
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
         }
+
 
         [Fact]
         public async Task CreateAsyncWhenValidationFailsReturnsInvalidData()
@@ -405,7 +407,7 @@ namespace Application.Tests.Services
                 .ReturnsAsync(new PagedResult<Knowledge> { Result = knowledges, Page = 1, PageSize = 10, Total = 2 });
 
             // Act
-            var result = await _knowledgeService.GetListAsync(null);
+            var result = await _knowledgeService.GetListAsync(null!);
 
             // Assert
             Assert.Equal(2, result.Total);
@@ -564,7 +566,7 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.Success, result.Status);
         }
         [Fact]
-        public void KnowledgeResource_ApplicationIsRequired_ShouldReturnResource()
+        public void KnowledgeResourceApplicationIsRequiredShouldReturnResource()
         {
             // Act
             var value = KnowledgeResource.ApplicationIsRequired;
@@ -574,7 +576,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public void KnowledgeResource_AssociationAlreadyExists_ShouldReturnResource()
+        public void KnowledgeResourceAssociationAlreadyExistsShouldReturnResource()
         {
             // Act
             var value = KnowledgeResource.AssociationAlreadyExists;
@@ -584,7 +586,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public void KnowledgeResource_AssociationFound_ShouldReturnResource()
+        public void KnowledgeResourceAssociationFoundShouldReturnResource()
         {
             // Act
             var value = KnowledgeResource.AssociationFound;
@@ -594,7 +596,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public void KnowledgeResource_AssociationNotFound_ShouldReturnResource()
+        public void KnowledgeResourceAssociationNotFoundShouldReturnResource()
         {
             // Act
             var value = KnowledgeResource.AssociationNotFound;
@@ -604,7 +606,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public void KnowledgeResource_CannotEditOrRemovePastAssociation_ShouldReturnResource()
+        public void KnowledgeResourceCannotEditOrRemovePastAssociationShouldReturnResource()
         {
             // Act
             var value = KnowledgeResource.CannotEditOrRemovePastAssociation;
@@ -614,7 +616,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public void KnowledgeResource_MemberApplicationMustBelongToTheSameSquad_ShouldReturnResource()
+        public void KnowledgeResourceMemberApplicationMustBelongToTheSameSquadShouldReturnResource()
         {
             // Act
             var value = KnowledgeResource.MemberApplicationMustBelongToTheSameSquad;
@@ -624,7 +626,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public void KnowledgeResource_MemberApplicationNotFound_ShouldReturnResource()
+        public void KnowledgeResourceMemberApplicationNotFoundShouldReturnResource()
         {
             // Act
             var value = KnowledgeResource.MemberApplicationNotFound;
@@ -634,7 +636,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public void KnowledgeResource_MemberIsRequired_ShouldReturnResource()
+        public void KnowledgeResourceMemberIsRequiredShouldReturnResource()
         {
             // Act
             var value = KnowledgeResource.MemberIsRequired;
@@ -644,7 +646,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public void KnowledgeResource_OnlyPossibleRemoveIfBelongToTheLeadersSquad_ShouldReturnResource()
+        public void KnowledgeResourceOnlyPossibleRemoveIfBelongToTheLeadersSquadShouldReturnResource()
         {
             // Act
             var value = KnowledgeResource.OnlyPossibleRemoveIfBelongToTheLeadersSquad;
@@ -654,7 +656,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public void KnowledgeResource_OnlySquadLeaderAssociate_ShouldReturnResource()
+        public void KnowledgeResourceOnlySquadLeaderAssociateShouldReturnResource()
         {
             // Act
             var value = KnowledgeResource.OnlySquadLeaderAssociate;
@@ -664,7 +666,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public void KnowledgeResource_OnlySquadLeaderRemove_ShouldReturnResource()
+        public void KnowledgeResourceOnlySquadLeaderRemoveShouldReturnResource()
         {
             // Act
             var value = KnowledgeResource.OnlySquadLeaderRemove;
@@ -674,13 +676,59 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public void KnowledgeResource_UnsupportedMembershipUpdate_ShouldReturnResource()
+        public void KnowledgeResourceUnsupportedMembershipUpdateShouldReturnResource()
         {
             // Act
             var value = KnowledgeResource.UnsupportedMembershipUpdate;
 
             // Assert
             Assert.False(string.IsNullOrWhiteSpace(value));
+        }
+        [Fact]
+        public async Task KnowledgeValidatorWhenMemberIdIsZeroShouldReturnMemberIsRequiredError()
+        {
+            // Arrange
+            var localizerFactory = LocalizerFactorHelper.Create();
+            var validator = new KnowledgeValidator(localizerFactory);
+            var knowledge = new Knowledge { MemberId = 0, ApplicationId = 1 };
+
+            // Act
+            var result = await validator.ValidateAsync(knowledge);
+
+            // Assert
+            Assert.False(result.IsValid);
+            Assert.Contains(result.Errors, e => e.PropertyName == nameof(Knowledge.MemberId) && e.ErrorMessage == KnowledgeResource.MemberIsRequired);
+        }
+
+        [Fact]
+        public async Task KnowledgeValidatorWhenApplicationIdIsZeroShouldReturnApplicationIsRequiredError()
+        {
+            // Arrange
+            var localizerFactory = LocalizerFactorHelper.Create();
+            var validator = new KnowledgeValidator(localizerFactory);
+            var knowledge = new Knowledge { MemberId = 1, ApplicationId = 0 };
+
+            // Act
+            var result = await validator.ValidateAsync(knowledge);
+
+            // Assert
+            Assert.False(result.IsValid);
+            Assert.Contains(result.Errors, e => e.PropertyName == nameof(Knowledge.ApplicationId) && e.ErrorMessage == KnowledgeResource.ApplicationIsRequired);
+        }
+
+        [Fact]
+        public async Task KnowledgeValidatorWhenMemberIdAndApplicationIdAreValidShouldBeValid()
+        {
+            // Arrange
+            var localizerFactory = LocalizerFactorHelper.Create();
+            var validator = new KnowledgeValidator(localizerFactory);
+            var knowledge = new Knowledge { MemberId = 1, ApplicationId = 1 };
+
+            // Act
+            var result = await validator.ValidateAsync(knowledge);
+
+            // Assert
+            Assert.True(result.IsValid);
         }
     }
 }
