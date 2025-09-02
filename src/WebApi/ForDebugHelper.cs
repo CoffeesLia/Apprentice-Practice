@@ -193,16 +193,16 @@ namespace Stellantis.ProjectName.WebApi
 
                 // Integrações
                 context.Integrations.AddRange(
-                    new Integration("Tralalero Tralala", "Bombardiro crocodilo") { ApplicationDataId = 1 },
-                    new Integration("Finance Sync", "Integração entre sistemas financeiros e ERP") { ApplicationDataId = 4 },
-                    new Integration("HR Connector", "Sincronização de dados de RH com sistemas externos") { ApplicationDataId = 5 },
-                    new Integration("Salesforce Bridge", "Integração de oportunidades de vendas com Salesforce") { ApplicationDataId = 7 },
-                    new Integration("Marketing Data Feed", "Importação de leads de campanhas de marketing") { ApplicationDataId = 6 },
-                    new Integration("Supplier API", "Integração com fornecedores externos para atualização de estoque") { ApplicationDataId = 9 },
-                    new Integration("Quality Gateway", "Envio de dados de qualidade para sistemas de auditoria") { ApplicationDataId = 8 },
-                    new Integration("AMS Notifier", "Notificações automáticas do Portal AMS para usuários") { ApplicationDataId = 1 },
-                    new Integration("Engineering Sync", "Integração de ferramentas de engenharia com repositórios") { ApplicationDataId = 10 },
-                    new Integration("eLog Importer", "Importação de dados logísticos do sistema eLog") { ApplicationDataId = 2 }
+                    new Integration { Name = "Tralalero Tralala", Description = "Bombardiro crocodilo", ApplicationDataId = 1 },
+                    new Integration { Name = "Finance Sync", Description = "Integração entre sistemas financeiros e ERP", ApplicationDataId = 4 },
+                    new Integration { Name = "HR Connector", Description = "Sincronização de dados de RH com sistemas externos", ApplicationDataId = 5 },
+                    new Integration { Name = "Salesforce Bridge", Description = "Integração de oportunidades de vendas com Salesforce", ApplicationDataId = 7 },
+                    new Integration { Name = "Marketing Data Feed", Description = "Importação de leads de campanhas de marketing", ApplicationDataId = 6 },
+                    new Integration { Name = "Supplier API", Description = "Integração com fornecedores externos para atualização de estoque", ApplicationDataId = 9 },
+                    new Integration { Name = "Quality Gateway", Description = "Envio de dados de qualidade para sistemas de auditoria", ApplicationDataId = 8 },
+                    new Integration { Name = "AMS Notifier", Description = "Notificações automáticas do Portal AMS para usuários", ApplicationDataId = 1 },
+                    new Integration { Name = "Engineering Sync", Description = "Integração de ferramentas de engenharia com repositórios", ApplicationDataId = 10 },
+                    new Integration { Name = "eLog Importer", Description = "Importação de dados logísticos do sistema eLog", ApplicationDataId = 2 }
                 );
 
                 // Membros

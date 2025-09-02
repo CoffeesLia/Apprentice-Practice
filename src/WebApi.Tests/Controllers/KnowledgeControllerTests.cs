@@ -7,6 +7,7 @@ using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Controllers;
 using Stellantis.ProjectName.WebApi.Dto;
+using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.Mapper;
 using Stellantis.ProjectName.WebApi.ViewModels;
 using WebApi.Tests.Helpers;
@@ -49,6 +50,9 @@ namespace WebApi.Tests.Controllers
             Assert.IsType<OkObjectResult>(result);
         }
 
+
+
+
         [Fact]
         public async Task UpdateAsyncShouldReturnConflictWhenAssociationIsPast()
         {
@@ -71,6 +75,9 @@ namespace WebApi.Tests.Controllers
             // Assert
             Assert.IsType<ConflictObjectResult>(result);
         }
+
+
+
 
         [Fact]
         public async Task DeleteAsyncShouldReturnNoContentWhenDeleteIsSuccessful()
@@ -121,6 +128,129 @@ namespace WebApi.Tests.Controllers
 
             // Assert
             Assert.IsType<CreatedAtActionResult>(result);
+        }
+        [Fact]
+        public async Task GetAsyncShouldReturnKnowledgeVmWhenExists()
+        {
+            // Arrange
+            int knowledgeId = 1;
+            var knowledge = new Knowledge
+            {
+                Id = knowledgeId,
+                MemberId = 2,
+                ApplicationId = 3,
+                SquadId = 4,
+                Status = KnowledgeStatus.Atual,
+                Member = new() { Id = 2, Name = "Nome Teste", Role = "Cargo Teste", Cost = 1000m, Email = "teste@email.com" },
+                Application = new ApplicationData("Nome Teste") { Id = 3, Description = "Descrição Teste" },
+                
+                Squad = new() { Id = 4, Name = "Nome Teste", Description = "Descrição Teste" }
+            };
+            _serviceMock.Setup(s => s.GetItemAsync(knowledgeId)).ReturnsAsync(knowledge);
+
+            // Act
+            var result = await _controller.GetAsync(knowledgeId);
+
+            // Assert
+            var actionResult = Assert.IsType<ActionResult<KnowledgeVm>>(result);
+            Assert.IsType<OkObjectResult>(actionResult.Result);
+        }
+
+        [Fact]
+        public async Task GetAsyncShouldReturnNotFoundWhenNotExists()
+        {
+            // Arrange
+            int knowledgeId = 99;
+            _serviceMock.Setup(s => s.GetItemAsync(knowledgeId)).ReturnsAsync((Knowledge?)null);
+
+            // Act
+            var result = await _controller.GetAsync(knowledgeId);
+
+            // Assert
+            var actionResult = Assert.IsType<ActionResult<KnowledgeVm>>(result);
+            Assert.IsType<NotFoundResult>(actionResult.Result);
+        }
+
+        [Fact]
+        public async Task GetListAsyncShouldReturnPagedResultVm()
+        {
+            // Arrange
+            var filterDto = new KnowledgeFilterDto
+            {
+                Page = 1,
+                PageSize = 10,
+                MemberId = 1,
+                ApplicationId = 2,
+                SquadId = 3,
+                Status = KnowledgeStatus.Atual
+            };
+            var pagedResult = new PagedResult<Knowledge>
+            {
+                Result = new List<Knowledge>
+                {
+                    new Knowledge
+                    {
+                        Id = 1,
+                        MemberId = 1,
+                        ApplicationId = 2,
+                        SquadId = 3,
+                        Status = KnowledgeStatus.Atual,
+                        Member = new() { Id = 1, Name = "Nome Teste", Role = "Cargo Teste", Cost = 1000m, Email = "teste@email.com" },
+                        Application = new ApplicationData("Nome Teste") { Id = 2, Description = "Descrição Teste" },
+                        Squad = new() { Id = 3, Name = "Nome Teste", Description = "Descrição Teste" }
+                    }
+                },
+                Page = 1,
+                PageSize = 10,
+                Total = 1
+            };
+            _serviceMock.Setup(s => s.GetListAsync(It.IsAny<KnowledgeFilter>())).ReturnsAsync(pagedResult);
+
+            // Act
+            var result = await _controller.GetListAsync(filterDto);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.IsType<PagedResultVm<KnowledgeVm>>(okResult.Value);
+        }
+        [Fact]
+        public void KnowledgeFilterDto_Should_Set_And_Get_Properties()
+        {
+            // Arrange
+            var filterDto = new KnowledgeFilterDto
+            {
+                Page = 2,
+                PageSize = 20,
+                MemberId = 5,
+                ApplicationId = 10,
+                SquadId = 15,
+                Status = KnowledgeStatus.Atual
+            };
+
+            // Assert
+            Assert.Equal(2, filterDto.Page);
+            Assert.Equal(20, filterDto.PageSize);
+            Assert.Equal(5, filterDto.MemberId);
+            Assert.Equal(10, filterDto.ApplicationId);
+            Assert.Equal(15, filterDto.SquadId);
+            Assert.Equal(KnowledgeStatus.Atual, filterDto.Status);
+        }
+
+        [Fact]
+        public void KnowledgeFilterDto_Default_Values_Should_Be_Correct()
+        {
+            // Arrange
+            var filterDto = new KnowledgeFilterDto
+            {
+                Page = 0,
+                PageSize = 0
+            };
+
+            // Assert
+            Assert.Equal(0, filterDto.MemberId);
+            Assert.Equal(0, filterDto.ApplicationId);
+            Assert.Equal(0, filterDto.SquadId);
+            Assert.Equal(default(KnowledgeStatus), filterDto.Status);
         }
     }
 }

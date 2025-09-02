@@ -7,5 +7,8 @@ namespace Stellantis.ProjectName.Application.Interfaces.Repositories
     {
         Task<PagedResult<Integration>> GetListAsync(IntegrationFilter filter);
         Task<bool> IsIntegrationNameUniqueAsync(string name, int? id = null);
+        Task<bool> VerifyApplicationIdExistsAsync(int applicationDataId);
+        Task<bool> VerifyDescriptionExistsAsync(string description);
+        Task<bool> VerifyNameExistsAsync(string name);
     }
 }
