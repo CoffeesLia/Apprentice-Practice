@@ -52,7 +52,9 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             if (!string.IsNullOrEmpty(serviceFilter.Name))
             {
-                query = query.Where(a => a.Name != null && a.Name.ToLower().Contains(serviceFilter.Name.ToLower()));
+                query = query.Where(a =>
+                    a.Name != null &&
+                    a.Name.Contains(serviceFilter.Name, StringComparison.OrdinalIgnoreCase));
             }
 
             return await GetPagedResultAsync(query, serviceFilter.Page, serviceFilter.PageSize)

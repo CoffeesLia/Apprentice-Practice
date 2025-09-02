@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
@@ -34,9 +35,12 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             ExpressionStarter<ApplicationData> filters = PredicateBuilder.New<ApplicationData>(true);
             applicationFilter.Page = applicationFilter.Page <= 0 ? 1 : applicationFilter.Page;
             applicationFilter.PageSize = applicationFilter.PageSize <= 0 ? 10 : applicationFilter.PageSize;
-            if (!string.IsNullOrWhiteSpace(applicationFilter.Name))
+
+            if (!string.IsNullOrEmpty(applicationFilter.Name))
             {
-                filters = filters.And(x => x.Name != null && x.Name.ToLower().Contains(applicationFilter.Name.ToLower()));
+                filters = filters.And(a =>
+                    a.Name != null &&
+                    a.Name.Contains(applicationFilter.Name, StringComparison.OrdinalIgnoreCase));
             }
 
 
