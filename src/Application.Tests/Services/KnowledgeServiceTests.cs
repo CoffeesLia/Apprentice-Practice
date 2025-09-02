@@ -306,5 +306,121 @@ namespace Application.Tests.Services
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
         }
+
+        [Fact]
+        public async Task GetSquadByMemberAsyncReturnsSquadWhenMemberExists()
+        {
+            var member = new Member
+            {
+                Id = 1,
+                SquadId = 2,
+                Name = "Test Name",
+                Role = "Test Role",
+                Cost = 1m,
+                Email = "test@email.com"
+            }; 
+            var squad = new Squad { Id = 2, Name = "Squad Test" };
+
+            var memberRepositoryMock = new Mock<IMemberRepository>();
+            var squadRepositoryMock = new Mock<ISquadRepository>();
+            memberRepositoryMock.Setup(r => r.GetByIdAsync(member.Id)).ReturnsAsync(member);
+            squadRepositoryMock.Setup(r => r.GetByIdAsync(member.SquadId)).ReturnsAsync(squad);
+
+            _unitOfWorkMock.Setup(u => u.MemberRepository).Returns(memberRepositoryMock.Object);
+            _unitOfWorkMock.Setup(u => u.SquadRepository).Returns(squadRepositoryMock.Object);
+
+            var result = await _knowledgeService.GetSquadByMemberAsync(member.Id);
+
+            Assert.NotNull(result);
+            Assert.Equal(squad.Id, result.Id);
+        }
+
+        [Fact]
+        public async Task GetSquadByMemberAsyncReturnsNullWhenMemberDoesNotExist()
+        {
+            var memberRepositoryMock = new Mock<IMemberRepository>();
+            memberRepositoryMock.Setup(r => r.GetByIdAsync(It.IsAny<int>())).ReturnsAsync((Member?)null);
+            _unitOfWorkMock.Setup(u => u.MemberRepository).Returns(memberRepositoryMock.Object);
+
+            var result = await _knowledgeService.GetSquadByMemberAsync(999);
+
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public async Task GetApplicationsByMemberAsyncReturnsApplications()
+        {
+            var applications = new List<ApplicationData>
+            {
+                new ApplicationData("App1") { Id = 1 },
+                new ApplicationData("App2") { Id = 2 }
+            };
+            _knowledgeRepositoryMock.Setup(r => r.ListApplicationsByMemberAsync(1, KnowledgeStatus.Atual)).ReturnsAsync(applications);
+
+            var result = await _knowledgeService.GetApplicationsByMemberAsync(1);
+
+            Assert.NotNull(result);
+            Assert.Equal(2, result.Count);
+            Assert.Contains(result, a => a.Id == 1);
+            Assert.Contains(result, a => a.Id == 2);
+        }
+
+        [Fact]
+        public async Task GetSquadsByApplicationAsyncReturnsSquadWhenApplicationHasSquad()
+        {
+            var application = new ApplicationData("App") { Id = 1, SquadId = 2 };
+            var squad = new Squad { Id = 2, Name = "Squad Test" };
+
+            var applicationRepositoryMock = new Mock<IApplicationDataRepository>();
+            var squadRepositoryMock = new Mock<ISquadRepository>();
+            applicationRepositoryMock.Setup(r => r.GetByIdAsync(application.Id)).ReturnsAsync(application);
+            squadRepositoryMock.Setup(r => r.GetByIdAsync(application.SquadId.Value)).ReturnsAsync(squad);
+
+            _unitOfWorkMock.Setup(u => u.ApplicationDataRepository).Returns(applicationRepositoryMock.Object);
+            _unitOfWorkMock.Setup(u => u.SquadRepository).Returns(squadRepositoryMock.Object);
+
+            var result = await _knowledgeService.GetSquadsByApplicationAsync(application.Id);
+
+            Assert.NotNull(result);
+            Assert.Single(result);
+            Assert.Equal(squad.Id, result[0].Id);
+        }
+
+        [Fact]
+        public async Task GetSquadsByApplicationAsyncReturnsEmptyWhenApplicationHasNoSquad()
+        {
+            var application = new ApplicationData("App") { Id = 1, SquadId = null };
+            var applicationRepositoryMock = new Mock<IApplicationDataRepository>();
+            applicationRepositoryMock.Setup(r => r.GetByIdAsync(application.Id)).ReturnsAsync(application);
+
+            _unitOfWorkMock.Setup(u => u.ApplicationDataRepository).Returns(applicationRepositoryMock.Object);
+
+            var result = await _knowledgeService.GetSquadsByApplicationAsync(application.Id);
+
+            Assert.NotNull(result);
+            Assert.Empty(result);
+        }
+
+        [Fact]
+        public async Task GetApplicationsBySquadAsyncReturnsApplications()
+        {
+            var applications = new List<ApplicationData>
+            {
+                new ApplicationData("App1") { Id = 1, SquadId = 10 },
+                new ApplicationData("App2") { Id = 2, SquadId = 10 }
+            };
+            var pagedResult = new PagedResult<ApplicationData> { Result = applications, Page = 1, PageSize = 10, Total = 2 };
+
+            var applicationRepositoryMock = new Mock<IApplicationDataRepository>();
+            applicationRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<ApplicationFilter>())).ReturnsAsync(pagedResult);
+
+            _unitOfWorkMock.Setup(u => u.ApplicationDataRepository).Returns(applicationRepositoryMock.Object);
+
+            var result = await _knowledgeService.GetApplicationsBySquadAsync(10);
+
+            Assert.NotNull(result);
+            Assert.Equal(2, result.Count);
+            Assert.All(result, a => Assert.Equal(10, a.SquadId));
+        }
     }
 }
