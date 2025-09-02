@@ -15,10 +15,12 @@ namespace Stellantis.ProjectName.Application.Validators
         {
             ArgumentNullException.ThrowIfNull(localizerFactory);
             var localizer = localizerFactory.Create(typeof(RepoResources));
-
             RuleFor(r => r.Description)
                 .NotEmpty()
                 .WithMessage(localizer[nameof(RepoResources.DescriptionIsRequired)]);
+            RuleFor(r => r.Description)
+                .Length(MinimumLegth, MaximumLength)
+                .WithMessage(localizer[nameof(RepoResources.DescriptionValidateLength), MinimumLegth, MaximumLength]);
 
             RuleFor(r => r.ApplicationId)
                 .GreaterThan(0)

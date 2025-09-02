@@ -72,7 +72,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
              pageSize: applicationFilter.PageSize,
              sort: applicationFilter.Sort,
              sortDir: applicationFilter.SortDir,
-             includeProperties: $"{nameof(ApplicationData.Area)},{nameof(ApplicationData.Squad)}"
+             includeProperties: $"{nameof(ApplicationData.Area)},{nameof(ApplicationData.Squad)},{nameof(ApplicationData.Responsible)}"
            ).ConfigureAwait(false);
 
         }
