@@ -52,9 +52,8 @@ namespace Stellantis.ProjectName.IoC
             services.AddScoped<IMemberService, MemberService>();
             services.AddScoped<IDocumentService, DocumentDataService>();
             services.AddScoped<IIncidentService, IncidentService>();
-            services.AddScoped<IDocumentService, DocumentDataService>();
             services.AddScoped<IKnowledgeService, KnowledgeService>();
-
+            services.AddScoped<IDashboardService, DashboardService>();
         }
 
         private static void Repositories(IServiceCollection services)
