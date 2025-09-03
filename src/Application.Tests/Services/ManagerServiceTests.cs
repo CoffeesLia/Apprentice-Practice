@@ -298,7 +298,7 @@ namespace Application.Tests.Services
             _managerRepositoryMock.Setup(repo => repo.GetListAsync(It.Is<ManagerFilter>(filter => filter.Name == manager.Name)))
                 .ReturnsAsync(new PagedResult<Manager>
                 {
-                    Result = new List<Manager> { manager },
+                    Result = [manager],
                     Page = 1,
                     PageSize = 10,
                     Total = 1
