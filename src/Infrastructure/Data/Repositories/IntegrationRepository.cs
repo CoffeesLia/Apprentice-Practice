@@ -56,5 +56,20 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 .AnyAsync(a => a.Name == name && (!id.HasValue || a.Id != id))
                 .ConfigureAwait(false);
         }
+
+        public async Task<bool> VerifyApplicationIdExistsAsync(int applicationDataId)
+        {
+           return await Context.Integrations.AnyAsync(a => a.ApplicationDataId == applicationDataId).ConfigureAwait(false);
+        }
+
+        public async Task<bool> VerifyDescriptionExistsAsync(string description)
+        {
+            return await Context.Integrations.AnyAsync(s => s.Description == description).ConfigureAwait(false);
+        }
+
+        public async Task<bool> VerifyNameExistsAsync(string name)
+        {
+            return await Context.Integrations.AnyAsync(s => s.Name == name).ConfigureAwait(false);
+        }
     }
 }

@@ -304,13 +304,11 @@ namespace Application.Tests.Services
         {
             // Arrange
             ServiceData serviceData = new() { Id = 1, Name = "Updated Service", ApplicationId = 1 };
-
             _serviceRepositoryMock.Setup(repo => repo.GetByIdAsync(serviceData.Id))
                 .ReturnsAsync(serviceData);
-            _serviceRepositoryMock.Setup(repo => repo.UpdateAsync(It.IsAny<ServiceData>(), It.IsAny<bool>()))
-                .Returns(Task.CompletedTask);
-            _serviceRepositoryMock.Setup(repo => repo.VerifyServiceExistsAsync(serviceData.ApplicationId))
-                .ReturnsAsync(true);
+
+            _unitOfWorkMock.Setup(uow => uow.ApplicationDataRepository.GetByIdAsync(serviceData.ApplicationId))
+                .ReturnsAsync(new ApplicationData("Valid Application Name") { Id = 1 });
 
             // Act
             OperationResult result = await _serviceData.UpdateAsync(serviceData);
@@ -347,10 +345,11 @@ namespace Application.Tests.Services
             string localizedMessage = ServiceDataResources.ServiceAlreadyExists;
 
             var conflictingService = new ServiceData { Id = 2, Name = "Existing Service", ApplicationId = 1 };
+            _unitOfWorkMock.Setup(uow => uow.ApplicationDataRepository.GetByIdAsync(serviceData.ApplicationId))
+               .ReturnsAsync(new ApplicationData("Valid Application Name") { Id = 1 });
 
-            _serviceRepositoryMock.SetupSequence(repo => repo.GetByIdAsync(It.IsAny<int>()))
-                .ReturnsAsync(serviceData)
-                .ReturnsAsync(new ServiceData { Id = 1, Name = "Valid Application", ApplicationId = 1 });
+            _serviceRepositoryMock.Setup(repo => repo.GetByIdAsync(serviceData.Id))
+                .ReturnsAsync(serviceData);
 
             _serviceRepositoryMock.Setup(repo => repo.VerifyNameExistsAsync(serviceData.Name))
                 .ReturnsAsync(true);
@@ -372,7 +371,7 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.Conflict, result.Status);
             Assert.Equal(localizedMessage, result.Message);
 
-            _serviceRepositoryMock.Verify(repo => repo.GetByIdAsync(serviceData.Id), Times.Exactly(2));
+            _serviceRepositoryMock.Verify(repo => repo.GetByIdAsync(serviceData.Id), Times.Once);
             _serviceRepositoryMock.Verify(repo => repo.VerifyNameExistsAsync(serviceData.Name), Times.Once);
             _serviceRepositoryMock.Verify(repo => repo.GetListAsync(It.Is<ServiceDataFilter>(filter => filter.Name == serviceData.Name)), Times.Once);
         }
@@ -383,6 +382,11 @@ namespace Application.Tests.Services
         {
             // Arrange
             ServiceData serviceData = new() { Id = 1, Name = "Existing Service", ApplicationId = 1 };
+
+            var conflictingService = new ServiceData { Id = 2, Name = "Existing Service", ApplicationId = 1 };
+            _unitOfWorkMock.Setup(uow => uow.ApplicationDataRepository.GetByIdAsync(serviceData.ApplicationId))
+               .ReturnsAsync(new ApplicationData("Valid Application Name") { Id = 1 });
+
 
             _serviceRepositoryMock.Setup(repo => repo.GetByIdAsync(serviceData.Id))
                 .ReturnsAsync(serviceData);
@@ -467,7 +471,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(OperationStatus.InvalidData, result.Status);
+            Assert.Equal(OperationStatus.Conflict, result.Status);
         }
 
         // Testa se GetListAsync retorna o resultado paginado.

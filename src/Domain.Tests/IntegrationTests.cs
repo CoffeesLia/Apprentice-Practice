@@ -10,7 +10,7 @@ namespace Domain.Tests
             // Arrange
             var name = "Test Integration";
             // Act
-            var integration = new Integration("Test Integration", "Description");
+            var integration = new Integration { ApplicationData = new ApplicationData("App Data"), Name = name, Description = "Description" };
             // Assert
             Assert.Equal(name, integration.Name);
         }
@@ -20,7 +20,7 @@ namespace Domain.Tests
             // Arrange
             var description = "Test Description";
             // Act
-            var integration = new Integration("Name", description);
+            var integration = new Integration { ApplicationData = new ApplicationData("App Data"), Name = "Name", Description = description };
             // Assert
             Assert.Equal(description, integration.Description);
         }
@@ -30,7 +30,7 @@ namespace Domain.Tests
             // Arrange
             var applicationData = new ApplicationData("Test Application Data");
             // Act
-            var integration = new Integration("Name", "Description") { ApplicationData = applicationData };
+            var integration = new Integration { ApplicationData = applicationData, Name = "Name", Description = "Description" };
             // Assert
             Assert.Equal(applicationData, integration.ApplicationData);
         }
@@ -54,7 +54,7 @@ namespace Domain.Tests
             // Arrange
             var applicationData = new ApplicationData("Test Application Data");
 
-            var integration = new Integration("Name", "Description");
+            var integration = new Integration { Name = "Name", Description = "Description", ApplicationData = applicationData };
             // Act
             applicationData.Integration.Add(integration);
             // Assert
@@ -66,7 +66,7 @@ namespace Domain.Tests
             // Arrange
             var applicationData = new ApplicationData("Test Application Data");
 
-            var integration = new Integration("Name", "Description") { ApplicationData = applicationData };
+            var integration = new Integration { Name = "Name", Description = "Description", ApplicationData = applicationData };
             // Act
             applicationData.Integration.Add(integration);
             // Assert

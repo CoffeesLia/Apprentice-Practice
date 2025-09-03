@@ -132,6 +132,9 @@
   <data name="ManagerEmailLength" xml:space="preserve">
     <value>Manager email must be between 5 and 70 characters.</value>
   </data>
+  <data name="ManagerLinkedArea" xml:space="preserve">
+    <value>You cannot delete a manager who has a linked area.</value>
+  </data>
   <data name="ManagerNameIsRequired" xml:space="preserve">
     <value>Manager name is required.</value>
   </data>
