@@ -106,6 +106,15 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a You cannot delete a manager who has a linked area..
+        /// </summary>
+        public static string ManagerLinkedArea {
+            get {
+                return ResourceManager.GetString("ManagerLinkedArea", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Manager name is required..
         /// </summary>
         public static string ManagerNameIsRequired {

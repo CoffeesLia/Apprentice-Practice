@@ -79,6 +79,87 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Area.
+        /// </summary>
+        public static string Csv_Area {
+            get {
+                return ResourceManager.GetString("Csv_Area", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Description.
+        /// </summary>
+        public static string Csv_Description {
+            get {
+                return ResourceManager.GetString("Csv_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a External.
+        /// </summary>
+        public static string Csv_External {
+            get {
+                return ResourceManager.GetString("Csv_External", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a No.
+        /// </summary>
+        public static string Csv_External_No {
+            get {
+                return ResourceManager.GetString("Csv_External_No", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Yes.
+        /// </summary>
+        public static string Csv_External_Yes {
+            get {
+                return ResourceManager.GetString("Csv_External_Yes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Id.
+        /// </summary>
+        public static string Csv_Id {
+            get {
+                return ResourceManager.GetString("Csv_Id", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Name.
+        /// </summary>
+        public static string Csv_Name {
+            get {
+                return ResourceManager.GetString("Csv_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Responsible.
+        /// </summary>
+        public static string Csv_Responsible {
+            get {
+                return ResourceManager.GetString("Csv_Responsible", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Squad.
+        /// </summary>
+        public static string Csv_Squad {
+            get {
+                return ResourceManager.GetString("Csv_Squad", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a The description has a limit of {0} characters..
         /// </summary>
         public static string DescriptionValidateLength {
@@ -88,11 +169,47 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Cannot delete the application because there are linked documents..
+        /// </summary>
+        public static string DocumentLinkedError {
+            get {
+                return ResourceManager.GetString("DocumentLinkedError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Não é possível excluir a aplicação pois existem feedbacks vinculados.   .
+        /// </summary>
+        public static string FeedbackLinkedError {
+            get {
+                return ResourceManager.GetString("FeedbackLinkedError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Não é possível excluir a aplicação pois existem incidentes vinculados..
+        /// </summary>
+        public static string IncidentLinkedError {
+            get {
+                return ResourceManager.GetString("IncidentLinkedError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Cannot delete the application because there are linked integrations..
         /// </summary>
         public static string IntegrationLinkedError {
             get {
                 return ResourceManager.GetString("IntegrationLinkedError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Cannot delete the application because there are linked member knowledges. .
+        /// </summary>
+        public static string KnowledgeLinkedError {
+            get {
+                return ResourceManager.GetString("KnowledgeLinkedError", resourceCulture);
             }
         }
         
@@ -120,6 +237,15 @@ namespace Stellantis.ProjectName.Application.Resources {
         public static string ProductOwnerRequired {
             get {
                 return ResourceManager.GetString("ProductOwnerRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Cannot delete the application because there are linked repositories..
+        /// </summary>
+        public static string RepoLinkedError {
+            get {
+                return ResourceManager.GetString("RepoLinkedError", resourceCulture);
             }
         }
         

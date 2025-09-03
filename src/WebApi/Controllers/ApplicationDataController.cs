@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
@@ -47,5 +48,29 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             PagedResult<ApplicationData> result = await Service.GetListAsync(filter).ConfigureAwait(false);
             return Ok(Mapper.Map<PagedResultVm<ApplicationVm>>(result));
         }
+
+        [HttpGet("export")]
+        public async Task<IActionResult> ExportCsv([FromQuery] ApplicationDataFilterDto filterDto)
+        {
+            var filter = Mapper.Map<ApplicationFilter>(filterDto);
+            var csvBytes = await Service.ExportToCsvAsync(filter).ConfigureAwait(false);
+            return File(csvBytes, "text/csv", $"applications_{DateTime.Now:yyyyMMddHHmmss}.csv");
+        }
+
+        [HttpGet("export/pdf")]
+        public async Task<IActionResult> ExportPdf([FromQuery] ApplicationDataFilterDto filterDto)
+        {
+            var filter = Mapper.Map<ApplicationFilter>(filterDto);
+            var pdfBytes = await Service.ExportToPdfAsync(filter).ConfigureAwait(false);
+            return File(pdfBytes, "application/pdf", $"applications_{DateTime.Now:yyyyMMddHHmmss}.pdf");
+        }
+
+        [HttpGet("{id}/export/pdf")]
+        public async Task<IActionResult> ExportSinglePdf(int id)
+        {
+            var pdfBytes = await Service.ExportApplicationAsync(id).ConfigureAwait(false);
+            return File(pdfBytes, "application/pdf", $"application_{id}_{DateTime.Now:yyyyMMddHHmmss}.pdf");
+        }
+
     }
 }

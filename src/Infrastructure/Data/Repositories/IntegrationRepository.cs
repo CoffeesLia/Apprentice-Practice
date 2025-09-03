@@ -49,20 +49,27 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 sortDir: filter.SortDir
                 ).ConfigureAwait(false);
                 return pagedResult;
-        } 
-        public async Task<bool> VerifyNameExistsAsync(string Name)
+        }
+        public async Task<bool> IsIntegrationNameUniqueAsync(string name, int? id = null)
         {
-            return await Context.Set<Integration>().AnyAsync(repo => repo.Name == Name).ConfigureAwait(false);
+            return !await Context.Set<Integration>()
+                .AnyAsync(a => a.Name == name && (!id.HasValue || a.Id != id))
+                .ConfigureAwait(false);
+        }
+
+        public async Task<bool> VerifyApplicationIdExistsAsync(int applicationDataId)
+        {
+           return await Context.Integrations.AnyAsync(a => a.ApplicationDataId == applicationDataId).ConfigureAwait(false);
         }
 
         public async Task<bool> VerifyDescriptionExistsAsync(string description)
         {
-            return await Context.Set<Integration>().AnyAsync(repo => repo.Description == description).ConfigureAwait(false);
+            return await Context.Integrations.AnyAsync(s => s.Description == description).ConfigureAwait(false);
         }
 
-        public async Task<bool> VerifyApplicationIdExistsAsync(int applicationId)
+        public async Task<bool> VerifyNameExistsAsync(string name)
         {
-            return await Context.Set<Integration>().AnyAsync(repo => repo.ApplicationDataId == applicationId).ConfigureAwait(false);
+            return await Context.Integrations.AnyAsync(s => s.Name == name).ConfigureAwait(false);
         }
     }
 }

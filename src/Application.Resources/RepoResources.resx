@@ -139,15 +139,12 @@
     <value>Description is required.</value>
   </data>
   <data name="NotFound" xml:space="preserve">
-    <value>Not Found.</value>
-  </data>
-  <data name="UrlIsInvalid" xml:space="preserve">
-    <value>Url is invalid.</value>
-  </data>
-  <data name="NotFound" xml:space="preserve">
     <value>Not found.</value>
   </data>
   <data name="UrlIsInvalid" xml:space="preserve">
     <value>UrlIsInvalid</value>
+  </data>
+  <data name="DescriptionValidateLength" xml:space="preserve">
+    <value>Description must be between {0} and {1} characters</value>
   </data>
 </root>

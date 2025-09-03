@@ -44,7 +44,9 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             if (!string.IsNullOrEmpty(filter.Name))
             {
-                query = query.Where(a => a.Name.ToLower().Contains(filter.Name.ToLower()));
+                query = query.Where(a =>
+                    a.Name != null &&
+                    a.Name.Contains(filter.Name, StringComparison.OrdinalIgnoreCase));
             }
 
             return await base.GetListAsync(query, sort: filter.Sort, sortDir: filter.SortDir, page: filter.Page, pageSize: filter.PageSize).ConfigureAwait(false);

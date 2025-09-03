@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
@@ -34,9 +35,12 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             ExpressionStarter<ApplicationData> filters = PredicateBuilder.New<ApplicationData>(true);
             applicationFilter.Page = applicationFilter.Page <= 0 ? 1 : applicationFilter.Page;
             applicationFilter.PageSize = applicationFilter.PageSize <= 0 ? 10 : applicationFilter.PageSize;
-            if (!string.IsNullOrWhiteSpace(applicationFilter.Name))
+
+            if (!string.IsNullOrEmpty(applicationFilter.Name))
             {
-                filters = filters.And(x => x.Name != null && x.Name.ToLower().Contains(applicationFilter.Name.ToLower()));
+                filters = filters.And(a =>
+                    a.Name != null &&
+                    a.Name.Contains(applicationFilter.Name, StringComparison.OrdinalIgnoreCase));
             }
 
 
@@ -72,7 +76,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
              pageSize: applicationFilter.PageSize,
              sort: applicationFilter.Sort,
              sortDir: applicationFilter.SortDir,
-             includeProperties: $"{nameof(ApplicationData.Area)},{nameof(ApplicationData.Squad)}"
+             includeProperties: $"{nameof(ApplicationData.Area)},{nameof(ApplicationData.Squad)},{nameof(ApplicationData.Responsible)}"
            ).ConfigureAwait(false);
 
         }
@@ -88,9 +92,14 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         public async Task<ApplicationData?> GetFullByIdAsync(int id)
         {
             return await Context.Set<ApplicationData>()
-                       .Include(x => x.Area)
-                       .FirstOrDefaultAsync(x => x.Id == id)
-                       .ConfigureAwait(false);
+           .Include(x => x.Area)
+           .Include(x => x.Responsible)
+           .Include(x => x.Squad)
+           .Include(x => x.Integration)
+           .Include(x => x.Repos)
+           .Include(x => x.Documents)
+           .FirstOrDefaultAsync(x => x.Id == id)
+           .ConfigureAwait(false);
         }
 
         public async Task<bool> IsResponsibleFromArea(int areaId, int responsibleId)

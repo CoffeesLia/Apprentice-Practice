@@ -141,7 +141,13 @@
   <data name="DescriptionValidateLength" xml:space="preserve">
     <value>The description must be between 3 and 255 characters.</value>
   </data>
-  <data name="SquadDeleteLinkedError" xml:space="preserve">
-    <value>It is not possible to delete a squad when it is linked to applications and members.</value>
+  <data name="SquadDeleteLinkedApplication" xml:space="preserve">
+    <value>It is not possible to delete a Squad linked to applications.</value>
+  </data>
+  <data name="SquadDeleteLinkedMembers" xml:space="preserve">
+    <value>It is not possible to delete Squad linked a members.</value>
+  </data>
+  <data name="SquadDeleteLinkedMemberApp" xml:space="preserve">
+    <value>It is not possible to delete a Squad linked to applications or members.</value>
   </data>
 </root>

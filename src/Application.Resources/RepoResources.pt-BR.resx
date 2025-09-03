@@ -144,4 +144,7 @@
   <data name="UrlIsInvalid" xml:space="preserve">
     <value>A Url é invalida.</value>
   </data>
+  <data name="DescriptionValidateLength" xml:space="preserve">
+    <value>A descrição deve ter entre {0} e {1} caracteres.</value>
+  </data>
 </root>

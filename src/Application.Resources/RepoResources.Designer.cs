@@ -79,6 +79,15 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Description must be between {0} and {1} characters.
+        /// </summary>
+        public static string DescriptionValidateLength {
+            get {
+                return ResourceManager.GetString("DescriptionValidateLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Name already exists..
         /// </summary>
         public static string NameAlreadyExists {
