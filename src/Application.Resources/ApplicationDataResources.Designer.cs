@@ -160,6 +160,15 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a From {0}.
+        /// </summary>
+        public static string FromDate {
+            get {
+                return ResourceManager.GetString("FromDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Generated on.
         /// </summary>
         public static string GeneratedOn {
@@ -241,6 +250,33 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Page.
+        /// </summary>
+        public static string Page {
+            get {
+                return ResourceManager.GetString("Page", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Period.
+        /// </summary>
+        public static string Period {
+            get {
+                return ResourceManager.GetString("Period", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a {0} - {1}.
+        /// </summary>
+        public static string PeriodRange {
+            get {
+                return ResourceManager.GetString("PeriodRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Product Owner is required..
         /// </summary>
         public static string ProductOwnerRequired {
@@ -309,6 +345,24 @@ namespace Stellantis.ProjectName.Application.Resources {
         public static string SquadMembers {
             get {
                 return ResourceManager.GetString("SquadMembers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Until {0}.
+        /// </summary>
+        public static string ToDate {
+            get {
+                return ResourceManager.GetString("ToDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Total: {0} applications.
+        /// </summary>
+        public static string TotalApplications {
+            get {
+                return ResourceManager.GetString("TotalApplications", resourceCulture);
             }
         }
     }

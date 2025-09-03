@@ -201,4 +201,22 @@
   <data name="ApplicationsList" xml:space="preserve">
     <value>Lista de Aplicações</value>
   </data>
+  <data name="Period" xml:space="preserve">
+    <value>Período</value>
+  </data>
+  <data name="FromDate" xml:space="preserve">
+    <value>A partir de {0}</value>
+  </data>
+  <data name="ToDate" xml:space="preserve">
+    <value>Até {0}</value>
+  </data>
+  <data name="PeriodRange" xml:space="preserve">
+    <value>{0} - {1}</value>
+  </data>
+  <data name="TotalApplications" xml:space="preserve">
+    <value>Total: {0} aplicações</value>
+  </data>
+  <data name="Page" xml:space="preserve">
+    <value>Página</value>
+  </data>
 </root>
