@@ -18,7 +18,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetDashboard()
         {
-            var dashboard = await _dashboardService.GetDashboardAsync();
+            var dashboard = await _dashboardService.GetDashboardAsync().ConfigureAwait(false);
             return Ok(dashboard);
         }
     }
