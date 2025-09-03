@@ -10,5 +10,9 @@ namespace Stellantis.ProjectName.Application.Models.Filters
         public int AreaId { get; set; }
         public int ResponsibleId { get; set; }
         public bool? External { get; set; }
+
+        // Filtro por período
+        public DateTime? CreatedAfter { get; set; }
+        public DateTime? CreatedBefore { get; set; }
     }
 }

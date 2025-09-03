@@ -79,83 +79,29 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Application List.
+        /// </summary>
+        public static string ApplicationsList {
+            get {
+                return ResourceManager.GetString("ApplicationsList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Area.
         /// </summary>
-        public static string Csv_Area {
+        public static string Area {
             get {
-                return ResourceManager.GetString("Csv_Area", resourceCulture);
+                return ResourceManager.GetString("Area", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Description.
         /// </summary>
-        public static string Csv_Description {
+        public static string Description {
             get {
-                return ResourceManager.GetString("Csv_Description", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a External.
-        /// </summary>
-        public static string Csv_External {
-            get {
-                return ResourceManager.GetString("Csv_External", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a No.
-        /// </summary>
-        public static string Csv_External_No {
-            get {
-                return ResourceManager.GetString("Csv_External_No", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Yes.
-        /// </summary>
-        public static string Csv_External_Yes {
-            get {
-                return ResourceManager.GetString("Csv_External_Yes", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Id.
-        /// </summary>
-        public static string Csv_Id {
-            get {
-                return ResourceManager.GetString("Csv_Id", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Name.
-        /// </summary>
-        public static string Csv_Name {
-            get {
-                return ResourceManager.GetString("Csv_Name", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Responsible.
-        /// </summary>
-        public static string Csv_Responsible {
-            get {
-                return ResourceManager.GetString("Csv_Responsible", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Squad.
-        /// </summary>
-        public static string Csv_Squad {
-            get {
-                return ResourceManager.GetString("Csv_Squad", resourceCulture);
+                return ResourceManager.GetString("Description", resourceCulture);
             }
         }
         
@@ -178,11 +124,56 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a External.
+        /// </summary>
+        public static string External {
+            get {
+                return ResourceManager.GetString("External", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a No.
+        /// </summary>
+        public static string External_No {
+            get {
+                return ResourceManager.GetString("External_No", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Yes.
+        /// </summary>
+        public static string External_Yes {
+            get {
+                return ResourceManager.GetString("External_Yes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Não é possível excluir a aplicação pois existem feedbacks vinculados.   .
         /// </summary>
         public static string FeedbackLinkedError {
             get {
                 return ResourceManager.GetString("FeedbackLinkedError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Generated on.
+        /// </summary>
+        public static string GeneratedOn {
+            get {
+                return ResourceManager.GetString("GeneratedOn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Id.
+        /// </summary>
+        public static string Id {
+            get {
+                return ResourceManager.GetString("Id", resourceCulture);
             }
         }
         
@@ -205,11 +196,29 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Integrations.
+        /// </summary>
+        public static string Integrations {
+            get {
+                return ResourceManager.GetString("Integrations", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Cannot delete the application because there are linked member knowledges. .
         /// </summary>
         public static string KnowledgeLinkedError {
             get {
                 return ResourceManager.GetString("KnowledgeLinkedError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Name.
+        /// </summary>
+        public static string Name {
+            get {
+                return ResourceManager.GetString("Name", resourceCulture);
             }
         }
         
@@ -250,6 +259,24 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Repositories.
+        /// </summary>
+        public static string Repositories {
+            get {
+                return ResourceManager.GetString("Repositories", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Responsible.
+        /// </summary>
+        public static string Responsible {
+            get {
+                return ResourceManager.GetString("Responsible", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Not Found..
         /// </summary>
         public static string ResponsibleNotFound {
@@ -264,6 +291,24 @@ namespace Stellantis.ProjectName.Application.Resources {
         public static string ServiceLinkedError {
             get {
                 return ResourceManager.GetString("ServiceLinkedError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Services.
+        /// </summary>
+        public static string Services {
+            get {
+                return ResourceManager.GetString("Services", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Squad Members.
+        /// </summary>
+        public static string SquadMembers {
+            get {
+                return ResourceManager.GetString("SquadMembers", resourceCulture);
             }
         }
     }

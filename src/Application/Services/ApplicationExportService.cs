@@ -57,123 +57,126 @@ namespace Stellantis.ProjectName.Application.Services
 
             return Encoding.UTF8.GetBytes(sb.ToString());
         }
+       public async Task<byte[]> ExportToPdfAsync(ApplicationFilter filter)
+{
+    QuestPDF.Settings.License = LicenseType.Community;
 
-        public async Task<byte[]> ExportToPdfAsync(ApplicationFilter filter)
+    var applications = await _unitOfWork.ApplicationDataRepository
+        .GetListAsync(filter)
+        .ConfigureAwait(false);
+
+    var primaryColor = Colors.Blue.Darken2;
+    var headerBgColor = Colors.Grey.Lighten3;
+    var evenRowColor = Colors.Grey.Lighten4;
+    var oddRowColor = Colors.White;
+    var textColor = Color.FromHex("#444444");
+    var logoPath = @"C:\Users\SE68087\gitlab\api\src\Application\Services\logo.png";
+
+    var document = Document.Create(container =>
+    {
+        container.Page(page =>
         {
-            QuestPDF.Settings.License = LicenseType.Community;
+            page.Size(PageSizes.A4);
+            page.Margin(40);
+            page.PageColor(Colors.White);
+            page.DefaultTextStyle(TextStyle.Default.FontFamily("Segoe UI").FontColor(textColor).FontSize(11));
 
-            var applications = await _unitOfWork.ApplicationDataRepository
-                .GetListAsync(filter)
-                .ConfigureAwait(false);
-
-            var primaryColor = Colors.Blue.Darken2;
-            var headerBgColor = Colors.Grey.Lighten3;
-            var evenRowColor = Colors.Grey.Lighten4;
-            var oddRowColor = Colors.White;
-            var textColor = Color.FromHex("#444444");
-            var logoPath = @"C:\Users\SE68087\gitlab\api\src\Application\Services\logo.png"; // ajuste conforme necessário
-
-            var document = Document.Create(container =>
+            // Cabeçalho (apenas na primeira página)
+            page.Header().ShowOnce().Element(header =>
             {
-                container.Page(page =>
+                header.Row(row =>
                 {
-                    page.Size(PageSizes.A4);
-                    page.Margin(40);
-                    page.PageColor(Colors.White);
-                    page.DefaultTextStyle(TextStyle.Default.FontFamily("Segoe UI").FontColor(textColor).FontSize(11));
+                    row.RelativeColumn().AlignMiddle().Text(_localizer["ApplicationsList"].Value ?? "Lista de Aplicações")
+                        .FontSize(18).SemiBold().FontColor(textColor);
 
-                    page.Header().Element(header =>
-                    {
-                        header.Row(row =>
-                        {
-                            row.RelativeColumn().AlignMiddle().Text(_localizer["ApplicationsList"].Value ?? "Lista de Aplicações")
-                                .FontSize(18).SemiBold().FontColor(textColor); // Título na cor do texto
-                            row.ConstantColumn(120).AlignMiddle().Image(logoPath, ImageScaling.FitWidth);
-                        });
-                    });
-
-                    page.Content().Column(content =>
-                    {
-                        content.Item().Row(row =>
-                        {
-                            row.RelativeColumn().Text($"Total: {applications.Result.Count()} aplicações")
-                                .FontSize(11).FontColor(textColor);
-                        });
-
-                        content.Item().PaddingVertical(8);
-
-                        content.Item().Table(table =>
-                        {
-                            table.ColumnsDefinition(columns =>
-                            {
-                                columns.ConstantColumn(40);  // Id
-                                columns.RelativeColumn(2);   // Nome
-                                columns.RelativeColumn(2);   // Área
-                                columns.RelativeColumn(2);   // Responsável
-                                columns.RelativeColumn(2);   // Squad
-                                columns.ConstantColumn(70);  // Externo
-                            });
-
-                            table.Header(header =>
-                            {
-                                header.Cell().Background(headerBgColor).Padding(6)
-                                    .Text(_localizer["Csv_Id"].Value).SemiBold().FontColor(textColor).FontSize(11);
-                                header.Cell().Background(headerBgColor).Padding(6)
-                                    .Text(_localizer["Csv_Name"].Value).SemiBold().FontColor(textColor).FontSize(11);
-                                header.Cell().Background(headerBgColor).Padding(6)
-                                    .Text(_localizer["Csv_Area"].Value).SemiBold().FontColor(textColor).FontSize(11);
-                                header.Cell().Background(headerBgColor).Padding(6)
-                                    .Text(_localizer["Csv_Responsible"].Value).SemiBold().FontColor(textColor).FontSize(11);
-                                header.Cell().Background(headerBgColor).Padding(6)
-                                    .Text(_localizer["Csv_Squad"].Value).SemiBold().FontColor(textColor).FontSize(11);
-                                header.Cell().Background(headerBgColor).Padding(6)
-                                    .Text(_localizer["Csv_External"].Value).SemiBold().FontColor(textColor).FontSize(11);
-                            });
-
-                            int rowIndex = 0;
-                            foreach (var app in applications.Result)
-                            {
-                                var bg = rowIndex % 2 == 0 ? evenRowColor : oddRowColor;
-
-                                table.Cell().Background(bg).Padding(5).Text(app.Id.ToString()).FontSize(11).FontColor(textColor);
-                                table.Cell().Background(bg).Padding(5).Text(app.Name ?? "").FontSize(11).FontColor(textColor);
-                                table.Cell().Background(bg).Padding(5).Text(app.Area?.Name ?? "").FontSize(11).FontColor(textColor);
-                                table.Cell().Background(bg).Padding(5).Text(app.Responsible?.Name ?? "").FontSize(11).FontColor(textColor);
-                                table.Cell().Background(bg).Padding(5).Text(app.Squad?.Name ?? "").FontSize(11).FontColor(textColor);
-                                table.Cell().Background(bg).Padding(5)
-                                    .Text(app.External
-                                        ? _localizer["Csv_External_Yes"].Value
-                                        : _localizer["Csv_External_No"].Value)
-                                    .FontSize(11).FontColor(textColor);
-
-                                rowIndex++;
-                            }
-                        });
-
-                        content.Item().PaddingVertical(8);
-                    });
-
-                    page.Footer().Row(row =>
-                    {
-                        row.RelativeColumn().AlignLeft().Text(t =>
-                        {
-                            t.Span("Gerado em: ").SemiBold();
-                            t.Span(DateTime.Now.ToString("dd/MM/yyyy HH:mm", CultureInfo.CurrentCulture)); // Dia/Mês/Ano
-                        });
-
-                        row.RelativeColumn().AlignRight().Text(t =>
-                        {
-                            t.Span("Página ").SemiBold();
-                            t.CurrentPageNumber();
-                            t.Span(" / ");
-                            t.TotalPages();
-                        });
-                    });
+                    row.ConstantColumn(120).AlignMiddle().Image(logoPath, ImageScaling.FitWidth);
                 });
             });
 
-            return document.GeneratePdf();
-        }
+            // Conteúdo principal
+            page.Content().Column(content =>
+            {
+                // --- Filtro de Período ---
+                if (filter.CreatedAfter.HasValue || filter.CreatedBefore.HasValue)
+                {
+                    string periodo;
+                    if (filter.CreatedAfter.HasValue && filter.CreatedBefore.HasValue)
+                        periodo = $"{filter.CreatedAfter.Value:dd/MM/yyyy} - {filter.CreatedBefore.Value:dd/MM/yyyy}";
+                    else if (filter.CreatedAfter.HasValue)
+                        periodo = $"A partir de {filter.CreatedAfter.Value:dd/MM/yyyy}";
+                    else
+                        periodo = $"Até {filter.CreatedBefore.Value:dd/MM/yyyy}";
+
+                    content.Item().PaddingBottom(5)
+                        .Text($"Período: {periodo}")
+                        .FontSize(11).FontColor(textColor).SemiBold();
+                }
+
+                // Total de aplicações
+                content.Item().Row(row =>
+                {
+                    row.RelativeColumn().Text($"Total: {applications.Result.Count()} aplicações")
+                        .FontSize(11).FontColor(textColor);
+                });
+
+                content.Item().PaddingVertical(8);
+
+                // Tabela de aplicações
+                content.Item().Table(table =>
+                {
+                    table.ColumnsDefinition(columns =>
+                    {
+                        columns.ConstantColumn(40);  // Id
+                        columns.RelativeColumn(2);   // Nome
+                        columns.RelativeColumn(2);   // Área
+                        columns.RelativeColumn(2);   // Responsável
+                        columns.RelativeColumn(2);   // Squad
+                        columns.ConstantColumn(70);  // Externo
+                    });
+
+                    table.Header(header =>
+                    {
+                        header.Cell().Background(headerBgColor).Padding(6)
+                            .Text(_localizer["Id"].Value).SemiBold().FontColor(textColor).FontSize(11);
+                        header.Cell().Background(headerBgColor).Padding(6)
+                            .Text(_localizer["Name"].Value).SemiBold().FontColor(textColor).FontSize(11);
+                        header.Cell().Background(headerBgColor).Padding(6)
+                            .Text(_localizer["Area"].Value).SemiBold().FontColor(textColor).FontSize(11);
+                        header.Cell().Background(headerBgColor).Padding(6)
+                            .Text(_localizer["Responsible"].Value).SemiBold().FontColor(textColor).FontSize(11);
+                        header.Cell().Background(headerBgColor).Padding(6)
+                            .Text(_localizer["Squad"].Value).SemiBold().FontColor(textColor).FontSize(11);
+                        header.Cell().Background(headerBgColor).Padding(6)
+                            .Text(_localizer["External"].Value).SemiBold().FontColor(textColor).FontSize(11);
+                    });
+
+                    int rowIndex = 0;
+                    foreach (var app in applications.Result)
+                    {
+                        var bg = rowIndex % 2 == 0 ? evenRowColor : oddRowColor;
+
+                        table.Cell().Background(bg).Padding(5).Text(app.Id.ToString()).FontSize(11).FontColor(textColor);
+                        table.Cell().Background(bg).Padding(5).Text(app.Name ?? "").FontSize(11).FontColor(textColor);
+                        table.Cell().Background(bg).Padding(5).Text(app.Area?.Name ?? "").FontSize(11).FontColor(textColor);
+                        table.Cell().Background(bg).Padding(5).Text(app.Responsible?.Name ?? "").FontSize(11).FontColor(textColor);
+                        table.Cell().Background(bg).Padding(5).Text(app.Squad?.Name ?? "").FontSize(11).FontColor(textColor);
+                        table.Cell().Background(bg).Padding(5)
+                            .Text(app.External
+                                ? _localizer["External_Yes"].Value
+                                : _localizer["External_No"].Value)
+                            .FontSize(11).FontColor(textColor);
+
+                        rowIndex++;
+                    }
+                });
+            });
+        });
+    });
+
+    return document.GeneratePdf();
+}
+
+
         public async Task<byte[]> ExportApplicationAsync(int id)
         {
             QuestPDF.Settings.License = LicenseType.Community;
@@ -202,6 +205,18 @@ namespace Stellantis.ProjectName.Application.Services
                 squadMembers = squadMembersResult.Result.ToList();
             }
 
+            // Buscar serviços da aplicação
+            List<ServiceData> services = new();
+            var serviceFilter = new ServiceDataFilter { ApplicationId = app.Id };
+            var serviceResult = await _unitOfWork.ServiceDataRepository.GetListAsync(serviceFilter);
+            services = serviceResult.Result.ToList();
+
+            // Buscar repositórios da aplicação
+            List<Repo> repos = new();
+            var repoFilter = new RepoFilter { ApplicationId = app.Id };
+            var repoResult = await _unitOfWork.RepoRepository.GetListAsync(repoFilter);
+            repos = repoResult.Result.ToList();
+
             var document = Document.Create(container =>
             {
                 container.Page(page =>
@@ -226,43 +241,19 @@ namespace Stellantis.ProjectName.Application.Services
                     // Conteúdo
                     page.Content().Column(content =>
                     {
-                        // Bloco de dados principais
-                        content.Item().Element(e =>
-                        {
-                            e.Background(headerBgColor).Padding(10).Column(col =>
-                            {
-                                col.Item().Text("Dados da Aplicação").SemiBold().FontSize(13).FontColor(textColor);
-                                col.Item().PaddingTop(4).Row(row =>
-                                {
-                                    row.RelativeColumn().Text($"Área:").SemiBold();
-                                    row.RelativeColumn().Text(app.Area?.Name ?? "-");
-                                });
-                                col.Item().Row(row =>
-                                {
-                                    row.RelativeColumn().Text($"Responsável:").SemiBold();
-                                    row.RelativeColumn().Text(app.Responsible?.Name ?? "-");
-                                });
-                                col.Item().Row(row =>
-                                {
-                                    row.RelativeColumn().Text($"Squad:").SemiBold();
-                                    row.RelativeColumn().Text(app.Squad?.Name ?? "-");
-                                });
-                                col.Item().Row(row =>
-                                {
-                                    row.RelativeColumn().Text($"Externo:").SemiBold();
-                                    row.RelativeColumn().Text(app.External ? _localizer["Csv_External_Yes"].Value : _localizer["Csv_External_No"].Value);
-                                });
-                            });
-                        });
+                        content.Item().Text($"{_localizer["Area"].Value}: {app.Area?.Name ?? "-"}").FontSize(11).FontColor(textColor);
+                        content.Item().Text($"{_localizer["Responsible"].Value}: {app.Responsible?.Name ?? "-"}").FontSize(11).FontColor(textColor);
+                        content.Item().Text($"{_localizer["Squad"].Value}: {app.Squad?.Name ?? "-"}").FontSize(11).FontColor(textColor);
+                        content.Item().Text($"{_localizer["External"].Value}: {(app.External ? _localizer["External_Yes"].Value : _localizer["External_No"].Value)}").FontSize(11).FontColor(textColor);
 
                         // Descrição
                         if (!string.IsNullOrWhiteSpace(app.Description))
                         {
                             content.Item().PaddingTop(10).Element(e =>
                             {
-                                e.Background(evenRowColor).Padding(10).Column(col =>
+                                e.Background(evenRowColor).Column(col =>
                                 {
-                                    col.Item().Text("Descrição").SemiBold().FontSize(13).FontColor(textColor);
+                                    col.Item().Text(_localizer["Description"].Value).SemiBold().FontSize(13).FontColor(textColor);
                                     col.Item().PaddingTop(4).Text(app.Description).FontColor(textColor);
                                 });
                             });
@@ -273,9 +264,9 @@ namespace Stellantis.ProjectName.Application.Services
                         {
                             content.Item().PaddingTop(10).Element(e =>
                             {
-                                e.Background(oddRowColor).Padding(10).Column(col =>
+                                e.Background(oddRowColor).Column(col =>
                                 {
-                                    col.Item().Text("Integrações").SemiBold().FontSize(13).FontColor(textColor);
+                                    col.Item().Text(_localizer["Integrations"].Value).SemiBold().FontSize(13).FontColor(textColor);
                                     col.Item().PaddingTop(4).Table(table =>
                                     {
                                         table.ColumnsDefinition(c => c.RelativeColumn());
@@ -292,21 +283,44 @@ namespace Stellantis.ProjectName.Application.Services
                         }
 
                         // Repositórios
-                        if (app.Repos != null && app.Repos.Any())
+                        if (repos.Any())
                         {
                             content.Item().PaddingTop(10).Element(e =>
                             {
-                                e.Background(evenRowColor).Padding(10).Column(col =>
+                                e.Background(oddRowColor).Column(col =>
                                 {
-                                    col.Item().Text("Repositórios").SemiBold().FontSize(13).FontColor(textColor);
+                                    col.Item().Text(_localizer["Repositories"].Value).SemiBold().FontSize(13).FontColor(textColor);
                                     col.Item().PaddingTop(4).Table(table =>
                                     {
                                         table.ColumnsDefinition(c => c.RelativeColumn());
                                         int idx = 0;
-                                        foreach (var repo in app.Repos)
+                                        foreach (var repo in repos)
                                         {
                                             var bg = idx % 2 == 0 ? oddRowColor : evenRowColor;
                                             table.Cell().Background(bg).Padding(5).Text(repo.Name).FontColor(textColor);
+                                            idx++;
+                                        }
+                                    });
+                                });
+                            });
+                        }
+
+                        // Serviços
+                        if (services.Any())
+                        {
+                            content.Item().PaddingTop(10).Element(e =>
+                            {
+                                e.Background(oddRowColor).Column(col =>
+                                {
+                                    col.Item().Text(_localizer["Services"].Value).SemiBold().FontSize(13).FontColor(textColor);
+                                    col.Item().PaddingTop(4).Table(table =>
+                                    {
+                                        table.ColumnsDefinition(c => c.RelativeColumn());
+                                        int idx = 0;
+                                        foreach (var service in services)
+                                        {
+                                            var bg = idx % 2 == 0 ? evenRowColor : oddRowColor;
+                                            table.Cell().Background(bg).Padding(5).Text(service.Name).FontColor(textColor);
                                             idx++;
                                         }
                                     });
@@ -319,9 +333,9 @@ namespace Stellantis.ProjectName.Application.Services
                         {
                             content.Item().PaddingTop(10).Element(e =>
                             {
-                                e.Background(oddRowColor).Padding(10).Column(col =>
+                                e.Background(oddRowColor).Column(col =>
                                 {
-                                    col.Item().Text("Membros do Squad").SemiBold().FontSize(13).FontColor(textColor);
+                                    col.Item().Text(_localizer["SquadMembers"].Value).SemiBold().FontSize(13).FontColor(textColor);
                                     col.Item().PaddingTop(4).Table(table =>
                                     {
                                         table.ColumnsDefinition(c =>

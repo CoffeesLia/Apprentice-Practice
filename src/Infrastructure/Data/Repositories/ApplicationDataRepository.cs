@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
@@ -65,6 +66,16 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 filters = filters.And(x => x.External == applicationFilter.External.Value);
             }
 
+            // Filtros por período
+            if (applicationFilter.CreatedAfter.HasValue)
+                filters = filters.And(x => x.CreatedAt >= applicationFilter.CreatedAfter.Value.Date); // início do dia
+
+            if (applicationFilter.CreatedBefore.HasValue)
+            {
+                var endOfDay = applicationFilter.CreatedBefore.Value.Date.AddDays(1).AddTicks(-1);
+                filters = filters.And(x => x.CreatedAt <= endOfDay); // final do dia
+            }
+
             return await GetListAsync(
 
              filter: filters,
@@ -76,7 +87,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
            ).ConfigureAwait(false);
 
         }
-
 
         public async Task<bool> IsApplicationNameUniqueAsync(string name, int? id = null)
         {
