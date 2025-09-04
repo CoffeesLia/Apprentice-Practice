@@ -22,7 +22,7 @@ namespace Stellantis.ProjectName.Application.Services
             _localizer = localizerFactory.Create(typeof(ApplicationDataResources));
         }
 
-        private static string CsvSafe(string? value)
+        internal static string CsvSafe(string? value)
         {
             if (string.IsNullOrWhiteSpace(value))
                 return "";
