@@ -270,7 +270,7 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(dest => dest.ApplicationName, opt => opt.MapFrom(src => src.Application != null ? src.Application.Name : string.Empty))
                 .ForMember(dest => dest.SquadName, opt => opt.MapFrom(src => src.Squad != null ? src.Squad.Name : string.Empty))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
-                .ForMember(dest => dest.StatusText, opt => opt.MapFrom(src => src.Status == KnowledgeStatus.Passado ? "passado" : "atual"));
+                .ForMember(dest => dest.StatusText, opt => opt.MapFrom(src => src.Status == KnowledgeStatus.Passado ? "Passado" : "Atual"));
 
             CreateMap<KnowledgeFilterDto, KnowledgeFilter>()
                 .ForMember(dest => dest.SquadId, opt => opt.MapFrom(src => src.SquadId))
