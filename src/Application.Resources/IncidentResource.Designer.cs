@@ -88,7 +88,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a .
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Incident not found..
         /// </summary>
         public static string NotFound {
             get {
