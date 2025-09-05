@@ -132,4 +132,8 @@
   <data name="NameValidateLength" xml:space="preserve">
     <value>O nome deve ter entre {0} e {1} caracteres.</value>
   </data>
+  <data name="ResponsibleLinkedToApplication" xml:space="preserve">
+    <value>Não é possível excluir o responsável, pois está vinculado a uma ou mais aplicações.
+</value>
+  </data>
 </root>
