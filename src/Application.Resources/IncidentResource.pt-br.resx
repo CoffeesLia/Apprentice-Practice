@@ -132,4 +132,7 @@
   <data name="TitleRequired" xml:space="preserve">
     <value>O título é obrigatório.</value>
   </data>
+  <data name="TitleValidateLength" xml:space="preserve">
+    <value>O título deve ter entre {0} e {1} caracteres.</value>
+  </data>
 </root>

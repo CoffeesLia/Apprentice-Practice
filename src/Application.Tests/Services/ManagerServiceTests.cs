@@ -22,6 +22,7 @@ namespace Application.Tests.Services
         private readonly Mock<IManagerRepository> _managerRepositoryMock;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private readonly ManagerService _manager;
+        private readonly Mock<IAreaRepository> _areaRepositoryMock;
 
         public ManagerServiceTests()
         {
@@ -31,15 +32,17 @@ namespace Application.Tests.Services
             CultureInfo.CurrentUICulture = new CultureInfo("en-US");
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _managerRepositoryMock = new Mock<IManagerRepository>();
+            _areaRepositoryMock = new Mock<IAreaRepository>();
 
             IStringLocalizerFactory localizerFactory = LocalizerFactorHelper.Create();
             ManagerValidator managerValidator = new(localizerFactory);
 
             _unitOfWorkMock.Setup(u => u.ManagerRepository).Returns(_managerRepositoryMock.Object);
+            _unitOfWorkMock.Setup(u => u.AreaRepository).Returns(_areaRepositoryMock.Object);
             _manager = new ManagerService(_unitOfWorkMock.Object, localizerFactory, managerValidator);
         }
 
-        // Verifica se CreateAsync retorna conflito em caso de serviço nulo.
+        // Verifica se CreateAsync retorna conflito em caso de gerente nulo.
         [Fact]
         public async Task CreateAsyncShouldReturnConflictWhenManagerIsNull()
         {
@@ -58,7 +61,7 @@ namespace Application.Tests.Services
             Assert.Equal(localizer[nameof(ManagerResources.ManagerCannotBeNull)], result.Message);
         }
 
-        // Verifica se CreateAsync retorna erro de validação quando o nome do serviço é inválido.
+        // Verifica se CreateAsync retorna erro de validação quando o nome do gerente é inválido.
         [Fact]
         public async Task CreateAsyncShouldReturnInvalidDataWhenValidationFails()
         {
@@ -109,7 +112,7 @@ namespace Application.Tests.Services
             _managerRepositoryMock.Verify(r => r.VerifyNameExistsAsync(It.IsAny<string>()), Times.Once);
         }
 
-        // Verifica se CreateAsync retorna conflito quando o nome do serviço já existe.
+        // Verifica se CreateAsync retorna conflito quando o nome do gerente já existe.
         [Fact]
         public async Task CreateAsyncShouldReturnConflictWhenNameExists()
         {
@@ -143,7 +146,36 @@ namespace Application.Tests.Services
             _managerRepositoryMock.Verify(r => r.VerifyNameExistsAsync(manager.Name), Times.Once);
         }
 
-        // Testa se DeleteAsync retorna NotFound quando o serviço não existe.
+        // Testa se DeleteAsync retorna Conflict quando o gerente está vinculado a uma área.
+        [Fact]
+        public async Task DeleteAsyncShouldReturnConflictWhenManagerIsLinkedToArea()
+        {
+            // Arrange
+            int managerId = 1;
+
+            _managerRepositoryMock.Setup(repo => repo.VerifyManagerExistsAsync(managerId))
+                .ReturnsAsync(true);
+
+            _areaRepositoryMock
+                .Setup(repo => repo.GetListAsync(It.IsAny<AreaFilter>()))
+                .ReturnsAsync(new PagedResult<Area>
+                {
+                    Result = [new Area("Area Teste") { ManagerId = managerId }],
+                    Page = 1,
+                    PageSize = 10,
+                    Total = 1
+                });
+
+            // Act
+            OperationResult result = await _manager.DeleteAsync(managerId);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(OperationStatus.Conflict, result.Status);
+            Assert.Equal(ManagerResources.ManagerLinkedArea, result.Message);
+        }
+
+        // Testa se DeleteAsync retorna NotFound quando o gerente não existe.
         [Fact]
         public async Task DeleteAsyncShouldReturnNotFoundWhenManagerDoesNotExist()
         {
@@ -162,7 +194,7 @@ namespace Application.Tests.Services
             Assert.Equal(ManagerResources.ManagerNotFound, result.Message);
         }
 
-        // Testa se DeleteAsync retorna NotFound quando o serviço não existe.
+        // Testa se DeleteAsync retorna NotFound quando o gerente não existe.
         [Fact]
         public async Task DeleteAsyncShouldCallRepositoryDeleteWhenManagerExists()
         {
@@ -177,6 +209,16 @@ namespace Application.Tests.Services
             _managerRepositoryMock.Setup(repo => repo.DeleteAsync(manager, true))
                 .Returns(Task.CompletedTask);
 
+            _areaRepositoryMock
+                .Setup(repo => repo.GetListAsync(It.IsAny<AreaFilter>()))
+                .ReturnsAsync(new PagedResult<Area>
+                {
+                    Result = [],
+                    Page = 1,
+                    PageSize = 10,
+                    Total = 0
+                });
+
             // Act
             OperationResult result = await _manager.DeleteAsync(managerId);
 
@@ -186,7 +228,7 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.Success, result.Status);
         }
 
-        // Testa se GetItemAsync retorna o item quando ele existe.
+        // Testa se GetItemAsync retorna o gerente quando ele existe.
         [Fact]
         public async Task GetItemAsyncShouldReturnItemWhenItemExists()
         {
@@ -203,7 +245,7 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.Success, result.Status);
         }
 
-        // Testa se GetItemAsync retorna KeyNotFoundException quando o item não existe.
+        // Testa se GetItemAsync retorna KeyNotFoundException quando o gerente não existe.
         [Fact]
         public async Task GetItemAsyncShouldReturnNotFoundWhenItemDoesNotExist()
         {
@@ -256,7 +298,7 @@ namespace Application.Tests.Services
             _managerRepositoryMock.Setup(repo => repo.GetListAsync(It.Is<ManagerFilter>(filter => filter.Name == manager.Name)))
                 .ReturnsAsync(new PagedResult<Manager>
                 {
-                    Result = new List<Manager> { manager },
+                    Result = [manager],
                     Page = 1,
                     PageSize = 10,
                     Total = 1
@@ -274,7 +316,7 @@ namespace Application.Tests.Services
             _managerRepositoryMock.Verify(repo => repo.GetListAsync(It.Is<ManagerFilter>(filter => filter.Name == manager.Name)), Times.Once);
         }
 
-        // Testa se o validador retorna erro quando o e-mail é obrigatório.
+        // Testa se o validador retorna erro quando o e-mail não é inserido.
         [Fact]
         public async Task ShouldHaveErrorWhenManagerEmailIsRequired()
         {
@@ -328,7 +370,7 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.InvalidData, result.Status);
         }
 
-        // Testa se UpdateAsync retorna conflito quand o serviço já existe.
+        // Testa se UpdateAsync retorna conflito quando o gerente já existe.
         [Fact]
         public async Task UpdateAsyncShouldReturnConflictWhenNameExists()
         {
@@ -367,7 +409,7 @@ namespace Application.Tests.Services
             _managerRepositoryMock.Verify(repo => repo.GetListAsync(It.Is<ManagerFilter>(filter => filter.Name == manager.Name)), Times.Once);
         }
 
-        // Testa UpdateAsync retorna NotFound quando o serviço não existe.
+        // Testa UpdateAsync retorna NotFound quando o gerente não existe.
         [Fact]
         public async Task UpdateAsyncShouldReturnNotFoundWhenManagerDoesNotExist()
         {
@@ -483,7 +525,7 @@ namespace Application.Tests.Services
             Assert.Equal(localizedMessage, result.Message);
         }
 
-        /// Testa se VerifyManagerExistsAsync retorna falso quando o serviço não existe.
+        // Testa se VerifyManagerExistsAsync retorna falso quando o gerente não existe.
         [Fact]
         public async Task VerifyManagerExistsAsyncShouldReturnFalseWhenManagerDoesNotExist()
         {
@@ -499,7 +541,7 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.Success, result.Status);
         }
 
-        // Testa VerifyManagerExistsAsync quando o serviço já existe.
+        // Testa VerifyManagerExistsAsync quando o gerente já existe.
         [Fact]
         public async Task VerifyManagerExistsAsyncShouldReturnConflictWhenManagerExists()
         {

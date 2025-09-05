@@ -159,31 +159,64 @@
   <data name="IncidentLinkedError" xml:space="preserve">
     <value>Cannot delete the application because there are linked incidents.</value>
   </data>
-  <data name="Csv_Id" xml:space="preserve">
+  <data name="Id" xml:space="preserve">
     <value>Id</value>
   </data>
-  <data name="Csv_Name" xml:space="preserve">
+  <data name="Name" xml:space="preserve">
     <value>Nome</value>
   </data>
-  <data name="Csv_Area" xml:space="preserve">
-    <value>Área</value>
-  </data>
-  <data name="Csv_Responsible" xml:space="preserve">
-    <value>Responsável</value>
-  </data>
-  <data name="Csv_Squad" xml:space="preserve">
-    <value>Squad</value>
-  </data>
-  <data name="Csv_Description" xml:space="preserve">
-    <value>Descrição</value>
-  </data>
-  <data name="Csv_External" xml:space="preserve">
+  <data name="External" xml:space="preserve">
     <value>Externo</value>
   </data>
-  <data name="Csv_External_Yes" xml:space="preserve">
+  <data name="External_Yes" xml:space="preserve">
     <value>Sim</value>
   </data>
-  <data name="Csv_External_No" xml:space="preserve">
+  <data name="External_No" xml:space="preserve">
     <value>Não</value>
+  </data>
+  <data name="Area" xml:space="preserve">
+    <value>Área</value>
+  </data>
+  <data name="Responsible" xml:space="preserve">
+    <value>Responsáveis</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Descrição</value>
+  </data>
+  <data name="Integrations" xml:space="preserve">
+    <value>Integrações</value>
+  </data>
+  <data name="Repositories" xml:space="preserve">
+    <value>Repositórios</value>
+  </data>
+  <data name="Services" xml:space="preserve">
+    <value>Serviços</value>
+  </data>
+  <data name="SquadMembers" xml:space="preserve">
+    <value>Membros do Squad</value>
+  </data>
+  <data name="GeneratedOn" xml:space="preserve">
+    <value>Gerado em</value>
+  </data>
+  <data name="ApplicationsList" xml:space="preserve">
+    <value>Lista de Aplicações</value>
+  </data>
+  <data name="Period" xml:space="preserve">
+    <value>Período</value>
+  </data>
+  <data name="FromDate" xml:space="preserve">
+    <value>A partir de {0}</value>
+  </data>
+  <data name="ToDate" xml:space="preserve">
+    <value>Até {0}</value>
+  </data>
+  <data name="PeriodRange" xml:space="preserve">
+    <value>{0} - {1}</value>
+  </data>
+  <data name="TotalApplications" xml:space="preserve">
+    <value>Total: {0} aplicações</value>
+  </data>
+  <data name="Page" xml:space="preserve">
+    <value>Página</value>
   </data>
 </root>
