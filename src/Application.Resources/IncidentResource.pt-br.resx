@@ -126,6 +126,9 @@
   <data name="InvalidMembers" xml:space="preserve">
     <value>Um ou mais membros especificados não pertencem aos esquadrões do aplicativo</value>
   </data>
+  <data name="NotFound" xml:space="preserve">
+    <value>Incidente não encontrado.</value>
+  </data>
   <data name="StatusRequired" xml:space="preserve">
     <value>O status é obrigatória.  </value>
   </data>

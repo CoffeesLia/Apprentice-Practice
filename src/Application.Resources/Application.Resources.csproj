@@ -39,6 +39,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Remove="FilterResources.es-AR.resx" />
+    <EmbeddedResource Remove="FilterResources.fr-FR.resx" />
+    <EmbeddedResource Remove="FilterResources.it-IT.resx" />
+    <EmbeddedResource Remove="FilterResources.ja-JP.resx" />
+    <EmbeddedResource Remove="FilterResources.zh-CN.resx" />
     <EmbeddedResource Remove="PartNumberResources.es-AR.resx" />
     <EmbeddedResource Remove="PartNumberResources.fr-FR.resx" />
     <EmbeddedResource Remove="PartNumberResources.it-IT.resx" />
@@ -46,6 +51,11 @@
     <EmbeddedResource Remove="PartNumberResources.pt-BR.resx" />
     <EmbeddedResource Remove="PartNumberResources.resx" />
     <EmbeddedResource Remove="PartNumberResources.zh-CN.resx" />
+    <EmbeddedResource Remove="ServiceResources.es-AR.resx" />
+    <EmbeddedResource Remove="ServiceResources.fr-FR.resx" />
+    <EmbeddedResource Remove="ServiceResources.it-IT.resx" />
+    <EmbeddedResource Remove="ServiceResources.ja-JP.resx" />
+    <EmbeddedResource Remove="ServiceResources.zh-CN.resx" />
     <EmbeddedResource Remove="SupplierResources.es-AR.resx" />
     <EmbeddedResource Remove="SupplierResources.fr-FR.resx" />
     <EmbeddedResource Remove="SupplierResources.it-IT.resx" />
@@ -257,27 +267,7 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ServiceDataResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Update="ServiceResources.zh-CN.resx">
-      <DependentUpon>ServiceResources.resx</DependentUpon>
-      <Generator></Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="ServiceResources.ja-JP.resx">
-      <DependentUpon>ServiceResources.resx</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Update="ServiceResources.fr-FR.resx">
-      <DependentUpon>ServiceResources.resx</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Update="Messages - Copy.pt-BR.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Update="ServiceResources.es-AR.resx">
-      <DependentUpon>ServiceResources.resx</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Update="ServiceResources.it-IT.resx">
-      <DependentUpon>ServiceResources.resx</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Update="ServiceResources.pt-BR.resx">
@@ -287,27 +277,6 @@
     <EmbeddedResource Update="ServiceResources.resx">
       <LastGenOutput>ServiceResources.Designer.cs</LastGenOutput>
       <Generator>PublicResXFileCodeGenerator</Generator>
-    </EmbeddedResource>
-
-     <EmbeddedResource Update="FilterResources.it-IT.resx">
-      <DependentUpon>FilterResources.resx</DependentUpon>
-      <Generator></Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="FilterResources.zh-CN.resx">
-      <DependentUpon>FilterResources.resx</DependentUpon>
-      <Generator></Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="FilterResources.ja-JP.resx">
-      <DependentUpon>FilterResources.resx</DependentUpon>
-      <Generator></Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="FilterResources.fr-FR.resx">
-      <DependentUpon>FilterResources.resx</DependentUpon>
-      <Generator></Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="FilterResources.es-AR.resx">
-      <DependentUpon>FilterResources.resx</DependentUpon>
-      <Generator></Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="FilterResources.pt-BR.resx">
       <DependentUpon>FilterResources.resx</DependentUpon>
