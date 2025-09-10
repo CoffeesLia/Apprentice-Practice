@@ -41,7 +41,7 @@ namespace Application.Tests.Services
         [InlineData("App1\nApp2", "\"App1\nApp2\"")]
         [InlineData(null, "")]
         [InlineData("   ", "")]
-        public void CsvSafe_ShouldEscapeValuesCorrectly(string? input, string expected)
+        public void CsvSafeShouldEscapeValuesCorrectly(string? input, string expected)
         {
             var result = ApplicationExportService.CsvSafe(input);
             Assert.Equal(expected, result);
@@ -133,7 +133,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task ExportApplicationAsyncShouldReturnPdfBytes_WithAllSections()
+        public async Task ExportApplicationAsyncShouldReturnPdfBytesWithAllSections()
         {
             // Arrange
             var app = new ApplicationData("App1")

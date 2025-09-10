@@ -700,7 +700,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task ExportApplicationAsync_ShouldReturnBytes()
+        public async Task ExportApplicationAsyncShouldReturnBytes()
         {
             // Arrange
             _unitOfWorkMock.Setup(u => u.ApplicationDataRepository.GetFullByIdAsync(42))
@@ -735,7 +735,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task ExportToPdfAsync_ShouldReturnBytes()
+        public async Task ExportToPdfAsyncShouldReturnBytes()
         {
             // Arrange
             var filter = new ApplicationFilter();
@@ -776,7 +776,7 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task ExportToCsvAsync_ShouldReturnBytes()
+        public async Task ExportToCsvAsyncShouldReturnBytes()
         {
             // Arrange
             var filter = new ApplicationFilter();
