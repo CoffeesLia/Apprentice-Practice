@@ -170,7 +170,7 @@ namespace WebApi.Tests.Controllers
         }
 
         [Fact]
-        public async Task ExportCsv_ShouldReturnFileContentResultWithCsvContentType()
+        public async Task ExportCsvShouldReturnFileContentResultWithCsvContentType()
         {
             // Arrange
             var filterDto = _fixture.Create<ApplicationDataFilterDto>();
@@ -190,7 +190,7 @@ namespace WebApi.Tests.Controllers
         }
 
         [Fact]
-        public async Task ExportPdf_ShouldReturnFileContentResultWithPdfContentType()
+        public async Task ExportPdfShouldReturnFileContentResultWithPdfContentType()
         {
             // Arrange
             var filterDto = _fixture.Create<ApplicationDataFilterDto>();
@@ -210,7 +210,7 @@ namespace WebApi.Tests.Controllers
         }
 
         [Fact]
-        public async Task ExportSinglePdf_ShouldReturnFileContentResultWithPdfContentTypeAndIdInFileName()
+        public async Task ExportSinglePdfShouldReturnFileContentResultWithPdfContentTypeAndIdInFileName()
         {
             // Arrange
             int id = 42;

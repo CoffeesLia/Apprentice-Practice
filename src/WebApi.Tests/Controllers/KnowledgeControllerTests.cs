@@ -214,7 +214,7 @@ namespace WebApi.Tests.Controllers
             Assert.IsType<PagedResultVm<KnowledgeVm>>(okResult.Value);
         }
         [Fact]
-        public void KnowledgeFilterDto_Should_Set_And_Get_Properties()
+        public void KnowledgeFilterDtoShouldSetAndGetProperties()
         {
             // Arrange
             var filterDto = new KnowledgeFilterDto
@@ -237,7 +237,7 @@ namespace WebApi.Tests.Controllers
         }
 
         [Fact]
-        public void KnowledgeFilterDto_Default_Values_Should_Be_Correct()
+        public void KnowledgeFilterDtoDefaultValuesShouldBeCorrect()
         {
             // Arrange
             var filterDto = new KnowledgeFilterDto
