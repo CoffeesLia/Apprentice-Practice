@@ -154,10 +154,10 @@
     <value>Não é possível excluir a aplicação pois existem conhecimento de membros vinculados. </value>
   </data>
   <data name="FeedbackLinkedError" xml:space="preserve">
-    <value>Cannot delete the application because there are linked feedbacks.</value>
+    <value>Não é possível excluir a aplicação pois existem feedbacks vinculados.   </value>
   </data>
   <data name="IncidentLinkedError" xml:space="preserve">
-    <value>Cannot delete the application because there are linked incidents.</value>
+    <value>Não é possível excluir a aplicação pois existem incidentes vinculados.</value>
   </data>
   <data name="Id" xml:space="preserve">
     <value>Id</value>

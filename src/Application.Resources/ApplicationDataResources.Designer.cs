@@ -151,7 +151,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Não é possível excluir a aplicação pois existem feedbacks vinculados.   .
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Cannot delete the application because there are linked feedbacks..
         /// </summary>
         public static string FeedbackLinkedError {
             get {
@@ -187,7 +187,7 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Não é possível excluir a aplicação pois existem incidentes vinculados..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Cannot delete the application because there are linked incidents..
         /// </summary>
         public static string IncidentLinkedError {
             get {
