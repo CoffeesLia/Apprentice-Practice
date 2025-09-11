@@ -30,10 +30,11 @@ namespace Stellantis.ProjectName.Application.Services
             if (member == null || application == null)
                 return OperationResult.NotFound(_localizer[nameof(KnowledgeResource.MemberApplicationNotFound)]);
 
-            if (member.SquadId != application.SquadId)
+            // só valida squad se o status for Atual
+            if (item.Status == KnowledgeStatus.Atual && member.SquadId != application.SquadId)
                 return OperationResult.Conflict(_localizer[nameof(KnowledgeResource.MemberApplicationMustBelongToTheSameSquad)]);
 
-            // Verifica se já existe associação com o mesmo status
+            // verifica se já existe associação com o mesmo status
             if (await Repository.AssociationExistsAsync(item.MemberId, item.ApplicationId, member.SquadId, item.Status).ConfigureAwait(false))
                 return OperationResult.Conflict(_localizer[nameof(KnowledgeResource.AssociationAlreadyExists)]);
 
