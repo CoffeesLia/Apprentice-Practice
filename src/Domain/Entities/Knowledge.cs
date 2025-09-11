@@ -2,8 +2,8 @@
 {
     public enum KnowledgeStatus
     {
-        Atual,
-        Passado
+        Atual = 0,
+        Passado = 1
     }
 
     public class Knowledge : EntityBase
