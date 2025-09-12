@@ -169,6 +169,65 @@ namespace WebApi.Tests.Controllers
             Assert.IsType<NotFoundResult>(result);
         }
 
+        [Fact]
+        public async Task ExportCsvShouldReturnFileContentResultWithCsvContentType()
+        {
+            // Arrange
+            var filterDto = _fixture.Create<ApplicationDataFilterDto>();
+            var expectedBytes = new byte[] { 1, 2, 3 };
+            _serviceMock.Setup(s => s.ExportToCsvAsync(It.IsAny<ApplicationFilter>()))
+                .ReturnsAsync(expectedBytes);
+
+            // Act
+            var result = await _controller.ExportCsv(filterDto);
+
+            // Assert
+            var fileResult = Assert.IsType<FileContentResult>(result);
+            Assert.Equal("text/csv", fileResult.ContentType);
+            Assert.Equal(expectedBytes, fileResult.FileContents);
+            Assert.Contains("applications_", fileResult.FileDownloadName);
+            Assert.EndsWith(".csv", fileResult.FileDownloadName);
+        }
+
+        [Fact]
+        public async Task ExportPdfShouldReturnFileContentResultWithPdfContentType()
+        {
+            // Arrange
+            var filterDto = _fixture.Create<ApplicationDataFilterDto>();
+            var expectedBytes = new byte[] { 4, 5, 6 };
+            _serviceMock.Setup(s => s.ExportToPdfAsync(It.IsAny<ApplicationFilter>()))
+                .ReturnsAsync(expectedBytes);
+
+            // Act
+            var result = await _controller.ExportPdf(filterDto);
+
+            // Assert
+            var fileResult = Assert.IsType<FileContentResult>(result);
+            Assert.Equal("application/pdf", fileResult.ContentType);
+            Assert.Equal(expectedBytes, fileResult.FileContents);
+            Assert.Contains("applications_", fileResult.FileDownloadName);
+            Assert.EndsWith(".pdf", fileResult.FileDownloadName);
+        }
+
+        [Fact]
+        public async Task ExportSinglePdfShouldReturnFileContentResultWithPdfContentTypeAndIdInFileName()
+        {
+            // Arrange
+            int id = 42;
+            var expectedBytes = new byte[] { 7, 8, 9 };
+            _serviceMock.Setup(s => s.ExportApplicationAsync(id))
+                .ReturnsAsync(expectedBytes);
+
+            // Act
+            var result = await _controller.ExportSinglePdf(id);
+
+            // Assert
+            var fileResult = Assert.IsType<FileContentResult>(result);
+            Assert.Equal("application/pdf", fileResult.ContentType);
+            Assert.Equal(expectedBytes, fileResult.FileContents);
+            Assert.Contains($"application_{id}_", fileResult.FileDownloadName);
+            Assert.EndsWith(".pdf", fileResult.FileDownloadName);
+        }
 
     }
 }

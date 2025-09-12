@@ -82,6 +82,13 @@ namespace Stellantis.ProjectName.Application.Services
             {
                 return OperationResult.NotFound(_localizer[nameof(ManagerResources.ManagerNotFound)]);
             }
+
+            var areas = await UnitOfWork.AreaRepository.GetListAsync(new AreaFilter { ManagerId = id }).ConfigureAwait(false);
+            if (areas.Result.Any())
+            {
+                return OperationResult.Conflict(_localizer[nameof(ManagerResources.ManagerLinkedArea)]);
+            }
+
             return await base.DeleteAsync(id).ConfigureAwait(false);
         }
 

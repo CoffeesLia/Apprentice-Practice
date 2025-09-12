@@ -132,6 +132,9 @@
   <data name="ManagerEmailLength" xml:space="preserve">
     <value>O email do gerente deve ter entre 5 e 70 caracteres.</value>
   </data>
+  <data name="ManagerLinkedArea" xml:space="preserve">
+    <value>Não é possível excluir um gerente que tenha uma área vinculada.</value>
+  </data>
   <data name="ManagerNameIsRequired" xml:space="preserve">
     <value>O email do gerente é obrigatório.</value>
   </data>

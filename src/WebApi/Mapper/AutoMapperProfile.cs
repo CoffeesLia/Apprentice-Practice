@@ -31,7 +31,7 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
 
             CreateMap<ApplicationData, ApplicationVm>()
-                .ForMember(dest => dest.Squads, opt => opt.MapFrom(src => src.Squad))
+                .ForMember(dest => dest.Squad, opt => opt.MapFrom(src => src.Squad))
                 .ForMember(dest => dest.Responsible, opt => opt.MapFrom(src => src.Responsible))
                 .ForMember(dest => dest.Area, opt => opt.MapFrom(src => src.Area))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
@@ -42,7 +42,7 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(x => x.AreaId, opt => opt.MapFrom(src => src.AreaId))
                 .ForMember(x => x.ResponsibleId, opt => opt.MapFrom(src => src.ResponsibleId))
                 .ForMember(x => x.External, opt => opt.MapFrom(src => src.External));
-
+                
             CreateMap<AreaDto, Area>()
                  .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
@@ -269,7 +269,7 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(dest => dest.ApplicationName, opt => opt.MapFrom(src => src.Application != null ? src.Application.Name : string.Empty))
                 .ForMember(dest => dest.SquadName, opt => opt.MapFrom(src => src.Squad != null ? src.Squad.Name : string.Empty))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
-                .ForMember(dest => dest.StatusText, opt => opt.MapFrom(src => src.Status == KnowledgeStatus.Passado ? "passado" : "atual"));
+                .ForMember(dest => dest.StatusText, opt => opt.MapFrom(src => src.Status == KnowledgeStatus.Passado ? "Passado" : "Atual"));
 
             CreateMap<KnowledgeFilterDto, KnowledgeFilter>()
                 .ForMember(dest => dest.SquadId, opt => opt.MapFrom(src => src.SquadId))

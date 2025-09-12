@@ -84,14 +84,23 @@ namespace Stellantis.ProjectName.Application.Services
             if (squad == null)
                 return OperationResult.NotFound(_localizer[nameof(SquadResources.SquadNotFound)]);
 
-            // Verifica membros vinculados
             var members = await UnitOfWork.MemberRepository.GetListAsync(new MemberFilter { SquadId = id }).ConfigureAwait(false);
-            // Verifica aplicações vinculadas
             var applications = await UnitOfWork.ApplicationDataRepository.GetListAsync(a => a.SquadId == id).ConfigureAwait(false);
 
-            if ((members.Result?.Any() ?? false) || (applications?.Any() ?? false))
+            bool hasMembers = members.Result?.Any() ?? false;
+            bool hasApplications = applications?.Any() ?? false;
+
+            if (hasMembers && hasApplications)
             {
-                return OperationResult.Conflict(_localizer[nameof(SquadResources.SquadDeleteLinkedError)]);
+                return OperationResult.Conflict(_localizer[nameof(SquadResources.SquadDeleteLinkedMemberApp)]);
+            }
+            if (hasMembers)
+            {
+                return OperationResult.Conflict(_localizer[nameof(SquadResources.SquadDeleteLinkedMembers)]);
+            }
+            if (hasApplications)
+            {
+                return OperationResult.Conflict(_localizer[nameof(SquadResources.SquadDeleteLinkedApplication)]);
             }
 
             await Repository.DeleteAsync(id, true).ConfigureAwait(false);

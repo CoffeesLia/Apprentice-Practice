@@ -2,8 +2,8 @@
 {
     public enum KnowledgeStatus
     {
-        Atual,
-        Passado
+        Atual = 0,
+        Passado = 1
     }
 
     public class Knowledge : BaseEntity
@@ -21,14 +21,6 @@
         public Squad Squad { get; set; } = null!;
 
         public KnowledgeStatus Status { get; set; }
-
-
-        // armazena o Squad no momento da associação(para regras de negócio)
-        //public ICollection<Squad>? AssociatedSquads { get; set; }
-        //public List<int>? AssociatedSquadIds { get; set; }
-
-        //public ICollection<ApplicationData>? AssociatedApplications { get; set; }
-        //public List<int>? AssociatedApplicationIds { get; set; }
 
     }
 }

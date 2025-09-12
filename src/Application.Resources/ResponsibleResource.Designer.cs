@@ -95,5 +95,23 @@ namespace Stellantis.ProjectName.Application.Resources {
                 return ResourceManager.GetString("NameRequired", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a  The name must be between {0} and {1} characters long..
+        /// </summary>
+        public static string NameValidateLength {
+            get {
+                return ResourceManager.GetString("NameValidateLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a It is not possible to delete the responsible, as it is linked to one or more applications.
+        /// </summary>
+        public static string ResponsibleLinkedToApplication {
+            get {
+                return ResourceManager.GetString("ResponsibleLinkedToApplication", resourceCulture);
+            }
+        }
     }
 }

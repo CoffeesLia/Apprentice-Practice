@@ -7,13 +7,17 @@ namespace Stellantis.ProjectName.Application.Validators
 {
     public class IncidentValidator : AbstractValidator<Incident>
     {
+        public const int TitleMinimumLength = 3;
+        public const int TitleMaximumLength = 255;
         public IncidentValidator(IStringLocalizerFactory localizerFactory)
         {
             ArgumentNullException.ThrowIfNull(localizerFactory);
             var localizer = localizerFactory.Create(typeof(IncidentResource));
 
             RuleFor(i => i.Title)
-                .NotEmpty().WithMessage(localizer[nameof(IncidentResource.TitleRequired)]);
+                .NotEmpty().WithMessage(localizer[nameof(IncidentResource.TitleRequired)])
+                .Length(TitleMinimumLength, TitleMaximumLength)
+                .WithMessage(localizer[nameof(IncidentResource.TitleValidateLength), TitleMinimumLength, TitleMaximumLength]);
 
             RuleFor(i => i.Description)
                 .NotEmpty().WithMessage(localizer[nameof(IncidentResource.DescriptionRequired)]);

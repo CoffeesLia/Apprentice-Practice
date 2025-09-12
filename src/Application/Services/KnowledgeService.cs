@@ -30,10 +30,11 @@ namespace Stellantis.ProjectName.Application.Services
             if (member == null || application == null)
                 return OperationResult.NotFound(_localizer[nameof(KnowledgeResource.MemberApplicationNotFound)]);
 
-            if (member.SquadId != application.SquadId)
+            // só valida squad se o status for Atual
+            if (item.Status == KnowledgeStatus.Atual && member.SquadId != application.SquadId)
                 return OperationResult.Conflict(_localizer[nameof(KnowledgeResource.MemberApplicationMustBelongToTheSameSquad)]);
 
-            // Verifica se já existe associação com o mesmo status
+            // verifica se já existe associação com o mesmo status
             if (await Repository.AssociationExistsAsync(item.MemberId, item.ApplicationId, member.SquadId, item.Status).ConfigureAwait(false))
                 return OperationResult.Conflict(_localizer[nameof(KnowledgeResource.AssociationAlreadyExists)]);
 
@@ -109,6 +110,41 @@ namespace Stellantis.ProjectName.Application.Services
         {
             filter ??= new KnowledgeFilter();
             return await Repository.GetListAsync(filter).ConfigureAwait(false);
+        }
+
+        // buscar squad do membro
+        public async Task<Squad?> GetSquadByMemberAsync(int memberId)
+        {
+            var member = await UnitOfWork.MemberRepository.GetByIdAsync(memberId);
+            if (member == null)
+                return null;
+            return await UnitOfWork.SquadRepository.GetByIdAsync(member.SquadId);
+        }
+
+        // buscar aplicações do membro 
+        public async Task<List<ApplicationData>> GetApplicationsByMemberAsync(int memberId)
+        {
+            return await Repository.ListApplicationsByMemberAsync(memberId, KnowledgeStatus.Atual);
+        }
+
+        // buscar squads da aplicação
+        public async Task<List<Squad>> GetSquadsByApplicationAsync(int applicationId)
+        {
+            var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(applicationId);
+            if (application?.SquadId != null)
+            {
+                var squad = await UnitOfWork.SquadRepository.GetByIdAsync(application.SquadId.Value);
+                return squad != null ? new List<Squad> { squad } : new List<Squad>();
+            }
+            return new List<Squad>();
+        }
+
+        // buscar aplicações do squad
+        public async Task<List<ApplicationData>> GetApplicationsBySquadAsync(int squadId)
+        {
+            var filter = new ApplicationFilter { SquadId = squadId };
+            var pagedResult = await UnitOfWork.ApplicationDataRepository.GetListAsync(filter);
+            return pagedResult.Result.ToList();
         }
     }
 }

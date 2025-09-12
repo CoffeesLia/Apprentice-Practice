@@ -75,12 +75,19 @@ namespace Stellantis.ProjectName.Application.Services
 
         public override async Task<OperationResult> DeleteAsync(int id)
         {
-            var item = await Repository.GetByIdAsync(id).ConfigureAwait(false);
-            if (item == null)
+            var responsible = await Repository.GetByIdAsync(id).ConfigureAwait(false);
+            if (responsible == null)
             {
                 return OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
             }
-            return await base.DeleteAsync(item).ConfigureAwait(false);
+
+            // Verifica se o responsável está vinculado a alguma aplicação
+            var applications = await UnitOfWork.ApplicationDataRepository.GetListAsync(app => app.ResponsibleId == id).ConfigureAwait(false);
+            if (applications.Any())
+            {
+                return OperationResult.Conflict(_localizer[nameof(ResponsibleResource.ResponsibleLinkedToApplication)]);
+            }
+            return await base.DeleteAsync(responsible).ConfigureAwait(false);
         }
 
         public async Task<PagedResult<Responsible>> GetListAsync(ResponsibleFilter responsibleFilter)

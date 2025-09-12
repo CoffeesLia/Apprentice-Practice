@@ -79,11 +79,29 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a  One or more specified members do not belong to the application&apos;s squads.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a One or more specified members do not belong to the application&apos;s squads.
         /// </summary>
         public static string InvalidMembers {
             get {
                 return ResourceManager.GetString("InvalidMembers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Incident not found..
+        /// </summary>
+        public static string NotFound {
+            get {
+                return ResourceManager.GetString("NotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Status is required..
+        /// </summary>
+        public static string StatusRequired {
+            get {
+                return ResourceManager.GetString("StatusRequired", resourceCulture);
             }
         }
         
@@ -95,15 +113,13 @@ namespace Stellantis.ProjectName.Application.Resources {
                 return ResourceManager.GetString("TitleRequired", resourceCulture);
             }
         }
-
+        
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Status is required.  .
+        ///   Consulta uma cadeia de caracteres localizada semelhante a The title must be between {0} and {1} characters long..
         /// </summary>
-        public static string StatusRequired
-        {
-            get
-            {
-                return ResourceManager.GetString("StatusRequired", resourceCulture);
+        public static string TitleValidateLength {
+            get {
+                return ResourceManager.GetString("TitleValidateLength", resourceCulture);
             }
         }
     }

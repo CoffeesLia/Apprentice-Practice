@@ -36,7 +36,7 @@ namespace WebApi.Tests.Controllers
             KnowledgeDto knowledgeDto = new()
             {
                 MemberId = 2,
-                ApplicationId = 3,
+                ApplicationIds = new[] { 3 }, 
                 SquadId = 4,
                 Status = KnowledgeStatus.Atual
             };
@@ -60,7 +60,7 @@ namespace WebApi.Tests.Controllers
             var knowledgeDto = new KnowledgeDto
             {
                 MemberId = 1,
-                ApplicationId = 2,
+                ApplicationIds = new[] { 2 },
                 SquadId = 99,
                 Status = KnowledgeStatus.Passado
             };
@@ -116,7 +116,7 @@ namespace WebApi.Tests.Controllers
             var knowledgeDto = new KnowledgeDto
             {
                 MemberId = 2,
-                ApplicationId = 3,
+                ApplicationIds = new[] { 3 },
                 SquadId = 4,
                 Status = KnowledgeStatus.Atual
             };
@@ -214,7 +214,7 @@ namespace WebApi.Tests.Controllers
             Assert.IsType<PagedResultVm<KnowledgeVm>>(okResult.Value);
         }
         [Fact]
-        public void KnowledgeFilterDto_Should_Set_And_Get_Properties()
+        public void KnowledgeFilterDtoShouldSetAndGetProperties()
         {
             // Arrange
             var filterDto = new KnowledgeFilterDto
@@ -237,7 +237,7 @@ namespace WebApi.Tests.Controllers
         }
 
         [Fact]
-        public void KnowledgeFilterDto_Default_Values_Should_Be_Correct()
+        public void KnowledgeFilterDtoDefaultValuesShouldBeCorrect()
         {
             // Arrange
             var filterDto = new KnowledgeFilterDto

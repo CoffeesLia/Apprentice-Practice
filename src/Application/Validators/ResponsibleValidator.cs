@@ -7,6 +7,8 @@ namespace Stellantis.ProjectName.Application.Validators
 {
     public class ResponsibleValidator : AbstractValidator<Responsible>
     {
+        public const int NameMinimumLength = 3;
+        public const int NameMaximumLength = 255;
         public ResponsibleValidator(IStringLocalizerFactory localizerFactory)
         {
             ArgumentNullException.ThrowIfNull(localizerFactory);
@@ -16,7 +18,9 @@ namespace Stellantis.ProjectName.Application.Validators
                 .NotEmpty().WithMessage(localizer[nameof(ResponsibleResource.EmailRequired)]);
 
             RuleFor(r => r.Name)
-                .NotEmpty().WithMessage(localizer[nameof(ResponsibleResource.NameRequired)]);
+                  .NotEmpty().WithMessage(localizer[nameof(ResponsibleResource.NameRequired)])
+                  .Length(NameMinimumLength, NameMaximumLength)
+                  .WithMessage(localizer[nameof(ResponsibleResource.NameValidateLength), NameMinimumLength, NameMaximumLength]);
 
             RuleFor(r => r.AreaId)
                 .NotEmpty().WithMessage(localizer[nameof(ResponsibleResource.AreaRequired)]);

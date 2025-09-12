@@ -129,4 +129,10 @@
   <data name="EmailRequired" xml:space="preserve">
     <value>Email is mandatory.</value>
   </data>
+  <data name="NameValidateLength" xml:space="preserve">
+    <value> The name must be between {0} and {1} characters long.</value>
+  </data>
+  <data name="ResponsibleLinkedToApplication" xml:space="preserve">
+    <value>It is not possible to delete the responsible, as it is linked to one or more applications</value>
+  </data>
 </root>

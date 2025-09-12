@@ -41,8 +41,11 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
                 .WithOne(k => k.Application)
                 .HasForeignKey(k => k.ApplicationId)
                 .OnDelete(DeleteBehavior.Cascade);
-
             builder.Ignore(ad => ad.ProductOwner);
+
+            builder.Property(ad => ad.CreatedAt)
+            .HasDefaultValueSql("CURRENT_TIMESTAMP")
+            .ValueGeneratedOnAdd();
         }
     }
 }

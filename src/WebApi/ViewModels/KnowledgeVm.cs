@@ -14,7 +14,5 @@ namespace Stellantis.ProjectName.WebApi.ViewModels
 
         public string StatusText { get; set; }
 
-        //public List<int>? AssociatedSquadIds { get; set; }
-        //public List<int>? AssociatedApplicationIds { get; set; }
     }
 }

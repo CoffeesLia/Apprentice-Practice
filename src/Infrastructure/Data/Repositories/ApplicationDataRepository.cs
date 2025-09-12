@@ -34,11 +34,16 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             ExpressionStarter<ApplicationData> filters = PredicateBuilder.New<ApplicationData>(true);
             applicationFilter.Page = applicationFilter.Page <= 0 ? 1 : applicationFilter.Page;
             applicationFilter.PageSize = applicationFilter.PageSize <= 0 ? 10 : applicationFilter.PageSize;
-            if (!string.IsNullOrWhiteSpace(applicationFilter.Name))
-            {
-                filters = filters.And(x => x.Name != null && x.Name.ToLower().Contains(applicationFilter.Name.ToLower()));
-            }
 
+            var query = Context.Set<ApplicationData>().AsQueryable();
+
+            if (!string.IsNullOrEmpty(applicationFilter.Name))
+            {
+                var name = applicationFilter.Name;
+                query = query.AsEnumerable()
+                    .Where(a => a.Name != null && a.Name.Contains(name, StringComparison.OrdinalIgnoreCase))
+                    .AsQueryable();
+            }
 
             if (applicationFilter.Id > 0)
             {
@@ -65,6 +70,16 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 filters = filters.And(x => x.External == applicationFilter.External.Value);
             }
 
+            // Filtros por período
+            if (applicationFilter.CreatedAfter.HasValue)
+                filters = filters.And(x => x.CreatedAt >= applicationFilter.CreatedAfter.Value.Date); // início do dia
+
+            if (applicationFilter.CreatedBefore.HasValue)
+            {
+                var endOfDay = applicationFilter.CreatedBefore.Value.Date.AddDays(1).AddTicks(-1);
+                filters = filters.And(x => x.CreatedAt <= endOfDay); // final do dia
+            }
+
             return await GetListAsync(
 
              filter: filters,
@@ -76,7 +91,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
            ).ConfigureAwait(false);
 
         }
-
 
         public async Task<bool> IsApplicationNameUniqueAsync(string name, int? id = null)
         {

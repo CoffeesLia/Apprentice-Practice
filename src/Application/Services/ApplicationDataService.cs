@@ -126,18 +126,19 @@ namespace Stellantis.ProjectName.Application.Services
             }
 
             // Verifica feedbacks vinculados
-            var feedbacks = await UnitOfWork.FeedbackRepository.GetMembersByApplicationIdAsync(id).ConfigureAwait(false);
-            if (feedbacks.Any())
+            var feedbacks = await UnitOfWork.FeedbackRepository.GetListAsync(new FeedbackFilter { ApplicationId = id }).ConfigureAwait(false);
+            if (feedbacks.Result.Any())
             {
                 return OperationResult.Conflict(_localizer[nameof(ApplicationDataResources.FeedbackLinkedError)]);
             }
 
             // Verifica incidentes vinculados
-            var incidents = await UnitOfWork.IncidentRepository.GetMembersByApplicationIdAsync(id).ConfigureAwait(false);
-            if (incidents.Any())
+            var incidents = await UnitOfWork.IncidentRepository.GetListAsync(new IncidentFilter { ApplicationId = id }).ConfigureAwait(false);
+            if (incidents.Result.Any())
             {
                 return OperationResult.Conflict(_localizer[nameof(ApplicationDataResources.IncidentLinkedError)]);
             }
+
 
             return await base.DeleteAsync(item).ConfigureAwait(false);
         }

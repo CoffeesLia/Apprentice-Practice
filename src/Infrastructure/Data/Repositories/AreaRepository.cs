@@ -3,6 +3,8 @@ using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
+using System.Linq.Expressions;
+using LinqKit;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
@@ -29,25 +31,32 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         public async Task<PagedResult<Area>> GetListAsync(AreaFilter filter)
         {
             ArgumentNullException.ThrowIfNull(filter);
+
+            ExpressionStarter<Area> filters = PredicateBuilder.New<Area>(true);
             filter.Page = filter.Page <= 0 ? 1 : filter.Page;
-            IQueryable<Area> query = Context.Set<Area>();
+            filter.PageSize = filter.PageSize <= 0 ? 10 : filter.PageSize;
 
             if (filter.ManagerId > 0)
-            {
-                query = query.Where(a => a.ManagerId == filter.ManagerId);
-            }
+                filters = filters.And(a => a.ManagerId == filter.ManagerId);
 
             if (filter.Id.HasValue)
-            {
-                query = query.Where(a => a.Id == filter.Id);
-            }
+                filters = filters.And(a => a.Id == filter.Id);
+
+            var pagedResult = await base.GetListAsync(
+                filter: filters,
+                sort: filter.Sort,
+                sortDir: filter.SortDir,
+                page: filter.Page,
+                pageSize: filter.PageSize
+            ).ConfigureAwait(false);
 
             if (!string.IsNullOrEmpty(filter.Name))
             {
-                query = query.Where(a => a.Name.ToLower().Contains(filter.Name.ToLower()));
+                var name = filter.Name;
+                pagedResult.Result = [.. pagedResult.Result.Where(a => a.Name != null && a.Name.Contains(name, StringComparison.OrdinalIgnoreCase))];
             }
 
-            return await base.GetListAsync(query, sort: filter.Sort, sortDir: filter.SortDir, page: filter.Page, pageSize: filter.PageSize).ConfigureAwait(false);
+            return pagedResult;
         }
 
         public async Task<bool> VerifyNameAlreadyExistsAsync(string name)
