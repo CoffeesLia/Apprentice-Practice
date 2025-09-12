@@ -15,7 +15,7 @@ namespace Stellantis.ProjectName.Application.Services
     /// <typeparam name="TIRepository">The type of the repository.</typeparam>
     public abstract class EntityServiceBase<TEntity>(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<TEntity> validator)
         : ServiceBase(unitOfWork, localizerFactory)
-        where TEntity : EntityBase
+        where TEntity : BaseEntity
     {
         /// <summary>
         /// Gets the repository for the entity.
@@ -94,8 +94,15 @@ namespace Stellantis.ProjectName.Application.Services
             {
                 return OperationResult.NotFound(Localizer[nameof(ServiceResources.NotFound)]);
             }
-
-            Repository.DetachEntity(itemOld);
+           
+            if (UnitOfWork is IDisposable disposableContext)
+            {
+                disposableContext.Dispose();
+            }
+            else
+            {
+           
+            }
             await Repository.UpdateAsync(item).ConfigureAwait(false);
             return OperationResult.Complete(Localizer[ServiceResources.UpdatedSuccessfully]);
         }

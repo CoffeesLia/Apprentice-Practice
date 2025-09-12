@@ -2,7 +2,7 @@
 
 namespace Stellantis.ProjectName.Domain.Entities
 {
-    public class Area(string name) : EntityBase
+    public class Area(string name) : BaseEntity
     {
         public string Name { get; set; } = name;
         public int ManagerId { get; set; }
