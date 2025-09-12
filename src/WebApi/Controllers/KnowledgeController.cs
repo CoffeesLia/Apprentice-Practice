@@ -7,6 +7,8 @@ using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.ViewModels;
+using Stellantis.ProjectName.Application.Models;
+using Stellantis.ProjectName.Application.Resources;
 
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
@@ -19,7 +21,29 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] KnowledgeDto itemDto)
         {
-            return await CreateBaseAsync<KnowledgeVm>(itemDto).ConfigureAwait(false);
+            if (itemDto.ApplicationIds == null || itemDto.ApplicationIds.Length == 0)
+                return BadRequest(Localizer[nameof(KnowledgeResource.ApplicationIsRequired)]);
+
+            var results = new List<OperationResult>();
+            foreach (var appId in itemDto.ApplicationIds)
+            {
+                var knowledge = new Knowledge
+                {
+                    MemberId = itemDto.MemberId,
+                    ApplicationId = appId,
+                    Status = itemDto.Status
+                };
+                var result = await Service.CreateAsync(knowledge);
+                results.Add(result);
+            }
+
+            // retorna CreatedAtActionResult se pelo menos uma criação foi bem-sucedida
+            if (results.Any(r => r.Status == OperationStatus.Success))
+            {
+                return CreatedAtAction(nameof(GetAsync), null, results);
+            }
+
+            return Ok(results);
         }
 
         [HttpGet("{id}")]
