@@ -13,7 +13,6 @@ namespace Stellantis.ProjectName.Application.Interfaces.Services
         Task<byte[]> ExportToCsvAsync(ApplicationFilter filter);
         Task<byte[]> ExportToPdfAsync(ApplicationFilter filter);
         Task<byte[]> ExportApplicationAsync(int id);
-
-
+        Task<byte[]> ExportApplicationsAsync(ApplicationFilter filter);
     }
 }

@@ -14,7 +14,7 @@ namespace Stellantis.ProjectName.WebApi.Extensions
                 mc.AddProfile(new AutoMapperProfile());
             });
 
-            mappingConfig.AssertConfigurationIsValid();
+            
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
 

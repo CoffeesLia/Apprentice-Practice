@@ -1,6 +1,6 @@
 ﻿namespace Stellantis.ProjectName.Domain.Entities
 {
-    public class ServiceData : EntityBase
+    public class ServiceData : BaseEntity
     {
         public required string Name { get; set; }
         public string? Description { get; set; }

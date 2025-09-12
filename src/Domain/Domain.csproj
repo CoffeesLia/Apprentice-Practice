@@ -31,12 +31,22 @@
 
   <ItemGroup>
     <Compile Remove="Entities\ValueObject\**" />
+    <Compile Remove="NovaPasta1\**" />
+    <Compile Remove="NovaPasta2\**" />
+    <Compile Remove="NovaPasta\**" />
     <EmbeddedResource Remove="Entities\ValueObject\**" />
+    <EmbeddedResource Remove="NovaPasta1\**" />
+    <EmbeddedResource Remove="NovaPasta2\**" />
+    <EmbeddedResource Remove="NovaPasta\**" />
     <None Remove="Entities\ValueObject\**" />
+    <None Remove="NovaPasta1\**" />
+    <None Remove="NovaPasta2\**" />
+    <None Remove="NovaPasta\**" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="Entities\Employee.cs" />
+    <Compile Remove="Entities\FakeApplication.cs" />
     <Compile Remove="Entities\PartNumber.cs" />
     <Compile Remove="Entities\PartNumberSupplier.cs" />
     <Compile Remove="Entities\Supplier.cs" />
