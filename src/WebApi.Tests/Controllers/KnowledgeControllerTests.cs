@@ -36,7 +36,7 @@ namespace WebApi.Tests.Controllers
             KnowledgeDto knowledgeDto = new()
             {
                 MemberId = 2,
-                ApplicationId = 3,
+                ApplicationIds = new[] { 3 }, 
                 SquadId = 4,
                 Status = KnowledgeStatus.Atual
             };
@@ -60,7 +60,7 @@ namespace WebApi.Tests.Controllers
             var knowledgeDto = new KnowledgeDto
             {
                 MemberId = 1,
-                ApplicationId = 2,
+                ApplicationIds = new[] { 2 },
                 SquadId = 99,
                 Status = KnowledgeStatus.Passado
             };
@@ -116,7 +116,7 @@ namespace WebApi.Tests.Controllers
             var knowledgeDto = new KnowledgeDto
             {
                 MemberId = 2,
-                ApplicationId = 3,
+                ApplicationIds = new[] { 3 },
                 SquadId = 4,
                 Status = KnowledgeStatus.Atual
             };
