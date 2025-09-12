@@ -21,6 +21,8 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] KnowledgeDto itemDto)
         {
+            ArgumentNullException.ThrowIfNull(itemDto);
+
             if (itemDto.ApplicationIds == null || itemDto.ApplicationIds.Length == 0)
                 return BadRequest(Localizer[nameof(KnowledgeResource.ApplicationIsRequired)]);
 
@@ -33,7 +35,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
                     ApplicationId = appId,
                     Status = itemDto.Status
                 };
-                var result = await Service.CreateAsync(knowledge);
+                var result = await Service.CreateAsync(knowledge).ConfigureAwait(false);
                 results.Add(result);
             }
 

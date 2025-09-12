@@ -18,6 +18,7 @@ namespace Stellantis.ProjectName.Application.Services
 
         public ApplicationExportService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory)
         {
+            ArgumentNullException.ThrowIfNull(localizerFactory);
             _unitOfWork = unitOfWork;
             _localizer = localizerFactory.Create(typeof(ApplicationDataResources));
         }
@@ -26,11 +27,11 @@ namespace Stellantis.ProjectName.Application.Services
         {
             if (string.IsNullOrWhiteSpace(value))
                 return "";
-            if (value.Contains(",") || value.Contains("\"") || value.Contains("\n"))
-                return $"\"{value.Replace("\"", "\"\"")}\"";
+            if (value.Contains(',', StringComparison.Ordinal) || value.Contains('"', StringComparison.Ordinal) || value.Contains('\n', StringComparison.Ordinal))
+                return $"\"{value.Replace("\"", "\"\"", StringComparison.Ordinal)}\"";
             return value;
         }
-
+        
         public async Task<byte[]> ExportToCsvAsync(ApplicationFilter filter)
         {
             var applications = await _unitOfWork.ApplicationDataRepository.GetListAsync(filter).ConfigureAwait(false);
@@ -117,9 +118,9 @@ namespace Stellantis.ProjectName.Application.Services
                         content.Item().Row(row =>
                         {
                             row.RelativeColumn().Text(
-                                 string.Format(_localizer["TotalApplications"].Value, applications.Result.Count())
-                             )
-                             .FontSize(11).FontColor(textColor);
+                                string.Format(CultureInfo.InvariantCulture, _localizer["TotalApplications"].Value, applications.Result.Count())
+                            )
+                            .FontSize(11).FontColor(textColor);
                         });
 
                         content.Item().PaddingVertical(8);
@@ -214,20 +215,20 @@ namespace Stellantis.ProjectName.Application.Services
             {
                 var squadMembersResult = await _unitOfWork.MemberRepository.GetListAsync(
                     new MemberFilter { SquadId = app.Squad.Id }
-                );
+                ).ConfigureAwait(false);
                 squadMembers = squadMembersResult.Result.ToList();
             }
 
             // Buscar serviços da aplicação
             List<ServiceData> services = new();
             var serviceFilter = new ServiceDataFilter { ApplicationId = app.Id };
-            var serviceResult = await _unitOfWork.ServiceDataRepository.GetListAsync(serviceFilter);
+            var serviceResult = await _unitOfWork.ServiceDataRepository.GetListAsync(serviceFilter).ConfigureAwait(false);
             services = serviceResult.Result.ToList();
 
             // Buscar repositórios da aplicação
             List<Repo> repos = new();
             var repoFilter = new RepoFilter { ApplicationId = app.Id };
-            var repoResult = await _unitOfWork.RepoRepository.GetListAsync(repoFilter);
+            var repoResult = await _unitOfWork.RepoRepository.GetListAsync(repoFilter).ConfigureAwait(false);
             repos = repoResult.Result.ToList();
 
             var document = Document.Create(container =>
@@ -273,7 +274,7 @@ namespace Stellantis.ProjectName.Application.Services
                         }
 
                         // Integrações
-                        if (app.Integration != null && app.Integration.Any())
+                        if (app.Integration != null && app.Integration.Count != 0)
                         {
                             content.Item().PaddingTop(10).Element(e =>
                             {
@@ -296,7 +297,7 @@ namespace Stellantis.ProjectName.Application.Services
                         }
 
                         // Repositórios
-                        if (repos.Any())
+                        if (repos.Count != 0)
                         {
                             content.Item().PaddingTop(10).Element(e =>
                             {
@@ -342,7 +343,7 @@ namespace Stellantis.ProjectName.Application.Services
                         }
 
                         // Membros do Squad
-                        if (squadMembers.Any())
+                        if (squadMembers.Count != 0)
                         {
                             content.Item().PaddingTop(10).Element(e =>
                             {
