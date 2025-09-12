@@ -193,5 +193,10 @@ namespace Stellantis.ProjectName.Application.Services
         {
             return await _exportService.ExportApplicationAsync(id);
         }
+
+        public Task<byte[]> ExportApplicationsAsync(ApplicationFilter filter)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -22,10 +22,13 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                 .ForMember(x => x.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(x => x.External, opt => opt.MapFrom(src => src.External))
                 .ForMember(x => x.ResponsibleId, opt => opt.MapFrom(src => src.ResponsibleId))
+                .ForMember(dest => dest.AreaId, opt => opt.MapFrom(src => src.AreaId))
                 .ForMember(dest => dest.Squad, opt => opt.Ignore())
                 .ForMember(dest => dest.Knowledges, opt => opt.Ignore())
-                .ForMember(dest => dest.ProductOwner, opt => opt.Ignore());
-
+                .ForMember(dest => dest.ProductOwner, opt => opt.Ignore())
+                .ForMember(dest => dest.SquadId, opt => opt.MapFrom(src => src.SquadId))
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
 
             CreateMap<ApplicationData, ApplicationVm>()
                 .ForMember(dest => dest.Squads, opt => opt.MapFrom(src => src.Squad))
@@ -174,7 +177,6 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                .ForMember(dest => dest.SquadId, opt => opt.MapFrom(src => src.SquadId))
                .ForMember(dest => dest.Squad, opt => opt.Ignore())
                .ForMember(dest => dest.Knowledges, opt => opt.Ignore());
-            //    .ForMember(dest => dest.SquadLeader, opt => opt.MapFrom(src => src.SquadLeader));
 
             CreateMap<Member, MemberVm>().ReverseMap()
                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
@@ -184,8 +186,6 @@ namespace Stellantis.ProjectName.WebApi.Mapper
                .ForMember(dest => dest.Cost, opt => opt.MapFrom(src => src.Cost))
                .ForMember(dest => dest.SquadId, opt => opt.MapFrom(src => src.SquadId))
                .ForMember(dest => dest.Squad, opt => opt.MapFrom(src => src.Squad));
-          //     .ForMember(dest => dest.SquadLeader, opt => opt.MapFrom(src => src.SquadLeader));
-
 
             CreateMap<MemberFilterDto, MemberFilter>()
                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))

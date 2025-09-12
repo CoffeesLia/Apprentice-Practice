@@ -1,7 +1,6 @@
 ﻿namespace Stellantis.ProjectName.Domain.Entities
 {
-    public abstract class EntityBase
+    public abstract class EntityBase : BaseEntity
     {
-        public int Id { get; set; }
     }
 }

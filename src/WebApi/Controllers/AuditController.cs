@@ -1,28 +1,26 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
+using Stellantis.ProjectName.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/audits")]
     [ApiController]
-
     public class AuditController : ControllerBase
     {
-        private readonly Context _dbContext;
+        private readonly Context _context;
 
-        public AuditController(Context dbContext)
+        public AuditController(Context context)
         {
-            _dbContext = dbContext;
-
+            _context = context;
         }
-        [HttpPost]
-        public IActionResult Post([FromBody] User user)
+
+        [HttpGet]
+        public async Task<IActionResult> GetAudits()
         {
-            _dbContext.Users.Add(user);
-            _dbContext.SaveChanges();
-            return Ok();
+            var audits = await _context.Audits.ToListAsync().ConfigureAwait(false);
+            return Ok(audits);
         }
     }
 }

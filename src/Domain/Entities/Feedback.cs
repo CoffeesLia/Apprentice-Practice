@@ -13,7 +13,7 @@
     {
         public string Title { get; set; } = null!;
         public string Description { get; set; } = null!;
-        public int ApplicationId { get; set; }       
+        public int ApplicationId { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? ClosedAt { get; set; }
         public FeedbackStatus Status { get; set; }

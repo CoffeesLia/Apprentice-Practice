@@ -4,7 +4,7 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Interfaces.Services
 {
-    public interface IEntityServiceBase<TEntity> where TEntity : EntityBase
+    public interface IEntityServiceBase<TEntity> where TEntity : BaseEntity
     {
         Task<OperationResult> CreateAsync(TEntity item);
         Task<OperationResult> DeleteAsync(int id);

@@ -1,7 +1,6 @@
-﻿
-namespace Stellantis.ProjectName.Domain.Entities
+﻿namespace Stellantis.ProjectName.Domain.Entities
 {
-    public class ApplicationData(string name) : EntityBase
+    public class ApplicationData(string name) : BaseEntity
     {
         public string? Name { get; set; } = name;
         public int AreaId { get; set; }
@@ -16,6 +15,6 @@ namespace Stellantis.ProjectName.Domain.Entities
         public ICollection<Repo> Repos { get; } = [];
         public ICollection<DocumentData> Documents { get; } = [];
         public ICollection<Knowledge> Knowledges { get; set; } = [];
-        public string? ProductOwner { get; set; } 
+        public string? ProductOwner { get; set; }
     }
 }
