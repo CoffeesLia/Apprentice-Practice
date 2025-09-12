@@ -146,5 +146,22 @@ namespace Stellantis.ProjectName.Application.Services
             var pagedResult = await UnitOfWork.ApplicationDataRepository.GetListAsync(filter);
             return pagedResult.Result.ToList();
         }
+
+        public async Task<List<OperationResult>> CreateMultipleAsync(int memberId, int[] applicationIds, KnowledgeStatus status)
+        {
+            var results = new List<OperationResult>();
+            foreach (var appId in applicationIds)
+            {
+                var knowledge = new Knowledge
+                {
+                    MemberId = memberId,
+                    ApplicationId = appId,
+                    Status = status
+                };
+                var result = await CreateAsync(knowledge);
+                results.Add(result);
+            }
+            return results;
+        }
     }
 }
