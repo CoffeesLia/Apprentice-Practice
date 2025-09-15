@@ -23,6 +23,8 @@ namespace Stellantis.ProjectName.Application.Services
             IValidator<ApplicationData> validator)
             : base(unitOfWork, localizerFactory, validator)
         {
+            ArgumentNullException.ThrowIfNull(localizerFactory);
+
             _localizer = localizerFactory.Create(typeof(ApplicationDataResources));
             _exportService = new ApplicationExportService(unitOfWork, localizerFactory);
         }
@@ -182,17 +184,17 @@ namespace Stellantis.ProjectName.Application.Services
 
         public async Task<byte[]> ExportToCsvAsync(ApplicationFilter filter)
         {
-            return await _exportService.ExportToCsvAsync(filter);
+            return await _exportService.ExportToCsvAsync(filter).ConfigureAwait(false);
         }
 
         public async Task<byte[]> ExportToPdfAsync(ApplicationFilter filter)
         {
-            return await _exportService.ExportToPdfAsync(filter);
+            return await _exportService.ExportToPdfAsync(filter).ConfigureAwait(false);
         }
 
         public async Task<byte[]> ExportApplicationAsync(int id)
         {
-            return await _exportService.ExportApplicationAsync(id);
+            return await _exportService.ExportApplicationAsync(id).ConfigureAwait(false);
         }
 
         public Task<byte[]> ExportApplicationsAsync(ApplicationFilter filter)
