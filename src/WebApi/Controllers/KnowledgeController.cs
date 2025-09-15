@@ -26,26 +26,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             if (itemDto.ApplicationIds == null || itemDto.ApplicationIds.Length == 0)
                 return BadRequest(Localizer[nameof(KnowledgeResource.ApplicationIsRequired)]);
 
-            var results = new List<OperationResult>();
-            foreach (var appId in itemDto.ApplicationIds)
-            {
-                var knowledge = new Knowledge
-                {
-                    MemberId = itemDto.MemberId,
-                    ApplicationId = appId,
-                    Status = itemDto.Status
-                };
-                var result = await Service.CreateAsync(knowledge).ConfigureAwait(false);
-                results.Add(result);
-            }
-
-            // retorna CreatedAtActionResult se pelo menos uma criação foi bem-sucedida
-            if (results.Any(r => r.Status == OperationStatus.Success))
-            {
-                return CreatedAtAction(nameof(GetAsync), null, results);
-            }
-
-            return Ok(results);
+            return await CreateBaseAsync<KnowledgeVm>(itemDto).ConfigureAwait(false);
         }
 
         [HttpGet("{id}")]

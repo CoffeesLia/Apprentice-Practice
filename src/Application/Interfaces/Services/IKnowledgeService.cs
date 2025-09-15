@@ -7,5 +7,6 @@ namespace Stellantis.ProjectName.Application.Interfaces.Services
     public interface IKnowledgeService : IEntityServiceBase<Knowledge>
     {
         Task<PagedResult<Knowledge>> GetListAsync(KnowledgeFilter knowledgeFilter);
+        Task<List<OperationResult>> CreateMultipleAsync(int memberId, int[] applicationIds, KnowledgeStatus status);
     }
 }

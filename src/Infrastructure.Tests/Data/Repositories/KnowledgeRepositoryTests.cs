@@ -51,9 +51,6 @@ namespace Infrastructure.Tests.Data.Repositories
                 ApplicationId = application.Id,
                 SquadId = squad.Id,
                 Status = KnowledgeStatus.Atual,
-                Member = member,
-                Application = application,
-                Squad = squad
             };
 
             // Act
