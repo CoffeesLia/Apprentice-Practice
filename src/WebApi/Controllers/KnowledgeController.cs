@@ -21,8 +21,6 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] KnowledgeDto itemDto)
         {
-            ArgumentNullException.ThrowIfNull(itemDto);
-
             if (itemDto.ApplicationIds == null || itemDto.ApplicationIds.Length == 0)
                 return BadRequest(Localizer[nameof(KnowledgeResource.ApplicationIsRequired)]);
 

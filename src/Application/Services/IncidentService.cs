@@ -213,7 +213,7 @@ namespace Stellantis.ProjectName.Application.Services
 
         public async Task<IEnumerable<Member>> GetMembersByApplicationIdAsync(int applicationId)
         {
-            return await Repository.GetMembersByApplicationIdAsync(applicationId).ConfigureAwait(false);
+            return await Repository.GetMembersByApplicationIdAsync(applicationId);
         }
 
         public override async Task<OperationResult> DeleteAsync(int id)

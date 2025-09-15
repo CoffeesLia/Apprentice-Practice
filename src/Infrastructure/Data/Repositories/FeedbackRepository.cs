@@ -41,7 +41,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             if (filter.Id > 0)
                 filters = filters.And(x => x.Id == filter.Id);
             if (!string.IsNullOrWhiteSpace(filter.Title))
-                filters = filters.And(x => x.Title.Contains(filter.Title, StringComparison.CurrentCultureIgnoreCase));
+                filters = filters.And(x => x.Title.ToLower().Contains(filter.Title.ToLower()));
             if (filter.ApplicationId > 0)
                 filters = filters.And(x => x.ApplicationId == filter.ApplicationId);
             if (filter.Status.HasValue)

@@ -67,9 +67,9 @@ namespace Application.Tests.Services
             // Assert
             Assert.NotNull(result);
             var csv = Encoding.UTF8.GetString(result);
-            Assert.Contains("App1", csv, StringComparison.CurrentCulture);
-            Assert.Contains("App2", csv, StringComparison.CurrentCulture);
-            Assert.Contains("Id", csv, StringComparison.CurrentCulture);
+            Assert.Contains("App1", csv);
+            Assert.Contains("App2", csv);
+            Assert.Contains("Id", csv); // cabeçalho
         }
       
         [Fact]
@@ -91,7 +91,7 @@ namespace Application.Tests.Services
             // Assert
             Assert.NotNull(result);
             // PDF geralmente começa com "%PDF"
-            Assert.StartsWith("%PDF", Encoding.UTF8.GetString(result)[..4], StringComparison.CurrentCulture);
+            Assert.StartsWith("%PDF", Encoding.UTF8.GetString(result).Substring(0, 4));
         }
 
         [Fact]
@@ -119,7 +119,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.NotNull(result);
-            Assert.StartsWith("%PDF", Encoding.UTF8.GetString(result).Substring(0, 4), StringComparison.CurrentCulture);
+            Assert.StartsWith("%PDF", Encoding.UTF8.GetString(result).Substring(0, 4));
         }
 
         [Fact]
@@ -199,7 +199,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.NotNull(result);
-            Assert.StartsWith("%PDF", Encoding.UTF8.GetString(result).Substring(0, 4), StringComparison.CurrentCulture);
+            Assert.StartsWith("%PDF", Encoding.UTF8.GetString(result).Substring(0, 4));
 
             // Extrair texto do PDF
             string pdfText;
@@ -208,10 +208,11 @@ namespace Application.Tests.Services
             {
                 pdfText = string.Join("\n", pdf.GetPages().Select(p => p.Text));
             }
-            Assert.Contains("Integração 1", pdfText, StringComparison.CurrentCulture);
-            Assert.Contains("Repo 1", pdfText, StringComparison.CurrentCulture);
-            Assert.Contains("Service 1", pdfText, StringComparison.CurrentCulture);
-            Assert.Contains("Member 1", pdfText, StringComparison.CurrentCulture);
+
+            Assert.Contains("Integração 1", pdfText);
+            Assert.Contains("Repo 1", pdfText);
+            Assert.Contains("Service 1", pdfText);
+            Assert.Contains("Member 1", pdfText);
         }
     }
 }
