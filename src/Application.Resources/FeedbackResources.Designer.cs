@@ -79,6 +79,15 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a The description must be between {0} and {1} characters long..
+        /// </summary>
+        public static string DescriptionValidateLength {
+            get {
+                return ResourceManager.GetString("DescriptionValidateLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a  One or more specified members do not belong to the application&apos;s squads.
         /// </summary>
         public static string InvalidMembers {
@@ -111,6 +120,15 @@ namespace Stellantis.ProjectName.Application.Resources {
         public static string TitleRequired {
             get {
                 return ResourceManager.GetString("TitleRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a The title must be between {0} and {1} characters long..
+        /// </summary>
+        public static string TitleValidateLength {
+            get {
+                return ResourceManager.GetString("TitleValidateLength", resourceCulture);
             }
         }
     }

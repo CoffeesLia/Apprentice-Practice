@@ -26,6 +26,9 @@ namespace Stellantis.ProjectName.Application.Services
         {
             ArgumentNullException.ThrowIfNull(item);
 
+            // Força o status para "Em Aberto" ao criar
+            item.Status = FeedbackStatus.Open;
+
             // Se vier apenas os IDs dos membros (ex: [{ Id = 1 }, { Id = 2 }]), busque os membros completos
             if (item.Members != null && item.Members.Count > 0)
             {
@@ -99,7 +102,16 @@ namespace Stellantis.ProjectName.Application.Services
             existingFeedback.Description = item.Description;
             existingFeedback.Status = item.Status;
             existingFeedback.ApplicationId = item.ApplicationId;
-            existingFeedback.CreatedAt = DateTime.UtcNow;
+
+            // Atualiza a data de fechamento se o status for "Fechado"
+            if (item.Status == FeedbackStatus.Closed && existingFeedback.ClosedAt == null)
+            {
+                existingFeedback.ClosedAt = DateTime.UtcNow;
+            }
+            else if (item.Status != FeedbackStatus.Closed)
+            {
+                existingFeedback.ClosedAt = null;
+            }
 
             List<Member> newMembers = new();
             if (item.Members != null)
