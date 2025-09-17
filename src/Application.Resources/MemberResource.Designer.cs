@@ -115,6 +115,15 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Member name must be between {0} and {1} characters..
+        /// </summary>
+        public static string MemberNameValidateLength {
+            get {
+                return ResourceManager.GetString("MemberNameValidateLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Member not found..
         /// </summary>
         public static string MemberNotFound {
