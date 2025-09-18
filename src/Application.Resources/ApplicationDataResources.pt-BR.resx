@@ -219,4 +219,7 @@
   <data name="Page" xml:space="preserve">
     <value>Página</value>
   </data>
+  <data name="InvalidDateRange" xml:space="preserve">
+    <value>A data final não pode ser menor que a data inicial.</value>
+  </data>
 </root>
