@@ -7,7 +7,8 @@ namespace Stellantis.ProjectName.Application.Validators
 {
     public class MemberValidator : AbstractValidator<Member>
     {
-
+        public const int NameMinimumLength = 3;
+        public const int NameMaximumLength = 255;
 
         public MemberValidator(IStringLocalizerFactory localizerFactory)
         {
@@ -17,8 +18,9 @@ namespace Stellantis.ProjectName.Application.Validators
             RuleFor(x => x.Name)
                .NotNull()
                .NotEmpty()
-               .WithMessage(localizer[nameof(MemberResource.MemberNameIsRequired)]);
-
+               .WithMessage(localizer[nameof(MemberResource.MemberNameIsRequired)])
+               .Length(NameMinimumLength, NameMaximumLength)
+               .WithMessage(localizer[nameof(MemberResource.MemberNameValidateLength), NameMinimumLength, NameMaximumLength]);
 
             RuleFor(x => x.Role)
                 .NotNull()
