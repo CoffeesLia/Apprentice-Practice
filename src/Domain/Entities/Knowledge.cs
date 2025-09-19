@@ -13,8 +13,8 @@
         public Member Member { get; set; } = null!;
 
 
-        public ICollection<int> ApplicationIds { get; } = new HashSet<int>();
-        public ICollection<ApplicationData> Applications { get; } = new HashSet<ApplicationData>();
+        public ICollection<int> ApplicationIds { get; } = [];
+        public ICollection<ApplicationData> Applications { get; } = [];
 
 
         public int SquadId { get; set; }

@@ -5,7 +5,7 @@ namespace Stellantis.ProjectName.WebApi.Dto
     public class KnowledgeDto
     {
         public int MemberId { get; set; }
-        public ICollection<int> ApplicationIds { get; set; } = new HashSet<int>();
+        public ICollection<int> ApplicationIds { get; set; } = [];
         public int SquadId { get; set; }
         public KnowledgeStatus Status { get; set; }
     }
