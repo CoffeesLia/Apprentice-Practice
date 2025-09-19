@@ -260,13 +260,14 @@ namespace Stellantis.ProjectName.WebApi.Mapper
 
             CreateMap<KnowledgeDto, Knowledge>()
                  .ForMember(dest => dest.Member, opt => opt.Ignore())
-                 .ForMember(dest => dest.Application, opt => opt.Ignore())
+                 .ForMember(dest => dest.Applications, opt => opt.Ignore())
                  .ForMember(dest => dest.Squad, opt => opt.Ignore())
                  .ForMember(dest => dest.Id, opt => opt.Ignore());
 
             CreateMap<Knowledge, KnowledgeVm>()
                 .ForMember(dest => dest.MemberName, opt => opt.MapFrom(src => src.Member != null ? src.Member.Name : string.Empty))
-                .ForMember(dest => dest.ApplicationName, opt => opt.MapFrom(src => src.Application != null ? src.Application.Name : string.Empty))
+                .ForMember(dest => dest.ApplicationIds, opt => opt.MapFrom(src => src.Applications.Select(a => a.Id).ToList()))
+                .ForMember(dest => dest.ApplicationNames, opt => opt.MapFrom(src => src.Applications.Select(a => a.Name).ToList()))
                 .ForMember(dest => dest.SquadName, opt => opt.MapFrom(src => src.Squad != null ? src.Squad.Name : string.Empty))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
                 .ForMember(dest => dest.StatusText, opt => opt.MapFrom(src => src.Status == KnowledgeStatus.Passado ? "Passado" : "Atual"));

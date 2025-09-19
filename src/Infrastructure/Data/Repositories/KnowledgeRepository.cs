@@ -12,7 +12,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         {
             return await Context.Set<Knowledge>()
                 .Include(k => k.Member)
-                .Include(k => k.Application)
+                .Include(k => k.Applications)
                 .Include(k => k.Squad)
                 .FirstOrDefaultAsync(k => k.Id == id)
                 .ConfigureAwait(false);
@@ -20,36 +20,62 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         public async Task CreateAssociationAsync(Knowledge knowledge)
         {
-            if (!await AssociationExistsAsync(knowledge.MemberId, knowledge.ApplicationId, knowledge.SquadId, knowledge.Status).ConfigureAwait(false))
+            foreach (var appId in knowledge.ApplicationIds)
             {
-                Context.Set<Knowledge>().Add(knowledge);
-                await SaveChangesAsync().ConfigureAwait(false);
+                if (!await AssociationExistsAsync(knowledge.MemberId, appId, knowledge.SquadId, knowledge.Status).ConfigureAwait(false))
+                {
+                    var newKnowledge = new Knowledge
+                    {
+                        MemberId = knowledge.MemberId,
+                        SquadId = knowledge.SquadId,
+                        Status = knowledge.Status
+                    };
+                    // Adiciona o ApplicationId e a entidade ApplicationData nas coleções
+                    newKnowledge.ApplicationIds.Add(appId);
+                    var application = await Context.Set<ApplicationData>().FindAsync(appId);
+                    if (application != null)
+                        newKnowledge.Applications.Add(application);
+
+                    Context.Set<Knowledge>().Add(newKnowledge);
+                }
             }
+            await SaveChangesAsync().ConfigureAwait(false);
         }
 
         public async Task<bool> AssociationExistsAsync(int memberId, int applicationId, int squadId, KnowledgeStatus status)
         {
             return await Context.Set<Knowledge>()
-                .AnyAsync(k => k.MemberId == memberId && k.ApplicationId == applicationId && k.SquadId == squadId && k.Status == status)
+                .AnyAsync(k => k.MemberId == memberId
+                            && k.Applications.Any(a => a.Id == applicationId)
+                            && k.SquadId == squadId
+                            && k.Status == status)
                 .ConfigureAwait(false);
         }
 
-        public async Task<List<ApplicationData>> ListApplicationsByMemberAsync(int memberId, KnowledgeStatus? status = null)
+        public async Task<ICollection<ApplicationData>> ListApplicationsByMemberAsync(int memberId, KnowledgeStatus? status = null)
         {
             var query = Context.Set<Knowledge>().Where(k => k.MemberId == memberId);
             if (status.HasValue)
                 query = query.Where(k => k.Status == status.Value);
 
-            return await query.Select(k => k.Application).Distinct().ToListAsync().ConfigureAwait(false);
+            return await query
+                .SelectMany(k => k.Applications)
+                .Distinct()
+                .ToListAsync()
+                .ConfigureAwait(false);
         }
 
-        public async Task<List<Member>> ListMembersByApplicationAsync(int applicationId, KnowledgeStatus? status = null)
+        public async Task<ICollection<Member>> ListMembersByApplicationAsync(int applicationId, KnowledgeStatus? status = null)
         {
-            var query = Context.Set<Knowledge>().Where(k => k.ApplicationId == applicationId);
+            var query = Context.Set<Knowledge>().Where(k => k.Applications.Any(a => a.Id == applicationId));
             if (status.HasValue)
                 query = query.Where(k => k.Status == status.Value);
 
-            return await query.Select(k => k.Member).Distinct().ToListAsync().ConfigureAwait(false);
+            return await query
+                .Select(k => k.Member)
+                .Distinct()
+                .ToListAsync()
+                .ConfigureAwait(false);
         }
 
         public async Task DeleteAsync(int id, bool saveChanges = true)
@@ -68,7 +94,10 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         public async Task RemoveAsync(int memberId, int applicationId, int squadId, KnowledgeStatus status)
         {
             var knowledge = await Context.Set<Knowledge>()
-                .FirstOrDefaultAsync(k => k.MemberId == memberId && k.ApplicationId == applicationId && k.SquadId == squadId && k.Status == status)
+                .FirstOrDefaultAsync(k => k.MemberId == memberId
+                                       && k.Applications.Any(a => a.Id == applicationId)
+                                       && k.SquadId == squadId
+                                       && k.Status == status)
                 .ConfigureAwait(false);
             if (knowledge != null)
             {
@@ -79,29 +108,25 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         public async Task<PagedResult<Knowledge>> GetListAsync(KnowledgeFilter filter)
         {
-            filter ??= new KnowledgeFilter();
-            filter.Page = filter.Page > 0 ? filter.Page : 1;
-            filter.PageSize = filter.PageSize > 0 ? filter.PageSize : 10;
-
-            IQueryable<Knowledge> query = Context.Set<Knowledge>()
+            var query = Context.Knowledges
                 .Include(k => k.Member)
-                .Include(k => k.Application)
-                .Include(k => k.Squad);
+                .Include(k => k.Squad)
+                .Include(k => k.Applications)
+                .AsQueryable();
 
             if (filter.MemberId > 0)
                 query = query.Where(k => k.MemberId == filter.MemberId);
 
             if (filter.ApplicationId > 0)
-                query = query.Where(k => k.ApplicationId == filter.ApplicationId);
+                query = query.Where(k => k.Applications.Any(a => a.Id == filter.ApplicationId));
 
             if (filter.SquadId > 0)
                 query = query.Where(k => k.SquadId == filter.SquadId);
 
-            if (filter.Status != 0) 
+            if (filter.Status != 0)
                 query = query.Where(k => k.Status == filter.Status);
 
-            return await GetPagedResultAsync(query, filter.Page, filter.PageSize)
-                .ConfigureAwait(false);
+            return await GetPagedResultAsync(query, filter.Page, filter.PageSize);
         }
 
         private static async Task<PagedResult<Knowledge>> GetPagedResultAsync(IQueryable<Knowledge> query, int page, int pageSize)

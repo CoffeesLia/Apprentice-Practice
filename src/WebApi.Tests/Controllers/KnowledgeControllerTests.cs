@@ -36,7 +36,7 @@ namespace WebApi.Tests.Controllers
             KnowledgeDto knowledgeDto = new()
             {
                 MemberId = 2,
-                ApplicationIds = new[] { 3 }, 
+                ApplicationIds = new List<int> { 3 },
                 SquadId = 4,
                 Status = KnowledgeStatus.Atual
             };
@@ -50,9 +50,6 @@ namespace WebApi.Tests.Controllers
             Assert.IsType<OkObjectResult>(result);
         }
 
-
-
-
         [Fact]
         public async Task UpdateAsyncShouldReturnConflictWhenAssociationIsPast()
         {
@@ -60,7 +57,7 @@ namespace WebApi.Tests.Controllers
             var knowledgeDto = new KnowledgeDto
             {
                 MemberId = 1,
-                ApplicationIds = new[] { 2 },
+                ApplicationIds = new List<int> { 2 },
                 SquadId = 99,
                 Status = KnowledgeStatus.Passado
             };
@@ -75,9 +72,6 @@ namespace WebApi.Tests.Controllers
             // Assert
             Assert.IsType<ConflictObjectResult>(result);
         }
-
-
-
 
         [Fact]
         public async Task DeleteAsyncShouldReturnNoContentWhenDeleteIsSuccessful()
@@ -116,7 +110,7 @@ namespace WebApi.Tests.Controllers
             var knowledgeDto = new KnowledgeDto
             {
                 MemberId = 2,
-                ApplicationIds = new[] { 3 },
+                ApplicationIds = new List<int> { 3 },
                 SquadId = 4,
                 Status = KnowledgeStatus.Atual
             };
@@ -129,6 +123,7 @@ namespace WebApi.Tests.Controllers
             // Assert
             Assert.IsType<CreatedAtActionResult>(result);
         }
+
         [Fact]
         public async Task GetAsyncShouldReturnKnowledgeVmWhenExists()
         {
@@ -136,17 +131,14 @@ namespace WebApi.Tests.Controllers
             int knowledgeId = 1;
             var knowledge = new Knowledge
             {
-                Id = knowledgeId,
-                MemberId = 2,
-                ApplicationId = 3,
-                SquadId = 4,
+                Id = 1,
+                MemberId = 1,
+                SquadId = 3,
                 Status = KnowledgeStatus.Atual,
-                Member = new() { Id = 2, Name = "Nome Teste", Role = "Cargo Teste", Cost = 1000m, Email = "teste@email.com" },
-                Application = new ApplicationData("Nome Teste") { Id = 3, Description = "Descrição Teste" },
-                
-                Squad = new() { Id = 4, Name = "Nome Teste", Description = "Descrição Teste" }
+                Member = new() { Id = 1, Name = "Nome Teste", Role = "Cargo Teste", Cost = 1000m, Email = "teste@email.com" },
+                Squad = new() { Id = 3, Name = "Nome Teste", Description = "Descrição Teste" }
             };
-            _serviceMock.Setup(s => s.GetItemAsync(knowledgeId)).ReturnsAsync(knowledge);
+            knowledge.ApplicationIds.Add(3);
 
             // Act
             var result = await _controller.GetAsync(knowledgeId);
@@ -184,22 +176,20 @@ namespace WebApi.Tests.Controllers
                 SquadId = 3,
                 Status = KnowledgeStatus.Atual
             };
+            var knowledge = new Knowledge
+            {
+                Id = 1,
+                MemberId = 1,
+                SquadId = 3,
+                Status = KnowledgeStatus.Atual,
+                Member = new() { Id = 1, Name = "Nome Teste", Role = "Cargo Teste", Cost = 1000m, Email = "teste@email.com" },
+                Squad = new() { Id = 3, Name = "Nome Teste", Description = "Descrição Teste" }
+            };
+            knowledge.ApplicationIds.Add(2);
+
             var pagedResult = new PagedResult<Knowledge>
             {
-                Result = new List<Knowledge>
-                {
-                    new Knowledge
-                    {
-                        Id = 1,
-                        MemberId = 1,
-                        ApplicationId = 2,
-                        SquadId = 3,
-                        Status = KnowledgeStatus.Atual,
-                        Member = new() { Id = 1, Name = "Nome Teste", Role = "Cargo Teste", Cost = 1000m, Email = "teste@email.com" },
-                        Application = new ApplicationData("Nome Teste") { Id = 2, Description = "Descrição Teste" },
-                        Squad = new() { Id = 3, Name = "Nome Teste", Description = "Descrição Teste" }
-                    }
-                },
+                Result = new List<Knowledge> { knowledge },
                 Page = 1,
                 PageSize = 10,
                 Total = 1
@@ -213,6 +203,7 @@ namespace WebApi.Tests.Controllers
             var okResult = Assert.IsType<OkObjectResult>(result);
             Assert.IsType<PagedResultVm<KnowledgeVm>>(okResult.Value);
         }
+
         [Fact]
         public void KnowledgeFilterDtoShouldSetAndGetProperties()
         {

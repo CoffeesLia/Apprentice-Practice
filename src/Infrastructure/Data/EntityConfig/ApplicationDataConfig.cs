@@ -28,24 +28,25 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
                 .IsRequired();
 
             builder.HasOne(ad => ad.Responsible)
-            .WithMany()
-            .HasForeignKey(ad => ad.ResponsibleId)
-            .IsRequired();
+                .WithMany()
+                .HasForeignKey(ad => ad.ResponsibleId)
+                .IsRequired();
 
             builder.HasOne(ad => ad.Squad)
-            .WithMany(s => s.Applications)
-            .HasForeignKey(ad => ad.SquadId)
-            .IsRequired(false); // Torna o vínculo opcional
+                .WithMany(s => s.Applications)
+                .HasForeignKey(ad => ad.SquadId)
+                .IsRequired(false); // Torna o vínculo opcional
 
-            builder.HasMany(ad => ad.Knowledges)
-                .WithOne(k => k.Application)
-                .HasForeignKey(k => k.ApplicationId)
-                .OnDelete(DeleteBehavior.Cascade);
+            builder
+                .HasMany(ad => ad.Knowledges)
+                .WithMany(k => k.Applications)
+                .UsingEntity(j => j.ToTable("KnowledgeApplications"));
+
             builder.Ignore(ad => ad.ProductOwner);
 
             builder.Property(ad => ad.CreatedAt)
-            .HasDefaultValueSql("CURRENT_TIMESTAMP")
-            .ValueGeneratedOnAdd();
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .ValueGeneratedOnAdd();
         }
     }
 }
