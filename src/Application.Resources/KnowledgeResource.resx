@@ -153,6 +153,9 @@
   <data name="OnlySquadLeaderRemove" xml:space="preserve">
     <value>Only squad leader can remove.</value>
   </data>
+  <data name="SquadIsRequired" xml:space="preserve">
+    <value>Squad is required</value>
+  </data>
   <data name="UnsupportedMembershipUpdate" xml:space="preserve">
     <value>Unsupported membership update.</value>
   </data>

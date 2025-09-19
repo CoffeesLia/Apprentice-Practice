@@ -51,7 +51,7 @@ namespace Application.Tests.Services
             // Arrange
             var knowledge = _fixture.Build<Knowledge>()
                 .With(k => k.MemberId, 0)
-                .With(k => k.ApplicationId, 0)
+                .With(k => k.ApplicationIds, new List<int> { 0 })
                 .Create();
 
             var validationResult = new ValidationResult(new[] { new ValidationFailure("MemberId", "MemberId is required") });
@@ -75,6 +75,7 @@ namespace Application.Tests.Services
             // Arrange
             var knowledge = _fixture.Build<Knowledge>()
                 .With(k => k.Status, KnowledgeStatus.Atual)
+                .With(k => k.ApplicationIds, new List<int> { 1 })
                 .Create();
 
             var validatorMock = new Mock<IValidator<Knowledge>>();
@@ -92,11 +93,14 @@ namespace Application.Tests.Services
                     Email = "test@email.com",
                     Cost = 1m
                 }
-            ); 
-            applicationRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.ApplicationId)).ReturnsAsync(new ApplicationData("App") { Id = knowledge.ApplicationId, SquadId = knowledge.SquadId });
+            );
+            foreach (var appId in knowledge.ApplicationIds)
+            {
+                applicationRepositoryMock.Setup(r => r.GetByIdAsync(appId)).ReturnsAsync(new ApplicationData("App") { Id = appId, SquadId = knowledge.SquadId });
+                _knowledgeRepositoryMock.Setup(r => r.AssociationExistsAsync(knowledge.MemberId, appId, knowledge.SquadId, knowledge.Status)).ReturnsAsync(true);
+            }
             _unitOfWorkMock.Setup(u => u.MemberRepository).Returns(memberRepositoryMock.Object);
             _unitOfWorkMock.Setup(u => u.ApplicationDataRepository).Returns(applicationRepositoryMock.Object);
-            _knowledgeRepositoryMock.Setup(r => r.AssociationExistsAsync(knowledge.MemberId, knowledge.ApplicationId, knowledge.SquadId, knowledge.Status)).ReturnsAsync(true);
 
             var service = new KnowledgeService(_unitOfWorkMock.Object, LocalizerFactorHelper.Create(), validatorMock.Object);
 
@@ -131,10 +135,10 @@ namespace Application.Tests.Services
 
             var knowledge = _fixture.Build<Knowledge>()
                 .With(k => k.MemberId, member.Id)
-                .With(k => k.ApplicationId, application.Id)
+                .With(k => k.ApplicationIds, new List<int> { application.Id })
                 .With(k => k.SquadId, squad.Id)
                 .With(k => k.Member, member)
-                .With(k => k.Application, application)
+                .With(k => k.Applications, new List<ApplicationData> { application })
                 .With(k => k.Squad, squad)
                 .With(k => k.Status, KnowledgeStatus.Atual)
                 .Create();
@@ -148,14 +152,16 @@ namespace Application.Tests.Services
             var squadRepositoryMock = new Mock<ISquadRepository>();
 
             memberRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.MemberId)).ReturnsAsync(member);
-            applicationRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.ApplicationId)).ReturnsAsync(application);
+            foreach (var appId in knowledge.ApplicationIds)
+                applicationRepositoryMock.Setup(r => r.GetByIdAsync(appId)).ReturnsAsync(application);
             squadRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.SquadId)).ReturnsAsync(squad);
 
             _unitOfWorkMock.Setup(u => u.MemberRepository).Returns(memberRepositoryMock.Object);
             _unitOfWorkMock.Setup(u => u.ApplicationDataRepository).Returns(applicationRepositoryMock.Object);
             _unitOfWorkMock.Setup(u => u.SquadRepository).Returns(squadRepositoryMock.Object);
             _unitOfWorkMock.Setup(u => u.CommitAsync()).Returns(Task.CompletedTask);
-            _knowledgeRepositoryMock.Setup(r => r.AssociationExistsAsync(knowledge.MemberId, knowledge.ApplicationId, knowledge.SquadId, knowledge.Status)).ReturnsAsync(false);
+            foreach (var appId in knowledge.ApplicationIds)
+                _knowledgeRepositoryMock.Setup(r => r.AssociationExistsAsync(knowledge.MemberId, appId, knowledge.SquadId, knowledge.Status)).ReturnsAsync(false);
 
             var service = new KnowledgeService(_unitOfWorkMock.Object, LocalizerFactorHelper.Create(), validatorMock.Object);
 
@@ -287,7 +293,7 @@ namespace Application.Tests.Services
             var knowledge = _fixture.Build<Knowledge>()
                 .With(k => k.Id, 1)
                 .With(k => k.MemberId, member.Id)
-                .With(k => k.ApplicationId, application.Id)
+                .With(k => k.ApplicationIds, new List<int> { application.Id })
                 .With(k => k.SquadId, member.SquadId)
                 .With(k => k.Status, KnowledgeStatus.Atual)
                 .Create();
@@ -299,7 +305,7 @@ namespace Application.Tests.Services
             memberRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.Id)).ReturnsAsync(member); // performingUser
 
             var applicationRepositoryMock = new Mock<IApplicationDataRepository>();
-            applicationRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.ApplicationId)).ReturnsAsync(application);
+            applicationRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.ApplicationIds.First())).ReturnsAsync(application);
 
             _unitOfWorkMock.Setup(u => u.MemberRepository).Returns(memberRepositoryMock.Object);
             _unitOfWorkMock.Setup(u => u.ApplicationDataRepository).Returns(applicationRepositoryMock.Object);
@@ -431,7 +437,7 @@ namespace Application.Tests.Services
             memberRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.MemberId)).ReturnsAsync((Member?)null);
 
             var applicationRepositoryMock = new Mock<IApplicationDataRepository>();
-            applicationRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.ApplicationId)).ReturnsAsync((ApplicationData?)null);
+            applicationRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.ApplicationIds.First())).ReturnsAsync((ApplicationData?)null);
 
             _unitOfWorkMock.Setup(u => u.MemberRepository).Returns(memberRepositoryMock.Object);
             _unitOfWorkMock.Setup(u => u.ApplicationDataRepository).Returns(applicationRepositoryMock.Object);
@@ -454,7 +460,7 @@ namespace Application.Tests.Services
             var knowledge = _fixture.Build<Knowledge>()
                 .With(k => k.Id, 10)
                 .With(k => k.MemberId, member.Id)
-                .With(k => k.ApplicationId, application.Id)
+                .With(k => k.ApplicationIds, new List<int> { application.Id })
                 .With(k => k.Status, KnowledgeStatus.Atual)
                 .Create();
 
@@ -467,7 +473,7 @@ namespace Application.Tests.Services
             memberRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.MemberId)).ReturnsAsync(member);
 
             var applicationRepositoryMock = new Mock<IApplicationDataRepository>();
-            applicationRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.ApplicationId)).ReturnsAsync(application);
+            applicationRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.ApplicationIds.First())).ReturnsAsync(application);
 
             _unitOfWorkMock.Setup(u => u.MemberRepository).Returns(memberRepositoryMock.Object);
             _unitOfWorkMock.Setup(u => u.ApplicationDataRepository).Returns(applicationRepositoryMock.Object);
@@ -490,7 +496,7 @@ namespace Application.Tests.Services
             var knowledge = _fixture.Build<Knowledge>()
                 .With(k => k.Id, 10)
                 .With(k => k.MemberId, member.Id)
-                .With(k => k.ApplicationId, application.Id)
+                .With(k => k.ApplicationIds, new List<int> { application.Id })
                 .With(k => k.Status, KnowledgeStatus.Atual)
                 .Create();
 
@@ -503,7 +509,7 @@ namespace Application.Tests.Services
             memberRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.MemberId)).ReturnsAsync(member);
 
             var applicationRepositoryMock = new Mock<IApplicationDataRepository>();
-            applicationRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.ApplicationId)).ReturnsAsync(application);
+            applicationRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.ApplicationIds.First())).ReturnsAsync(application);
 
             var squadRepositoryMock = new Mock<ISquadRepository>();
             squadRepositoryMock.Setup(r => r.GetByIdAsync(member.SquadId)).ReturnsAsync(new Squad { Id = member.SquadId });
@@ -533,7 +539,7 @@ namespace Application.Tests.Services
             var knowledge = _fixture.Build<Knowledge>()
                 .With(k => k.Id, 10)
                 .With(k => k.MemberId, member.Id)
-                .With(k => k.ApplicationId, application.Id)
+                .With(k => k.ApplicationIds, new List<int> { application.Id })
                 .With(k => k.Status, KnowledgeStatus.Atual)
                 .Create();
 
@@ -546,7 +552,7 @@ namespace Application.Tests.Services
             memberRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.MemberId)).ReturnsAsync(member);
 
             var applicationRepositoryMock = new Mock<IApplicationDataRepository>();
-            applicationRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.ApplicationId)).ReturnsAsync(application);
+            applicationRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.ApplicationIds.First())).ReturnsAsync(application);
 
             var squadRepositoryMock = new Mock<ISquadRepository>();
             squadRepositoryMock.Setup(r => r.GetByIdAsync(member.SquadId)).ReturnsAsync(squad);
@@ -690,7 +696,8 @@ namespace Application.Tests.Services
             // Arrange
             var localizerFactory = LocalizerFactorHelper.Create();
             var validator = new KnowledgeValidator(localizerFactory);
-            var knowledge = new Knowledge { MemberId = 0, ApplicationId = 1 };
+            var knowledge = new Knowledge { MemberId = 0 };
+            knowledge.ApplicationIds.Add(1);
 
             // Act
             var result = await validator.ValidateAsync(knowledge);
@@ -701,28 +708,34 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-        public async Task KnowledgeValidatorWhenApplicationIdIsZeroShouldReturnApplicationIsRequiredError()
+        public async Task KnowledgeValidatorWhenApplicationIdsIsEmptyShouldReturnApplicationIsRequiredError()
         {
             // Arrange
             var localizerFactory = LocalizerFactorHelper.Create();
             var validator = new KnowledgeValidator(localizerFactory);
-            var knowledge = new Knowledge { MemberId = 1, ApplicationId = 0 };
+            var knowledge = new Knowledge { MemberId = 1 };
+            // Não adiciona nada em ApplicationIds para garantir que está vazia
 
             // Act
             var result = await validator.ValidateAsync(knowledge);
 
             // Assert
             Assert.False(result.IsValid);
-            Assert.Contains(result.Errors, e => e.PropertyName == nameof(Knowledge.ApplicationId) && e.ErrorMessage == KnowledgeResource.ApplicationIsRequired);
+            Assert.Contains(result.Errors, e => e.PropertyName == nameof(Knowledge.ApplicationIds) && e.ErrorMessage == KnowledgeResource.ApplicationIsRequired);
         }
 
         [Fact]
-        public async Task KnowledgeValidatorWhenMemberIdAndApplicationIdAreValidShouldBeValid()
+        public async Task KnowledgeValidatorWhenMemberIdAndApplicationIdsAreValidShouldBeValid()
         {
             // Arrange
             var localizerFactory = LocalizerFactorHelper.Create();
             var validator = new KnowledgeValidator(localizerFactory);
-            var knowledge = new Knowledge { MemberId = 1, ApplicationId = 1 };
+            var knowledge = new Knowledge
+            {
+                MemberId = 1,
+                SquadId = 1
+            };
+            knowledge.ApplicationIds.Add(1);
 
             // Act
             var result = await validator.ValidateAsync(knowledge);

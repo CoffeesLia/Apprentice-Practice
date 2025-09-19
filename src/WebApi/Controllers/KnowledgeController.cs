@@ -14,14 +14,14 @@ namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [Route("api/knowledges")]
     public sealed class KnowledgeController(IKnowledgeService service, IMapper mapper, IStringLocalizerFactory localizerFactory)
-        : EntityControllerBase<Knowledge, KnowledgeDto>(service, mapper, localizerFactory)
+    : EntityControllerBase<Knowledge, KnowledgeDto>(service, mapper, localizerFactory)
     {
         protected override IKnowledgeService Service => (IKnowledgeService)base.Service;
 
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] KnowledgeDto itemDto)
         {
-            if (itemDto.ApplicationIds == null || itemDto.ApplicationIds.Length == 0)
+            if (itemDto.ApplicationIds == null || itemDto.ApplicationIds.Count == 0)
                 return BadRequest(Localizer[nameof(KnowledgeResource.ApplicationIsRequired)]);
 
             return await CreateBaseAsync<KnowledgeVm>(itemDto).ConfigureAwait(false);
@@ -45,6 +45,9 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] KnowledgeDto itemDto)
         {
+            if (itemDto.ApplicationIds == null || itemDto.ApplicationIds.Count == 0)
+                return BadRequest(Localizer[nameof(KnowledgeResource.ApplicationIsRequired)]);
+
             return await UpdateBaseAsync<KnowledgeVm>(id, itemDto).ConfigureAwait(false);
         }
 
@@ -53,6 +56,5 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         {
             return await base.DeleteAsync(id).ConfigureAwait(false);
         }
-
     }
 }

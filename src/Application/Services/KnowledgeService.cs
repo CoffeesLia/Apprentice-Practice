@@ -25,23 +25,30 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.InvalidData(validationResult);
 
             var member = await UnitOfWork.MemberRepository.GetByIdAsync(item.MemberId).ConfigureAwait(false);
-            var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(item.ApplicationId).ConfigureAwait(false);
 
-            if (member == null || application == null)
-                return OperationResult.NotFound(_localizer[nameof(KnowledgeResource.MemberApplicationNotFound)]);
+            foreach (var appId in item.ApplicationIds)
+            {
+                var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(appId).ConfigureAwait(false);
 
-            // só valida squad se o status for Atual
-            if (item.Status == KnowledgeStatus.Atual && member.SquadId != application.SquadId)
-                return OperationResult.Conflict(_localizer[nameof(KnowledgeResource.MemberApplicationMustBelongToTheSameSquad)]);
+                if (item.Status == KnowledgeStatus.Atual && member.SquadId != application.SquadId)
+                    return OperationResult.Conflict(_localizer[nameof(KnowledgeResource.MemberApplicationMustBelongToTheSameSquad)]);
 
-            // verifica se já existe associação com o mesmo status
-            if (await Repository.AssociationExistsAsync(item.MemberId, item.ApplicationId, member.SquadId, item.Status).ConfigureAwait(false))
-                return OperationResult.Conflict(_localizer[nameof(KnowledgeResource.AssociationAlreadyExists)]);
+                if (await Repository.AssociationExistsAsync(item.MemberId, appId, member.SquadId, item.Status).ConfigureAwait(false))
+                    return OperationResult.Conflict(_localizer[nameof(KnowledgeResource.AssociationAlreadyExists)]);
+            }
 
             item.SquadId = member.SquadId;
             item.Squad = await UnitOfWork.SquadRepository.GetByIdAsync(member.SquadId).ConfigureAwait(false)!;
             item.Member = member;
-            item.Application = application;
+
+            // Preenche a coleção Applications
+            item.Applications.Clear();
+            foreach (var appId in item.ApplicationIds)
+            {
+                var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(appId).ConfigureAwait(false);
+                if (application != null)
+                    item.Applications.Add(application);
+            }
 
             return await base.CreateAsync(item).ConfigureAwait(false);
         }
@@ -63,24 +70,39 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.Conflict(_localizer[nameof(KnowledgeResource.CannotEditOrRemovePastAssociation)]);
 
             var member = await UnitOfWork.MemberRepository.GetByIdAsync(existing.MemberId).ConfigureAwait(false);
-            var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(existing.ApplicationId).ConfigureAwait(false);
 
-            if (member == null || application == null)
-                return OperationResult.NotFound(_localizer[nameof(KnowledgeResource.MemberApplicationNotFound)]);
+            // Validação para todas as aplicações
+            foreach (var appId in item.ApplicationIds)
+            {
+                var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(appId).ConfigureAwait(false);
+                if (member == null || application == null)
+                    return OperationResult.NotFound(_localizer[nameof(KnowledgeResource.MemberApplicationNotFound)]);
 
-            if (member.SquadId != application.SquadId)
-                return OperationResult.Conflict(_localizer[nameof(KnowledgeResource.MemberApplicationMustBelongToTheSameSquad)]);
+                if (member.SquadId != application.SquadId)
+                    return OperationResult.Conflict(_localizer[nameof(KnowledgeResource.MemberApplicationMustBelongToTheSameSquad)]);
 
-            // Verifica se já existe associação com o mesmo status
-            if (await Repository.AssociationExistsAsync(member.Id, item.ApplicationId, member.SquadId, item.Status).ConfigureAwait(false))
-                return OperationResult.Conflict(_localizer[nameof(KnowledgeResource.AssociationAlreadyExists)]);
+                if (await Repository.AssociationExistsAsync(member.Id, appId, member.SquadId, item.Status).ConfigureAwait(false))
+                    return OperationResult.Conflict(_localizer[nameof(KnowledgeResource.AssociationAlreadyExists)]);
+            }
 
-            existing.ApplicationId = item.ApplicationId;
             existing.Status = item.Status;
             existing.SquadId = member.SquadId;
             existing.Squad = await UnitOfWork.SquadRepository.GetByIdAsync(member.SquadId).ConfigureAwait(false)!;
             existing.Member = member;
-            existing.Application = application;
+
+            // Atualiza ApplicationIds
+            existing.ApplicationIds.Clear();
+            foreach (var id in item.ApplicationIds)
+                existing.ApplicationIds.Add(id);
+
+            // Atualiza Applications
+            existing.Applications.Clear();
+            foreach (var appId in item.ApplicationIds)
+            {
+                var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(appId).ConfigureAwait(false);
+                if (application != null)
+                    existing.Applications.Add(application);
+            }
 
             return await base.UpdateAsync(existing).ConfigureAwait(false);
         }
@@ -122,7 +144,7 @@ namespace Stellantis.ProjectName.Application.Services
         }
 
         // buscar aplicações do membro 
-        public async Task<List<ApplicationData>> GetApplicationsByMemberAsync(int memberId)
+        public async Task<ICollection<ApplicationData>> GetApplicationsByMemberAsync(int memberId)
         {
             return await Repository.ListApplicationsByMemberAsync(memberId, KnowledgeStatus.Atual);
         }
@@ -150,17 +172,16 @@ namespace Stellantis.ProjectName.Application.Services
         public async Task<List<OperationResult>> CreateMultipleAsync(int memberId, int[] applicationIds, KnowledgeStatus status)
         {
             var results = new List<OperationResult>();
-            foreach (var appId in applicationIds)
+            var knowledge = new Knowledge
             {
-                var knowledge = new Knowledge
-                {
-                    MemberId = memberId,
-                    ApplicationId = appId,
-                    Status = status
-                };
-                var result = await CreateAsync(knowledge);
-                results.Add(result);
-            }
+                MemberId = memberId,
+                Status = status
+            };
+            foreach (var id in applicationIds)
+                knowledge.ApplicationIds.Add(id);
+
+            var result = await CreateAsync(knowledge);
+            results.Add(result);
             return results;
         }
     }

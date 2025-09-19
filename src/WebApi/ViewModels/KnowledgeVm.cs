@@ -6,8 +6,8 @@ namespace Stellantis.ProjectName.WebApi.ViewModels
     {
         public int MemberId { get; set; }
         public string MemberName { get; set; }
-        public int ApplicationId { get; set; }
-        public string ApplicationName { get; set; }
+        public ICollection<int> ApplicationIds { get; } = new HashSet<int>();
+        public ICollection<string> ApplicationNames { get; } = new HashSet<string>();
         public int SquadId { get; set; }
         public string SquadName { get; set; }
         public KnowledgeStatus Status { get; set; }
