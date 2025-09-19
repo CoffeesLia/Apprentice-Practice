@@ -39,13 +39,15 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             {
                 filters = filters.And(a =>
                     a.Name != null &&
-                    a.Name.Contains(documentFilter.Name, StringComparison.OrdinalIgnoreCase));
+                    EF.Functions.Like(a.Name, $"%{documentFilter.Name}%"));
             }
 
             if (documentFilter.Url != null)
                 filters = filters.And(x => x.Url == documentFilter.Url);
             if (documentFilter.ApplicationId > 0)
                 filters = filters.And(x => x.ApplicationId == documentFilter.ApplicationId);
+
+            var query = Context.Set<DocumentData>().AsQueryable().AsEnumerable();
 
             return await GetListAsync(filter: filters, page: documentFilter.Page, pageSize: documentFilter.PageSize,
  sort: documentFilter.Sort, sortDir: documentFilter.SortDir, includeProperties: nameof(DocumentData.ApplicationData)

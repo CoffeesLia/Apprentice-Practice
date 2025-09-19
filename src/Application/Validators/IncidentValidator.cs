@@ -9,6 +9,9 @@ namespace Stellantis.ProjectName.Application.Validators
     {
         public const int TitleMinimumLength = 3;
         public const int TitleMaximumLength = 255;
+        public const int DescriptionMinimumLength = 3;
+        public const int DescriptionMaximumLength = 500;
+
         public IncidentValidator(IStringLocalizerFactory localizerFactory)
         {
             ArgumentNullException.ThrowIfNull(localizerFactory);
@@ -20,11 +23,13 @@ namespace Stellantis.ProjectName.Application.Validators
                 .WithMessage(localizer[nameof(IncidentResource.TitleValidateLength), TitleMinimumLength, TitleMaximumLength]);
 
             RuleFor(i => i.Description)
-                .NotEmpty().WithMessage(localizer[nameof(IncidentResource.DescriptionRequired)]);
+                .NotEmpty().WithMessage(localizer[nameof(IncidentResource.DescriptionRequired)])
+                .Length(DescriptionMinimumLength, DescriptionMaximumLength)
+                .WithMessage(localizer[nameof(IncidentResource.DescriptionValidateLength), DescriptionMinimumLength, DescriptionMaximumLength]);
 
             RuleFor(i => i.Status)
-            .IsInEnum()
-            .WithMessage(localizer[nameof(IncidentResource.StatusRequired)]);
+                .IsInEnum()
+                .WithMessage(localizer[nameof(IncidentResource.StatusRequired)]);
 
             RuleFor(i => i.ApplicationId)
                 .GreaterThan(0).WithMessage(localizer[nameof(IncidentResource.ApplicationRequired)]);

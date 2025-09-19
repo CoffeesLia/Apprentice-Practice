@@ -39,10 +39,8 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             if (!string.IsNullOrEmpty(applicationFilter.Name))
             {
-                var name = applicationFilter.Name;
-                query = query.AsEnumerable()
-                    .Where(a => a.Name != null && a.Name.Contains(name, StringComparison.OrdinalIgnoreCase))
-                    .AsQueryable();
+                var name = applicationFilter.Name.ToLowerInvariant();
+                filters = filters.And(a => a.Name != null && a.Name.ToLower().Contains(name));
             }
 
             if (applicationFilter.Id > 0)

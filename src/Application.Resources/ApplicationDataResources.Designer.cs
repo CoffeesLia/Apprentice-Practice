@@ -214,6 +214,15 @@ namespace Stellantis.ProjectName.Application.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a The end date cannot be earlier than the start date..
+        /// </summary>
+        public static string InvalidDateRange {
+            get {
+                return ResourceManager.GetString("InvalidDateRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Cannot delete the application because there are linked member knowledges. .
         /// </summary>
         public static string KnowledgeLinkedError {

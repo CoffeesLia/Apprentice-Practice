@@ -141,4 +141,7 @@
   <data name="LeaderSquadAlreadyExists" xml:space="preserve">
     <value>Leader Squad already exists in Squad.</value>
   </data>
+  <data name="MemberNameValidateLength" xml:space="preserve">
+    <value>Member name must be between {0} and {1} characters.</value>
+  </data>
 </root>

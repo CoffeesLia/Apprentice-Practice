@@ -33,13 +33,18 @@ namespace Stellantis.ProjectName.Application.Services
 
         public async Task<byte[]> ExportToCsvAsync(ApplicationFilter filter)
         {
+            if (filter.CreatedAfter.HasValue && filter.CreatedBefore.HasValue &&
+                filter.CreatedBefore.Value < filter.CreatedAfter.Value)
+            {
+                throw new ArgumentException(_localizer["InvalidDateRange"].Value);
+            }
             var applications = await _unitOfWork.ApplicationDataRepository.GetListAsync(filter).ConfigureAwait(false);
 
             var sb = new StringBuilder();
             sb.AppendLine(string.Join(",",
                _localizer["Id"].Value,
                _localizer["Name"].Value,
-               _localizer["rea"].Value,
+               _localizer["Area"].Value,
                _localizer["Responsible"].Value,
                _localizer["Squad"].Value,
                _localizer["External"].Value
@@ -60,6 +65,12 @@ namespace Stellantis.ProjectName.Application.Services
 
         public async Task<byte[]> ExportToPdfAsync(ApplicationFilter filter)
         {
+            if (filter.CreatedAfter.HasValue && filter.CreatedBefore.HasValue &&
+                filter.CreatedBefore.Value < filter.CreatedAfter.Value)
+            {
+                throw new ArgumentException(_localizer["InvalidDateRange"].Value);
+            }
+
             QuestPDF.Settings.License = LicenseType.Community;
 
             var applications = await _unitOfWork.ApplicationDataRepository

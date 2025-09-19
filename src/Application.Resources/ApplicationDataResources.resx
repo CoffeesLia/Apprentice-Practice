@@ -219,4 +219,7 @@
   <data name="Page" xml:space="preserve">
     <value>Page</value>
   </data>
+  <data name="InvalidDateRange" xml:space="preserve">
+    <value>The end date cannot be earlier than the start date.</value>
+  </data>
 </root>

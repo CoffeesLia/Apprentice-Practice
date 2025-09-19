@@ -123,6 +123,9 @@
   <data name="DescriptionRequired" xml:space="preserve">
     <value>A descrição é obrigatória.</value>
   </data>
+  <data name="DescriptionValidateLength" xml:space="preserve">
+    <value>A descrição deve ter entre {0} e {1} caracteres.</value>
+  </data>
   <data name="InvalidMembers" xml:space="preserve">
     <value>Um ou mais membros específicados não pertencem ao squad do aplicativo.</value>
   </data>
@@ -134,5 +137,8 @@
   </data>
   <data name="TitleRequired" xml:space="preserve">
     <value>O título é obrigatório.</value>
+  </data>
+  <data name="TitleValidateLength" xml:space="preserve">
+    <value>O título deve ter entre {0} e {1} caracteres</value>
   </data>
 </root>

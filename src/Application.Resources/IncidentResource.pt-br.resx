@@ -123,6 +123,9 @@
   <data name="DescriptionRequired" xml:space="preserve">
     <value>A descrição é obrigatória.  </value>
   </data>
+  <data name="DescriptionValidateLength" xml:space="preserve">
+    <value>A descrição deve ter entre {0} e {1} caracteres.</value>
+  </data>
   <data name="InvalidMembers" xml:space="preserve">
     <value>Um ou mais membros especificados não pertencem aos esquadrões do aplicativo</value>
   </data>
