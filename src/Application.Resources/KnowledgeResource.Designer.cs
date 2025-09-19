@@ -158,7 +158,18 @@ namespace Stellantis.ProjectName.Application.Resources {
                 return ResourceManager.GetString("OnlySquadLeaderRemove", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Only squad leader can remove..
+        /// </summary>
+        public static string SquadIsRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("SquadIsRequired", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Unsupported membership update..
         /// </summary>

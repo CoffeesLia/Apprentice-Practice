@@ -366,25 +366,25 @@ namespace Stellantis.ProjectName.WebApi
                 );
 
                 // Knowledges
-                context.Knowledges.AddRange(
-                    new Knowledge { MemberId = 1, ApplicationId = 1, SquadId = 1, Status = KnowledgeStatus.Atual }, // Matheus
-                    new Knowledge { MemberId = 2, ApplicationId = 2, SquadId = 1, Status = KnowledgeStatus.Atual }, // Patricia
-                    new Knowledge { MemberId = 3, ApplicationId = 4, SquadId = 4, Status = KnowledgeStatus.Atual }, // Jardel
-                    new Knowledge { MemberId = 4, ApplicationId = 3, SquadId = 3, Status = KnowledgeStatus.Atual }, // Vitória
-                    new Knowledge { MemberId = 5, ApplicationId = 5, SquadId = 5, Status = KnowledgeStatus.Atual }, // Andryel
-                    new Knowledge { MemberId = 6, ApplicationId = 6, SquadId = 6, Status = KnowledgeStatus.Atual }, // Ana
-                    new Knowledge { MemberId = 7, ApplicationId = 2, SquadId = 2, Status = KnowledgeStatus.Atual }, // Cecília
-                    new Knowledge { MemberId = 8, ApplicationId = 1, SquadId = 1, Status = KnowledgeStatus.Atual }, // João Silva
-                    new Knowledge { MemberId = 9, ApplicationId = 4, SquadId = 4, Status = KnowledgeStatus.Atual }, // Maria Oliveira
-                    new Knowledge { MemberId = 10, ApplicationId = 3, SquadId = 3, Status = KnowledgeStatus.Atual }, // Pedro Santos
-                    new Knowledge { MemberId = 11, ApplicationId = 5, SquadId = 5, Status = KnowledgeStatus.Atual }, // Ana Costa
-                    new Knowledge { MemberId = 12, ApplicationId = 12, SquadId = 6, Status = KnowledgeStatus.Atual }, // Lucas Almeida
-                    new Knowledge { MemberId = 13, ApplicationId = 2, SquadId = 2, Status = KnowledgeStatus.Atual }, // Carla Mendes
-                    new Knowledge { MemberId = 14, ApplicationId = 1, SquadId = 1, Status = KnowledgeStatus.Atual }, // Rafael Lima
-                    new Knowledge { MemberId = 15, ApplicationId = 4, SquadId = 4, Status = KnowledgeStatus.Atual }, // Fernanda Souza
-                    new Knowledge { MemberId = 16, ApplicationId = 3, SquadId = 3, Status = KnowledgeStatus.Atual }, // Bruno Rocha
-                    new Knowledge { MemberId = 17, ApplicationId = 5, SquadId = 5, Status = KnowledgeStatus.Atual }  // Juliana Martins
-                );
+                //context.Knowledges.AddRange(
+                //    new Knowledge { MemberId = 1, ApplicationIds = 1, SquadId = 1, Status = KnowledgeStatus.Atual }, // Matheus
+                //    new Knowledge { MemberId = 2, ApplicationIds = 2, SquadId = 1, Status = KnowledgeStatus.Atual }, // Patricia
+                //    new Knowledge { MemberId = 3, ApplicationIds = 4, SquadId = 4, Status = KnowledgeStatus.Atual }, // Jardel
+                //    new Knowledge { MemberId = 4, ApplicationIds = 3, SquadId = 3, Status = KnowledgeStatus.Atual }, // Vitória
+                //    new Knowledge { MemberId = 5, ApplicationIds = 5, SquadId = 5, Status = KnowledgeStatus.Atual }, // Andryel
+                //    new Knowledge { MemberId = 6, ApplicationIds = 6, SquadId = 6, Status = KnowledgeStatus.Atual }, // Ana
+                //    new Knowledge { MemberId = 7, ApplicationIds = 2, SquadId = 2, Status = KnowledgeStatus.Atual }, // Cecília
+                //    new Knowledge { MemberId = 8, ApplicationIds = 1, SquadId = 1, Status = KnowledgeStatus.Atual }, // João Silva
+                //    new Knowledge { MemberId = 9, ApplicationIds = 4, SquadId = 4, Status = KnowledgeStatus.Atual }, // Maria Oliveira
+                //    new Knowledge { MemberId = 10, ApplicationIds = 3, SquadId = 3, Status = KnowledgeStatus.Atual }, // Pedro Santos
+                //    new Knowledge { MemberId = 11, ApplicationIds = 5, SquadId = 5, Status = KnowledgeStatus.Atual }, // Ana Costa
+                //    new Knowledge { MemberId = 12, ApplicationIds = 12, SquadId = 6, Status = KnowledgeStatus.Atual }, // Lucas Almeida
+                //    new Knowledge { MemberId = 13, ApplicationIds = 2, SquadId = 2, Status = KnowledgeStatus.Atual }, // Carla Mendes
+                //    new Knowledge { MemberId = 14, ApplicationIds = 1, SquadId = 1, Status = KnowledgeStatus.Atual }, // Rafael Lima
+                //    new Knowledge { MemberId = 15, ApplicationIds = 4, SquadId = 4, Status = KnowledgeStatus.Atual }, // Fernanda Souza
+                //    new Knowledge { MemberId = 16, ApplicationIds = 3, SquadId = 3, Status = KnowledgeStatus.Atual }, // Bruno Rocha
+                //    new Knowledge { MemberId = 17, ApplicationIds = 5, SquadId = 5, Status = KnowledgeStatus.Atual }  // Juliana Martins
+                //);
 
                 // Notificação
                 context.Notifications.AddRange(

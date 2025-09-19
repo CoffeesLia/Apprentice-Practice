@@ -13,8 +13,8 @@
         public Member Member { get; set; } = null!;
 
 
-        public int ApplicationId { get; set; }
-        public ApplicationData Application { get; set; } = null!;
+        public ICollection<int> ApplicationIds { get; } = [];
+        public ICollection<ApplicationData> Applications { get; } = [];
 
 
         public int SquadId { get; set; }

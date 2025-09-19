@@ -19,9 +19,13 @@ namespace Stellantis.ProjectName.Application.Validators
                 .GreaterThan(0)
                 .WithMessage(localizer[nameof(KnowledgeResource.MemberIsRequired)]);
 
-            RuleFor(x => x.ApplicationId)
-            .GreaterThan(0)
+            RuleFor(x => x.ApplicationIds)
+                .Must(list => list.Count > 0)
                 .WithMessage(localizer[nameof(KnowledgeResource.ApplicationIsRequired)]);
+
+            RuleFor(x => x.SquadId)
+                .GreaterThan(0)
+                .WithMessage(localizer[nameof(KnowledgeResource.SquadIsRequired)]);
         }
     }
 }

@@ -48,10 +48,12 @@ namespace Infrastructure.Tests.Data.Repositories
             var knowledge = new Knowledge
             {
                 MemberId = member.Id,
-                ApplicationId = application.Id,
                 SquadId = squad.Id,
                 Status = KnowledgeStatus.Atual,
+                Member = member,
+                Squad = squad
             };
+            knowledge.Applications.Add(application);
 
             // Act
             await _repository.CreateAssociationAsync(knowledge);
@@ -77,10 +79,12 @@ namespace Infrastructure.Tests.Data.Repositories
             var knowledge = new Knowledge
             {
                 MemberId = member.Id,
-                ApplicationId = application.Id,
                 SquadId = squad.Id,
-                Status = KnowledgeStatus.Atual
+                Status = KnowledgeStatus.Atual,
+                Member = member,
+                Squad = squad
             };
+            knowledge.Applications.Add(application);
 
             await _repository.CreateAssociationAsync(knowledge);
 
@@ -108,13 +112,12 @@ namespace Infrastructure.Tests.Data.Repositories
             var knowledge = new Knowledge
             {
                 MemberId = member.Id,
-                ApplicationId = application.Id,
                 SquadId = squad.Id,
                 Status = KnowledgeStatus.Atual,
                 Member = member,
-                Application = application,
                 Squad = squad
             };
+            knowledge.Applications.Add(application);
 
             await _repository.CreateAssociationAsync(knowledge);
 
@@ -135,7 +138,6 @@ namespace Infrastructure.Tests.Data.Repositories
             }
             _disposed = true;
         }
-
 
         public void Dispose()
         {
@@ -160,23 +162,21 @@ namespace Infrastructure.Tests.Data.Repositories
             var knowledge1 = new Knowledge
             {
                 MemberId = member1.Id,
-                ApplicationId = application.Id,
                 SquadId = squad.Id,
                 Status = KnowledgeStatus.Atual,
                 Member = member1,
-                Application = application,
                 Squad = squad
             };
+            knowledge1.Applications.Add(application);
             var knowledge2 = new Knowledge
             {
                 MemberId = member2.Id,
-                ApplicationId = application.Id,
                 SquadId = squad.Id,
                 Status = KnowledgeStatus.Passado,
                 Member = member2,
-                Application = application,
                 Squad = squad
             };
+            knowledge2.Applications.Add(application);
 
             await _repository.CreateAssociationAsync(knowledge1);
             await _repository.CreateAssociationAsync(knowledge2);
@@ -208,13 +208,12 @@ namespace Infrastructure.Tests.Data.Repositories
             var knowledge = new Knowledge
             {
                 MemberId = member.Id,
-                ApplicationId = application.Id,
                 SquadId = squad.Id,
                 Status = KnowledgeStatus.Atual,
                 Member = member,
-                Application = application,
                 Squad = squad
             };
+            knowledge.Applications.Add(application);
 
             await _repository.CreateAssociationAsync(knowledge);
 
@@ -245,21 +244,18 @@ namespace Infrastructure.Tests.Data.Repositories
             var knowledge1 = new Knowledge
             {
                 MemberId = member1.Id,
-                ApplicationId = application1.Id,
                 SquadId = squad1.Id,
                 Status = KnowledgeStatus.Atual,
                 Member = member1,
-                Application = application1,
                 Squad = squad1
             };
+            knowledge1.Applications.Add(application1);
             var knowledge2 = new Knowledge
             {
                 MemberId = member2.Id,
-                ApplicationId = application2.Id,
                 SquadId = squad2.Id,
                 Status = KnowledgeStatus.Passado,
                 Member = member2,
-                Application = application2,
                 Squad = squad2
             };
             await _repository.CreateAssociationAsync(knowledge1);
@@ -286,8 +282,6 @@ namespace Infrastructure.Tests.Data.Repositories
             Assert.Equal(10, pagedResult.PageSize);
         }
 
-
-
         [Fact]
         public async Task GetListAsyncShouldRespectPagination()
         {
@@ -306,13 +300,12 @@ namespace Infrastructure.Tests.Data.Repositories
                 var knowledge = new Knowledge
                 {
                     MemberId = member.Id,
-                    ApplicationId = application.Id,
                     SquadId = squad.Id,
                     Status = KnowledgeStatus.Atual,
                     Member = member,
-                    Application = application,
                     Squad = squad
                 };
+                knowledge.Applications.Add(application);
                 await _repository.CreateAssociationAsync(knowledge);
             }
 
