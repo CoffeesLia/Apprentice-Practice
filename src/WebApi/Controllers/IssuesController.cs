@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Application.DtoService;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [AllowAnonymous]
     public class IssuesController : ControllerBase
     {
         private readonly GitLabIssueService _gitLabService;
