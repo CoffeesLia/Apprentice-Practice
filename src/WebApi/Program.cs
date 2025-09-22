@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Stellantis.ProjectName.Application.Interfaces.Services;
+using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Infrastructure.Data;
 using Stellantis.ProjectName.IoC;
 using Stellantis.ProjectName.WebApi;
@@ -52,6 +53,9 @@ builder.Services.AddScoped<Func<ISmtpClient>>(sp => () => sp.GetRequiredService<
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<ISmtpClient, SmtpClientWrapper>();
+
+// HttpClient para o serviço do GitLab
+builder.Services.AddHttpClient<GitLabIssueService>();
 
 string? databaseType = configuration["DatabaseType"];
 switch (databaseType)
