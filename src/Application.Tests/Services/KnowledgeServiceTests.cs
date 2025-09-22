@@ -51,8 +51,8 @@ namespace Application.Tests.Services
             // Arrange
             var knowledge = _fixture.Build<Knowledge>()
                 .With(k => k.MemberId, 0)
-                .With(k => k.ApplicationIds, new List<int> { 0 })
                 .Create();
+            knowledge.ApplicationIds.Add(0);
 
             var validationResult = new ValidationResult(new[] { new ValidationFailure("MemberId", "MemberId is required") });
             var validatorMock = new Mock<IValidator<Knowledge>>();
@@ -75,8 +75,8 @@ namespace Application.Tests.Services
             // Arrange
             var knowledge = _fixture.Build<Knowledge>()
                 .With(k => k.Status, KnowledgeStatus.Atual)
-                .With(k => k.ApplicationIds, new List<int> { 1 })
                 .Create();
+            knowledge.ApplicationIds.Add(1);
 
             var validatorMock = new Mock<IValidator<Knowledge>>();
             validatorMock.Setup(v => v.ValidateAsync(knowledge, default)).ReturnsAsync(new ValidationResult());
@@ -135,13 +135,13 @@ namespace Application.Tests.Services
 
             var knowledge = _fixture.Build<Knowledge>()
                 .With(k => k.MemberId, member.Id)
-                .With(k => k.ApplicationIds, new List<int> { application.Id })
                 .With(k => k.SquadId, squad.Id)
                 .With(k => k.Member, member)
-                .With(k => k.Applications, new List<ApplicationData> { application })
                 .With(k => k.Squad, squad)
                 .With(k => k.Status, KnowledgeStatus.Atual)
                 .Create();
+            knowledge.Applications.Add(application);
+            knowledge.ApplicationIds.Add(application.Id);
 
             var validatorMock = new Mock<IValidator<Knowledge>>();
             var validationResult = new ValidationResult();
@@ -293,10 +293,10 @@ namespace Application.Tests.Services
             var knowledge = _fixture.Build<Knowledge>()
                 .With(k => k.Id, 1)
                 .With(k => k.MemberId, member.Id)
-                .With(k => k.ApplicationIds, new List<int> { application.Id })
                 .With(k => k.SquadId, member.SquadId)
                 .With(k => k.Status, KnowledgeStatus.Atual)
                 .Create();
+            knowledge.ApplicationIds.Add(application.Id);
 
             _knowledgeRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.Id)).ReturnsAsync(knowledge);
 
@@ -425,8 +425,9 @@ namespace Application.Tests.Services
         {
             // Arrange
             var knowledge = _fixture.Build<Knowledge>()
-                .With(k => k.Status, KnowledgeStatus.Atual)
-                .Create();
+                 .With(k => k.Status, KnowledgeStatus.Atual)
+                 .Create();
+            knowledge.ApplicationIds.Add(1); // Adicione pelo menos um ID
 
             _knowledgeRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.Id)).ReturnsAsync(knowledge);
 
@@ -458,11 +459,11 @@ namespace Application.Tests.Services
             var member = _fixture.Build<Member>().With(m => m.Id, 1).With(m => m.SquadId, 1).Create();
             var application = _fixture.Build<ApplicationData>().With(a => a.Id, 2).With(a => a.SquadId, 2).Create();
             var knowledge = _fixture.Build<Knowledge>()
-                .With(k => k.Id, 10)
-                .With(k => k.MemberId, member.Id)
-                .With(k => k.ApplicationIds, new List<int> { application.Id })
-                .With(k => k.Status, KnowledgeStatus.Atual)
-                .Create();
+               .With(k => k.Id, 10)
+               .With(k => k.MemberId, member.Id)
+               .With(k => k.Status, KnowledgeStatus.Atual)
+               .Create();
+            knowledge.ApplicationIds.Add(application.Id);
 
             _knowledgeRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.Id)).ReturnsAsync(knowledge);
 
@@ -496,10 +497,11 @@ namespace Application.Tests.Services
             var knowledge = _fixture.Build<Knowledge>()
                 .With(k => k.Id, 10)
                 .With(k => k.MemberId, member.Id)
-                .With(k => k.ApplicationIds, new List<int> { application.Id })
                 .With(k => k.Status, KnowledgeStatus.Atual)
                 .Create();
+            knowledge.ApplicationIds.Add(application.Id);
 
+            // Mock para garantir que o Knowledge existe no repositório
             _knowledgeRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.Id)).ReturnsAsync(knowledge);
 
             var validatorMock = new Mock<IValidator<Knowledge>>();
@@ -537,11 +539,11 @@ namespace Application.Tests.Services
             var application = _fixture.Build<ApplicationData>().With(a => a.Id, 2).With(a => a.SquadId, 1).Create();
             var squad = new Squad { Id = 1, Name = "Squad Test" };
             var knowledge = _fixture.Build<Knowledge>()
-                .With(k => k.Id, 10)
-                .With(k => k.MemberId, member.Id)
-                .With(k => k.ApplicationIds, new List<int> { application.Id })
-                .With(k => k.Status, KnowledgeStatus.Atual)
-                .Create();
+                  .With(k => k.Id, 10)
+                  .With(k => k.MemberId, member.Id)
+                  .With(k => k.Status, KnowledgeStatus.Atual)
+                  .Create();
+            knowledge.ApplicationIds.Add(application.Id);
 
             _knowledgeRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.Id)).ReturnsAsync(knowledge);
 

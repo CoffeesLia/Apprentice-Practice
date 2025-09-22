@@ -85,15 +85,25 @@ namespace Infrastructure.Tests.Data.Repositories
                 Squad = squad
             };
             knowledge.Applications.Add(application);
+            knowledge.ApplicationIds.Add(application.Id); 
 
             await _repository.CreateAssociationAsync(knowledge);
 
+            // Busque o Knowledge realmente persistido
+            var persistedKnowledge = _context.Set<Knowledge>()
+                .FirstOrDefault(k =>
+                    k.MemberId == member.Id &&
+                    k.SquadId == squad.Id &&
+                    k.Status == KnowledgeStatus.Atual &&
+                    k.Applications.Any(a => a.Id == application.Id)
+                );
+
             // Act
-            Knowledge? retrievedKnowledge = await _repository.GetByIdAsync(knowledge.Id);
+            Knowledge? retrievedKnowledge = await _repository.GetByIdAsync(persistedKnowledge!.Id);
 
             // Assert
             Assert.NotNull(retrievedKnowledge);
-            Assert.Equal(knowledge.Id, retrievedKnowledge.Id);
+            Assert.Equal(persistedKnowledge.Id, retrievedKnowledge.Id);
         }
 
         [Fact]
@@ -250,6 +260,8 @@ namespace Infrastructure.Tests.Data.Repositories
                 Squad = squad1
             };
             knowledge1.Applications.Add(application1);
+            knowledge1.ApplicationIds.Add(application1.Id);
+
             var knowledge2 = new Knowledge
             {
                 MemberId = member2.Id,
@@ -258,9 +270,11 @@ namespace Infrastructure.Tests.Data.Repositories
                 Member = member2,
                 Squad = squad2
             };
+            knowledge2.Applications.Add(application2);
+            knowledge2.ApplicationIds.Add(application2.Id);
+
             await _repository.CreateAssociationAsync(knowledge1);
             await _repository.CreateAssociationAsync(knowledge2);
-
             // Act
             var filter = new KnowledgeFilter
             {
@@ -306,6 +320,7 @@ namespace Infrastructure.Tests.Data.Repositories
                     Squad = squad
                 };
                 knowledge.Applications.Add(application);
+                knowledge.ApplicationIds.Add(application.Id); 
                 await _repository.CreateAssociationAsync(knowledge);
             }
 
@@ -315,10 +330,10 @@ namespace Infrastructure.Tests.Data.Repositories
 
             // Assert
             Assert.NotNull(pagedResult);
-            Assert.Equal(43, pagedResult.Total);
+            Assert.Equal(15, pagedResult.Total);     
             Assert.Equal(2, pagedResult.Page);
             Assert.Equal(10, pagedResult.PageSize);
-            Assert.Equal(3, pagedResult.Result.Count());
+            Assert.Equal(5, pagedResult.Result.Count()); 
         }
         ~KnowledgeRepositoryTests()
         {
