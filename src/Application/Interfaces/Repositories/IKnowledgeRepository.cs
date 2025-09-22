@@ -14,7 +14,7 @@ namespace Stellantis.ProjectName.Application.Interfaces.Repositories
         // lista as aplicações conhecidas por um membro
         Task<ICollection<ApplicationData>> ListApplicationsByMemberAsync(int memberId, KnowledgeStatus? status = null);
 
-        // lista os membros que conhecem uma aplicação
+        // lista os membros que conhecem uma aplicaçãos
         Task<ICollection<Member>> ListMembersByApplicationAsync(int applicationId, KnowledgeStatus? status = null);
 
         // remove a associação específica

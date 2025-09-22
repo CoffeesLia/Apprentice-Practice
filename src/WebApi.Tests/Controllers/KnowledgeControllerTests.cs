@@ -140,6 +140,9 @@ namespace WebApi.Tests.Controllers
             };
             knowledge.ApplicationIds.Add(3);
 
+            // Mocka o retorno do serviço!
+            _serviceMock.Setup(s => s.GetItemAsync(knowledgeId)).ReturnsAsync(knowledge);
+
             // Act
             var result = await _controller.GetAsync(knowledgeId);
 
