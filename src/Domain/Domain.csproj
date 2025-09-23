@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Remove="Entities\Employee.cs" />
     <Compile Remove="Entities\FakeApplication.cs" />
+    <Compile Remove="Entities\IBaseEntity.cs" />
     <Compile Remove="Entities\PartNumber.cs" />
     <Compile Remove="Entities\PartNumberSupplier.cs" />
     <Compile Remove="Entities\Supplier.cs" />
