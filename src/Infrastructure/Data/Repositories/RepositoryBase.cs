@@ -259,26 +259,13 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         {
             ArgumentNullException.ThrowIfNull(entity);
 
-            var key = Context.Model.FindEntityType(typeof(TEntity))?.FindPrimaryKey();
-            if (key == null)
-                throw new InvalidOperationException("A chave primária da entidade não foi encontrada.");
-
-            var keyValues = key.Properties
-                .Select(p => p.PropertyInfo?.GetValue(entity))
-                .ToArray();
-
-            var existingEntity = await Context.Set<TEntity>().FindAsync(keyValues).ConfigureAwait(false);
-            if (existingEntity == null)
-                throw new InvalidOperationException("Entidade não encontrada no banco de dados.");
-
-            Context.Entry(existingEntity).CurrentValues.SetValues(entity);
+            Context.Set<TEntity>().Update(entity);
 
             if (saveChanges)
             {
                 await Context.SaveChangesAsync().ConfigureAwait(false);
             }
         }
-
 
         /// <summary>
         /// Updates a collection of existing entities.

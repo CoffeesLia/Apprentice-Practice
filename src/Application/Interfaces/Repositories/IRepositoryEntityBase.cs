@@ -4,7 +4,7 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Interfaces.Repositories
 {
-    public interface IRepositoryEntityBase<TEntity> : IRepositoryBase<TEntity> where TEntity : BaseEntity
+    public interface IRepositoryEntityBase<TEntity> : IRepositoryBase<TEntity> where TEntity : EntityBase
     {
         Task DeleteAsync(int id, bool saveChanges = true);
         Task<TEntity?> GetByIdAsync(int id);
