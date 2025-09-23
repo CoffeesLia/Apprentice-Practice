@@ -15,7 +15,7 @@ namespace Stellantis.ProjectName.Application.Services
     /// <typeparam name="TIRepository">The type of the repository.</typeparam>
     public abstract class EntityServiceBase<TEntity>(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory, IValidator<TEntity> validator)
         : ServiceBase(unitOfWork, localizerFactory)
-        where TEntity : BaseEntity
+        where TEntity : EntityBase
     {
         /// <summary>
         /// Gets the repository for the entity.

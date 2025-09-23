@@ -14,7 +14,7 @@ namespace Stellantis.ProjectName.WebApi.Controllers
     [ApiController]
     [Authorize]
     public abstract class EntityControllerBase<TEntity, TEntityDto>(IEntityServiceBase<TEntity> service, IMapper mapper, IStringLocalizerFactory localizerFactory) : ControllerBase
-        where TEntity : BaseEntity
+        where TEntity : EntityBase
         where TEntityDto : class
     {
         protected virtual IEntityServiceBase<TEntity> Service { get; } = service ?? throw new ArgumentNullException(nameof(service));
