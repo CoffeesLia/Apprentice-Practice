@@ -10,7 +10,7 @@ namespace Stellantis.ProjectName.Domain.Entities
         Reopened
     }
 
-    public class Incident : BaseEntity
+    public class Incident : EntityBase
     {
         public string Title { get; set; } = null!;
         public string Description { get; set; } = null!;

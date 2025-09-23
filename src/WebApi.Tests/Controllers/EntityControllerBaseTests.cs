@@ -13,9 +13,7 @@ using Xunit;
 namespace WebApi.Tests.Controllers
 {
     public class DummyVm : EntityVmBase { }
-
     public class DummyEntity : EntityBase { }
-
     public class DummyEntityDto { }
 
     internal sealed class DummyEntityController : EntityControllerBase<DummyEntity, DummyEntityDto>

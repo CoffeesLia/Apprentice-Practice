@@ -44,9 +44,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
 
             builder.Ignore(ad => ad.ProductOwner);
 
-            builder.Property(ad => ad.CreatedAt)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .ValueGeneratedOnAdd();
         }
     }
 }
