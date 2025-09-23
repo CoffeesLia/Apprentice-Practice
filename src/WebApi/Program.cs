@@ -54,7 +54,7 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<ISmtpClient, SmtpClientWrapper>();
 
-// HttpClient para o serviço do GitLab
+// HttpClient para GitLab
 builder.Services.AddHttpClient<GitLabIssueService>((sp, client) =>
 {
     var config = sp.GetRequiredService<IConfiguration>();
@@ -63,11 +63,9 @@ builder.Services.AddHttpClient<GitLabIssueService>((sp, client) =>
 
     client.BaseAddress = new Uri(baseUrl!);
 
-    // Adiciona Bearer Authorization para o GitLab
-    client.DefaultRequestHeaders.Authorization =
-        new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+    // GitLab usa PRIVATE-TOKEN, não Bearer (a menos que seja OAuth2)
+    client.DefaultRequestHeaders.Add("PRIVATE-TOKEN", token);
 });
-
 
 string? databaseType = configuration["DatabaseType"];
 switch (databaseType)
