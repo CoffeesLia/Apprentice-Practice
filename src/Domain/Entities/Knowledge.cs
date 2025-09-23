@@ -6,7 +6,7 @@
         Passado = 1
     }
 
-    public class Knowledge : BaseEntity
+    public class Knowledge : EntityBase
     {
 
         public int MemberId { get; set; }
