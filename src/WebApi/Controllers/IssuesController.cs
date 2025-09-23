@@ -17,6 +17,13 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             _gitLabService = gitLabService;
         }
 
+        [HttpGet("{issueIid}")]
+        public async Task<IActionResult> Get(int issueIid)
+        {
+            var result = await _gitLabService.GetIssueAsync(issueIid);
+            return Ok(result);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] GitLabIssueDto dto)
         {
