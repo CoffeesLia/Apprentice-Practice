@@ -1,6 +1,6 @@
 ﻿namespace Stellantis.ProjectName.Domain.Entities
 {
-    public class Member : BaseEntity
+    public class Member : EntityBase
     {
         public required string Name { get; set; }
         public required string Role { get; set; }
@@ -9,6 +9,5 @@
         public int SquadId { get; set; }
         public Squad Squad { get; set; }
         public ICollection<Knowledge> Knowledges { get; set; } = [];
-      //  public bool SquadLeader { get; set; }
     }
 }
