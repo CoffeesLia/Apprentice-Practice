@@ -8,14 +8,9 @@ namespace Stellantis.ProjectName.WebApi.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [AllowAnonymous]
-    public class IssuesController : ControllerBase
+    public class IssuesController(GitLabIssueService gitLabService) : ControllerBase
     {
-        private readonly GitLabIssueService _gitLabService;
-
-        public IssuesController(GitLabIssueService gitLabService)
-        {
-            _gitLabService = gitLabService;
-        }
+        private readonly GitLabIssueService _gitLabService = gitLabService;
 
         [HttpGet("{issueIid}")]
         public async Task<IActionResult> Get(int issueIid)

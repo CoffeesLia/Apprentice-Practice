@@ -11,8 +11,6 @@ namespace Stellantis.ProjectName.WebApi.ViewModels
         public int SquadId { get; set; }
         public string? SquadName { get; set; }
         public KnowledgeStatus Status { get; set; }
-
         public string? StatusText { get; set; }
-
     }
 }

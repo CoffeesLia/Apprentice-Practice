@@ -1,6 +1,4 @@
-﻿using Stellantis.ProjectName.Domain.Entities;
-
-namespace Stellantis.ProjectName.WebApi.ViewModels
+﻿namespace Stellantis.ProjectName.WebApi.ViewModels
 {
     public class ApplicationVm : EntityVmBase
     {

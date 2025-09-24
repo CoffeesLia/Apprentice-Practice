@@ -1,6 +1,4 @@
-﻿using Stellantis.ProjectName.Domain.Entities;
-
-namespace Stellantis.ProjectName.WebApi.Dto.Filters
+﻿namespace Stellantis.ProjectName.WebApi.Dto.Filters
 {
     public class FeedbackFilterDto : FilterDto
     {

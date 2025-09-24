@@ -1,6 +1,4 @@
-﻿using Stellantis.ProjectName.Domain.Entities;
-
-namespace Stellantis.ProjectName.WebApi.ViewModels
+﻿namespace Stellantis.ProjectName.WebApi.ViewModels
 {
     public class MemberVm : EntityVmBase
     {
@@ -11,6 +9,5 @@ namespace Stellantis.ProjectName.WebApi.ViewModels
         public decimal Cost { get; set; }
         public required string Email { get; set; }
      // public bool SquadLeader { get; set; }
-
     }
 }

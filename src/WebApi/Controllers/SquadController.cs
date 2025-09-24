@@ -17,7 +17,6 @@ namespace Stellantis.ProjectName.WebApi.Controllers
     {
         protected override ISquadService Service => (ISquadService)base.Service;
 
-
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] SquadDto itemDto)
         {
