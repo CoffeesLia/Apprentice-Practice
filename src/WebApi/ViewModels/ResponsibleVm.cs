@@ -1,5 +1,4 @@
-﻿
-namespace Stellantis.ProjectName.WebApi.ViewModels
+﻿namespace Stellantis.ProjectName.WebApi.ViewModels
 {
     public class ResponsibleVm : EntityVmBase
     {
@@ -7,6 +6,5 @@ namespace Stellantis.ProjectName.WebApi.ViewModels
         public required string Name { get; set; }
         public int AreaId { get; set; }
         public AreaVm Area { get; set; } = new();
-
     }
 }

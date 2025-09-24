@@ -9,6 +9,6 @@
         public int Status { get; set; }
         public int ApplicationId { get; set; }
         public ApplicationVm? Application { get; set; }
-        public ICollection<MemberVm> Members { get; set; }
+        public ICollection<MemberVm>? Members { get; set; }
     }
 }
