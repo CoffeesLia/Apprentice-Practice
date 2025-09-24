@@ -67,6 +67,15 @@ builder.Services.AddHttpClient<GitLabIssueService>((sp, client) =>
     client.DefaultRequestHeaders.Add("PRIVATE-TOKEN", token);
 });
 
+builder.Services.AddHttpClient<BranchService>((sp, client) =>
+{
+    var config = sp.GetRequiredService<IConfiguration>();
+    var baseUrl = config["Branch:BaseUrl"];
+    var token = config["Branch:PRIVATE-TOKEN"];
+
+    client.DefaultRequestHeaders.Authorization =
+        new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+});
 string? databaseType = configuration["DatabaseType"];
 switch (databaseType)
 {
