@@ -198,7 +198,7 @@ namespace Infrastructure.Tests.Data.Repositories
             // Assert
             Assert.Contains(allMembers, m => m.Id == member1.Id);
             Assert.Contains(allMembers, m => m.Id == member2.Id);
-            Assert.Single(atualMembers.Where(m => m.Id == member1.Id));
+            Assert.Single(atualMembers, m => m.Id == member1.Id);
             Assert.DoesNotContain(atualMembers, m => m.Id == member2.Id);
         }
 
