@@ -9,7 +9,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data
 
         public DbSet<Responsible> Responsibles { get; set; }
         public DbSet<Area> Areas { get; set; }
-        public DbSet<Audit> Auditorias { get; set; }
         public DbSet<Member> Members { get; set; }
         public DbSet<Squad> Squads { get; set; }
         public DbSet<Integration> Integrations { get; set; }
@@ -21,7 +20,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data
         public DbSet<Incident> Incidents { get; set; }
         public DbSet<DocumentData> Documents { get; set; }
         public DbSet<Chat> ChatMessages { get; set; } = null!;
-        public DbSet<User> Users { get; set; } = null!;
         public DbSet<Notification> Notifications { get; set; } = null!;
         public DbSet<Knowledge> Knowledges { get; set; } = null!;
 

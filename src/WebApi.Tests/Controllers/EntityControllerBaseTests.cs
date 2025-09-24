@@ -13,7 +13,9 @@ using Xunit;
 namespace WebApi.Tests.Controllers
 {
     public class DummyVm : EntityVmBase { }
+
     public class DummyEntity : EntityBase { }
+
     public class DummyEntityDto { }
 
     internal sealed class DummyEntityController : EntityControllerBase<DummyEntity, DummyEntityDto>
@@ -27,14 +29,14 @@ namespace WebApi.Tests.Controllers
         public new async Task<IActionResult> DeleteAsync(int id) => await base.DeleteAsync(id).ConfigureAwait(false);
 
         public async Task<IActionResult> UpdateBaseAsyncProxy(int id, DummyEntityDto? itemDto)
-            #pragma warning disable CS8604 // Possível argumento de referência nula.
+#pragma warning disable CS8604 // Possível argumento de referência nula.
             => await UpdateBaseAsync<DummyVm>(id, itemDto).ConfigureAwait(false);
-            #pragma warning restore CS8604 // Possível argumento de referência nula.
+#pragma warning restore CS8604 // Possível argumento de referência nula.
 
         public async Task<IActionResult> CreateBaseAsyncProxy<TEntityVm>(DummyEntityDto? itemDto) where TEntityVm : EntityVmBase
-            #pragma warning disable CS8604 // Possível argumento de referência nula.
+#pragma warning disable CS8604 // Possível argumento de referência nula.
             => await CreateBaseAsync<TEntityVm>(itemDto).ConfigureAwait(false);
-            #pragma warning restore CS8604 // Possível argumento de referência nula.
+#pragma warning restore CS8604 // Possível argumento de referência nula.
     }
 
     public class EntityControllerBaseTests
@@ -55,7 +57,7 @@ namespace WebApi.Tests.Controllers
                 .GetMethod("Complete", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)!
                 .Invoke(null, [""]) as OperationResult;
 
-            Assert.NotNull(operationResult); 
+            Assert.NotNull(operationResult);
 
             operationResult!.GetType().GetProperty("Status")!.SetValue(operationResult, (OperationStatus)999);
 
