@@ -26,6 +26,5 @@ namespace Stellantis.ProjectName.Application.Validators
             .When(x => !string.IsNullOrEmpty(x.Description))
             .WithMessage(localizer[nameof(SquadResources.DescriptionValidateLength), 3, 200]);
         }
-
     }
 }

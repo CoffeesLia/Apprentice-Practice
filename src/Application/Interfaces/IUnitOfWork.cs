@@ -4,31 +4,18 @@ namespace Stellantis.ProjectName.Application.Interfaces
 {
     public interface IUnitOfWork
     {
-
         IDocumentRepository DocumentDataRepository { get; }
-
         IAreaRepository AreaRepository { get; }
-
         IIntegrationRepository IntegrationRepository { get; }
-
         IResponsibleRepository ResponsibleRepository { get; }
-
         IIncidentRepository IncidentRepository { get; }
-
         IFeedbackRepository FeedbackRepository { get; }
-
         IMemberRepository MemberRepository { get; }
-
         IServiceDataRepository ServiceDataRepository { get; }
-
         IManagerRepository ManagerRepository { get; }
-
         IApplicationDataRepository ApplicationDataRepository { get; }
-
         ISquadRepository SquadRepository { get; }
-
         IRepoRepository RepoRepository { get; }
-
         IKnowledgeRepository KnowledgeRepository { get; }
 
         Task CommitAsync();

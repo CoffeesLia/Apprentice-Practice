@@ -23,7 +23,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
             builder.Property(r => r.AreaId)
                 .IsRequired();
 
-            builder.HasOne(r => r.Area) // Configura a navegação
+            builder.HasOne(r => r.Area)
                 .WithMany(a => a.Responsibles)
                 .HasForeignKey(r => r.AreaId)
                 .IsRequired();

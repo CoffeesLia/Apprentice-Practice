@@ -21,8 +21,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
                    .WithMany(s => s.Members)  
                    .HasForeignKey(m => m.SquadId)
                    .OnDelete(DeleteBehavior.Cascade);
-
-
         }
     }
 }

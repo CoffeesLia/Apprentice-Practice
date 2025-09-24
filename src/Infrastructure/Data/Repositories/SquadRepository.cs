@@ -2,7 +2,6 @@
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
-using System.Globalization;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {

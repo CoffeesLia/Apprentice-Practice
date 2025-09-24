@@ -8,6 +8,5 @@ namespace Stellantis.ProjectName.Application.Interfaces.Repositories
         Task<PagedResult<Repo>> GetListAsync(RepoFilter repoFilter);
         Task<bool> NameAlreadyExists(string name, int? id = null);
         Task<bool> UrlAlreadyExists(Uri url, int? id = null);
-
     }
 }

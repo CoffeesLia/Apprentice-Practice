@@ -1,10 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-using FluentValidation;
+﻿using FluentValidation;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Resources;
-using Stellantis.ProjectName.Application.Validators;
 using Stellantis.ProjectName.Domain.Entities;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Stellantis.ProjectName.Application.Validators
 {

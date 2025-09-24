@@ -8,6 +8,5 @@ namespace Stellantis.ProjectName.Application.Interfaces.Repositories
         Task<PagedResult<DocumentData>> GetListAsync(DocumentDataFilter documentFilter);
         Task<bool> NameAlreadyExists(string name, int applicationId, int? id = null);
         Task<bool> UrlAlreadyExists(Uri url, int applicationId, int? id = null);
-
     }
 }

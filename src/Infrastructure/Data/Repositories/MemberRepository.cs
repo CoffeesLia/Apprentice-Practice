@@ -1,11 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
-
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
@@ -35,7 +32,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         {
             membersFilter ??= new MemberFilter();
 
-            // Garantir valores padrão para paginação
             membersFilter.Page = membersFilter.Page > 0 ? membersFilter.Page : 1;
             membersFilter.PageSize = membersFilter.PageSize > 0 ? membersFilter.PageSize : 10;
 
@@ -61,7 +57,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             if (membersFilter.SquadId > 0)
                 query = query.Where(a => a.SquadId == membersFilter.SquadId);
-
 
             if (membersFilter.Cost > 0)
                 query = query.Where(a => a.Cost == membersFilter.Cost);

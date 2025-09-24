@@ -44,7 +44,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data
                 {
                     await _transaction.RollbackAsync().ConfigureAwait(false);
                 }
-
                 throw;
             }
         }

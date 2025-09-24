@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 {
@@ -50,10 +49,8 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             var query = Context.Set<DocumentData>().AsQueryable().AsEnumerable();
 
             return await GetListAsync(filter: filters, page: documentFilter.Page, pageSize: documentFilter.PageSize,
- sort: documentFilter.Sort, sortDir: documentFilter.SortDir, includeProperties: nameof(DocumentData.ApplicationData)
-             ).ConfigureAwait(false);
+            sort: documentFilter.Sort, sortDir: documentFilter.SortDir, includeProperties: nameof(DocumentData.ApplicationData)).ConfigureAwait(false);
         }
-
 
         public async Task<bool> NameAlreadyExists(string name, int applicationId, int? id = null)
         {
@@ -64,12 +61,11 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 .ConfigureAwait(false);
         }
 
-
         public async Task<bool> UrlAlreadyExists(Uri url, int applicationId, int? id = null)
         {
             return await Context.Set<DocumentData>().AnyAsync(a => a.Url == url
-                           && a.ApplicationId == applicationId
-                           && (!id.HasValue || a.Id != id)).ConfigureAwait(false);
+            && a.ApplicationId == applicationId
+            && (!id.HasValue || a.Id != id)).ConfigureAwait(false);
         }
     }
 }

@@ -39,7 +39,6 @@ namespace Stellantis.ProjectName.Application.Validators
                 .NotNull()
                 .NotEmpty()
                 .WithMessage(localizer[nameof(MemberResource.MemberEmailIsRequired)]);
-
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿
-namespace Stellantis.ProjectName.Domain.Entities
+﻿namespace Stellantis.ProjectName.Domain.Entities
 {
     public class Responsible : EntityBase
     {

@@ -6,6 +6,5 @@ namespace Stellantis.ProjectName.Application.Interfaces.Services
     public interface IIntegrationService : IEntityServiceBase<Integration>
     {
         Task<PagedResult<Integration>> GetListAsync(IntegrationFilter filter);
-
     }
 }

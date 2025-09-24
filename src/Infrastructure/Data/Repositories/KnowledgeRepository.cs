@@ -32,7 +32,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                         SquadId = knowledge.SquadId,
                         Status = knowledge.Status
                     };
-                    // Adiciona o ApplicationId e a entidade ApplicationData nas coleções
+
                     newKnowledge.ApplicationIds.Add(appId);
                     var application = await Context.Set<ApplicationData>().FindAsync(appId).ConfigureAwait(false);
                     if (application != null)

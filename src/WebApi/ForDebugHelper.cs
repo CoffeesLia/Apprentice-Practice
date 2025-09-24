@@ -10,11 +10,9 @@ namespace Stellantis.ProjectName.WebApi
         {
             if (databaseType == "InMemory")
             {
-                // Popula o banco com dados de teste
                 using IServiceScope scope = app.Services.CreateScope();
                 Context context = scope.ServiceProvider.GetRequiredService<Context>();
                 await context.Database.EnsureCreatedAsync().ConfigureAwait(false);
-
 
                 // Mensagens de chat
                 context.ChatMessages.AddRange(

@@ -21,14 +21,12 @@ namespace Stellantis.ProjectName.Application.Services
         {
             ArgumentNullException.ThrowIfNull(item);
 
-            // Validação do objeto pelo FluentValidation
             var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
             if (!validationResult.IsValid)
             {
                 return OperationResult.InvalidData(validationResult);
             }
 
-            // Verificação se o e-mail já existe
             if (await Repository.VerifyEmailAlreadyExistsAsync(item.Email).ConfigureAwait(false))
             {
                 return OperationResult.Conflict(_localizer[nameof(ResponsibleResource.EmailExists)]);
@@ -49,21 +47,18 @@ namespace Stellantis.ProjectName.Application.Services
         {
             ArgumentNullException.ThrowIfNull(item);
 
-            // Validação do objeto pelo FluentValidation
             var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
             if (!validationResult.IsValid)
             {
                 return OperationResult.InvalidData(validationResult);
             }
 
-            // Obter o responsável atual do banco de dados
             var existingResponsible = await Repository.GetByIdAsync(item.Id).ConfigureAwait(false);
             if (existingResponsible == null)
             {
                 return OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
             }
 
-            // Verificar se o e-mail foi alterado e se já existe no banco
             if (!string.Equals(existingResponsible.Email, item.Email, StringComparison.OrdinalIgnoreCase) &&
                 await Repository.VerifyEmailAlreadyExistsAsync(item.Email).ConfigureAwait(false))
             {
@@ -81,9 +76,8 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
             }
 
-            // Verifica se o responsável está vinculado a alguma aplicação
             var applications = await UnitOfWork.ApplicationDataRepository.GetListAsync(app => app.ResponsibleId == id).ConfigureAwait(false);
-            if (applications.Any())
+            if (applications.Count > 0)
             {
                 return OperationResult.Conflict(_localizer[nameof(ResponsibleResource.ResponsibleLinkedToApplication)]);
             }

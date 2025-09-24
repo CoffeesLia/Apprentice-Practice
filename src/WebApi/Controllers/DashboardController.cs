@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Stellantis.ProjectName.Application.Interfaces.Services;
-using System.Threading.Tasks;
 
 namespace Stellantis.ProjectName.WebApi.Controllers
 {
