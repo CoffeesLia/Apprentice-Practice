@@ -36,7 +36,7 @@ namespace WebApi.Tests.Controllers
             KnowledgeDto knowledgeDto = new()
             {
                 MemberId = 2,
-                ApplicationIds = new List<int> { 3 },
+                ApplicationIds = [3],
                 SquadId = 4,
                 Status = KnowledgeStatus.Atual
             };
@@ -57,7 +57,7 @@ namespace WebApi.Tests.Controllers
             var knowledgeDto = new KnowledgeDto
             {
                 MemberId = 1,
-                ApplicationIds = new List<int> { 2 },
+                ApplicationIds = [2],
                 SquadId = 99,
                 Status = KnowledgeStatus.Passado
             };
@@ -110,7 +110,7 @@ namespace WebApi.Tests.Controllers
             var knowledgeDto = new KnowledgeDto
             {
                 MemberId = 2,
-                ApplicationIds = new List<int> { 3 },
+                ApplicationIds = [3],
                 SquadId = 4,
                 Status = KnowledgeStatus.Atual
             };
@@ -140,7 +140,6 @@ namespace WebApi.Tests.Controllers
             };
             knowledge.ApplicationIds.Add(3);
 
-            // Mocka o retorno do serviço!
             _serviceMock.Setup(s => s.GetItemAsync(knowledgeId)).ReturnsAsync(knowledge);
 
             // Act
@@ -192,7 +191,7 @@ namespace WebApi.Tests.Controllers
 
             var pagedResult = new PagedResult<Knowledge>
             {
-                Result = new List<Knowledge> { knowledge },
+                Result = [knowledge],
                 Page = 1,
                 PageSize = 10,
                 Total = 1
@@ -244,7 +243,7 @@ namespace WebApi.Tests.Controllers
             Assert.Equal(0, filterDto.MemberId);
             Assert.Equal(0, filterDto.ApplicationId);
             Assert.Equal(0, filterDto.SquadId);
-            Assert.Equal(default(KnowledgeStatus), filterDto.Status);
+            Assert.Equal(default, filterDto.Status);
         }
     }
 }

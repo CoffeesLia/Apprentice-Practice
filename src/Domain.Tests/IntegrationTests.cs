@@ -73,6 +73,5 @@ namespace Domain.Tests
             Assert.Contains(integration, applicationData.Integration);
             Assert.Equal(applicationData, integration.ApplicationData);
         }
-
     }
 }

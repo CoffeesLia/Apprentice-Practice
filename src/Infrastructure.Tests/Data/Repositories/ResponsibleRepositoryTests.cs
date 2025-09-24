@@ -78,7 +78,6 @@ namespace Infrastructure.Tests.Data.Repositories
             await _context.Set<Responsible>().AddRangeAsync(responsibles);
             await _context.SaveChangesAsync();
 
-            // Verifique se os dados foram salvos corretamente
             List<Responsible> savedResponsibles = await _context.Set<Responsible>().ToListAsync();
             Assert.Equal(Count, savedResponsibles.Count);
 
@@ -86,9 +85,9 @@ namespace Infrastructure.Tests.Data.Repositories
             PagedResult<Responsible> result = await _repository.GetListAsync(filter);
 
             // Assert
-            Assert.Equal(Count, result.Total); // Verifica o total de itens
-            Assert.Equal(filter.Page, result.Page); // Verifica a página solicitada
-            Assert.Equal(filter.PageSize, result.PageSize); // Verifica o tamanho da página retornada
+            Assert.Equal(Count, result.Total);
+            Assert.Equal(filter.Page, result.Page); 
+            Assert.Equal(filter.PageSize, result.PageSize);
         }
 
         [Fact]
@@ -151,11 +150,9 @@ namespace Infrastructure.Tests.Data.Repositories
 
             if (disposing)
             {
-                // free managed resources
                 _context?.Dispose();
             }
 
-            // free native resources if there are any.
             if (nativeResource != IntPtr.Zero)
             {
                 Marshal.FreeHGlobal(nativeResource);

@@ -88,7 +88,6 @@ namespace Application.Tests.Services
             Assert.Contains(FeedbackResources.TitleRequired, result.Errors);
             Assert.Contains(FeedbackResources.ApplicationRequired, result.Errors);
             Assert.Contains(FeedbackResources.DescriptionRequired, result.Errors);
-
         }
 
         [Fact]
@@ -239,9 +238,8 @@ namespace Application.Tests.Services
             };
 
             _feedbackRepositoryMock.Setup(r => r.GetByIdAsync(feedback.Id)).ReturnsAsync(existing);
-            // Mock para evitar NullReference ao buscar membros
             _memberRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Member, bool>>>(), null, null, null, 1, 10))
-                .ReturnsAsync(new PagedResult<Member> { Result = new List<Member>() });
+                .ReturnsAsync(new PagedResult<Member> { Result = [] });
 
             var result = await _feedbackService.UpdateAsync(feedback);
 
@@ -274,7 +272,7 @@ namespace Application.Tests.Services
             _feedbackRepositoryMock.Setup(r => r.GetByIdAsync(feedback.Id)).ReturnsAsync(existing);
             _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(feedback.ApplicationId)).ReturnsAsync((ApplicationData?)null);
             _memberRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Member, bool>>>(), null, null, null, 1, 10))
-                .ReturnsAsync(new PagedResult<Member> { Result = new List<Member>() });
+                .ReturnsAsync(new PagedResult<Member> { Result = [] });
 
             var result = await _feedbackService.UpdateAsync(feedback);
 
@@ -285,7 +283,7 @@ namespace Application.Tests.Services
         public async Task UpdateAsyncShouldReturnConflictWhenMemberNotInSquad()
         {
             var member = new Member { Id = 1, Name = "M", Role = "Dev", Cost = 1, Email = "m@x.com", SquadId = 99 };
-            var existing = new Feedback { Id = 1, Title = "Old", Description = "Old", ApplicationId = 1, Members = new List<Member>() };
+            var existing = new Feedback { Id = 1, Title = "Old", Description = "Old", ApplicationId = 1, Members = [] };
             var feedback = new Feedback { Id = 1, Title = "Teste", Description = "Desc", ApplicationId = 1, Members = [member] };
             var app = new ApplicationData("App") { Id = 1, SquadId = 1, ProductOwner = "PO" };
 
@@ -303,7 +301,7 @@ namespace Application.Tests.Services
         public async Task UpdateAsyncShouldReturnSuccessWhenValid()
         {
             var member = new Member { Id = 1, Name = "M", Role = "Dev", Cost = 1, Email = "m@x.com", SquadId = 1 };
-            var existing = new Feedback { Id = 1, Title = "Old", Description = "Old", ApplicationId = 1, Members = new List<Member>() };
+            var existing = new Feedback { Id = 1, Title = "Old", Description = "Old", ApplicationId = 1, Members = [] };
             var feedback = new Feedback { Id = 1, Title = "Teste", Description = "Desc", ApplicationId = 1, Members = [member] };
             var app = new ApplicationData("App") { Id = 1, SquadId = 1, ProductOwner = "PO" };
 
@@ -450,13 +448,13 @@ namespace Application.Tests.Services
                 Email = "m2@example.com" 
             };
             var app = new ApplicationData("App") { Id = 1, SquadId = 1, ProductOwner = "PO" };
-            var existing = new Feedback { Id = 1, Title = "Old", Description = "Old", ApplicationId = 1, Status = FeedbackStatus.Open, Members = new List<Member> { member1, member2 }, Application = app };
-            var feedback = new Feedback { Id = 1, Title = "Teste", Description = "Desc", ApplicationId = 1, Status = FeedbackStatus.Open, Members = new List<Member> { member1 }, Application = app };
+            var existing = new Feedback { Id = 1, Title = "Old", Description = "Old", ApplicationId = 1, Status = FeedbackStatus.Open, Members = [member1, member2], Application = app };
+            var feedback = new Feedback { Id = 1, Title = "Teste", Description = "Desc", ApplicationId = 1, Status = FeedbackStatus.Open, Members = [member1], Application = app };
 
             _feedbackRepositoryMock.Setup(r => r.GetByIdAsync(feedback.Id)).ReturnsAsync(existing);
             _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(feedback.ApplicationId)).ReturnsAsync(app);
             _memberRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Member, bool>>>(), null, null, null, 1, 10))
-                .ReturnsAsync(new PagedResult<Member> { Result = new List<Member> { member1 } });
+                .ReturnsAsync(new PagedResult<Member> { Result = [member1] });
             _feedbackRepositoryMock.Setup(r => r.UpdateAsync(It.IsAny<Feedback>(), true)).Returns(Task.CompletedTask);
 
             _notificationLocalizerMock.Setup(l => l["FeedbackRemoveMember", member2.Name, existing.Title])

@@ -38,7 +38,6 @@ namespace Application.Tests.Services
             _areaService = new AreaService(_unitOfWorkMock.Object, localizer, areaValidator);
         }
 
-
         [Fact]
         public async Task CreateAsyncShouldReturnConflictWhenNameIsNullOrEmptyOrWhitespace()
         {
@@ -49,9 +48,7 @@ namespace Application.Tests.Services
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
             Assert.Equal(string.Format(CultureInfo.InvariantCulture, AreaResources.NameIsRequired), result.Errors.First());
-
         }
-
 
         [Fact]
         public async Task CreateAsyncShouldReturnInvalidDataWhenValidationFails()
@@ -66,7 +63,6 @@ namespace Application.Tests.Services
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
             Assert.Equal(string.Format(CultureInfo.InvariantCulture, AreaResources.NameValidateLength, AreaValidator.MinimumLength, AreaValidator.MaximumLength), result.Errors.First());
-
         }
 
         [Fact]
@@ -75,17 +71,15 @@ namespace Application.Tests.Services
             // Arrange
             Area area = new("Área Existente") { ManagerId = 1 };
 
-            // Mock do manager válido
             var manager = new Manager { Name = "Gerente", Id = 1, Email = "gerente@email.com" };
             var managerRepositoryMock = new Mock<IManagerRepository>();
             managerRepositoryMock.Setup(m => m.GetByIdAsync(area.ManagerId)).ReturnsAsync(manager);
             _unitOfWorkMock.Setup(u => u.ManagerRepository).Returns(managerRepositoryMock.Object);
 
-            // Mock para simular nome já existente
             _areaRepositoryMock.Setup(r => r.GetListAsync(It.Is<AreaFilter>(f => f.Name == area.Name)))
                 .ReturnsAsync(new PagedResult<Area>
                 {
-                    Result = new List<Area> { new Area(area.Name) { Id = 2, ManagerId = area.ManagerId } },
+                    Result = [new Area(area.Name) { Id = 2, ManagerId = area.ManagerId }],
                     Page = 1,
                     PageSize = 10,
                     Total = 1
@@ -109,7 +103,7 @@ namespace Application.Tests.Services
             areaRepositoryMock.Setup(r => r.GetListAsync(It.Is<AreaFilter>(f => f.Name == area.Name)))
                 .ReturnsAsync(new PagedResult<Area>
                 {
-                    Result = new List<Area> { new Area(area.Name) { Id = 1, ManagerId = 123 } },
+                    Result = [new Area(area.Name) { Id = 1, ManagerId = 123 }],
                     Page = 1,
                     PageSize = 10,
                     Total = 1
@@ -190,7 +184,6 @@ namespace Application.Tests.Services
             Area area = new("Test Area") { ManagerId = 999 };
             _areaRepositoryMock.Setup(r => r.VerifyNameAlreadyExistsAsync(area.Name)).ReturnsAsync(false);
 
-            // Mock do manager inexistente
             var managerRepositoryMock = new Mock<IManagerRepository>();
             managerRepositoryMock.Setup(m => m.GetByIdAsync(area.ManagerId)).ReturnsAsync((Manager?)null);
             _unitOfWorkMock.Setup(u => u.ManagerRepository).Returns(managerRepositoryMock.Object);
@@ -212,7 +205,7 @@ namespace Application.Tests.Services
 
             var emptyPagedResult = new PagedResult<Area>
             {
-                Result = new List<Area>(),
+                Result = [],
                 Page = 1,
                 PageSize = 10,
                 Total = 0
@@ -299,10 +292,7 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.Success, result.Status);
         }
 
-
         [Fact]
-
-
         public async Task GetItemAsyncShouldReturnCompleteWhenAreaExists()
         {
             // Arrange
@@ -318,7 +308,6 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.Success, result.Status);
         }
 
-
         [Fact]
         public async Task GetItemAsyncShouldReturnNotFoundWhenAreaDoesNotExist()
         {
@@ -333,7 +322,6 @@ namespace Application.Tests.Services
             // Assert
             Assert.Equal(OperationStatus.NotFound, result.Status);
         }
-
 
         [Fact]
         public async Task UpdateAsyncShouldReturnInvalidDataWhenValidationFails()
@@ -395,7 +383,7 @@ namespace Application.Tests.Services
 
             var pagedResult = new PagedResult<Area>
             {
-                Result = new List<Area> { new Area("Nome Duplicado") { Id = 2, ManagerId = 123 } },
+                Result = [new Area("Nome Duplicado") { Id = 2, ManagerId = 123 }],
                 Page = 1,
                 PageSize = 10,
                 Total = 1
@@ -407,7 +395,7 @@ namespace Application.Tests.Services
             _areaRepositoryMock.Setup(r => r.GetListAsync(It.Is<AreaFilter>(f => f.ManagerId == area.ManagerId)))
                 .ReturnsAsync(new PagedResult<Area>
                 {
-                    Result = new List<Area>(),
+                    Result = [],
                     Page = 1,
                     PageSize = 10,
                     Total = 0
@@ -455,13 +443,7 @@ namespace Application.Tests.Services
             // Arrange
             var area = new Area("Area com Manager ocupado") { Id = 1, ManagerId = 123 };
 
-            var pagedResult = new PagedResult<Area>
-            {
-                Result = new List<Area> { new Area("Outra Area") { Id = 2, ManagerId = 123 } },
-                Page = 1,
-                PageSize = 10,
-                Total = 1
-            };
+            var pagedResult = new PagedResult<Area> { Result = [new Area("Outra Area") { Id = 2, ManagerId = 123 }], Page = 1, PageSize = 10, Total = 1 };
             _areaRepositoryMock.Setup(r => r.GetByIdAsync(area.Id)).ReturnsAsync(area);
             _areaRepositoryMock.Setup(r => r.GetListAsync(It.Is<AreaFilter>(f => f.ManagerId == area.ManagerId)))
                 .ReturnsAsync(pagedResult);
@@ -513,7 +495,7 @@ namespace Application.Tests.Services
 
             var pagedResult = new PagedResult<Area>
             {
-                Result = new List<Area>(),
+                Result = [],
                 Page = 1,
                 PageSize = 10,
                 Total = 0

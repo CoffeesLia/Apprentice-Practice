@@ -44,7 +44,6 @@ namespace Application.Tests.Services
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
         }
 
-
         [Fact]
         public async Task CreateAsyncWhenValidationFailsReturnsInvalidData()
         {
@@ -54,7 +53,7 @@ namespace Application.Tests.Services
                 .Create();
             knowledge.ApplicationIds.Add(0);
 
-            var validationResult = new ValidationResult(new[] { new ValidationFailure("MemberId", "MemberId is required") });
+            var validationResult = new ValidationResult([new ValidationFailure("MemberId", "MemberId is required")]);
             var validatorMock = new Mock<IValidator<Knowledge>>();
             validatorMock.Setup(v => v.ValidateAsync(knowledge, default)).ReturnsAsync(validationResult);
 
@@ -66,8 +65,6 @@ namespace Application.Tests.Services
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
         }
-
-
 
         [Fact]
         public async Task CreateAsyncWhenAssociationAlreadyExistsReturnsConflict()
@@ -317,7 +314,6 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.Success, result.Status);
         }
 
-
         [Fact]
         public async Task GetListAsyncWithMemberIdFilterReturnsFilteredResults()
         {
@@ -332,20 +328,17 @@ namespace Application.Tests.Services
                 .Setup(r => r.GetListAsync(It.Is<KnowledgeFilter>(f => f.MemberId == 1)))
                 .ReturnsAsync(new PagedResult<Knowledge> { Result = knowledges, Page = 1, PageSize = 10, Total = 3 });
 
-            // Exemplo 2:
             _knowledgeRepositoryMock
                 .Setup(r => r.GetListAsync(It.Is<KnowledgeFilter>(f => f.ApplicationId == 2)))
-                .ReturnsAsync(new PagedResult<Knowledge> { Result = new List<Knowledge>(), Page = 1, PageSize = 10, Total = 2 });
+                .ReturnsAsync(new PagedResult<Knowledge> { Result = [], Page = 1, PageSize = 10, Total = 2 });
 
-            // Exemplo 3:
             _knowledgeRepositoryMock
                 .Setup(r => r.GetListAsync(It.Is<KnowledgeFilter>(f => f.SquadId == 5)))
-                .ReturnsAsync(new PagedResult<Knowledge> { Result = new List<Knowledge>(), Page = 1, PageSize = 10, Total = 1 });
+                .ReturnsAsync(new PagedResult<Knowledge> { Result = [], Page = 1, PageSize = 10, Total = 1 });
 
-            // Exemplo 4:
             _knowledgeRepositoryMock
                 .Setup(r => r.GetListAsync(It.Is<KnowledgeFilter>(f => f.Status == KnowledgeStatus.Atual)))
-                .ReturnsAsync(new PagedResult<Knowledge> { Result = new List<Knowledge>(), Page = 1, PageSize = 10, Total = 4 });
+                .ReturnsAsync(new PagedResult<Knowledge> { Result = [], Page = 1, PageSize = 10, Total = 4 });
 
             // Act
             var result = await _knowledgeService.GetListAsync(filter);
@@ -363,7 +356,7 @@ namespace Application.Tests.Services
             var filter = new KnowledgeFilter { ApplicationId = 2 };
             _knowledgeRepositoryMock
                 .Setup(r => r.GetListAsync(It.Is<KnowledgeFilter>(f => f.ApplicationId == 2)))
-                .ReturnsAsync(new PagedResult<Knowledge> { Result = new List<Knowledge>(), Page = 1, PageSize = 10, Total = 2 });
+                .ReturnsAsync(new PagedResult<Knowledge> { Result = [], Page = 1, PageSize = 10, Total = 2 });
 
             // Act
             var result = await _knowledgeService.GetListAsync(filter);
@@ -379,7 +372,7 @@ namespace Application.Tests.Services
             var filter = new KnowledgeFilter { SquadId = 5 };
             _knowledgeRepositoryMock
                 .Setup(r => r.GetListAsync(It.Is<KnowledgeFilter>(f => f.SquadId == 5)))
-                .ReturnsAsync(new PagedResult<Knowledge> { Result = new List<Knowledge>(), Page = 1, PageSize = 10, Total = 1 });
+                .ReturnsAsync(new PagedResult<Knowledge> { Result = [], Page = 1, PageSize = 10, Total = 1 });
 
             // Act
             var result = await _knowledgeService.GetListAsync(filter);
@@ -395,7 +388,7 @@ namespace Application.Tests.Services
             var filter = new KnowledgeFilter { Status = KnowledgeStatus.Atual };
             _knowledgeRepositoryMock
                 .Setup(r => r.GetListAsync(It.Is<KnowledgeFilter>(f => f.Status == KnowledgeStatus.Atual)))
-                .ReturnsAsync(new PagedResult<Knowledge> { Result = new List<Knowledge>(), Page = 1, PageSize = 10, Total = 4 });
+                .ReturnsAsync(new PagedResult<Knowledge> { Result = [], Page = 1, PageSize = 10, Total = 4 });
 
             // Act
             var result = await _knowledgeService.GetListAsync(filter);
@@ -403,6 +396,7 @@ namespace Application.Tests.Services
             // Assert
             Assert.Equal(4, result.Total);
         }
+
         [Fact]
         public async Task GetListAsyncWhenFilterIsNullReturnsAll()
         {
@@ -418,7 +412,6 @@ namespace Application.Tests.Services
             // Assert
             Assert.Equal(2, result.Total);
         }
-
 
         [Fact]
         public async Task UpdateAsyncWhenMemberOrApplicationNotFoundReturnsNotFound()
@@ -501,7 +494,6 @@ namespace Application.Tests.Services
                 .Create();
             knowledge.ApplicationIds.Add(application.Id);
 
-            // Mock para garantir que o Knowledge existe no repositório
             _knowledgeRepositoryMock.Setup(r => r.GetByIdAsync(knowledge.Id)).ReturnsAsync(knowledge);
 
             var validatorMock = new Mock<IValidator<Knowledge>>();
@@ -716,7 +708,6 @@ namespace Application.Tests.Services
             var localizerFactory = LocalizerFactorHelper.Create();
             var validator = new KnowledgeValidator(localizerFactory);
             var knowledge = new Knowledge { MemberId = 1 };
-            // Não adiciona nada em ApplicationIds para garantir que está vazia
 
             // Act
             var result = await validator.ValidateAsync(knowledge);
@@ -791,8 +782,8 @@ namespace Application.Tests.Services
         {
             var applications = new List<ApplicationData>
             {
-                new ApplicationData("App1") { Id = 1 },
-                new ApplicationData("App2") { Id = 2 }
+                new("App1") { Id = 1 },
+                new("App2") { Id = 2 }
             };
             _knowledgeRepositoryMock.Setup(r => r.ListApplicationsByMemberAsync(1, KnowledgeStatus.Atual)).ReturnsAsync(applications);
 
@@ -845,8 +836,8 @@ namespace Application.Tests.Services
         {
             var applications = new List<ApplicationData>
             {
-                new ApplicationData("App1") { Id = 1, SquadId = 10 },
-                new ApplicationData("App2") { Id = 2, SquadId = 10 }
+                new("App1") { Id = 1, SquadId = 10 },
+                new("App2") { Id = 2, SquadId = 10 }
             };
             var pagedResult = new PagedResult<ApplicationData> { Result = applications, Page = 1, PageSize = 10, Total = 2 };
 

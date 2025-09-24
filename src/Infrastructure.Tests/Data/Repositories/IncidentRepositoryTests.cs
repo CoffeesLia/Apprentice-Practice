@@ -16,7 +16,6 @@ namespace Infrastructure.Tests.Data.Repositories
         private bool isDisposed;
         private IntPtr nativeResource = Marshal.AllocHGlobal(100);
 
-
         public IncidentRepositoryTests()
         {
             _fixture = new Fixture();
@@ -73,7 +72,6 @@ namespace Infrastructure.Tests.Data.Repositories
             await _context.Set<ApplicationData>().AddAsync(application);
             await _context.SaveChangesAsync();
 
-            // Reutilize a instância rastreada de ApplicationData
             var trackedApplication = await _context.Set<ApplicationData>().FirstAsync(a => a.Id == application.Id);
 
             IncidentFilter filter = new()
@@ -97,7 +95,6 @@ namespace Infrastructure.Tests.Data.Repositories
             await _context.Set<Incident>().AddRangeAsync(incidents);
             await _context.SaveChangesAsync();
 
-            // Verifique se os dados foram salvos corretamente
             List<Incident> savedIncidents = await _context.Set<Incident>().ToListAsync();
             Assert.Equal(Count, savedIncidents.Count);
 
@@ -204,8 +201,8 @@ namespace Infrastructure.Tests.Data.Repositories
             var squad = new Squad
             {
                 Id = 1,
-                Name = "Squad Alpha", // Propriedade obrigatória
-                Description = "Squad de testes", // Propriedade obrigatória
+                Name = "Squad Alpha", 
+                Description = "Squad de testes",
             };
             var application = new ApplicationData("App") { Id = 1, SquadId = squad.Id, Squad = squad };
             await _context.Set<Squad>().AddAsync(squad);

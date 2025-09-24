@@ -89,7 +89,6 @@ namespace Infrastructure.Tests.Data.Repositories
 
             await _repository.CreateAssociationAsync(knowledge);
 
-            // Busque o Knowledge realmente persistido
             var persistedKnowledge = _context.Set<Knowledge>()
                 .FirstOrDefault(k =>
                     k.MemberId == member.Id &&

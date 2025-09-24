@@ -29,13 +29,11 @@ namespace WebApi.Tests.Controllers
             var localizerFactory = LocalizerFactorHelper.Create();
 
             _fixture = new Fixture();
-            // Evita exceção de referência circular no AutoFixture
             _fixture.Behaviors
                 .OfType<ThrowingRecursionBehavior>()
                 .ToList()
                 .ForEach(b => _fixture.Behaviors.Remove(b));
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
-            // Configura o AutoFixture para gerar valores válidos para o Status
             _fixture.Customize<IncidentDto>(c => c
                 .With(dto => dto.Status, () => _fixture.Create<Stellantis.ProjectName.WebApi.Dto.IncidentStatus>()));
 

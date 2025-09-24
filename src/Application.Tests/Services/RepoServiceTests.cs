@@ -13,7 +13,6 @@ using Stellantis.ProjectName.Application.Validators;
 using Stellantis.ProjectName.Domain.Entities;
 using Xunit;
 
-
 namespace Application.Tests.Services
 {
     public class RepoServiceTests
@@ -43,9 +42,7 @@ namespace Application.Tests.Services
              .ToList()
              .ForEach(b => _fixture.Behaviors.Remove(b));
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
-
         }
-
 
         [Fact]
         public async Task CreateAsyncShouldReturnInvalidRepoName()
@@ -105,7 +102,6 @@ namespace Application.Tests.Services
                 ApplicationId = 1
             };
 
-            // Força o validador a retornar inválido
             var localizer = Helpers.LocalizerFactorHelper.Create();
             var validator = new RepoValidator(localizer);
             var service = new RepoService(_unitOfWorkMock.Object, localizer, validator);
@@ -116,7 +112,6 @@ namespace Application.Tests.Services
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
         }
-
 
         [Fact]
         public async Task DeleteAsyncRepoExistsReturnsSuccess()
@@ -393,13 +388,11 @@ namespace Application.Tests.Services
                 ApplicationId = 1
             };
 
-            // Mock do validador para retornar válido
             var validatorMock = new Mock<IValidator<Repo>>();
             validatorMock
                 .Setup(v => v.ValidateAsync(repo, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new ValidationResult());
 
-            // Mock do repositório para garantir unicidade
             _repoRepositoryMock
                 .Setup(r => r.NameAlreadyExists(repo.Name, repo.ApplicationId))
                 .ReturnsAsync(false);
@@ -408,7 +401,6 @@ namespace Application.Tests.Services
                 .Setup(r => r.UrlAlreadyExists(repo.Url, null))
                 .ReturnsAsync(false);
 
-            // Instancia o serviço com o validador mockado
             var repoService = new RepoService(_unitOfWorkMock.Object, Helpers.LocalizerFactorHelper.Create(), validatorMock.Object);
 
             // Act
@@ -448,7 +440,7 @@ namespace Application.Tests.Services
                 Name = "Valid Name",
                 Description = "Descrição",
                 Url = new Uri("https://exemplo.com"),
-                ApplicationId = 0 // ou -1, conforme sua regra
+                ApplicationId = 0 
             };
             var localizerFactory = Helpers.LocalizerFactorHelper.Create();
             var validator = new RepoValidator(localizerFactory);
@@ -458,7 +450,6 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Contains(result.Errors, e => e.PropertyName == nameof(repo.ApplicationId) && e.ErrorMessage == RepoResources.ApplicationIdIsRequired);
-
         }
 
         [Fact]
@@ -469,7 +460,7 @@ namespace Application.Tests.Services
             {
                 Name = "Valid Name",
                 Description = "Descrição",
-                Url = null!, // Url inválida
+                Url = null!, 
                 ApplicationId = 1
             };
             var localizerFactory = Helpers.LocalizerFactorHelper.Create();
@@ -480,7 +471,6 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Contains(result.Errors, e => e.PropertyName == nameof(repo.Url) && e.ErrorMessage == RepoResources.UrlIsInvalid);
-
         }
     }
 }

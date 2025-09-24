@@ -116,8 +116,6 @@ namespace WebApi.Tests.Controllers
             Assert.IsType<NotFoundResult>(result.Result);
         }
 
-
-
         [Fact]
         public async Task UpdateAsyncShouldReturnOkResultWhenApplicationDataIsValid()
         {
@@ -228,7 +226,6 @@ namespace WebApi.Tests.Controllers
             Assert.Contains($"application_{id}_", fileResult.FileDownloadName, StringComparison.Ordinal);
             Assert.EndsWith(".pdf", fileResult.FileDownloadName, StringComparison.Ordinal);
         }
-
     }
 }
 

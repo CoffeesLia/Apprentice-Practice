@@ -156,7 +156,6 @@ namespace Infrastructure.Tests.Data.Repositories
             Assert.Equal(entity.Id, result.Id);
         }
 
-
         [Fact]
         public async Task GetListAsyncByAllCriteria()
         {
@@ -213,7 +212,6 @@ namespace Infrastructure.Tests.Data.Repositories
             Assert.True(result);
         }
 
-
         [Fact]
         public async Task IsResponsibleFromAreaShouldReturnFalseWhenResponsibleDoesNotExist()
         {
@@ -227,7 +225,6 @@ namespace Infrastructure.Tests.Data.Repositories
             // Assert
             Assert.False(result);
         }
-
 
         [Fact]
         public async Task GetListAsyncWithFilterReturnsFilteredList()
@@ -338,8 +335,6 @@ namespace Infrastructure.Tests.Data.Repositories
             Assert.Equal(filter.Page, result.Page);
             Assert.Equal(filter.PageSize, result.PageSize);
         }
-
-
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposed && disposing && _context != null)
@@ -349,7 +344,6 @@ namespace Infrastructure.Tests.Data.Repositories
             }
             _disposed = true;
         }
-
 
         public void Dispose()
         {
@@ -363,4 +357,3 @@ namespace Infrastructure.Tests.Data.Repositories
         }
     }
 }
-

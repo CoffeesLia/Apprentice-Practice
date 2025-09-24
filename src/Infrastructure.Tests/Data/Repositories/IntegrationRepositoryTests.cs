@@ -171,7 +171,6 @@ namespace Infrastructure.Tests.Data.Repositories
             await _context.Set<Integration>().AddAsync(integration);
             await _context.SaveChangesAsync();
 
-            // Atualiza o nome da entidade para o valor esperado
             integration.Name = IntegrationResources.UpdatedSuccessfully;
 
             // Act  
@@ -195,7 +194,6 @@ namespace Infrastructure.Tests.Data.Repositories
             // Assert  
             Assert.False(result);
         }
-
 
         [Fact]
         public async Task VerifyDescriptionExistsAsyncItWhenDescriptionExists()
@@ -240,14 +238,12 @@ namespace Infrastructure.Tests.Data.Repositories
             });
         }
 
-
         [Fact]
         public async Task DeleteAsyncWithNullEntityThrowsException()
         {
             // Act & Assert
             await Assert.ThrowsAsync<ArgumentNullException>(() => _repository.DeleteAsync((Integration)null!));
         }
-
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposed)

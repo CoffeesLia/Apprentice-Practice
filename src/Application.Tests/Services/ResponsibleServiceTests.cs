@@ -205,7 +205,6 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.Conflict, result.Status);
         }
 
-
         [Fact]
         public async Task UpdateAsyncWhenItemIsNull()
         {
@@ -227,7 +226,6 @@ namespace Application.Tests.Services
             // Assert
             Assert.Equal(OperationStatus.NotFound, result.Status);
         }
-
 
         [Fact]
         public async Task DeleteAsyncWhenItemDoesNotExist()

@@ -79,7 +79,7 @@ namespace Application.Tests.Services
                 Title = "",
                 Description = "",
                 ApplicationId = 0,
-                Members = new List<Member>()
+                Members = []
             };
 
             var result = await _incidentService.CreateAsync(incident);
@@ -89,7 +89,6 @@ namespace Application.Tests.Services
             Assert.Contains(IncidentResource.TitleRequired, result.Errors);
             Assert.Contains(IncidentResource.ApplicationRequired, result.Errors);
             Assert.Contains(IncidentResource.DescriptionRequired, result.Errors);
-
         }
 
         [Fact]
@@ -100,7 +99,7 @@ namespace Application.Tests.Services
                 Title = "Teste",
                 Description = "Desc",
                 ApplicationId = 1,
-                Members = new List<Member>()
+                Members = []
             };
 
             _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(incident.ApplicationId)).ReturnsAsync((ApplicationData?)null);
@@ -119,13 +118,13 @@ namespace Application.Tests.Services
                 Title = "Teste",
                 Description = "Desc",
                 ApplicationId = 1,
-                Members = new List<Member> { member }
+                Members = [member]
             };
             var app = new ApplicationData("App") { Id = 1, SquadId = 1, ProductOwner = "PO" };
 
             _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(incident.ApplicationId)).ReturnsAsync(app);
             _memberRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Member, bool>>>(), null, null, null, 1, 10))
-                .ReturnsAsync(new PagedResult<Member> { Result = new List<Member> { member } });
+                .ReturnsAsync(new PagedResult<Member> { Result = [member] });
 
             var result = await _incidentService.CreateAsync(incident);
 
@@ -141,13 +140,13 @@ namespace Application.Tests.Services
                 Title = "Teste",
                 Description = "Desc",
                 ApplicationId = 1,
-                Members = new List<Member> { member }
+                Members = [member]
             };
             var app = new ApplicationData("App") { Id = 1, SquadId = 1, ProductOwner = "PO" };
 
             _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(incident.ApplicationId)).ReturnsAsync(app);
             _memberRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Member, bool>>>(), null, null, null, 1, 10))
-                .ReturnsAsync(new PagedResult<Member> { Result = new List<Member> { member } });
+                .ReturnsAsync(new PagedResult<Member> { Result = [member] });
             _incidentRepositoryMock.Setup(r => r.CreateAsync(It.IsAny<Incident>(), true)).Returns(Task.CompletedTask);
 
             var result = await _incidentService.CreateAsync(incident);
@@ -188,7 +187,7 @@ namespace Application.Tests.Services
                 Title = "Teste",
                 Description = "Desc",
                 ApplicationId = 1,
-                Members = new List<Member>()
+                Members = []
             };
             _incidentRepositoryMock.Setup(r => r.GetByIdAsync(incident.Id)).ReturnsAsync(incident);
 
@@ -226,7 +225,7 @@ namespace Application.Tests.Services
                 Description = "Old",
                 ApplicationId = 1,
                 Application = app,
-                Members = new List<Member>()
+                Members = []
             };
             var incident = new Incident
             {
@@ -235,13 +234,12 @@ namespace Application.Tests.Services
                 Description = "",
                 ApplicationId = 1,
                 Application = app,
-                Members = new List<Member>()
+                Members = []
             };
 
             _incidentRepositoryMock.Setup(r => r.GetByIdAsync(incident.Id)).ReturnsAsync(existing);
-            // Mock para evitar NullReference ao buscar membros
             _memberRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Member, bool>>>(), null, null, null, 1, 10))
-                .ReturnsAsync(new PagedResult<Member> { Result = new List<Member>() });
+                .ReturnsAsync(new PagedResult<Member> { Result = [] });
 
             var result = await _incidentService.UpdateAsync(incident);
 
@@ -259,7 +257,7 @@ namespace Application.Tests.Services
                 Description = "Old",
                 ApplicationId = 1,
                 Application = app,
-                Members = new List<Member>()
+                Members = []
             };
             var incident = new Incident
             {
@@ -268,13 +266,13 @@ namespace Application.Tests.Services
                 Description = "Desc",
                 ApplicationId = 1,
                 Application = app,
-                Members = new List<Member>()
+                Members = []
             };
 
             _incidentRepositoryMock.Setup(r => r.GetByIdAsync(incident.Id)).ReturnsAsync(existing);
             _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(incident.ApplicationId)).ReturnsAsync((ApplicationData?)null);
             _memberRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Member, bool>>>(), null, null, null, 1, 10))
-                .ReturnsAsync(new PagedResult<Member> { Result = new List<Member>() });
+                .ReturnsAsync(new PagedResult<Member> { Result = [] });
 
             var result = await _incidentService.UpdateAsync(incident);
 
@@ -285,14 +283,14 @@ namespace Application.Tests.Services
         public async Task UpdateAsyncShouldReturnConflictWhenMemberNotInSquad()
         {
             var member = new Member { Id = 1, Name = "M", Role = "Dev", Cost = 1, Email = "m@x.com", SquadId = 99 };
-            var existing = new Incident { Id = 1, Title = "Old", Description = "Old", ApplicationId = 1, Members = new List<Member>() };
-            var incident = new Incident { Id = 1, Title = "Teste", Description = "Desc", ApplicationId = 1, Members = new List<Member> { member } };
+            var existing = new Incident { Id = 1, Title = "Old", Description = "Old", ApplicationId = 1, Members = [] };
+            var incident = new Incident { Id = 1, Title = "Teste", Description = "Desc", ApplicationId = 1, Members = [member] };
             var app = new ApplicationData("App") { Id = 1, SquadId = 1, ProductOwner = "PO" };
 
             _incidentRepositoryMock.Setup(r => r.GetByIdAsync(incident.Id)).ReturnsAsync(existing);
             _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(incident.ApplicationId)).ReturnsAsync(app);
             _memberRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Member, bool>>>(), null, null, null, 1, 10))
-                .ReturnsAsync(new PagedResult<Member> { Result = new List<Member> { member } });
+                .ReturnsAsync(new PagedResult<Member> { Result = [member] });
 
             var result = await _incidentService.UpdateAsync(incident);
 
@@ -303,14 +301,14 @@ namespace Application.Tests.Services
         public async Task UpdateAsyncShouldReturnSuccessWhenValid()
         {
             var member = new Member { Id = 1, Name = "M", Role = "Dev", Cost = 1, Email = "m@x.com", SquadId = 1 };
-            var existing = new Incident { Id = 1, Title = "Old", Description = "Old", ApplicationId = 1, Members = new List<Member>() };
-            var incident = new Incident { Id = 1, Title = "Teste", Description = "Desc", ApplicationId = 1, Members = new List<Member> { member } };
+            var existing = new Incident { Id = 1, Title = "Old", Description = "Old", ApplicationId = 1, Members = [] };
+            var incident = new Incident { Id = 1, Title = "Teste", Description = "Desc", ApplicationId = 1, Members = [member] };
             var app = new ApplicationData("App") { Id = 1, SquadId = 1, ProductOwner = "PO" };
 
             _incidentRepositoryMock.Setup(r => r.GetByIdAsync(incident.Id)).ReturnsAsync(existing);
             _applicationDataRepositoryMock.Setup(r => r.GetByIdAsync(incident.ApplicationId)).ReturnsAsync(app);
             _memberRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Member, bool>>>(), null, null, null, 1, 10))
-                .ReturnsAsync(new PagedResult<Member> { Result = new List<Member> { member } });
+                .ReturnsAsync(new PagedResult<Member> { Result = [member] });
             _incidentRepositoryMock.Setup(r => r.UpdateAsync(It.IsAny<Incident>(), true)).Returns(Task.CompletedTask);
 
             var result = await _incidentService.UpdateAsync(incident);
@@ -338,7 +336,7 @@ namespace Application.Tests.Services
                 Title = "Teste",
                 Description = "Desc",
                 ApplicationId = 1,
-                Members = new List<Member>()
+                Members = []
             };
             _incidentRepositoryMock.Setup(r => r.GetByIdAsync(incident.Id)).ReturnsAsync(incident);
             _incidentRepositoryMock.Setup(r => r.DeleteAsync(incident, true)).Returns(Task.CompletedTask);

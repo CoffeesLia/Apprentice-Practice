@@ -311,7 +311,6 @@ namespace Application.Tests.Services
             Assert.NotNull(result);
             Assert.Equal(OperationStatus.Success, result.Status);
 
-            // Verifica se os métodos foram chamados corretamente
             _managerRepositoryMock.Verify(repo => repo.VerifyNameExistsAsync(manager.Name), Times.Once);
             _managerRepositoryMock.Verify(repo => repo.GetListAsync(It.Is<ManagerFilter>(filter => filter.Name == manager.Name)), Times.Once);
         }
@@ -428,7 +427,6 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.NotFound, result.Status);
             Assert.Equal(localizedMessage, result.Message);
         }
-
 
         // Testa UpdateAsync quando a entidade é nula.
         [Fact]

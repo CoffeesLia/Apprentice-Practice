@@ -64,7 +64,6 @@ namespace Infrastructure.Tests.Data.Repositories
             Assert.Equal(100, result.Result.First().Cost);
         }
 
-
         [Fact]
         public async Task CreateAsyncShouldAddMember()
         {
@@ -148,7 +147,6 @@ namespace Infrastructure.Tests.Data.Repositories
             }
             _disposed = true;
         }
-
 
         public void Dispose()
         {

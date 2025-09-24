@@ -44,8 +44,6 @@ namespace Application.Tests.Services
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
         }
 
-
-
         [Fact]
         public async Task CreateAsyncWhenValidationFails()
         {
@@ -64,8 +62,6 @@ namespace Application.Tests.Services
             Assert.Contains(MemberResource.MemberNameIsRequired, result.Errors);
             Assert.Contains(MemberResource.MemberEmailIsRequired, result.Errors);
             Assert.Contains(MemberResource.MemberRoleIsRequired, result.Errors);
-
-
         }
 
         [Fact]
@@ -86,7 +82,6 @@ namespace Application.Tests.Services
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
             Assert.Equal(MemberResource.MemberCostRequired, result.Errors.First());
-
         }
 
         [Fact]
@@ -107,8 +102,6 @@ namespace Application.Tests.Services
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
             Assert.Equal(MemberResource.CostMemberLargestEqualZero, result.Errors.First());
-
-
         }
 
         [Fact]
@@ -125,12 +118,10 @@ namespace Application.Tests.Services
             validatorMock.Setup(v => v.ValidateAsync(member, default)).ReturnsAsync(validationResult);
             _memberRepositoryMock.Setup(r => r.IsEmailUnique(member.Email, null)).ReturnsAsync(false);
 
-            // Mock do SquadRepository
             var squadMock = new Mock<ISquadRepository>();
             _unitOfWorkMock.Setup(u => u.SquadRepository).Returns(squadMock.Object);
             squadMock.Setup(s => s.GetByIdAsync(member.SquadId)).ReturnsAsync(new Squad { Id = member.SquadId, Name = "Squad Test" });
 
-            // Crie o serviço usando o mock do validador
             var memberService = new MemberService(_unitOfWorkMock.Object, LocalizerFactorHelper.Create(), validatorMock.Object);
 
             // Act
@@ -140,7 +131,6 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.Conflict, result.Status);
             Assert.Equal(MemberResource.MemberEmailAlreadyExists, result.Message);
         }
-
 
         [Fact]
         public async Task CreateAsyncWhenSuccessful()
@@ -158,12 +148,10 @@ namespace Application.Tests.Services
             _memberRepositoryMock.Setup(r => r.IsEmailUnique(member.Email, null)).ReturnsAsync(true);
             _unitOfWorkMock.Setup(u => u.CommitAsync()).Returns(Task.CompletedTask);
 
-            // Mock do SquadRepository
             var squadMock = new Mock<ISquadRepository>();
             _unitOfWorkMock.Setup(u => u.SquadRepository).Returns(squadMock.Object);
             squadMock.Setup(s => s.GetByIdAsync(member.SquadId)).ReturnsAsync(new Squad { Id = member.SquadId, Name = "Squad Test" });
 
-            // Crie o serviço usando o mock do validador
             var memberService = new MemberService(_unitOfWorkMock.Object, LocalizerFactorHelper.Create(), validatorMock.Object);
 
             // Act
@@ -172,7 +160,6 @@ namespace Application.Tests.Services
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
         }
-
 
         [Fact]
         public async Task GetListAsyncShouldReturnPagedResult()
@@ -232,7 +219,6 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(OperationStatus.InvalidData, result.Status);
-
         }
 
         [Fact]
@@ -300,7 +286,6 @@ namespace Application.Tests.Services
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
         }
-
 
         [Fact]
         public async Task DeleteAsyncWhenItemDoesNotExist()

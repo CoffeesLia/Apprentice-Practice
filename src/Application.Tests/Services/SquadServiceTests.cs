@@ -187,8 +187,6 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.Conflict, result.Status);
         }
 
-
-
         [Fact]
         public async Task UpdateAsyncReturnsConflictWhenNameAlreadyExists()
         {
@@ -301,15 +299,14 @@ namespace Application.Tests.Services
             _squadRepositoryMock.Setup(r => r.GetByIdAsync(squadId)).ReturnsAsync(squad);
             _squadRepositoryMock.Setup(r => r.DeleteAsync(squadId, true)).Returns(Task.CompletedTask);
 
-            // Se o serviço verifica membros/aplicações, simule que não há vinculados:
             var memberRepoMock = new Mock<IMemberRepository>();
             memberRepoMock.Setup(m => m.GetListAsync(It.IsAny<MemberFilter>()))
-                .ReturnsAsync(new PagedResult<Member> { Result = new List<Member>(), Page = 1, PageSize = 10, Total = 0 });
+                .ReturnsAsync(new PagedResult<Member> { Result = [], Page = 1, PageSize = 10, Total = 0 });
             _unitOfWorkMock.Setup(u => u.MemberRepository).Returns(memberRepoMock.Object);
 
             var appRepoMock = new Mock<IApplicationDataRepository>();
             appRepoMock.Setup(a => a.GetListAsync(It.IsAny<Expression<Func<ApplicationData, bool>>>()))
-                .ReturnsAsync(new List<ApplicationData>());
+                .ReturnsAsync([]);
             _unitOfWorkMock.Setup(u => u.ApplicationDataRepository).Returns(appRepoMock.Object);
 
             // Act
@@ -588,8 +585,8 @@ namespace Application.Tests.Services
             var squad = new Squad { Id = squadId, Name = "Squad Teste" };
             var members = new List<Member>
             {
-                new Member { Name = "Member 1", Role = "Developer", Cost = 100, Email = "member1@example.com" },
-                new Member { Name = "Member 2", Role = "Tester", Cost = 200, Email = "member2@example.com" }
+                new() { Name = "Member 1", Role = "Developer", Cost = 100, Email = "member1@example.com" },
+                new() { Name = "Member 2", Role = "Tester", Cost = 200, Email = "member2@example.com" }
             };
             _squadRepositoryMock.Setup(r => r.GetByIdAsync(squadId)).ReturnsAsync(squad);
             _unitOfWorkMock.Setup(u => u.MemberRepository.GetListAsync(It.Is<MemberFilter>(f => f.SquadId == squadId)))
@@ -624,8 +621,8 @@ namespace Application.Tests.Services
             int squadId = 2;
             var members = new List<Member>
             {
-                new Member { Name = "Member 1", Role = "Developer", Cost = 100, Email = "member1@example.com" },
-                new Member { Name = "Member 2", Role = "Tester", Cost = 200, Email = "member2@example.com" }
+                new() { Name = "Member 1", Role = "Developer", Cost = 100, Email = "member1@example.com" },
+                new() { Name = "Member 2", Role = "Tester", Cost = 200, Email = "member2@example.com" }
             };
             _unitOfWorkMock.Setup(u => u.MemberRepository.GetListAsync(It.Is<MemberFilter>(f => f.SquadId == squadId)))
                 .ReturnsAsync(new PagedResult<Member> { Result = members, Page = 1, PageSize = 10, Total = 2 });
@@ -643,7 +640,7 @@ namespace Application.Tests.Services
             // Arrange
             int squadId = 3;
             _unitOfWorkMock.Setup(u => u.MemberRepository.GetListAsync(It.Is<MemberFilter>(f => f.SquadId == squadId)))
-                .ReturnsAsync(new PagedResult<Member> { Result = new List<Member>(), Page = 1, PageSize = 10, Total = 0 });
+                .ReturnsAsync(new PagedResult<Member> { Result = [], Page = 1, PageSize = 10, Total = 0 });
 
             // Act
             var totalCost = await _squadService.GetTotalCostAsync(squadId);
@@ -669,21 +666,18 @@ namespace Application.Tests.Services
             int squadId = 1;
             var squad = new Squad { Id = squadId, Name = "Squad Test" };
 
-            // Mock: Squad existe
             _squadRepositoryMock.Setup(r => r.VerifySquadExistsAsync(squadId)).ReturnsAsync(true);
             _squadRepositoryMock.Setup(r => r.GetByIdAsync(squadId)).ReturnsAsync(squad);
             _squadRepositoryMock.Setup(r => r.DeleteAsync(squadId, true)).Returns(Task.CompletedTask);
 
-            // Mock: Não há membros vinculados
             var memberRepoMock = new Mock<IMemberRepository>();
             memberRepoMock.Setup(m => m.GetListAsync(It.IsAny<MemberFilter>()))
-                .ReturnsAsync(new PagedResult<Member> { Result = new List<Member>(), Page = 1, PageSize = 10, Total = 0 });
+                .ReturnsAsync(new PagedResult<Member> { Result = [], Page = 1, PageSize = 10, Total = 0 });
             _unitOfWorkMock.Setup(u => u.MemberRepository).Returns(memberRepoMock.Object);
 
-            // Mock: Não há aplicações vinculadas
             var appRepoMock = new Mock<IApplicationDataRepository>();
             appRepoMock.Setup(a => a.GetListAsync(It.IsAny<Expression<Func<ApplicationData, bool>>>()))
-                .ReturnsAsync(new List<ApplicationData>());
+                .ReturnsAsync([]);
             _unitOfWorkMock.Setup(u => u.ApplicationDataRepository).Returns(appRepoMock.Object);
 
             // Act

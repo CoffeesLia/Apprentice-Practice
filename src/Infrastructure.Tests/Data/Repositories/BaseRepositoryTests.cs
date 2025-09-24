@@ -504,10 +504,7 @@ namespace Infrastructure.Tests.Data.Repositories
 
             if (disposing)
             {
-                if (_context != null)
-                {
-                    _context.Dispose();
-                }
+                _context?.Dispose();
             }
 
             if (nativeResource != IntPtr.Zero)

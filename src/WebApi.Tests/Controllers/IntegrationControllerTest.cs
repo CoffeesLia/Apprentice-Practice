@@ -1,4 +1,4 @@
-using AutoFixture;
+﻿using AutoFixture;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -46,6 +46,7 @@ namespace WebApi.Tests.Controllers
             var returnValue = Assert.IsType<PagedResultVm<IntegrationVm>>(((OkObjectResult)result).Value);
             Assert.Equal(pagedResult.Result.Count(), returnValue.Result.Count());
         }
+
         [Fact]
         public async Task GetListAsyncShouldReturnEmptyResultWhenNoIntegrationsExist()
         {
@@ -93,6 +94,7 @@ namespace WebApi.Tests.Controllers
             var integrationVm = Assert.IsType<IntegrationVm>(createdResult.Value);
             Assert.Equal(integration.Id, integrationVm.Id);
         }
+
         [Fact]
         public async Task GetAsyncShouldReturnOkResultWhenIntegrationExists()
         {
@@ -109,6 +111,7 @@ namespace WebApi.Tests.Controllers
             var returnValue = Assert.IsType<IntegrationVm>(okResult.Value);
             Assert.Equal(integration.Id, returnValue.Id);
         }
+
         [Fact]
         public async Task GetAsyncShouldReturnNotFoundResultWhenIntegrationDoesNotExist()
         {
@@ -120,6 +123,7 @@ namespace WebApi.Tests.Controllers
             // Assert
             Assert.IsType<NotFoundResult>(result.Result);
         }
+
         [Fact]
         public void IntegrationVmShouldSetPropertiesCorrectly()
         {
@@ -162,6 +166,7 @@ namespace WebApi.Tests.Controllers
             Assert.Equal(pagedResult.Total, returnValue.Total);
             Assert.Equal(pagedResult.Result.Count(), returnValue.Result.Count());
         }
+
         [Fact]
         public async Task UpdateAsyncShouldReturnOkResultWhenIntegrationIsUpdated()
         {

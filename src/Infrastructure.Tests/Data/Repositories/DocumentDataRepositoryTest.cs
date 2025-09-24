@@ -46,7 +46,6 @@ namespace Infrastructure.Tests.Data.Repositories
                 ApplicationId = applicationId
             };
 
-
             await _context.SaveChangesAsync();
 
             // Act
@@ -63,7 +62,6 @@ namespace Infrastructure.Tests.Data.Repositories
             // Act & Assert
             await Assert.ThrowsAsync<ArgumentNullException>(() => _repository.GetListAsync(null!));
         }
-
 
         [Fact]
         public async Task CreateAndGetByIdAsyncShouldPersistAndReturnDocument()
@@ -105,10 +103,6 @@ namespace Infrastructure.Tests.Data.Repositories
             // Assert
             Assert.Null(result);
         }
-
-
-
-
 
         [Fact]
         public async Task IsDocumentNameUniqueAsyncShouldReturnFalseIfExists()
@@ -157,7 +151,7 @@ namespace Infrastructure.Tests.Data.Repositories
             {
                 Name = _fixture.Create<string>(),
                 Url = url,
-                ApplicationId = applicationId // Use o mesmo applicationId
+                ApplicationId = applicationId 
             };
             await _repository.CreateAsync(document);
 
@@ -198,11 +192,9 @@ namespace Infrastructure.Tests.Data.Repositories
 
             if (disposing)
             {
-                // free managed resources
                 _context?.Dispose();
             }
 
-            // free native resources if there are any.
             if (nativeResource != IntPtr.Zero)
             {
                 Marshal.FreeHGlobal(nativeResource);

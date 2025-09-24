@@ -178,7 +178,7 @@ namespace Infrastructure.Tests.Data.Repositories
 
             // Act
             await _repository.DeleteAsync(area.Id);
-            await _context.SaveChangesAsync(); // Certifique-se de salvar as mudanças após a exclusão
+            await _context.SaveChangesAsync();
             Area? result = await _context.Set<Area>().FindAsync(area.Id);
 
             // Assert
@@ -246,11 +246,9 @@ namespace Infrastructure.Tests.Data.Repositories
 
             if (disposing)
             {
-                // free managed resources
                 _context?.Dispose();
             }
 
-            // free native resources if there are any.
             if (nativeResource != IntPtr.Zero)
             {
                 Marshal.FreeHGlobal(nativeResource);

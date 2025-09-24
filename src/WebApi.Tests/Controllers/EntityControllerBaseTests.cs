@@ -29,14 +29,10 @@ namespace WebApi.Tests.Controllers
         public new async Task<IActionResult> DeleteAsync(int id) => await base.DeleteAsync(id).ConfigureAwait(false);
 
         public async Task<IActionResult> UpdateBaseAsyncProxy(int id, DummyEntityDto? itemDto)
-#pragma warning disable CS8604 // Possível argumento de referência nula.
             => await UpdateBaseAsync<DummyVm>(id, itemDto).ConfigureAwait(false);
-#pragma warning restore CS8604 // Possível argumento de referência nula.
 
         public async Task<IActionResult> CreateBaseAsyncProxy<TEntityVm>(DummyEntityDto? itemDto) where TEntityVm : EntityVmBase
-#pragma warning disable CS8604 // Possível argumento de referência nula.
             => await CreateBaseAsync<TEntityVm>(itemDto).ConfigureAwait(false);
-#pragma warning restore CS8604 // Possível argumento de referência nula.
     }
 
     public class EntityControllerBaseTests
@@ -156,7 +152,7 @@ namespace WebApi.Tests.Controllers
             localizerFactoryMock.Setup(f => f.Create(It.IsAny<Type>())).Returns(localizerMock.Object);
 
             var validationResult = new FluentValidation.Results.ValidationResult(
-                new[] { new FluentValidation.Results.ValidationFailure("Prop", "Erro de validação") }
+                [new FluentValidation.Results.ValidationFailure("Prop", "Erro de validação")]
             );
             var operationResult = OperationResult.InvalidData(validationResult);
 
@@ -244,9 +240,8 @@ namespace WebApi.Tests.Controllers
             var localizerFactoryMock = new Mock<IStringLocalizerFactory>();
             localizerFactoryMock.Setup(f => f.Create(It.IsAny<Type>())).Returns(localizerMock.Object);
 
-            // Crie um ValidationResult falso para simular dados inválidos
             var validationResult = new FluentValidation.Results.ValidationResult(
-                new[] { new FluentValidation.Results.ValidationFailure("Prop", "Erro de validação") }
+                [new FluentValidation.Results.ValidationFailure("Prop", "Erro de validação")]
             );
             var operationResult = OperationResult.InvalidData(validationResult);
 
@@ -270,7 +265,6 @@ namespace WebApi.Tests.Controllers
             var serviceMock = new Mock<IEntityServiceBase<DummyEntity>>();
             var mapperMock = new Mock<IMapper>();
 
-            // Mock do localizer para retornar um LocalizedString válido
             var localizerMock = new Mock<IStringLocalizer>();
             localizerMock
                 .Setup(l => l[It.IsAny<string>()])
@@ -283,7 +277,6 @@ namespace WebApi.Tests.Controllers
 
             var controller = new DummyEntityController(serviceMock.Object, mapperMock.Object, localizerFactoryMock.Object);
 
-            // Expondo o método protegido via proxy
             async Task<IActionResult> ProxyCreateBaseAsync()
                 => await controller.CreateBaseAsyncProxy<DummyVm>(null).ConfigureAwait(false);
 
@@ -294,7 +287,6 @@ namespace WebApi.Tests.Controllers
             var badRequest = Assert.IsType<BadRequestObjectResult>(result);
             Assert.NotNull(badRequest.Value);
 
-            // Tente acessar a propriedade Message ou Error do objeto retornado
             var errorObj = badRequest.Value;
             var messageProp = errorObj.GetType().GetProperty("Message") ?? errorObj.GetType().GetProperty("Error");
             Assert.NotNull(messageProp);
@@ -350,7 +342,6 @@ namespace WebApi.Tests.Controllers
 
             var controller = new DummyEntityController(serviceMock.Object, mapperMock.Object, localizerFactoryMock.Object);
 
-            // Mock do mapeamento
             mapperMock.Setup(m => m.Map<DummyEntity>(It.IsAny<DummyEntityDto>())).Returns(new DummyEntity());
 
             // Act

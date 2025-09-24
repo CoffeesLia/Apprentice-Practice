@@ -162,7 +162,6 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.InvalidData, result.Status);
         }
 
-
         [Fact]
         public async Task CreateAsyncShouldReturnSuccessWhenValidIntegration()
         {
@@ -195,7 +194,6 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.InvalidData, result.Status);
         }
 
-
         [Fact]
         public async Task CreateAsyncShouldReturnErrorWhenDescriptionExist()
         {
@@ -214,7 +212,6 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-
         public async Task UpdateReturnValidatedChangeShouldReturnMessage()
         {
             // Arrange
@@ -228,7 +225,6 @@ namespace Application.Tests.Services
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
             Assert.Equal(IntegrationResources.UpdatedSuccessfully, result.Message);
-
         }
 
         [Fact]
@@ -260,7 +256,6 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-
         public async Task UpdateAsyncShouldReturnInvalidDataWhenNameAlreadyExistss()
         {
             // Arrange
@@ -276,7 +271,6 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-
         public async Task UpdateAsyncShouldReturnInvalidDataWhenDescriptionAlreadyExists()
         {
             // Arrange
@@ -292,7 +286,6 @@ namespace Application.Tests.Services
             // Assert
             Assert.Equal(OperationStatus.NotFound, result.Status);
         }
-
 
         [Fact]
         public async Task UpdateAsyncShouldReturnInvalidDataWhenNameAlreadyExists()
@@ -325,7 +318,6 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-
         public async Task DeleteAsyncReturnsErrorWhenIntegrationDoesNotExist()
         {
             // Arrange  
@@ -371,7 +363,6 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
-
         }
 
         [Fact]
@@ -387,7 +378,6 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-
         public async Task CreateAsyncShouldReturnErrorWhenApplicationIdNotExists()
         {
             // Arrange      
@@ -416,7 +406,6 @@ namespace Application.Tests.Services
         }
 
         [Fact]
-
         public async Task UpdateAsyncShouldReturnErrorWhenNameDontExist()
         {
             var integration = new Integration {Name = "" };
@@ -430,6 +419,7 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.InvalidData, result.Status);
 
         }
+
         [Fact]
         public async Task UpdateAsyncShouldReturnInvalidDataWhenNameAlreadyExistsRepositoryCheck()
         {
