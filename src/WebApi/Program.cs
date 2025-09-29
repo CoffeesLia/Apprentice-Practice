@@ -71,10 +71,11 @@ builder.Services.AddHttpClient<BranchService>((sp, client) =>
 {
     var config = sp.GetRequiredService<IConfiguration>();
     var baseUrl = config["Branch:BaseUrl"];
-    var token = config["Branch:PRIVATE-TOKEN"];
+    var token = config["Branch:Token"];
+    client.BaseAddress = new Uri(baseUrl!);
 
-    client.DefaultRequestHeaders.Authorization =
-        new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+    // GitLab usa PRIVATE-TOKEN
+    client.DefaultRequestHeaders.Add("PRIVATE-TOKEN", token);
 });
 string? databaseType = configuration["DatabaseType"];
 switch (databaseType)

@@ -16,21 +16,21 @@ namespace Stellantis.ProjectName.WebApi.Controllers
         public async Task<ActionResult<List<BranchDtoService>>> Get()
         {
             var branches = await _branchService.GetBranchesAsync().ConfigureAwait(false);
-            return Ok(branches);
+            return Ok(branches); 
         }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateBranchRequest dto)
         {
             var result = await _branchService.CreateBranchAsync(dto).ConfigureAwait(false);
-            return Ok(result);
+            return Ok(new { message = "Branch criada com sucesso", result });
         }
 
         [HttpDelete("{branchName}")]
         public async Task<IActionResult> Delete(string branchName)
         {
             var result = await _branchService.DeleteBranchAsync(branchName).ConfigureAwait(false);
-            return Ok(result);
+            return Ok(new { message = $"Branch '{branchName}' deletada com sucesso", result });
         }
     }
 }

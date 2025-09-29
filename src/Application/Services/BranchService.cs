@@ -19,7 +19,7 @@ namespace Stellantis.ProjectName.Application.Services
             ArgumentNullException.ThrowIfNull(configuration);
 
             var projectId = configuration["Branch:ProjectId"];
-            var token = configuration["Branch:PRIVATE-TOKEN"];
+            var token = configuration["Branch:Token"];
             var baseUrl = configuration["Branch:BaseUrl"];
 
             ArgumentNullException.ThrowIfNull(projectId);
