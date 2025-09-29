@@ -35,7 +35,6 @@ namespace Stellantis.ProjectName.IoC
             services.AddScoped<IValidator<Incident>, IncidentValidator>();
             services.AddScoped<IValidator<DocumentData>, DocumentDataValidator>();
             services.AddScoped<IValidator<Knowledge>, KnowledgeValidator>();
-
         }
 
         private static void Services(IServiceCollection services)
@@ -71,7 +70,6 @@ namespace Stellantis.ProjectName.IoC
             services.AddScoped<IIncidentRepository, IncidentRepository>();
             services.AddScoped<IDocumentRepository, DocumentDataRepository>();
             services.AddScoped<IKnowledgeRepository, KnowledgeRepository>();
-
             services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
     }

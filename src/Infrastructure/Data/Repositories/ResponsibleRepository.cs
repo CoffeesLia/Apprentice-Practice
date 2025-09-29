@@ -59,7 +59,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 sort: filter.Sort,
                 sortDir: filter.SortDir,
                 includeProperties: nameof(Responsible.Area)
-                ).ConfigureAwait(false);
+            ).ConfigureAwait(false);
         }
 
         public async Task<bool> VerifyEmailAlreadyExistsAsync(string email)

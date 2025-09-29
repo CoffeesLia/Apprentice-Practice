@@ -1,6 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using Stellantis.ProjectName.Application.Models;
-using Stellantis.ProjectName.Application.Models.Filters;
+﻿using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Interfaces.Services

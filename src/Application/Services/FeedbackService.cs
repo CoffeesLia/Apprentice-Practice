@@ -26,37 +26,32 @@ namespace Stellantis.ProjectName.Application.Services
         {
             ArgumentNullException.ThrowIfNull(item);
 
-            // Força o status para "Em Aberto" ao criar
             item.Status = FeedbackStatus.Open;
 
-            // Se vier apenas os IDs dos membros (ex: [{ Id = 1 }, { Id = 2 }]), busque os membros completos
             if (item.Members != null && item.Members.Count > 0)
             {
                 var memberIds = item.Members.Select(m => m.Id).ToList();
                 var pagedMembers = await UnitOfWork.MemberRepository
                     .GetListAsync(m => memberIds.Contains(m.Id)).ConfigureAwait(false);
-                item.Members = pagedMembers.Result.ToList();
+                item.Members = [.. pagedMembers.Result];
             }
             else
             {
-                item.Members = new List<Member>();
+                item.Members = [];
             }
 
-            // Validação do objeto pelo FluentValidation
             var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
             if (!validationResult.IsValid)
             {
                 return OperationResult.InvalidData(validationResult);
             }
 
-            // Verificar se a aplicação existe
             var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(item.ApplicationId).ConfigureAwait(false);
             if (application == null)
             {
                 return OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
             }
 
-            // Validar se os membros estão no squad da aplicação
             if (item.Members != null && item.Members.Count > 0)
             {
                 var squadId = application.SquadId;
@@ -94,16 +89,14 @@ namespace Stellantis.ProjectName.Application.Services
             }
 
             var previousStatus = existingFeedback.Status;
-            var oldMemberIds = existingFeedback.Members?.Select(m => m.Id).ToHashSet() ?? new HashSet<int>();
-            var oldMembers = existingFeedback.Members?.ToList() ?? new List<Member>();
+            var oldMemberIds = existingFeedback.Members?.Select(m => m.Id).ToHashSet() ?? [];
+            var oldMembers = existingFeedback.Members?.ToList() ?? [];
 
-            // Atualiza propriedades simples
             existingFeedback.Title = item.Title;
             existingFeedback.Description = item.Description;
             existingFeedback.Status = item.Status;
             existingFeedback.ApplicationId = item.ApplicationId;
 
-            // Atualiza a data de fechamento se o status for "Fechado"
             if (item.Status == FeedbackStatus.Closed && existingFeedback.ClosedAt == null)
             {
                 existingFeedback.ClosedAt = DateTime.UtcNow;
@@ -113,13 +106,15 @@ namespace Stellantis.ProjectName.Application.Services
                 existingFeedback.ClosedAt = null;
             }
 
-            List<Member> newMembers = new();
+            List<Member> newMembers = [];
             if (item.Members != null)
             {
                 var memberIds = item.Members.Select(m => m.Id).ToList();
                 var pagedMembers = await UnitOfWork.MemberRepository
                     .GetListAsync(m => memberIds.Contains(m.Id)).ConfigureAwait(false);
-                newMembers = pagedMembers.Result.ToList();
+                newMembers = [.. pagedMembers.Result];
+
+                existingFeedback.Members ??= [];
 
                 existingFeedback.Members.Clear();
                 foreach (var member in newMembers)
@@ -171,7 +166,7 @@ namespace Stellantis.ProjectName.Application.Services
                 foreach (var member in addedMembers)
                 {
                     var message = _notificationLocalizer["FeedbackAddMember", member.Name, existingFeedback.Title];
-                    await _notificationService.NotifyMembersAsync(new[] { member }, message).ConfigureAwait(false);
+                    await _notificationService.NotifyMembersAsync([member], message).ConfigureAwait(false);
                 }
             }
 
@@ -182,7 +177,7 @@ namespace Stellantis.ProjectName.Application.Services
                 foreach (var member in removedMembers)
                 {
                     var message = _notificationLocalizer["FeedbackRemoveMember", member.Name, existingFeedback.Title];
-                    await _notificationService.NotifyMembersAsync(new[] { member }, message).ConfigureAwait(false);
+                    await _notificationService.NotifyMembersAsync([member], message).ConfigureAwait(false);
                 }
             }
 
@@ -197,10 +192,10 @@ namespace Stellantis.ProjectName.Application.Services
                 : OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
         }
 
-        public async Task<PagedResult<Feedback>> GetListAsync(FeedbackFilter feedbackFilter)
+        public async Task<PagedResult<Feedback>> GetListAsync(FeedbackFilter filter)
         {
-            feedbackFilter ??= new FeedbackFilter();
-            return await UnitOfWork.FeedbackRepository.GetListAsync(feedbackFilter).ConfigureAwait(false);
+            filter ??= new FeedbackFilter();
+            return await UnitOfWork.FeedbackRepository.GetListAsync(filter).ConfigureAwait(false);
         }
 
         public async Task<IEnumerable<Member>> GetMembersByApplicationIdAsync(int applicationId)

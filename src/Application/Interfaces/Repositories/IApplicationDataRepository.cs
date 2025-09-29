@@ -11,6 +11,5 @@ namespace Stellantis.ProjectName.Application.Interfaces.Repositories
         Task<ApplicationData?> GetFullByIdAsync(int id);
         Task<bool> IsResponsibleFromArea(int areaId, int responsibleId);
         Task<List<ApplicationData>> GetListAsync(Expression<Func<ApplicationData, bool>> filter);
-
     }
 }

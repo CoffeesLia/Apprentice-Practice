@@ -1,7 +1,6 @@
 ﻿#if DEBUG
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
-using Stellantis.ProjectName.WebApi.Hubs;
 
 namespace Stellantis.ProjectName.WebApi
 {
@@ -11,11 +10,9 @@ namespace Stellantis.ProjectName.WebApi
         {
             if (databaseType == "InMemory")
             {
-                // Popula o banco com dados de teste
                 using IServiceScope scope = app.Services.CreateScope();
                 Context context = scope.ServiceProvider.GetRequiredService<Context>();
                 await context.Database.EnsureCreatedAsync().ConfigureAwait(false);
-
 
                 // Mensagens de chat
                 context.ChatMessages.AddRange(
@@ -325,7 +322,7 @@ namespace Stellantis.ProjectName.WebApi
                         CreatedAt = DateTime.UtcNow.AddDays(-5),
                         Status = IncidentStatus.Open,
                         ApplicationId = 1,
-                        Members = context.Members.Where(m => m.SquadId == 1).ToList()
+                        Members = [.. context.Members.Where(m => m.SquadId == 1)]
                     },
                     new Incident
                     {
@@ -334,7 +331,7 @@ namespace Stellantis.ProjectName.WebApi
                         CreatedAt = DateTime.UtcNow.AddDays(-3),
                         Status = IncidentStatus.Open,
                         ApplicationId = 2,
-                        Members = context.Members.Where(m => m.SquadId == 2).ToList()
+                        Members = [.. context.Members.Where(m => m.SquadId == 2)]
                     },
                     new Incident
                     {
@@ -343,7 +340,7 @@ namespace Stellantis.ProjectName.WebApi
                         CreatedAt = DateTime.UtcNow.AddDays(-2),
                         Status = IncidentStatus.InProgress,
                         ApplicationId = 3,
-                        Members = context.Members.Where(m => m.SquadId == 3).ToList()
+                        Members = [.. context.Members.Where(m => m.SquadId == 3)]
                     },
                     new Incident
                     {
@@ -352,7 +349,7 @@ namespace Stellantis.ProjectName.WebApi
                         CreatedAt = DateTime.UtcNow.AddDays(-1),
                         Status = IncidentStatus.Open,
                         ApplicationId = 4,
-                        Members = context.Members.Where(m => m.SquadId == 4).ToList()
+                        Members = [.. context.Members.Where(m => m.SquadId == 4)]
                     },
                     new Incident
                     {
@@ -361,30 +358,9 @@ namespace Stellantis.ProjectName.WebApi
                         CreatedAt = DateTime.UtcNow,
                         Status = IncidentStatus.Open,
                         ApplicationId = 9,
-                        Members = context.Members.Where(m => m.SquadId == 5).ToList()
+                        Members = [.. context.Members.Where(m => m.SquadId == 5)]
                     }
                 );
-
-                // Knowledges
-                //context.Knowledges.AddRange(
-                //    new Knowledge { MemberId = 1, ApplicationIds = 1, SquadId = 1, Status = KnowledgeStatus.Atual }, // Matheus
-                //    new Knowledge { MemberId = 2, ApplicationIds = 2, SquadId = 1, Status = KnowledgeStatus.Atual }, // Patricia
-                //    new Knowledge { MemberId = 3, ApplicationIds = 4, SquadId = 4, Status = KnowledgeStatus.Atual }, // Jardel
-                //    new Knowledge { MemberId = 4, ApplicationIds = 3, SquadId = 3, Status = KnowledgeStatus.Atual }, // Vitória
-                //    new Knowledge { MemberId = 5, ApplicationIds = 5, SquadId = 5, Status = KnowledgeStatus.Atual }, // Andryel
-                //    new Knowledge { MemberId = 6, ApplicationIds = 6, SquadId = 6, Status = KnowledgeStatus.Atual }, // Ana
-                //    new Knowledge { MemberId = 7, ApplicationIds = 2, SquadId = 2, Status = KnowledgeStatus.Atual }, // Cecília
-                //    new Knowledge { MemberId = 8, ApplicationIds = 1, SquadId = 1, Status = KnowledgeStatus.Atual }, // João Silva
-                //    new Knowledge { MemberId = 9, ApplicationIds = 4, SquadId = 4, Status = KnowledgeStatus.Atual }, // Maria Oliveira
-                //    new Knowledge { MemberId = 10, ApplicationIds = 3, SquadId = 3, Status = KnowledgeStatus.Atual }, // Pedro Santos
-                //    new Knowledge { MemberId = 11, ApplicationIds = 5, SquadId = 5, Status = KnowledgeStatus.Atual }, // Ana Costa
-                //    new Knowledge { MemberId = 12, ApplicationIds = 12, SquadId = 6, Status = KnowledgeStatus.Atual }, // Lucas Almeida
-                //    new Knowledge { MemberId = 13, ApplicationIds = 2, SquadId = 2, Status = KnowledgeStatus.Atual }, // Carla Mendes
-                //    new Knowledge { MemberId = 14, ApplicationIds = 1, SquadId = 1, Status = KnowledgeStatus.Atual }, // Rafael Lima
-                //    new Knowledge { MemberId = 15, ApplicationIds = 4, SquadId = 4, Status = KnowledgeStatus.Atual }, // Fernanda Souza
-                //    new Knowledge { MemberId = 16, ApplicationIds = 3, SquadId = 3, Status = KnowledgeStatus.Atual }, // Bruno Rocha
-                //    new Knowledge { MemberId = 17, ApplicationIds = 5, SquadId = 5, Status = KnowledgeStatus.Atual }  // Juliana Martins
-                //);
 
                 // Notificação
                 context.Notifications.AddRange(

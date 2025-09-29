@@ -1,4 +1,4 @@
-using AutoFixture;
+﻿using AutoFixture;
 using Microsoft.EntityFrameworkCore;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
@@ -59,7 +59,7 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
-        public async Task IsIntegrationNameUniqueAsync_ReturnsFalse_WhenNameExists()
+        public async Task IsIntegrationNameUniqueAsyncReturnsFalseWhenNameExists()
         {
             // Arrange
             _fixture.Behaviors.Remove(new ThrowingRecursionBehavior());
@@ -81,7 +81,7 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
-        public async Task IsIntegrationNameUniqueAsync_ReturnsTrue_WhenNameDoesNotExist()
+        public async Task IsIntegrationNameUniqueAsyncReturnsTrueWhenNameDoesNotExist()
         {
             // Arrange
             var name = _fixture.Create<string>();
@@ -94,7 +94,7 @@ namespace Infrastructure.Tests.Data.Repositories
         }
 
         [Fact]
-        public async Task IsIntegrationNameUniqueAsync_ReturnsTrue_WhenNameExistsButIdIsSame()
+        public async Task IsIntegrationNameUniqueAsyncReturnsTrueWhenNameExistsButIdIsSame()
         {
             // Arrange  
             var integration = new Integration { Name = "Test Name", Description = "Test Description", ApplicationDataId = 1 };
@@ -171,7 +171,6 @@ namespace Infrastructure.Tests.Data.Repositories
             await _context.Set<Integration>().AddAsync(integration);
             await _context.SaveChangesAsync();
 
-            // Atualiza o nome da entidade para o valor esperado
             integration.Name = IntegrationResources.UpdatedSuccessfully;
 
             // Act  
@@ -195,7 +194,6 @@ namespace Infrastructure.Tests.Data.Repositories
             // Assert  
             Assert.False(result);
         }
-
 
         [Fact]
         public async Task VerifyDescriptionExistsAsyncItWhenDescriptionExists()
@@ -240,14 +238,12 @@ namespace Infrastructure.Tests.Data.Repositories
             });
         }
 
-
         [Fact]
         public async Task DeleteAsyncWithNullEntityThrowsException()
         {
             // Act & Assert
             await Assert.ThrowsAsync<ArgumentNullException>(() => _repository.DeleteAsync((Integration)null!));
         }
-
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposed)

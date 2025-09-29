@@ -1,17 +1,16 @@
-﻿using FluentValidation;
+﻿using System.Globalization;
+using System.Text;
+using FluentValidation;
 using FluentValidation.Results;
 using Moq;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
-using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Application.Validators;
 using Stellantis.ProjectName.Domain.Entities;
-using System.Globalization;
-using System.Text;
 using Xunit;
 
 namespace Application.Tests.Services
@@ -36,7 +35,6 @@ namespace Application.Tests.Services
             _exportServiceMock = new Mock<ApplicationExportService>(_unitOfWorkMock.Object, localizer);
             _applicationDataService = new ApplicationDataService(_unitOfWorkMock.Object, localizer, applicationDataValidator);
 
-            // Injeta o mock no campo privado _exportService usando reflection
             typeof(ApplicationDataService)
                 .GetField("_exportService", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
                 ?.SetValue(_applicationDataService, _exportServiceMock.Object);
@@ -74,8 +72,6 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.InvalidData, result.Status);
             Assert.Equal(ApplicationDataResources.NameRequired, result.Errors.First());
         }
-
-
 
         [Fact]
         public async Task CreateAsyncShouldReturnInvalidDataWhenProductOwerIsRequired()
@@ -186,7 +182,6 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(OperationStatus.NotFound, result.Status);
-
         }
 
         [Fact]
@@ -268,7 +263,6 @@ namespace Application.Tests.Services
             Assert.Equal(ApplicationDataResources.AlreadyExists, result.Message);
         }
 
-
         [Fact]
         public async Task UpdateAsyncShouldReturnSuccessWhenApplicationDataIsValid()
         {
@@ -304,7 +298,6 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.Equal(OperationStatus.Success, result.Status);
-
         }
 
         [Fact]
@@ -350,8 +343,6 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.NotFound, result.Status);
         }
 
-
-
         [Fact]
         public async Task IsApplicationNameUniqueAsyncShouldReturnFalseWhenNameIsNullOrWhiteSpace()
         {
@@ -364,7 +355,6 @@ namespace Application.Tests.Services
             // Assert
             Assert.False(result);
         }
-
 
         [Fact]
         public async Task IsApplicationNameUniqueAsyncShouldReturnTrueWhenExistingItemsResultIsNull()
@@ -398,7 +388,6 @@ namespace Application.Tests.Services
             Assert.Equal(OperationStatus.InvalidData, result.Status);
             Assert.Equal(string.Format(CultureInfo.InvariantCulture, ApplicationDataResources.DescriptionValidateLength, ApplicationDataValidator.DescriptionMaxLength), result.Errors.First());
         }
-
 
         [Fact]
         public async Task IsResponsibleFromAreaReturnsTrueWhenResponsibleExistsAndAreaMatches()
@@ -584,8 +573,6 @@ namespace Application.Tests.Services
             var documentRepoMock = new Mock<IDocumentRepository>();
             documentRepoMock.Setup(r => r.GetListAsync(It.IsAny<DocumentDataFilter>()))
                 .ReturnsAsync(new PagedResult<DocumentData> { Result = [] });
-            // Substitua todas as ocorrências de "_unitOfWorkMock.Setup(u => u.DocumentRepository)" por "_unitOfWorkMock.Setup(u => u.DocumentDataRepository)"
-            // Exemplo de correção:
             _unitOfWorkMock.Setup(u => u.DocumentDataRepository).Returns(documentRepoMock.Object);
 
 
@@ -706,19 +693,16 @@ namespace Application.Tests.Services
             _unitOfWorkMock.Setup(u => u.ApplicationDataRepository.GetFullByIdAsync(42))
                 .ReturnsAsync(new ApplicationData("App42") { Id = 42 });
 
-            // Mock para membros
             var memberRepoMock = new Mock<IMemberRepository>();
             memberRepoMock.Setup(r => r.GetListAsync(It.IsAny<MemberFilter>()))
                 .ReturnsAsync(new PagedResult<Member> { Result = [] });
             _unitOfWorkMock.Setup(u => u.MemberRepository).Returns(memberRepoMock.Object);
 
-            // Mock para serviços
             var serviceRepoMock = new Mock<IServiceDataRepository>();
             serviceRepoMock.Setup(r => r.GetListAsync(It.IsAny<ServiceDataFilter>()))
                 .ReturnsAsync(new PagedResult<ServiceData> { Result = [] });
             _unitOfWorkMock.Setup(u => u.ServiceDataRepository).Returns(serviceRepoMock.Object);
 
-            // Mock para repositórios (repos)
             var repoRepoMock = new Mock<IRepoRepository>();
             repoRepoMock.Setup(r => r.GetListAsync(It.IsAny<RepoFilter>()))
                 .ReturnsAsync(new PagedResult<Repo> { Result = [] });
@@ -740,26 +724,22 @@ namespace Application.Tests.Services
             // Arrange
             var filter = new ApplicationFilter();
 
-            // Mock retorno de aplicações
             _unitOfWorkMock.Setup(u => u.ApplicationDataRepository.GetListAsync(filter))
                 .ReturnsAsync(new PagedResult<ApplicationData>
                 {
                     Result = [new ApplicationData("App1") { Id = 1, Area = new Area("Area1"), Responsible = new Responsible { Name = "Resp1", Email = "resp1@email.com", AreaId = 1 }, Squad = new Squad { Name = "Squad1" }, External = true }]
                 });
 
-            // Mock para membros
             var memberRepoMock = new Mock<IMemberRepository>();
             memberRepoMock.Setup(r => r.GetListAsync(It.IsAny<MemberFilter>()))
                 .ReturnsAsync(new PagedResult<Member> { Result = [] });
             _unitOfWorkMock.Setup(u => u.MemberRepository).Returns(memberRepoMock.Object);
 
-            // Mock para serviços
             var serviceRepoMock = new Mock<IServiceDataRepository>();
             serviceRepoMock.Setup(r => r.GetListAsync(It.IsAny<ServiceDataFilter>()))
                 .ReturnsAsync(new PagedResult<ServiceData> { Result = [] });
             _unitOfWorkMock.Setup(u => u.ServiceDataRepository).Returns(serviceRepoMock.Object);
 
-            // Mock para repositórios (repos)
             var repoRepoMock = new Mock<IRepoRepository>();
             repoRepoMock.Setup(r => r.GetListAsync(It.IsAny<RepoFilter>()))
                 .ReturnsAsync(new PagedResult<Repo> { Result = [] });
@@ -781,7 +761,6 @@ namespace Application.Tests.Services
             // Arrange
             var filter = new ApplicationFilter();
 
-            // Mock retorno de aplicações
             _unitOfWorkMock.Setup(u => u.ApplicationDataRepository.GetListAsync(filter))
                 .ReturnsAsync(new PagedResult<ApplicationData>
                 {

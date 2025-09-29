@@ -174,7 +174,6 @@ namespace Infrastructure.Tests.Data.Repositories
 
             var trackedMember = await _context.Members.FirstAsync(m => m.Name == member.Name);
 
-            // Crie e salve um feedback que relacione o member à application
             var feedback = _fixture.Build<Feedback>()
                 .With(f => f.ApplicationId, trackedApplication.Id)
                 .With(f => f.Application, trackedApplication)
@@ -240,7 +239,7 @@ namespace Infrastructure.Tests.Data.Repositories
 
             var filter = new FeedbackFilter
             {
-                Id = 123, // Ativa o filtro por Id
+                Id = 123,
                 Page = 1,
                 PageSize = 10
             };

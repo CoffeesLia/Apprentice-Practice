@@ -38,10 +38,7 @@ namespace WebApi.Tests.Controllers
              .ForEach(b => _fixture.Behaviors.Remove(b));
 
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
-
-
         }
-
 
         [Fact]
         public async Task GetListAsyncShouldReturnPagedResultVm()
@@ -80,7 +77,7 @@ namespace WebApi.Tests.Controllers
                 {
                     Id = 1,
                     Name = "App1",
-                    Area = new AreaVm(), // Assuming AreaVm is properly initialized elsewhere  
+                    Area = new AreaVm(),
                     External = false
                 }
             };
@@ -123,8 +120,6 @@ namespace WebApi.Tests.Controllers
                 Url = new Uri("https://example.com/doc2"),
                 ApplicationId = 2,
             };
-
-
 
             _serviceMock.Setup(s => s.CreateAsync(It.IsAny<DocumentData>()))
                 .ReturnsAsync(OperationResult.Complete("Registered successfully"));

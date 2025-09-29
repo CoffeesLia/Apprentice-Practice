@@ -47,7 +47,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             if (filter.Status.HasValue)
                 filters = filters.And(x => x.Status == filter.Status.Value);
 
-            // Busca paginada incluindo Application
             var pagedResult = await GetListAsync(
                 filter: filters,
                 pageSize: filter.PageSize,
@@ -59,7 +58,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             return pagedResult;
         }
 
-        // Implementação no FeedbackRepository
         public Task<IEnumerable<Member>> GetMembersByApplicationIdAsync(int applicationId)
         {
             var application = Context.Applications.FirstOrDefault(a => a.Id == applicationId);

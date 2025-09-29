@@ -8,6 +8,5 @@ namespace Stellantis.ProjectName.WebApi.Dto.Filters
         public int ApplicationId { get; set; }
         public int SquadId { get; set; }
         public KnowledgeStatus Status { get; set; }
-
     }
 }

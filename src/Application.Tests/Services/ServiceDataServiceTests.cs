@@ -101,7 +101,6 @@ namespace Application.Tests.Services
             _serviceRepositoryMock.Setup(r => r.VerifyNameExistsAsync(serviceData.Name))
                 .ReturnsAsync(true);
 
-            // Retorna apenas o próprio serviço (não há conflito)
             _serviceRepositoryMock.Setup(r => r.GetListAsync(It.IsAny<ServiceDataFilter>()))
                 .ReturnsAsync(new PagedResult<ServiceData>
                 {
@@ -111,7 +110,6 @@ namespace Application.Tests.Services
                     ]
                 });
 
-            // Simula sucesso no base.CreateAsync
             var serviceDataService = new ServiceDataService(_unitOfWorkMock.Object, localizerFactory, serviceDataValidator.Object);
 
             // Act
@@ -410,7 +408,6 @@ namespace Application.Tests.Services
             Assert.NotNull(result);
             Assert.Equal(OperationStatus.Success, result.Status);
 
-            // Verifica se os métodos foram chamados corretamente
             _serviceRepositoryMock.Verify(repo => repo.VerifyNameExistsAsync(serviceData.Name), Times.Once);
             _serviceRepositoryMock.Verify(repo => repo.GetListAsync(It.Is<ServiceDataFilter>(filter => filter.Name == serviceData.Name)), Times.Once);
         }
@@ -554,7 +551,7 @@ namespace Application.Tests.Services
             Assert.Equal(localizedMessage, result.Message);
         }
 
-        /// Testa se VerifyServiceExistsAsync retorna falso quando o serviço não existe.
+        // Testa se VerifyServiceExistsAsync retorna falso quando o serviço não existe.
         [Fact]
         public async Task VerifyServiceExistsAsyncShouldReturnFalseWhenServiceDoesNotExist()
         {

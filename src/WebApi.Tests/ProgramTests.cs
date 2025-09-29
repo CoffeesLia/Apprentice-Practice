@@ -11,13 +11,9 @@ namespace WebApi.Tests
 {
     public class ProgramTests
     {
-        private sealed class CustomWebApplicationFactory : WebApplicationFactory<Program>
+        private sealed class CustomWebApplicationFactory(string databaseType) : WebApplicationFactory<Program>
         {
-            private readonly string _databaseType;
-            public CustomWebApplicationFactory(string databaseType)
-            {
-                _databaseType = databaseType;
-            }
+            private readonly string _databaseType = databaseType;
 
             protected override void ConfigureWebHost(Microsoft.AspNetCore.Hosting.IWebHostBuilder builder)
             {

@@ -37,10 +37,9 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
             var query = Context.Set<ApplicationData>().AsQueryable();
 
-            if (!string.IsNullOrEmpty(applicationFilter.Name))
+            if (!string.IsNullOrWhiteSpace(applicationFilter.Name))
             {
-                var name = applicationFilter.Name.ToLowerInvariant();
-                filters = filters.And(a => a.Name != null && a.Name.ToLower().Contains(name));
+                filters = filters.And(x => x.Name != null && x.Name.ToLower().Contains(applicationFilter.Name.ToLower()));
             }
 
             if (applicationFilter.Id > 0)
@@ -68,15 +67,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 filters = filters.And(x => x.External == applicationFilter.External.Value);
             }
 
-            // Filtros por período
-            if (applicationFilter.CreatedAfter.HasValue)
-                filters = filters.And(x => x.CreatedAt >= applicationFilter.CreatedAfter.Value.Date); // início do dia
-
-            if (applicationFilter.CreatedBefore.HasValue)
-            {
-                var endOfDay = applicationFilter.CreatedBefore.Value.Date.AddDays(1).AddTicks(-1);
-                filters = filters.And(x => x.CreatedAt <= endOfDay); // final do dia
-            }
 
             return await GetListAsync(
 

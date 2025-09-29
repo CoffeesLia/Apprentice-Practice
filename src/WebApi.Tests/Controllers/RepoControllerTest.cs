@@ -41,7 +41,6 @@ namespace WebApi.Tests.Controllers
 
         }
 
-
         [Fact]
         public async Task GetListAsyncShouldReturnPagedResultVm()
         {
@@ -126,7 +125,6 @@ namespace WebApi.Tests.Controllers
                 ApplicationId = 2
             };
 
-
             _serviceMock.Setup(s => s.CreateAsync(It.IsAny<Repo>()))
                 .ReturnsAsync(OperationResult.Complete("Registered successfully"));
 
@@ -188,6 +186,4 @@ namespace WebApi.Tests.Controllers
             Assert.IsType<NotFoundResult>(result);
         }
     }
-}
-
-        
+} 

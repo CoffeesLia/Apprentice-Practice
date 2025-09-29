@@ -1,10 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Stellantis.ProjectName.Application.Models;
 using Stellantis.ProjectName.Application.Models.Filters;
 using Stellantis.ProjectName.Domain.Entities;
 using Stellantis.ProjectName.Infrastructure.Data;
 using Stellantis.ProjectName.Infrastructure.Data.Repositories;
-using Xunit;
 
 namespace Infrastructure.Tests.Data.Repositories
 {
@@ -16,7 +14,6 @@ namespace Infrastructure.Tests.Data.Repositories
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
         }
-
 
         [Fact]
         public async Task CreateAsyncShouldAddSquad()

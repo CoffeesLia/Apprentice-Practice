@@ -8,6 +8,5 @@ namespace Stellantis.ProjectName.Application.Interfaces.Repositories
         Task<PagedResult<Feedback>> GetListAsync(FeedbackFilter filter);
 
         Task<IEnumerable<Member>> GetMembersByApplicationIdAsync(int applicationId);
-
     }
 }

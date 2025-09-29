@@ -27,7 +27,6 @@ namespace Infrastructure.Tests.Data
         }
 
         [Fact]
-        [SuppressMessage("Blocker Code Smell", "S2699:Tests should include assertions", Justification = "It's a temporary code.")]
         public void ContextShouldHaveDbSetProperties()
         {
             // Act

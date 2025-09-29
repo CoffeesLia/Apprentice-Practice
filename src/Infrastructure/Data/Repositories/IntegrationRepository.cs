@@ -47,7 +47,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                 pageSize: filter.PageSize,
                 sort: filter.Sort,
                 sortDir: filter.SortDir
-                ).ConfigureAwait(false);
+            ).ConfigureAwait(false);
                 return pagedResult;
         }
         public async Task<bool> IsIntegrationNameUniqueAsync(string name, int? id = null)

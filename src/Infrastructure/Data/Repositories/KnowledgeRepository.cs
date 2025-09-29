@@ -20,6 +20,8 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         public async Task CreateAssociationAsync(Knowledge knowledge)
         {
+            ArgumentNullException.ThrowIfNull(knowledge);
+
             foreach (var appId in knowledge.ApplicationIds)
             {
                 if (!await AssociationExistsAsync(knowledge.MemberId, appId, knowledge.SquadId, knowledge.Status).ConfigureAwait(false))
@@ -30,9 +32,9 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
                         SquadId = knowledge.SquadId,
                         Status = knowledge.Status
                     };
-                    // Adiciona o ApplicationId e a entidade ApplicationData nas coleções
+
                     newKnowledge.ApplicationIds.Add(appId);
-                    var application = await Context.Set<ApplicationData>().FindAsync(appId);
+                    var application = await Context.Set<ApplicationData>().FindAsync(appId).ConfigureAwait(false);
                     if (application != null)
                         newKnowledge.Applications.Add(application);
 
@@ -108,6 +110,8 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
 
         public async Task<PagedResult<Knowledge>> GetListAsync(KnowledgeFilter filter)
         {
+            ArgumentNullException.ThrowIfNull(filter);
+
             var query = Context.Knowledges
                 .Include(k => k.Member)
                 .Include(k => k.Squad)
@@ -126,7 +130,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             if (filter.Status != 0)
                 query = query.Where(k => k.Status == filter.Status);
 
-            return await GetPagedResultAsync(query, filter.Page, filter.PageSize);
+            return await GetPagedResultAsync(query, filter.Page, filter.PageSize).ConfigureAwait(false);
         }
 
         private static async Task<PagedResult<Knowledge>> GetPagedResultAsync(IQueryable<Knowledge> query, int page, int pageSize)

@@ -8,6 +8,7 @@ namespace WebApi.Tests.Controllers
     public class EmailTests
     {
         // Teste só pode ser rodado em rede externa
+
         //[Fact]
         //public async Task SmtpClientWrapperSendMailAsyncCallsUnderlyingSmtpClient()
         //{
@@ -27,6 +28,7 @@ namespace WebApi.Tests.Controllers
         //}
 
         // Teste só pode ser rodado em rede externa
+
         //[Fact]
         //public async Task SmtpClientWrapperSendMailAsyncCompleteWithoutException()
         //{

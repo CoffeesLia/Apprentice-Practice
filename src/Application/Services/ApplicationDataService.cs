@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-using System.Text;
-using FluentValidation;
+﻿using FluentValidation;
 using Microsoft.Extensions.Localization;
 using Stellantis.ProjectName.Application.Interfaces;
 using Stellantis.ProjectName.Application.Interfaces.Repositories;
@@ -12,20 +10,14 @@ using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Services
 {
-    public class ApplicationDataService : EntityServiceBase<ApplicationData>, IApplicationDataService
+    public class ApplicationDataService(
+        IUnitOfWork unitOfWork,
+        IStringLocalizerFactory localizerFactory,
+        IValidator<ApplicationData> validator
+    ) : EntityServiceBase<ApplicationData>(unitOfWork, localizerFactory, validator), IApplicationDataService
     {
-        private readonly IStringLocalizer _localizer;
-        private readonly ApplicationExportService _exportService;
-
-        public ApplicationDataService(
-            IUnitOfWork unitOfWork,
-            IStringLocalizerFactory localizerFactory,
-            IValidator<ApplicationData> validator)
-            : base(unitOfWork, localizerFactory, validator)
-        {
-            _localizer = localizerFactory.Create(typeof(ApplicationDataResources));
-            _exportService = new ApplicationExportService(unitOfWork, localizerFactory);
-        }
+        private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(ApplicationDataResources));
+        private readonly ApplicationExportService _exportService = new(unitOfWork, localizerFactory);
 
         protected override IApplicationDataRepository Repository =>
             UnitOfWork.ApplicationDataRepository;
@@ -90,49 +82,42 @@ namespace Stellantis.ProjectName.Application.Services
                 return OperationResult.NotFound(_localizer[nameof(ApplicationDataResources.ApplicationNotFound)]);
             }
 
-            // Verifica integrações vinculadas
             var integrations = await UnitOfWork.IntegrationRepository.GetListAsync(new IntegrationFilter { ApplicationDataId = id }).ConfigureAwait(false);
             if (integrations.Result.Any())
             {
                 return OperationResult.Conflict(_localizer[nameof(ApplicationDataResources.IntegrationLinkedError)]);
             }
 
-            // Verifica serviços vinculados
             var services = await UnitOfWork.ServiceDataRepository.GetListAsync(new ServiceDataFilter { ApplicationId = id }).ConfigureAwait(false);
             if (services.Result.Any())
             {
                 return OperationResult.Conflict(_localizer[nameof(ApplicationDataResources.ServiceLinkedError)]);
             }
 
-            // Verifica repositórios vinculados
             var repos = await UnitOfWork.RepoRepository.GetListAsync(new RepoFilter { ApplicationId = id }).ConfigureAwait(false);
             if (repos.Result.Any())
             {
                 return OperationResult.Conflict(_localizer[nameof(ApplicationDataResources.RepoLinkedError)]);
             }
 
-            // Verifica documentos vinculados
             var documents = await UnitOfWork.DocumentDataRepository.GetListAsync(new DocumentDataFilter { ApplicationId = id }).ConfigureAwait(false);
             if (documents.Result.Any())
             {
                 return OperationResult.Conflict(_localizer[nameof(ApplicationDataResources.DocumentLinkedError)]);
             }
 
-            // Verifica conhecimentos vinculados
             var knowledges = await UnitOfWork.KnowledgeRepository.GetListAsync(new KnowledgeFilter { ApplicationId = id }).ConfigureAwait(false);
             if (knowledges.Result.Any())
             {
                 return OperationResult.Conflict(_localizer[nameof(ApplicationDataResources.KnowledgeLinkedError)]);
             }
 
-            // Verifica feedbacks vinculados
             var feedbacks = await UnitOfWork.FeedbackRepository.GetListAsync(new FeedbackFilter { ApplicationId = id }).ConfigureAwait(false);
             if (feedbacks.Result.Any())
             {
                 return OperationResult.Conflict(_localizer[nameof(ApplicationDataResources.FeedbackLinkedError)]);
             }
 
-            // Verifica incidentes vinculados
             var incidents = await UnitOfWork.IncidentRepository.GetListAsync(new IncidentFilter { ApplicationId = id }).ConfigureAwait(false);
             if (incidents.Result.Any())
             {
@@ -163,7 +148,6 @@ namespace Stellantis.ProjectName.Application.Services
                 return true;
             }
 
-            // Comparação exata, ignorando maiúsculas/minúsculas
             return !existingItems.Result.Any(e =>
                 e.Id != id &&
                 string.Equals(e.Name, name, StringComparison.OrdinalIgnoreCase)
@@ -182,17 +166,17 @@ namespace Stellantis.ProjectName.Application.Services
 
         public async Task<byte[]> ExportToCsvAsync(ApplicationFilter filter)
         {
-            return await _exportService.ExportToCsvAsync(filter);
+            return await _exportService.ExportToCsvAsync(filter).ConfigureAwait(false);
         }
 
         public async Task<byte[]> ExportToPdfAsync(ApplicationFilter filter)
         {
-            return await _exportService.ExportToPdfAsync(filter);
+            return await _exportService.ExportToPdfAsync(filter).ConfigureAwait(false);
         }
 
         public async Task<byte[]> ExportApplicationAsync(int id)
         {
-            return await _exportService.ExportApplicationAsync(id);
+            return await _exportService.ExportApplicationAsync(id).ConfigureAwait(false);
         }
 
         public Task<byte[]> ExportApplicationsAsync(ApplicationFilter filter)

@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Stellantis.ProjectName.Domain.Entities;
-using Stellantis.ProjectName.Infrastructure.Data.Repositories;
 
 namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
 {
@@ -35,7 +34,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
             builder.HasOne(ad => ad.Squad)
                 .WithMany(s => s.Applications)
                 .HasForeignKey(ad => ad.SquadId)
-                .IsRequired(false); // Torna o vínculo opcional
+                .IsRequired(false);
 
             builder
                 .HasMany(ad => ad.Knowledges)
@@ -44,9 +43,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.EntityConfig
 
             builder.Ignore(ad => ad.ProductOwner);
 
-            builder.Property(ad => ad.CreatedAt)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .ValueGeneratedOnAdd();
         }
     }
 }

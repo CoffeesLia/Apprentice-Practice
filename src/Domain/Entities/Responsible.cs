@@ -1,7 +1,6 @@
-﻿
-namespace Stellantis.ProjectName.Domain.Entities
+﻿namespace Stellantis.ProjectName.Domain.Entities
 {
-    public class Responsible : BaseEntity
+    public class Responsible : EntityBase
     {
         public required string Email { get; set; }
         public required string Name { get; set; }

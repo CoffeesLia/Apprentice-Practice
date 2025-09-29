@@ -91,8 +91,6 @@ namespace Infrastructure.Tests.Data
             await Assert.ThrowsAnyAsync<Exception>(() => unitOfWork.CommitAsync());
             Assert.True(mockTransaction.RollbackAsyncHasCalled());
         }
-
-
         public void Dispose()
         {
             Dispose(true);
@@ -108,11 +106,9 @@ namespace Infrastructure.Tests.Data
 
             if (disposing)
             {
-                // free managed resources
                 _context?.Dispose();
             }
 
-            // free native resources if there are any.
             if (nativeResource != IntPtr.Zero)
             {
                 Marshal.FreeHGlobal(nativeResource);

@@ -1,16 +1,14 @@
-﻿using Moq;
+﻿using System.Globalization;
+using System.Text;
+using Microsoft.Extensions.Localization;
+using Moq;
 using Stellantis.ProjectName.Application.Interfaces;
+using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using Stellantis.ProjectName.Application.Models.Filters;
-using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Application.Services;
 using Stellantis.ProjectName.Domain.Entities;
-using System.Globalization;
-using System.Text;
-using Xunit;
-using Microsoft.Extensions.Localization;
-using Stellantis.ProjectName.Application.Interfaces.Repositories;
 using UglyToad.PdfPig;
-using System.IO;
+using Xunit;
 
 namespace Application.Tests.Services
 {
@@ -69,7 +67,7 @@ namespace Application.Tests.Services
             var csv = Encoding.UTF8.GetString(result);
             Assert.Contains("App1", csv);
             Assert.Contains("App2", csv);
-            Assert.Contains("Id", csv); // cabeçalho
+            Assert.Contains("Id", csv);
         }
       
         [Fact]
@@ -90,8 +88,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.NotNull(result);
-            // PDF geralmente começa com "%PDF"
-            Assert.StartsWith("%PDF", Encoding.UTF8.GetString(result).Substring(0, 4));
+            Assert.StartsWith("%PDF", Encoding.UTF8.GetString(result)[..4]);
         }
 
         [Fact]
@@ -119,7 +116,7 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.NotNull(result);
-            Assert.StartsWith("%PDF", Encoding.UTF8.GetString(result).Substring(0, 4));
+            Assert.StartsWith("%PDF", Encoding.UTF8.GetString(result)[..4]);
         }
 
         [Fact]
@@ -146,13 +143,11 @@ namespace Application.Tests.Services
                 Description = "Descrição"
             };
 
-            // Integrações
             app.Integration.Add(new Integration { Name = "Integração 1" });
             app.Integration.Add(new Integration { Name = "Integração 2" });
 
             _applicationDataRepositoryMock.Setup(r => r.GetFullByIdAsync(app.Id)).ReturnsAsync(app);
 
-            // Membros do Squad (inicializando Role e Cost)
             _unitOfWorkMock.Setup(u => u.MemberRepository.GetListAsync(It.IsAny<MemberFilter>()))
                 .ReturnsAsync(new PagedResult<Member>
                 {
@@ -167,14 +162,12 @@ namespace Application.Tests.Services
                     ]
                 });
 
-            // Serviços
             _unitOfWorkMock.Setup(u => u.ServiceDataRepository.GetListAsync(It.IsAny<ServiceDataFilter>()))
                 .ReturnsAsync(new PagedResult<ServiceData>
                 {
                     Result = [new ServiceData { Name = "Service 1" }]
                 });
 
-            // Repositórios (inicializando Description e Url)
             _unitOfWorkMock.Setup(u => u.RepoRepository.GetListAsync(It.IsAny<RepoFilter>()))
                 .ReturnsAsync(new PagedResult<Repo>
                 {
@@ -199,9 +192,8 @@ namespace Application.Tests.Services
 
             // Assert
             Assert.NotNull(result);
-            Assert.StartsWith("%PDF", Encoding.UTF8.GetString(result).Substring(0, 4));
+            Assert.StartsWith("%PDF", Encoding.UTF8.GetString(result)[..4]);
 
-            // Extrair texto do PDF
             string pdfText;
             using (var ms = new MemoryStream(result))
             using (var pdf = PdfDocument.Open(ms))

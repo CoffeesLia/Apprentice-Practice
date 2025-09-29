@@ -7,7 +7,5 @@
         public required Uri Url { get; set; }
         public required int ApplicationId { get; set; }
         public ApplicationVm? ApplicationData { get; set; }
-
     }
-
 }

@@ -22,11 +22,9 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         {
             ArgumentNullException.ThrowIfNull(filter);
 
-            // Inicializa os filtros dinâmicos
             ExpressionStarter<Incident> filters = PredicateBuilder.New<Incident>(true);
             filter.Page = filter.Page <= 0 ? 1 : filter.Page;
 
-            // Filtros existentes...
             if (filter.Id > 0)
                 filters = filters.And(x => x.Id == filter.Id);
             if (!string.IsNullOrWhiteSpace(filter.Title))
@@ -36,7 +34,6 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
             if (filter.Status.HasValue)
                 filters = filters.And(x => x.Status == filter.Status.Value);
 
-            // Busca paginada incluindo Application
             var pagedResult = await GetListAsync(
                 filter: filters,
                 page: filter.Page,
@@ -53,7 +50,7 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         {
             var application = Context.Applications.FirstOrDefault(a => a.Id == applicationId);
             if (application == null)
-                return Task.FromResult<IEnumerable<Member>>(Enumerable.Empty<Member>());
+                return Task.FromResult<IEnumerable<Member>>([]);
 
             var members = Context.Members
                 .Where(m => m.SquadId == application.SquadId)

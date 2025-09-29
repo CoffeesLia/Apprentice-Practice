@@ -1,26 +1,19 @@
-﻿using System.Globalization;
-using System.Text;
+﻿using System.Text;
 using Microsoft.Extensions.Localization;
-using Stellantis.ProjectName.Application.Models.Filters;
-using Stellantis.ProjectName.Application.Resources;
-using Stellantis.ProjectName.Application.Interfaces;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
+using Stellantis.ProjectName.Application.Interfaces;
+using Stellantis.ProjectName.Application.Models.Filters;
+using Stellantis.ProjectName.Application.Resources;
 using Stellantis.ProjectName.Domain.Entities;
 
 namespace Stellantis.ProjectName.Application.Services
 {
-    public class ApplicationExportService
+    public class ApplicationExportService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory)
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IStringLocalizer _localizer;
-
-        public ApplicationExportService(IUnitOfWork unitOfWork, IStringLocalizerFactory localizerFactory)
-        {
-            _unitOfWork = unitOfWork;
-            _localizer = localizerFactory.Create(typeof(ApplicationDataResources));
-        }
+        private readonly IUnitOfWork _unitOfWork = unitOfWork;
+        private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(ApplicationDataResources));
 
         internal static string CsvSafe(string? value)
         {
@@ -93,7 +86,6 @@ namespace Stellantis.ProjectName.Application.Services
                     page.PageColor(Colors.White);
                     page.DefaultTextStyle(TextStyle.Default.FontFamily("Segoe UI").FontColor(textColor).FontSize(11));
 
-                    // Cabeçalho (apenas na primeira página)
                     page.Header().ShowOnce().Element(header =>
                     {
                         header.Row(row =>
@@ -105,10 +97,8 @@ namespace Stellantis.ProjectName.Application.Services
                         });
                     });
 
-                    // Conteúdo principal
                     page.Content().Column(content =>
                     {
-                        // --- Filtro de Período ---
                         if (filter.CreatedAfter.HasValue || filter.CreatedBefore.HasValue)
                         {
                             string periodo;
@@ -124,7 +114,6 @@ namespace Stellantis.ProjectName.Application.Services
                                 .FontSize(11).FontColor(textColor).SemiBold();
                         }
 
-                        // Total de aplicações
                         content.Item().Row(row =>
                         {
                             row.RelativeColumn().Text(
@@ -135,17 +124,16 @@ namespace Stellantis.ProjectName.Application.Services
 
                         content.Item().PaddingVertical(8);
 
-                        // Tabela de aplicações
                         content.Item().Table(table =>
                         {
                             table.ColumnsDefinition(columns =>
                             {
-                                columns.ConstantColumn(40);  // Id
-                                columns.RelativeColumn(2);   // Nome
-                                columns.RelativeColumn(2);   // Área
-                                columns.RelativeColumn(2);   // Responsável
-                                columns.RelativeColumn(2);   // Squad
-                                columns.ConstantColumn(70);  // Externo
+                                columns.ConstantColumn(40); 
+                                columns.RelativeColumn(2);   
+                                columns.RelativeColumn(2);  
+                                columns.RelativeColumn(2);   
+                                columns.RelativeColumn(2);   
+                                columns.ConstantColumn(70);  
                             });
 
                             table.Header(header =>
@@ -183,7 +171,6 @@ namespace Stellantis.ProjectName.Application.Services
                                 rowIndex++;
                             }
 
-                            // Rodapé
                             page.Footer().Row(row =>
                             {
                                 row.RelativeColumn().AlignRight().Text(t =>
@@ -208,38 +195,31 @@ namespace Stellantis.ProjectName.Application.Services
 
             var app = await _unitOfWork.ApplicationDataRepository
                 .GetFullByIdAsync(id)
-                .ConfigureAwait(false);
-
-            if (app == null)
-                throw new KeyNotFoundException($"Application with Id {id} not found");
-
+                .ConfigureAwait(false) ?? throw new KeyNotFoundException($"Application with Id {id} not found");
             var primaryColor = Colors.Blue.Darken2;
-            var evenRowColor = Colors.Grey.Lighten4; // Cinza claro
-            var oddRowColor = Colors.Grey.Lighten2;  // Cinza um pouco mais escuro
+            var evenRowColor = Colors.Grey.Lighten4; 
+            var oddRowColor = Colors.Grey.Lighten2;  
             var textColor = Color.FromHex("#444444");
             var logoPath = @"C:\Users\SE68087\gitlab\api\src\Application\Services\logo.png";
 
-            // Buscar membros do squad (se houver)
-            List<Member> squadMembers = new();
+            List<Member> squadMembers = [];
             if (app.Squad != null)
             {
                 var squadMembersResult = await _unitOfWork.MemberRepository.GetListAsync(
                     new MemberFilter { SquadId = app.Squad.Id }
-                );
-                squadMembers = squadMembersResult.Result.ToList();
+                ).ConfigureAwait(false);
+                squadMembers = [.. squadMembersResult.Result];
             }
 
-            // Buscar serviços da aplicação
-            List<ServiceData> services = new();
+            List<ServiceData> services = [];
             var serviceFilter = new ServiceDataFilter { ApplicationId = app.Id };
-            var serviceResult = await _unitOfWork.ServiceDataRepository.GetListAsync(serviceFilter);
-            services = serviceResult.Result.ToList();
+            var serviceResult = await _unitOfWork.ServiceDataRepository.GetListAsync(serviceFilter).ConfigureAwait(false);
+            services = [.. serviceResult.Result];
 
-            // Buscar repositórios da aplicação
-            List<Repo> repos = new();
+            List<Repo> repos = [];
             var repoFilter = new RepoFilter { ApplicationId = app.Id };
-            var repoResult = await _unitOfWork.RepoRepository.GetListAsync(repoFilter);
-            repos = repoResult.Result.ToList();
+            var repoResult = await _unitOfWork.RepoRepository.GetListAsync(repoFilter).ConfigureAwait(false);
+            repos = [.. repoResult.Result];
 
             var document = Document.Create(container =>
             {
@@ -250,7 +230,6 @@ namespace Stellantis.ProjectName.Application.Services
                     page.PageColor(Colors.White);
                     page.DefaultTextStyle(TextStyle.Default.FontFamily("Segoe UI").FontColor(textColor).FontSize(11));
 
-                    // Cabeçalho
                     page.Header().Element(header =>
                     {
                         header.Row(row =>
@@ -262,7 +241,6 @@ namespace Stellantis.ProjectName.Application.Services
                         });
                     });
 
-                    // Conteúdo
                     page.Content().Column(content =>
                     {
                         content.Item().Text($"{_localizer["Area"].Value}: {app.Area?.Name ?? "-"}").FontSize(11).FontColor(textColor);
@@ -270,7 +248,6 @@ namespace Stellantis.ProjectName.Application.Services
                         content.Item().Text($"{_localizer["Squad"].Value}: {app.Squad?.Name ?? "-"}").FontSize(11).FontColor(textColor);
                         content.Item().Text($"{_localizer["External"].Value}: {(app.External ? _localizer["External_Yes"].Value : _localizer["External_No"].Value)}").FontSize(11).FontColor(textColor);
 
-                        // Descrição
                         if (!string.IsNullOrWhiteSpace(app.Description))
                         {
                             content.Item().PaddingTop(10).Element(e =>
@@ -283,7 +260,6 @@ namespace Stellantis.ProjectName.Application.Services
                             });
                         }
 
-                        // Integrações
                         if (app.Integration != null && app.Integration.Any())
                         {
                             content.Item().PaddingTop(10).Element(e =>
@@ -306,7 +282,6 @@ namespace Stellantis.ProjectName.Application.Services
                             });
                         }
 
-                        // Repositórios
                         if (repos.Any())
                         {
                             content.Item().PaddingTop(10).Element(e =>
@@ -329,7 +304,6 @@ namespace Stellantis.ProjectName.Application.Services
                             });
                         }
 
-                        // Serviços
                         if (services.Any())
                         {
                             content.Item().PaddingTop(10).Element(e =>
@@ -352,7 +326,6 @@ namespace Stellantis.ProjectName.Application.Services
                             });
                         }
 
-                        // Membros do Squad
                         if (squadMembers.Any())
                         {
                             content.Item().PaddingTop(10).Element(e =>
@@ -364,8 +337,8 @@ namespace Stellantis.ProjectName.Application.Services
                                     {
                                         table.ColumnsDefinition(c =>
                                         {
-                                            c.RelativeColumn(2); // Nome
-                                            c.RelativeColumn(3); // Email
+                                            c.RelativeColumn(2); 
+                                            c.RelativeColumn(3); 
                                         });
                                         int idx = 0;
                                         foreach (var member in squadMembers)
@@ -381,7 +354,6 @@ namespace Stellantis.ProjectName.Application.Services
                         }
                     });
 
-                    // Rodapé
                     page.Footer().Row(row =>
                     {                      
                         row.RelativeColumn().AlignRight().Text(t =>

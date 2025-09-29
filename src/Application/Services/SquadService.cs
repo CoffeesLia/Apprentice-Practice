@@ -84,11 +84,11 @@ namespace Stellantis.ProjectName.Application.Services
             if (squad == null)
                 return OperationResult.NotFound(_localizer[nameof(SquadResources.SquadNotFound)]);
 
-            var members = await UnitOfWork.MemberRepository.GetListAsync(new MemberFilter { SquadId = id }).ConfigureAwait(false);
+            var membersPaged = await UnitOfWork.MemberRepository.GetListAsync(new MemberFilter { SquadId = id }).ConfigureAwait(false);
             var applications = await UnitOfWork.ApplicationDataRepository.GetListAsync(a => a.SquadId == id).ConfigureAwait(false);
 
-            bool hasMembers = members.Result?.Any() ?? false;
-            bool hasApplications = applications?.Any() ?? false;
+            bool hasMembers = membersPaged.Result is ICollection<Member> memberCollection && memberCollection.Count > 0;
+            bool hasApplications = applications.Count > 0;
 
             if (hasMembers && hasApplications)
             {
@@ -151,7 +151,7 @@ namespace Stellantis.ProjectName.Application.Services
             if (squad == null)
                 return null;
 
-            squad.Cost = await GetTotalCostAsync(id);
+            squad.Cost = await GetTotalCostAsync(id).ConfigureAwait(false);
             return squad;
         }
     }

@@ -116,8 +116,6 @@ namespace WebApi.Tests.Controllers
             Assert.IsType<NotFoundResult>(result.Result);
         }
 
-
-
         [Fact]
         public async Task UpdateAsyncShouldReturnOkResultWhenApplicationDataIsValid()
         {
@@ -185,8 +183,8 @@ namespace WebApi.Tests.Controllers
             var fileResult = Assert.IsType<FileContentResult>(result);
             Assert.Equal("text/csv", fileResult.ContentType);
             Assert.Equal(expectedBytes, fileResult.FileContents);
-            Assert.Contains("applications_", fileResult.FileDownloadName);
-            Assert.EndsWith(".csv", fileResult.FileDownloadName);
+            Assert.Contains("applications_", fileResult.FileDownloadName, StringComparison.Ordinal);
+            Assert.EndsWith(".csv", fileResult.FileDownloadName, StringComparison.Ordinal);
         }
 
         [Fact]
@@ -205,8 +203,8 @@ namespace WebApi.Tests.Controllers
             var fileResult = Assert.IsType<FileContentResult>(result);
             Assert.Equal("application/pdf", fileResult.ContentType);
             Assert.Equal(expectedBytes, fileResult.FileContents);
-            Assert.Contains("applications_", fileResult.FileDownloadName);
-            Assert.EndsWith(".pdf", fileResult.FileDownloadName);
+            Assert.Contains("applications_", fileResult.FileDownloadName, StringComparison.Ordinal);
+            Assert.EndsWith(".pdf", fileResult.FileDownloadName, StringComparison.Ordinal);
         }
 
         [Fact]
@@ -225,10 +223,9 @@ namespace WebApi.Tests.Controllers
             var fileResult = Assert.IsType<FileContentResult>(result);
             Assert.Equal("application/pdf", fileResult.ContentType);
             Assert.Equal(expectedBytes, fileResult.FileContents);
-            Assert.Contains($"application_{id}_", fileResult.FileDownloadName);
-            Assert.EndsWith(".pdf", fileResult.FileDownloadName);
+            Assert.Contains($"application_{id}_", fileResult.FileDownloadName, StringComparison.Ordinal);
+            Assert.EndsWith(".pdf", fileResult.FileDownloadName, StringComparison.Ordinal);
         }
-
     }
 }
 

@@ -146,7 +146,6 @@ namespace WebApi.Tests.Controllers
             Assert.Equal(1, mappedResult.Total);
             Assert.Single(mappedResult.Result);
             Assert.Equal("Test Name", mappedResult.Result.First().Name);
-
         }
 
         [Fact]

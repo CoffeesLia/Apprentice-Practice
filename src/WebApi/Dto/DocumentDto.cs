@@ -6,5 +6,4 @@
         public required Uri Url { get; set; }
         public int ApplicationId { get; set; }
     }
-
 }

@@ -1,11 +1,8 @@
-﻿using Xunit;
+﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
-using Microsoft.AspNetCore.Mvc;
-using Stellantis.ProjectName.WebApi.Controllers;
 using Stellantis.ProjectName.Application.Interfaces.Services;
 using Stellantis.ProjectName.Domain.Entities;
-using System.Threading.Tasks;
-using System.Collections.Generic;
+using Stellantis.ProjectName.WebApi.Controllers;
 
 namespace WebApi.Tests.Controllers
 {

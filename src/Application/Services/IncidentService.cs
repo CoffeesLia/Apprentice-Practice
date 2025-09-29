@@ -25,37 +25,32 @@ namespace Stellantis.ProjectName.Application.Services
         {
             ArgumentNullException.ThrowIfNull(item);
 
-            // Força o status para "Em Aberto" ao criar
             item.Status = IncidentStatus.Open;
 
-            // Se vier apenas os IDs dos membros (ex: [{ Id = 1 }, { Id = 2 }]), busque os membros completos
             if (item.Members != null && item.Members.Count > 0)
             {
                 var memberIds = item.Members.Select(m => m.Id).ToList();
                 var pagedMembers = await UnitOfWork.MemberRepository
                     .GetListAsync(m => memberIds.Contains(m.Id)).ConfigureAwait(false);
-                item.Members = pagedMembers.Result.ToList();
+                item.Members = [.. pagedMembers.Result];
             }
             else
             {
-                item.Members = new List<Member>();
+                item.Members = [];
             }
 
-            // Validação do objeto pelo FluentValidation
             var validationResult = await Validator.ValidateAsync(item).ConfigureAwait(false);
             if (!validationResult.IsValid)
             {
                 return OperationResult.InvalidData(validationResult);
             }
 
-            // Verificar se a aplicação existe
             var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(item.ApplicationId).ConfigureAwait(false);
             if (application == null)
             {
                 return OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
             }
 
-            // Validar se os membros estão no squad da aplicação
             if (item.Members != null && item.Members.Count > 0)
             {
                 var squadId = application.SquadId;
@@ -86,27 +81,22 @@ namespace Stellantis.ProjectName.Application.Services
         {
             ArgumentNullException.ThrowIfNull(item);
 
-            // Busca o incidente existente incluindo os membros
             var existingIncident = await Repository.GetByIdAsync(item.Id).ConfigureAwait(false);
             if (existingIncident == null)
             {
                 return OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
             }
 
-            // Salva o status anterior
             var previousStatus = existingIncident.Status;
 
-            // Salva os IDs dos membros antigos
-            var oldMemberIds = existingIncident.Members?.Select(m => m.Id).ToHashSet() ?? new HashSet<int>();
-            var oldMembers = existingIncident.Members?.ToList() ?? new List<Member>();
+            var oldMemberIds = existingIncident.Members?.Select(m => m.Id).ToHashSet() ?? [];
+            var oldMembers = existingIncident.Members?.ToList() ?? [];
 
-            // Atualiza propriedades simples
             existingIncident.Title = item.Title;
             existingIncident.Description = item.Description;
             existingIncident.Status = item.Status;
             existingIncident.ApplicationId = item.ApplicationId;
 
-            // Atualiza a data de fechamento se o status for "Fechado"
             if (item.Status == IncidentStatus.Closed && existingIncident.ClosedAt == null)
             {
                 existingIncident.ClosedAt = DateTime.UtcNow;
@@ -116,16 +106,16 @@ namespace Stellantis.ProjectName.Application.Services
                 existingIncident.ClosedAt = null;
             }
 
-            // Atualiza membros apenas se necessário
-            List<Member> newMembers = new();
+            List<Member> newMembers = [];
             if (item.Members != null)
             {
                 var memberIds = item.Members.Select(m => m.Id).ToList();
                 var pagedMembers = await UnitOfWork.MemberRepository
                     .GetListAsync(m => memberIds.Contains(m.Id)).ConfigureAwait(false);
-                newMembers = pagedMembers.Result.ToList();
+                newMembers = [.. pagedMembers.Result];
 
-                // Sincroniza a coleção de membros sem sobrescrever a referência
+                existingIncident.Members ??= [];
+
                 existingIncident.Members.Clear();
                 foreach (var member in newMembers)
                 {
@@ -133,21 +123,18 @@ namespace Stellantis.ProjectName.Application.Services
                 }
             }
 
-            // Validação do objeto pelo FluentValidation
             var validationResult = await Validator.ValidateAsync(existingIncident).ConfigureAwait(false);
             if (!validationResult.IsValid)
             {
                 return OperationResult.InvalidData(validationResult);
             }
 
-            // Verifica se a aplicação existe
             var application = await UnitOfWork.ApplicationDataRepository.GetByIdAsync(item.ApplicationId).ConfigureAwait(false);
             if (application == null)
             {
                 return OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
             }
 
-            // Validar se os membros estão no squad da aplicação
             if (existingIncident.Members != null && existingIncident.Members.Count > 0)
             {
                 var squadId = application.SquadId;
@@ -179,7 +166,8 @@ namespace Stellantis.ProjectName.Application.Services
                 foreach (var member in addedMembers)
                 {
                     var message = _notificationLocalizer["IncidentAddMember", member.Name, existingIncident.Title];
-                    await _notificationService.NotifyMembersAsync(new[] { member }, message).ConfigureAwait(false);
+                    IEnumerable<Member> members = [member];
+                    await _notificationService.NotifyMembersAsync(members, message).ConfigureAwait(false);
                 }
             }
 
@@ -190,7 +178,7 @@ namespace Stellantis.ProjectName.Application.Services
                 foreach (var member in removedMembers)
                 {
                     var message = _notificationLocalizer["IncidentRemoveMember", member.Name, existingIncident.Title];
-                    await _notificationService.NotifyMembersAsync(new[] { member }, message).ConfigureAwait(false);
+                    await _notificationService.NotifyMembersAsync([member], message).ConfigureAwait(false);
                 }
             }
 
@@ -205,15 +193,15 @@ namespace Stellantis.ProjectName.Application.Services
                 : OperationResult.NotFound(_localizer[nameof(ServiceResources.NotFound)]);
         }
 
-        public async Task<PagedResult<Incident>> GetListAsync(IncidentFilter incidentFilter)
+        public async Task<PagedResult<Incident>> GetListAsync(IncidentFilter filter)
         {
-            incidentFilter ??= new IncidentFilter();
-            return await UnitOfWork.IncidentRepository.GetListAsync(incidentFilter).ConfigureAwait(false);
+            filter ??= new IncidentFilter();
+            return await UnitOfWork.IncidentRepository.GetListAsync(filter).ConfigureAwait(false);
         }
 
         public async Task<IEnumerable<Member>> GetMembersByApplicationIdAsync(int applicationId)
         {
-            return await Repository.GetMembersByApplicationIdAsync(applicationId);
+            return await Repository.GetMembersByApplicationIdAsync(applicationId).ConfigureAwait(false);
         }
 
         public override async Task<OperationResult> DeleteAsync(int id)

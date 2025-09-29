@@ -13,7 +13,6 @@ using Stellantis.ProjectName.WebApi.Dto;
 using Stellantis.ProjectName.WebApi.Dto.Filters;
 using Stellantis.ProjectName.WebApi.ViewModels;
 
-
 namespace WebApi.Tests.Controllers
 {
     public class AreaControllerTests
@@ -50,14 +49,13 @@ namespace WebApi.Tests.Controllers
             IActionResult result = await _controller.CreateAsync(areaDto);
 
             // Assert
-            Assert.IsType<CreatedAtActionResult>(result); // Verifica se o resultado é do tipo CreatedAtActionResult
-            CreatedAtActionResult? objectResult = result as CreatedAtActionResult; // Cast para acessar propriedades, se necessário
+            Assert.IsType<CreatedAtActionResult>(result); 
+            CreatedAtActionResult? objectResult = result as CreatedAtActionResult; 
             Assert.NotNull(objectResult);
             Assert.Equal(areaVm, objectResult.Value);
         }
 
         [Fact]
-        // Teste para verificar se GetAsync retorna AreaVm
         public async Task GetAsyncShouldReturnAreaVm()
         {
             // Arrange
@@ -76,6 +74,7 @@ namespace WebApi.Tests.Controllers
             Assert.Equal(areaVm.Id, returnedAreaVm.Id);
             Assert.Equal(areaVm.Name, returnedAreaVm.Name);
         }
+
         [Fact]
         public async Task GetAsyncShouldReturnAreaVmWithApplications()
         {
@@ -107,7 +106,6 @@ namespace WebApi.Tests.Controllers
         }
 
         [Fact]
-        // Teste para verificar se UpdateAsync retorna Success quando a atualização é bem-sucedida
         public async Task UpdateAsyncShouldReturnSuccessWhenUpdateIsSuccessful()
         {
             // Arrange
@@ -134,7 +132,6 @@ namespace WebApi.Tests.Controllers
         }
 
         [Fact]
-        // Teste para verificar se DeleteAsync retorna NoContent quando a exclusão é bem-sucedida
         public async Task DeleteAsyncShouldReturnNoContentWhenDeleteIsSuccessful()
         {
             // Arrange
@@ -218,6 +215,5 @@ namespace WebApi.Tests.Controllers
             Assert.Empty(returnedPagedResultVm.Result);
             Assert.Equal(0, returnedPagedResultVm.Total);
         }
-
     }
 }

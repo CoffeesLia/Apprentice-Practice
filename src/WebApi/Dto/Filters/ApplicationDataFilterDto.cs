@@ -11,7 +11,6 @@ namespace Stellantis.ProjectName.WebApi.Dto.Filters
         public bool? External { get; set; }
         public int ResponsibleId { get; set; }
 
-        // Datas para filtro
         [DataType(DataType.Date)]
         public DateTime? CreatedAfter { get; set; }
         [DataType(DataType.Date)]

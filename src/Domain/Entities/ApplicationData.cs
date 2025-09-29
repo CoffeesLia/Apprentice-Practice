@@ -1,6 +1,6 @@
 ﻿namespace Stellantis.ProjectName.Domain.Entities
 {
-    public class ApplicationData(string name) : BaseEntity
+    public class ApplicationData(string name) : EntityBase
     {
         public string? Name { get; set; } = name;
         public int AreaId { get; set; }
