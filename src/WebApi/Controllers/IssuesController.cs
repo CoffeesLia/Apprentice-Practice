@@ -12,10 +12,19 @@ namespace Stellantis.ProjectName.WebApi.Controllers
     {
         private readonly GitLabIssueService _gitLabService = gitLabService;
 
-        [HttpGet("{issueIid}")]
+        // Buscar por ID
+        [HttpGet("{issueIid:int}")]  // apenas inteiros
         public async Task<IActionResult> Get(int issueIid)
         {
             var result = await _gitLabService.GetIssueAsync(issueIid).ConfigureAwait(false);
+            return Ok(result);
+        }
+
+        // Listar todas as issues do projeto
+        [HttpGet]
+        public async Task<IActionResult> List()
+        {
+            var result = await _gitLabService.ListIssuesAsync();
             return Ok(result);
         }
 
@@ -26,14 +35,14 @@ namespace Stellantis.ProjectName.WebApi.Controllers
             return Ok(result);
         }
 
-        [HttpPut("{issueIid}")]
+        [HttpPut("{issueIid:int}")]
         public async Task<IActionResult> Update(int issueIid, [FromBody] GitLabIssueDto dto)
         {
             var result = await _gitLabService.UpdateIssueAsync(issueIid, dto).ConfigureAwait(false);
             return Ok(result);
         }
 
-        [HttpPut("{issueIid}/close")]
+        [HttpPut("{issueIid:int}/close")]
         public async Task<IActionResult> Close(int issueIid)
         {
             var result = await _gitLabService.CloseIssueAsync(issueIid).ConfigureAwait(false);

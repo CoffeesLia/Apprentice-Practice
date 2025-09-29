@@ -16,13 +16,24 @@ namespace Stellantis.ProjectName.Application.Services
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
         }
+
+        public async Task<GitLabIssueDto[]> ListIssuesAsync()
+        {
+            // Chama o GitLab para listar todas as issues do projeto
+            var response = await _httpClient.GetAsync($"projects/{_projectId}/issues");
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<GitLabIssueDto[]>(json)!;
+        }
+
+
         public async Task<string> CreateIssueAsync(GitLabIssueDto dto)
         {
             var payload = new Dictionary<string, object?>
             {
                 ["title"] = dto.Title,
                 ["description"] = dto.Description,
-                ["state_event"] = dto.StateEvent
             };
 
             if (dto.AssigneeId.HasValue)
@@ -46,12 +57,18 @@ namespace Stellantis.ProjectName.Application.Services
 
             if (!string.IsNullOrEmpty(dto.Title))
                 payload["title"] = dto.Title;
+
             if (!string.IsNullOrEmpty(dto.Description))
                 payload["description"] = dto.Description;
+
             if (dto.AssigneeId.HasValue)
                 payload["assignee_id"] = dto.AssigneeId.Value;
+
             if (!string.IsNullOrEmpty(dto.StateEvent))
-                payload["state_event"] = dto.StateEvent;
+            {
+                // GitLab não aceita "open", só "close" ou "reopen"
+                payload["state_event"] = dto.StateEvent == "open" ? "reopen" : dto.StateEvent;
+            }
 
             if (dto.Labels != null && dto.Labels.Length > 0)
                 payload["add_labels"] = string.Join(",", dto.Labels);
