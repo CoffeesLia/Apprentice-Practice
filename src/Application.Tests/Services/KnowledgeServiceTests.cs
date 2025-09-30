@@ -116,7 +116,6 @@ namespace Application.Tests.Services
             var member = _fixture.Build<Member>()
                 .With(m => m.Id, 1)
                 .With(m => m.Name, "Valid Name")
-                .With(m => m.Role, "SquadLeader")
                 .With(m => m.Email, "valid.email@example.com")
                 .With(m => m.Cost, 1m)
                 .With(m => m.SquadId, 1)
@@ -279,7 +278,6 @@ namespace Application.Tests.Services
             var member = _fixture.Build<Member>()
                 .With(m => m.Id, 1)
                 .With(m => m.SquadId, 10)
-                .With(m => m.Role, "SquadLeader")
                 .Create();
 
             var application = _fixture.Build<ApplicationData>()
@@ -650,26 +648,6 @@ namespace Application.Tests.Services
         {
             // Act
             var value = KnowledgeResource.OnlyPossibleRemoveIfBelongToTheLeadersSquad;
-
-            // Assert
-            Assert.False(string.IsNullOrWhiteSpace(value));
-        }
-
-        [Fact]
-        public void KnowledgeResourceOnlySquadLeaderAssociateShouldReturnResource()
-        {
-            // Act
-            var value = KnowledgeResource.OnlySquadLeaderAssociate;
-
-            // Assert
-            Assert.False(string.IsNullOrWhiteSpace(value));
-        }
-
-        [Fact]
-        public void KnowledgeResourceOnlySquadLeaderRemoveShouldReturnResource()
-        {
-            // Act
-            var value = KnowledgeResource.OnlySquadLeaderRemove;
 
             // Assert
             Assert.False(string.IsNullOrWhiteSpace(value));
