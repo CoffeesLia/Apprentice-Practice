@@ -259,7 +259,17 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         {
             ArgumentNullException.ThrowIfNull(entity);
 
-            Context.Set<TEntity>().Update(entity);
+            var key = Context.Model.FindEntityType(typeof(TEntity))?.FindPrimaryKey();
+            if (key == null)
+                throw new InvalidOperationException("Chave primária não encontrada.");
+
+            var keyValues = key.Properties.Select(p => p.PropertyInfo?.GetValue(entity)).ToArray();
+
+            var trackedEntity = await Context.Set<TEntity>().FindAsync(keyValues).ConfigureAwait(false);
+            if (trackedEntity == null)
+                throw new InvalidOperationException("Entidade não encontrada para atualização.");
+
+            Context.Entry(trackedEntity).CurrentValues.SetValues(entity);
 
             if (saveChanges)
             {
@@ -278,7 +288,23 @@ namespace Stellantis.ProjectName.Infrastructure.Data.Repositories
         {
             ArgumentNullException.ThrowIfNull(entities);
 
-            Context.Set<TEntity>().UpdateRange(entities);
+            var entityType = Context.Model.FindEntityType(typeof(TEntity));
+            if (entityType == null)
+                throw new InvalidOperationException("Tipo de entidade não encontrado.");
+
+            var key = entityType.FindPrimaryKey();
+            if (key == null)
+                throw new InvalidOperationException("Chave primária não encontrada.");
+
+            foreach (var entity in entities)
+            {
+                var keyValues = key.Properties.Select(p => p.PropertyInfo?.GetValue(entity)).ToArray();
+                var trackedEntity = await Context.Set<TEntity>().FindAsync(keyValues).ConfigureAwait(false);
+                if (trackedEntity == null)
+                    throw new InvalidOperationException("Entidade não encontrada para atualização.");
+
+                Context.Entry(trackedEntity).CurrentValues.SetValues(entity);
+            }
 
             if (saveChanges)
             {
