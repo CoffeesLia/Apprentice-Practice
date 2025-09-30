@@ -8,6 +8,5 @@
         public required string Role { get; set; }
         public decimal Cost { get; set; }
         public required string Email { get; set; }
-     // public bool SquadLeader { get; set; }
     }
 }

@@ -147,12 +147,6 @@
   <data name="OnlyPossibleRemoveIfBelongToTheLeadersSquad" xml:space="preserve">
     <value>Só é possível remover se ambos pertencerem ao squad do líder.</value>
   </data>
-  <data name="OnlySquadLeaderAssociate" xml:space="preserve">
-    <value>Apenas o líder do Squad pode associar.</value>
-  </data>
-  <data name="OnlySquadLeaderRemove" xml:space="preserve">
-    <value>Apenas o líder do Squad pode remover.</value>
-  </data>
   <data name="SquadIsRequired" xml:space="preserve">
     <value>Squad é obrigratório.</value>
   </data>
